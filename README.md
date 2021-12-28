@@ -1,4 +1,3 @@
-# Extension for Visual Studio Code - FastIoT
-Extension for Visual Studio Code to automate the deployment of .NET applications to embedded devices
+# .NET FastIoT Visual Studio Code Extension
 
-Coming soon!
+Extension for Visual Studio Code for configuring Remote Debugging of a .NET Application for Embedded Linux Devices
