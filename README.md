@@ -2,7 +2,7 @@
 
 # .NET FastIoT VS Code Extension
 
-[.NET FastIoT Extension](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot/ ".NET FastIoT Extension") in Visual Studio Code Marketplace.
+[.NET FastIoT Extension](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot ".NET FastIoT Extension") in Visual Studio Code Marketplace.
 
 [README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README.md "README") in English | [README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README_ru.md "README") на русском языке | Habr.com (Russian) - [Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux").
 
