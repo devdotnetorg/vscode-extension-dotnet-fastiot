@@ -1,0 +1,15 @@
+{
+	"label": "fastiot-%FASTID%-create-folder",
+	"dependsOn":"fastiot-%FASTID%-build-linux",
+	"command": "%PIPEPROGRAM%",
+	"type": "process",
+	"args": [
+			"-i",
+			"%SSH_KEY%",
+			"-o",
+			"StrictHostKeyChecking no",
+			"%USER_DEBUG%@%REMOTE_HOST%",
+			"mkdir -p ~/fastiot/%NAME_PROJECT%"
+	],
+	"problemMatcher": "$msCompile"
+}

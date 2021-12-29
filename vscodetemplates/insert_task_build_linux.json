@@ -1,0 +1,14 @@
+{
+	"label": "fastiot-%FASTID%-build-linux",
+	"command": "dotnet",
+	"type": "process",
+	"args": [
+		"build",
+		"${workspaceFolder}/%PATH_PROJECT_REVERSE%",
+		"--configuration","Debug",
+		"/property:GenerateFullPaths=true",
+		"/consoleloggerparameters:NoSummary",
+		"-r","%PLATFORM%"                
+	],
+	"problemMatcher": "$msCompile"
+}

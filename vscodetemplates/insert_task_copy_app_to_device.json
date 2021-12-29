@@ -1,0 +1,17 @@
+{
+	"label": "fastiot-%FASTID%-copy-app-to-device",
+	"dependsOn":"fastiot-%FASTID%-create-folder",
+	"command": "%RSYNCPROGRAM%",
+	"type": "process",
+	"args": [
+		"--log-file=rsync.log",
+		"--progress",
+		"-avz" ,
+		"-e",
+		"%PIPEPROGRAM% -i %SSH_KEY% -o 'StrictHostKeyChecking no'",
+		"%CY_PATH_PROJECT%/bin/Debug/%TARGET_FRAMEWORK%/%PLATFORM%/",
+		"%USER_DEBUG%@%REMOTE_HOST%:~/fastiot/%NAME_PROJECT%"
+	],
+	 "problemMatcher": "$msCompile"
+}
+ 

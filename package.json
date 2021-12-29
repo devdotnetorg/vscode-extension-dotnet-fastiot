@@ -1,0 +1,450 @@
+{
+	"name": "vscode-extension-dotnet-fastiot",
+	"displayName": ".NET FastIoT",
+	"description": "Configuring Remote Debugging of a .NET application for embedded Linux devices",	
+	"icon": "assets/fastiot-logo-128.png",
+	"license": "LGPL-3.0-only",
+	"preview": true,
+	"version": "0.1.4",
+	"overview": "assets/marketplace/vscode-marketplace-overview.md",
+	"priceCategory": "free",
+	"publisher": "devdotnetorg",
+	"private": "false",
+	"identity": {
+		"internalName": "vscode-extension-dotnet-fastiot"	
+	},
+	"keywords": ["Debugging", "Embedded", "IoT", "Linux", "SBC", "Raspberry", "Remote", "csproj"],	
+	"engines": {
+		"vscode": "^1.63.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot.git"
+	},
+	"homepage": "https://devdotnet.org",
+	"bugs": {
+		"url": "https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues",
+		"email": "fastiot@devdotnet.org"
+	},
+	"categories": [
+		"Programming Languages",		
+		"Other"
+	],
+	"activationEvents": [
+		"onView:viewDevices",
+		"onCommand:vscode-extension-dotnet-fastiot.helloWorld"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"configuration": [
+			{
+				"title": ".NET FastIoT",
+				"properties": {
+					"fastiot.device.account.username": {
+						"type": "string",
+						"default": "debugvscode",
+						"description": "Debug account name"
+					},
+					"fastiot.device.account.groups": {
+						"type": "string",
+						"default": "sudo",
+						"description": "Linux group for a new user (debugvscode) of a development device."
+					},
+					"fastiot.device.pathfolderkeys": {
+						"type": "string",
+						"default": "C:\\RemoteCode\\keys",
+						"description": "Path to ssh key storage folder"
+					},
+					"fastiot.device.pathfoldercwrsync": {
+						"type": "string",
+						"default": "C:\\RemoteCode\\cwrsync",
+						"markdownDescription": "The folder with the [cwRsync](https://itefix.net/cwrsync) package to copy the application to a remote device and provide a transport for the debugger."
+					},
+					"fastiot.device.all.JSON": {
+						"type": "object",
+						"default": {},
+						"description": "Configuration of all devices in JSON format."
+					},
+					"conf.resource.insertEmptyLastLine": {
+						"type": "object",
+						"default": {},
+						"description": "Resource configuration: Configure files using glob patterns to have an empty last line always",
+						"scope": "resource"
+					}
+				}
+			}
+		],
+		"commands": [
+			{
+				"command": "vscode-extension-dotnet-fastiot.helloWorld",
+				"title": "Hello World"
+			},
+			{
+				"command": "viewDevices.AddDevice",
+				"title": "Add Device",
+				"icon": {
+					"light": "resources/light/add.svg",
+					"dark": "resources/dark/add.svg"
+				}
+			},
+			{
+				"command": "viewDevices.RefreshDevices",
+				"title": "Refresh"
+			},
+			{
+				"command": "viewDevices.ExportDevices",
+				"title": "Export"
+			},
+			{
+				"command": "viewDevices.ImportDevices",
+				"title": "Import"
+			},
+			{
+				"command": "viewDevices.RenameDevice",
+				"title": "Rename"
+			},
+			{
+				"command": "viewDevices.DeleteDevice",
+				"title": "Delete"
+			},
+			{
+				"command": "viewDevices.PingDevice",
+				"title": "Ping"
+			},
+			{
+				"command": "viewDevices.RebootDevice",
+				"title": "Reboot"
+			},
+			{
+				"command": "viewDevices.CopyToClipboard",
+				"title": "Copy to Clipboard"
+			},
+			{
+				"command": "viewDevices.CheckAllPackages",
+				"title": "Check all packages",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "viewDevices.InstallationPackage",
+				"title": "Package installation",
+				"icon": {
+					"light": "resources/light/setup.svg",
+					"dark": "resources/dark/setup.svg"
+				}
+			},
+			{
+				"command": "viewDevices.UpgradePackage",
+				"title": "Upgrade package"
+			},
+			{
+				"command": "viewDevices.RemovePackage",
+				"title": "Remove package"
+			},
+			{
+				"command": "viewDevices.TestPackage",
+				"title": "Test package"
+			},
+			{
+				"command": "viewDevices.UpdateDTO",
+				"title": "Update DTO",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "viewDevices.AddDTO",
+				"title": "Add DTO",
+				"icon": {
+					"light": "resources/light/add.svg",
+					"dark": "resources/dark/add.svg"
+				}
+			},
+			{
+				"command": "viewDevices.DeleteDTO",
+				"title": "Delete DTO"
+			},
+			{
+				"command": "viewDevices.EnableDTO",
+				"title": "Enable DTO",
+				"icon": {
+					"light": "resources/light/include.svg",
+					"dark": "resources/dark/include.svg"
+				}
+			},
+			{
+				"command": "viewDevices.DisableDTO",
+				"title": "Disable DTO",
+				"icon": {
+					"light": "resources/light/exclude.svg",
+					"dark": "resources/dark/exclude.svg"
+				}
+			},
+			{
+				"command": "viewDevices.DetectGpiochips",
+				"title": "GPIO detect",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "viewConfigurations.AddConfiguration",
+				"title": "Add Configuration",
+				"icon": {
+					"light": "resources/light/add.svg",
+					"dark": "resources/dark/add.svg"
+				}
+			},
+			{
+				"command": "viewConfigurations.RefreshConfigurations",
+				"title": "Refresh"
+			},
+			{
+				"command": "viewConfigurations.RenameConfiguration",
+				"title": "Rename"
+			},
+			{
+				"command": "viewConfigurations.DeleteConfiguration",
+				"title": "Delete"
+			},
+			{
+				"command": "viewConfigurations.RebuildConfiguration",
+				"title": "Rebuild"
+			},
+			{
+				"command": "viewConfigurations.GoToDevice",
+				"title": "Go to device"
+			},
+			{
+				"command": "viewConfigurations.AddEnviroment",
+				"title": "Add Enviroment",
+				"icon": {
+					"light": "resources/light/add.svg",
+					"dark": "resources/dark/add.svg"
+				}
+			},
+			{
+				"command": "viewConfigurations.RenameEnviroment",
+				"title": "Rename"
+			},
+			{
+				"command": "viewConfigurations.EditEnviroment",
+				"title": "Edit"
+			},
+			{
+				"command": "viewConfigurations.DeleteEnviroment",
+				"title": "Delete"
+			}
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "bar-devices-explorer",
+					"title": ".NET FastIoT",
+					"icon": "assets/fastiot.svg"
+				}
+			]
+		},
+		"views": {
+			"bar-devices-explorer": [
+				{
+					"id": "viewDevices",
+					"name": "Devices",
+					"contextualTitle": "Devices"
+				},
+				{
+					"id": "viewConfigurations",
+					"name": "Configurations",
+					"contextualTitle": "Configurations"
+				}
+			]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "viewDevices.AddDevice",
+					"when": "view == viewDevices",
+					"group": "navigation"
+				},
+				{
+					"command": "viewDevices.RefreshDevices",
+					"when": "view == viewDevices"
+				},
+				{
+					"command": "viewDevices.ExportDevices",
+					"when": "view == viewDevices"
+				},
+				{
+					"command": "viewDevices.ImportDevices",
+					"when": "view == viewDevices"
+				},
+				{
+					"command": "viewConfigurations.AddConfiguration",
+					"when": "view == viewConfigurations",
+					"group": "navigation"
+				},
+				{
+					"command": "viewConfigurations.RefreshConfigurations",
+					"when": "view == viewConfigurations"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "viewDevices.RenameDevice",
+					"when": "view == viewDevices && viewItem == iotdevice"
+				},
+				{
+					"command": "viewDevices.DeleteDevice",
+					"when": "view == viewDevices && viewItem == iotdevice"
+				},
+				{
+					"command": "viewDevices.PingDevice",
+					"when": "view == viewDevices && viewItem == iotdevice"
+				},
+				{
+					"command": "viewDevices.RebootDevice",
+					"when": "view == viewDevices && viewItem == iotdevice"
+				},
+				{
+					"command": "viewDevices.CopyToClipboard",
+					"when": "view == viewDevices && viewItem == iotitemtree"
+				},
+				{
+					"command": "viewDevices.CheckAllPackages",
+					"when": "view == viewDevices && viewItem == iotpackages",
+					"group": "inline"
+				},
+				{
+					"command": "viewDevices.InstallationPackage",
+					"when": "view == viewDevices && viewItem == iotpackages_not_installed",
+					"group": "inline"
+				},
+				{
+					"command": "viewDevices.UpgradePackage",
+					"when": "view == viewDevices && viewItem == iotpackage_installed"
+				},
+				{
+					"command": "viewDevices.RemovePackage",
+					"when": "view == viewDevices && viewItem == iotpackage_installed"
+				},
+				{
+					"command": "viewDevices.TestPackage",
+					"when": "view == viewDevices && viewItem == iotpackage_installed"
+				},
+				{
+					"command": "viewDevices.CopyToClipboard",
+					"when": "view == viewDevices && viewItem == iotpackage_installed"
+				},
+				{
+					"command": "viewDevices.UpdateDTO",
+					"when": "view == viewDevices && viewItem == iotdtos",
+					"group": "inline"
+				},
+				{
+					"command": "viewDevices.AddDTO",
+					"when": "view == viewDevices && viewItem == iotdtos",
+					"group": "inline"
+				},
+				{
+					"command": "viewDevices.DeleteDTO",
+					"when": "view == viewDevices && viewItem == iotdto_off"
+				},
+				{
+					"command": "viewDevices.EnableDTO",
+					"when": "view == viewDevices && viewItem == iotdto_off",
+					"group": "inline"
+				},
+				{
+					"command": "viewDevices.DisableDTO",
+					"when": "view == viewDevices && viewItem == iotdto_on",
+					"group": "inline"
+				},
+				{
+					"command": "viewDevices.DetectGpiochips",
+					"when": "view == viewDevices && viewItem == iotgpios",
+					"group": "inline"
+				},
+				{
+					"command": "viewConfigurations.RenameConfiguration",
+					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+				},
+				{
+					"command": "viewConfigurations.DeleteConfiguration",
+					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+				},
+				{
+					"command": "viewConfigurations.RebuildConfiguration",
+					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+				},
+				{
+					"command": "viewConfigurations.GoToDevice",
+					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+				},
+				{
+					"command": "viewConfigurations.AddEnviroment",
+					"when": "view == viewConfigurations && viewItem == iotenviroments",
+					"group": "inline"
+				},
+				{
+					"command": "viewConfigurations.RenameEnviroment",
+					"when": "view == viewConfigurations && viewItem == iotenviroment"
+				},
+				{
+					"command": "viewConfigurations.EditEnviroment",
+					"when": "view == viewConfigurations && viewItem == iotenviroment"
+				},
+				{
+					"command": "viewConfigurations.DeleteEnviroment",
+					"when": "view == viewConfigurations && viewItem == iotenviroment"
+				}
+			]
+		},
+		"viewsWelcome": [
+			{
+				"view": "viewDevices",
+				"contents": "No devices added [learn more](https://devdotnet.org/).\n[Add Device](command:viewDevices.AddDevice)"
+			},
+			{
+				"view": "viewConfigurations",
+				"contents": "No configurations [learn more](https://devdotnet.org/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.2.2",
+		"@types/node": "14.x",
+		"@types/ssh2": "^0.5.49",
+		"@types/uuid": "^8.3.1",
+		"@types/vscode": "^1.59.0",
+		"@typescript-eslint/eslint-plugin": "^4.26.0",
+		"@typescript-eslint/parser": "^4.26.0",
+		"eslint": "^7.27.0",
+		"glob": "^7.1.7",
+		"mocha": "^8.4.0",
+		"typescript": "^4.3.2",
+		"vscode-test": "^1.5.2"
+	},
+	"dependencies": {
+		"@lolpants/pingman": "^1.0.6",
+		"node-stream-zip": "^1.14.0",
+		"pingman": "^1.1.5",
+		"ssh2": "^1.5.0",
+		"ssh2-promise": "^1.0.2",
+		"uuid": "^8.3.2",
+		"xmldom": "^0.6.0",
+		"xpath": "0.0.32"
+	}
+}
