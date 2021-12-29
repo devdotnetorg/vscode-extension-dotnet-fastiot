@@ -4,7 +4,7 @@
 
 2. Extension UI does not follow Extension Guidelines - https://code.visualstudio.com/api/references/extension-guidelines.
 
-3. To create the .vscode/* config use the library hjson.
+3. To create the `.vscode/*` config use the library hjson.
 
 4. DTO information is not saved.
 

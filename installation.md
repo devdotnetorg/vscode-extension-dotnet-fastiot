@@ -7,11 +7,11 @@
 ## Install Node.js
 
 - Download Node.js https://nodejs.org/dist/v14.16.0/
-- Unpack to folder: {folder_nodejs}
+- Unpack to folder: `{folder_nodejs}`
 - For windows 7 set environment variable: NODE_SKIP_PLATFORM_CHECK=1
-- Add to environment variable Path: {folder_nodejs}
-- Execute command: npm config --global set cache "{folder_nodejs}\\npm-cache"
-- Execute command: npm config --global set prefix "{folder_nodejs}"
+- Add to environment variable Path: `{folder_nodejs}`
+- Execute command: npm config --global set cache "`{folder_nodejs}`\\npm-cache"
+- Execute command: npm config --global set prefix "`{folder_nodejs}`"
 - Execute command: npm config ls -l
 
 ## Install steps
