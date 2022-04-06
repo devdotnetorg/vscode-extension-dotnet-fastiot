@@ -182,7 +182,12 @@ export class IotDevicePackage extends BaseTreeItem {
   }
 
   public async Test(): Promise<IotResult>{  
-    //TODO:
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      const result=await this.Client.Ping(this.Device.Account.Host);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }
     //get namepackage 
     let namePackage = GetNamePackageByType(this.NamePackage);    
     //testpackagedotnetsdk.sh

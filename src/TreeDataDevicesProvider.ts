@@ -438,6 +438,31 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     return Promise.resolve(result);
   }
 
+  public async TestPackage(idDevice:string,itemPackage:TypePackage): Promise<IotResult> {    
+    this.ShowStatusBar(`Package test: ${itemPackage}`);
+    this.OutputChannel.appendLine(`Package test:${itemPackage}`);
+    //
+    let device= this.FindbyIdDevice(idDevice);
+    let result=new IotResult(StatusResult.None,"message", undefined);
+    if(!device){
+      result=new IotResult(StatusResult.Error,"Device not found", undefined);
+      this.HideStatusBar();
+      return Promise.resolve(result);
+    }     
+    let devicePackage=device.PackagesLinux.Childs.find(x=>x.NamePackage==itemPackage);
+    if(!devicePackage)
+    {
+      result=new IotResult(StatusResult.Error,"Package not found", undefined);
+      this.HideStatusBar();
+      return Promise.resolve(result);
+    }    
+    //Test
+    result = await devicePackage.Test();    
+    this.HideStatusBar();
+    //
+    return Promise.resolve(result);
+  }
+
   //------------ Gpiochips ------------
   public async DetectGpiochips(idDevice:string):  Promise<IotResult> {
     this.ShowStatusBar("Detecting all GPIO chips");

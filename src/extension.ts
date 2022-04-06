@@ -27,6 +27,7 @@ import { checkAllPackages } from './actionsDevice/checkAllPackages';
 import { installPackage } from './actionsDevice/installPackage';
 import { upgradePackage } from './actionsDevice/upgradePackage';
 import { uninstallPackage } from './actionsDevice/uninstallPackage';
+import { testPackage } from './actionsDevice/testPackage';
 
 import { refreshDTO } from './actionsDevice/refreshDTO';
 import { addDTO } from './actionsDevice/addDTO';
@@ -98,8 +99,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		//Test code
 		console.log("=========");
 		const msg='"Banana Pi M64"';
-		console.log(msg);			 
-	});  
+		console.log(msg);
+		vscode.window.showInformationMessage('Function not implemented!');					 
+	});
 	
 	//Add new device		  
 	let commandAddDevice = vscode.commands.registerCommand('viewDevices.AddDevice', () => {	
@@ -163,9 +165,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandRemovePackage = vscode.commands.registerCommand("viewDevices.RemovePackage", (item:IotDevicePackage) => {
 		uninstallPackage(treeDataDevicesProvider,item); 
 	});
-	//Remove package 
-	let commandTestPackage = vscode.commands.registerCommand("viewDevices.TestPackage", (item:IotDevicePackage) => {
-		vscode.window.showInformationMessage('Function not implemented!');	
+	//Test package 
+	let commandTestPackage = vscode.commands.registerCommand("viewDevices.TestPackage", (item:IotDevicePackage) => {		
+		testPackage(treeDataDevicesProvider,item); 
 	});
 	//Update DTO
 	let commandUpdateDTO = vscode.commands.registerCommand("viewDevices.UpdateDTO", (item:IotDeviceDTO) => {
