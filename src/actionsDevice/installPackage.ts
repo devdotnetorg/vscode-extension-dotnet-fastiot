@@ -16,8 +16,8 @@ import { ItemQuickPick } from '../Helper/actionHelper';
 
 export async function installPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage): Promise<void> {
     //catalogs
-    const catalogNetSDKChannel: Array<string>=["3.1","5.0","6.0"];
-    const catalogNetRuntimeChannel: Array<string>=["3.1","5.0","6.0"];
+    const catalogNetSDKChannel: Array<string>=["3.1","5.0","6.0","7.0"];
+    const catalogNetRuntimeChannel: Array<string>=["3.1","5.0","6.0","7.0"];
     const catalogNetRuntimeName: Array<string>=["dotnet","aspnetcore"];
     const catalogLibgpiodVersion: Array<string>=["1.6.3"];
     //objJSON: preparation of input parameters    
