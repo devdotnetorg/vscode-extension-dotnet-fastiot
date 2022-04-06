@@ -7,7 +7,7 @@ import {IotItemTree} from './IotItemTree';
 import {IotConfiguration} from './IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 import {IotLaunchConfiguration} from './IotLaunchConfiguration';
-import {MakeDirSync,ReverseSeparatorReplacement,ReverseSeparatorWinToLinux,GetDotnetRID} from './IoTHelper';
+import {MakeDirSync,ReverseSeparatorReplacement,ReverseSeparatorWinToLinux,GetDotnetRID} from './Helper/IoTHelper';
 //
 
 export class IotLaunchOptions extends BaseTreeItem{  

@@ -5,7 +5,6 @@ import * as path from 'path';
 import { TreeDataConfigurationsProvider } from '../TreeDataConfigurationsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { pingDevice } from './pingDevice';
-import { GetWorkspaceFolder,GetDotnetRID } from '../IoTHelper';
 import { IotDevice } from '../IotDevice';
 import { IotLaunchProject } from '../IotLaunchProject';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';

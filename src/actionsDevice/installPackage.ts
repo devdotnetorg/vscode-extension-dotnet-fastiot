@@ -5,12 +5,12 @@ import * as path from 'path';
 import { TreeDataConfigurationsProvider } from '../TreeDataConfigurationsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { pingDevice } from './pingDevice';
-import { GetWorkspaceFolder,GetDotnetRID } from '../IoTHelper';
+import { GetWorkspaceFolder,GetDotnetRID } from '../Helper/IoTHelper';
 import { IotDevice } from '../IotDevice';
 import { IotLaunchProject } from '../IotLaunchProject';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
-import { ItemQuickPick } from './actionHelper';
+import { ItemQuickPick } from '../Helper/actionHelper';
 
 // async InstallPackage(idDevice:string,itemPackage:typePackage,objJSON:any): Promise<IotResult> {            
 

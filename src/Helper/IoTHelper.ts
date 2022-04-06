@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IotConfiguration} from './IotConfiguration';
-import {IotDevice} from './IotDevice';
+import {IotConfiguration} from '../IotConfiguration';
+import {IotDevice} from '../IotDevice';
 import StreamZip from 'node-stream-zip';
 
 export function  Sleep (time:number) {

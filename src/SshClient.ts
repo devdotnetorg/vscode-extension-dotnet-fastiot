@@ -9,7 +9,7 @@ import {IotDevicePackage} from './IotDevicePackage';
 import {IotConfiguration} from './IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 
-import {Sleep,StringTrim} from './IoTHelper';
+import {Sleep,StringTrim} from './Helper/IoTHelper';
 import SSH2Promise from 'ssh2-promise';
 import SFTP from 'ssh2-promise';
 import { stringify } from 'querystring';

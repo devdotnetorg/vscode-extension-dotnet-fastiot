@@ -4,8 +4,7 @@ import * as path from 'path';
 
 import { TreeDataConfigurationsProvider } from '../TreeDataConfigurationsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { pingDevice } from './pingDevice';
-import { GetWorkspaceFolder } from '../IoTHelper';
+import { GetWorkspaceFolder } from '../Helper/IoTHelper';
 import { IotDevice } from '../IotDevice';
 import { IotLaunchProject } from '../IotLaunchProject';
 import { IotLaunchConfiguration } from '../IotLaunchConfiguration';

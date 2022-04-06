@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 //shared
-import {GetWorkspaceFolder,GetConfiguration,CheckAppcwRsync} from './IoTHelper'; 
+import {GetWorkspaceFolder,GetConfiguration,CheckAppcwRsync} from './Helper/IoTHelper'; 
 import { IotItemTree } from './IotItemTree';
 
 //Devices
@@ -13,25 +13,25 @@ import { IotDeviceDTO } from './IotDeviceDTO';
 import { IotDeviceGpiochip } from './IotDeviceGpiochip';
 
 //Devices.actions
-import { addDevice } from './actions/addDevice';
-import { refreshDevices } from './actions/refreshDevices';
-import { exportDevices,importDevices } from './actions/exportImportDevices';
-import { deleteDevice } from './actions/deleteDevice';
-import { pingDevice } from './actions/pingDevice';
-import { rebootDevice } from './actions/rebootDevice';
-import { renameDevice } from './actions/renameDevice';
-import { detectGpiochips } from './actions/detectGpiochips';
-import { copyTexttoClipboard } from './actions/copyTexttoClipboard';
-import { checkAllPackages } from './actions/checkAllPackages';
-import { installPackage } from './actions/installPackage';
-import { upgradePackage } from './actions/upgradePackage';
-import { uninstallPackage } from './actions/uninstallPackage';
+import { addDevice } from './actionsDevice/addDevice';
+import { refreshDevices } from './actionsDevice/refreshDevices';
+import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
+import { deleteDevice } from './actionsDevice/deleteDevice';
+import { pingDevice } from './actionsDevice/pingDevice';
+import { rebootDevice } from './actionsDevice/rebootDevice';
+import { renameDevice } from './actionsDevice/renameDevice';
+import { detectGpiochips } from './actionsDevice/detectGpiochips';
+import { copyTexttoClipboard } from './actionsDevice/copyTexttoClipboard';
+import { checkAllPackages } from './actionsDevice/checkAllPackages';
+import { installPackage } from './actionsDevice/installPackage';
+import { upgradePackage } from './actionsDevice/upgradePackage';
+import { uninstallPackage } from './actionsDevice/uninstallPackage';
 
-import { refreshDTO } from './actions/refreshDTO';
-import { addDTO } from './actions/addDTO';
-import { deleteDTO } from './actions/deleteDTO';
-import { enableDTO } from './actions/enableDTO';
-import { disableDTO } from './actions/disableDTO';
+import { refreshDTO } from './actionsDevice/refreshDTO';
+import { addDTO } from './actionsDevice/addDTO';
+import { deleteDTO } from './actionsDevice/deleteDTO';
+import { enableDTO } from './actionsDevice/enableDTO';
+import { disableDTO } from './actionsDevice/disableDTO';
 
 //Configurations
 import { TreeDataConfigurationsProvider } from './TreeDataConfigurationsProvider';
@@ -40,13 +40,13 @@ import { IotLaunchEnvironment } from './IotLaunchEnvironment';
 
 
 //Configurations.actions
-import { addConfiguration } from './actions/addConfiguration';
-import { refreshConfigurations } from './actions/refreshConfigurations';
-import { renameConfiguration } from './actions/renameConfiguration';
-import { rebuildConfiguration } from './actions/rebuildConfiguration';
-import { deleteConfiguration } from './actions/deleteConfiguration';
-import { gotoDevice } from './actions/gotoDevice';
-import { addEnviroment,renameEnviroment,editEnviroment,deleteEnviroment } from './actions/managementEnviroment';
+import { addConfiguration } from './actionsConfiguration/addConfiguration';
+import { refreshConfigurations } from './actionsConfiguration/refreshConfigurations';
+import { renameConfiguration } from './actionsConfiguration/renameConfiguration';
+import { rebuildConfiguration } from './actionsConfiguration/rebuildConfiguration';
+import { deleteConfiguration } from './actionsConfiguration/deleteConfiguration';
+import { gotoDevice } from './actionsConfiguration/gotoDevice';
+import { addEnviroment,renameEnviroment,editEnviroment,deleteEnviroment } from './actionsConfiguration/managementEnviroment';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

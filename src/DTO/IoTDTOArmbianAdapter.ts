@@ -5,7 +5,7 @@ import {IotDevice} from '../IotDevice';
 import {IDtoAdapter} from './IDtoAdapter';
 import {IoTDTO} from './IoTDTO';
 import { IotResult,StatusResult } from '../IotResult';
-import { StringTrim } from '../IoTHelper';
+import { StringTrim } from '../Helper/IoTHelper';
 
 export class IoTDTOArmbianAdapter implements IDtoAdapter {
   private _config = {

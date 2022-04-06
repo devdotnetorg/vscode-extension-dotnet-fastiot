@@ -16,7 +16,7 @@ import {IotLaunchOptions} from './IotLaunchOptions';
 import {IotLaunchEnvironment} from './IotLaunchEnvironment';
 import {IotLaunchProject} from './IotLaunchProject';
 
-import {GetUniqueLabel,MakeDirSync,ReverseSeparatorReplacement} from './IoTHelper';
+import {GetUniqueLabel,MakeDirSync,ReverseSeparatorReplacement} from './Helper/IoTHelper';
 //
 
 export class IotLaunchConfiguration extends BaseTreeItem {  

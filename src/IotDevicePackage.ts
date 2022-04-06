@@ -5,7 +5,7 @@ import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotResult,StatusResult } from './IotResult';
 
-import {StringTrim} from './IoTHelper';
+import {StringTrim} from './Helper/IoTHelper';
 import { exit } from 'process';
 
 export class IotDevicePackage extends BaseTreeItem {

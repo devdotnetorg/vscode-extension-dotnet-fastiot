@@ -7,7 +7,7 @@ import { IotResult,StatusResult } from '../IotResult';
 import { pingDevice } from './pingDevice';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';
-import { ItemQuickPick } from './actionHelper';
+import { ItemQuickPick } from '../Helper/actionHelper';
 
 export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>): Promise<void> {                
         const host = await vscode.window.showInputBox({            
