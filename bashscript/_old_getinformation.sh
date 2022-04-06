@@ -21,10 +21,4 @@ if [ -f /etc/armbian-release ]; then
 	echo "boardFamily:$(cat /etc/armbian-release | grep 'BOARDFAMILY' | sed 's/.*=\s*//')"
 	echo "armbianVersion:$(cat /etc/armbian-release | grep 'VERSION' | sed 's/.*=\s*//')"
 	echo "linuxFamily:$(cat /etc/armbian-release | grep 'LINUXFAMILY' | sed 's/.*=\s*//')"
-else
-	#/proc/cpuinfo	
-	declare boardName=($(cat /proc/cpuinfo | grep 'model\|Model' | sed 's/.*:\s*//'))	
-	if [ "$boardName" != "" ]; then
-		echo "boardName:${boardName}"
-	fi	
 fi
