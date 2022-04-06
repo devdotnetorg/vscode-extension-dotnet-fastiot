@@ -313,7 +313,7 @@ export class IotDevice extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host,2,1);
+      const result=await this.Client.Ping(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -321,6 +321,19 @@ export class IotDevice extends BaseTreeItem {
       undefined,false,false);
     //if(result.status==StatusResult.Error) return Promise.resolve(result);
     
+    return Promise.resolve(result);    
+  }
+
+  public async Shutdown(): Promise<IotResult>{
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      const result=await this.Client.Ping(this.Device.Account.Host);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }    
+    //
+    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.PathFolderExtension,"shutdown",
+      undefined,false,false);    
     return Promise.resolve(result);    
   }
 

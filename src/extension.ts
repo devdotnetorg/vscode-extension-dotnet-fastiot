@@ -19,6 +19,7 @@ import { exportDevices,importDevices } from './actionsDevice/exportImportDevices
 import { deleteDevice } from './actionsDevice/deleteDevice';
 import { pingDevice } from './actionsDevice/pingDevice';
 import { rebootDevice } from './actionsDevice/rebootDevice';
+import {shutdownDevice } from './actionsDevice/shutdownDevice';
 import { renameDevice } from './actionsDevice/renameDevice';
 import { detectGpiochips } from './actionsDevice/detectGpiochips';
 import { copyTexttoClipboard } from './actionsDevice/copyTexttoClipboard';
@@ -133,6 +134,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Reboot Device
 	let commandRebootDevice = vscode.commands.registerCommand("viewDevices.RebootDevice", (item:IotDevice) => {
 		rebootDevice(treeDataDevicesProvider,item,undefined);
+	});
+	//Shutdown Device
+	let commandShutdownDevice = vscode.commands.registerCommand("viewDevices.ShutdownDevice", (item:IotDevice) => {
+		shutdownDevice(treeDataDevicesProvider,item,undefined);
 	});
 	//Delete Device
 	let commandDeleteDevice = vscode.commands.registerCommand("viewDevices.DeleteDevice", (item:IotDevice) => {
@@ -258,6 +263,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandRenameDevice);
 	context.subscriptions.push(commandPingDevice);
 	context.subscriptions.push(commandRebootDevice);
+	context.subscriptions.push(commandShutdownDevice);
 	context.subscriptions.push(commandDeleteDevice);
 	context.subscriptions.push(commandCopyToClipboard);
 	context.subscriptions.push(commandCheckAllPackages);

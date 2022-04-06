@@ -11,7 +11,7 @@ import { IotItemTree } from './IotItemTree';
 import { IotDevicePackage,TypePackage } from './IotDevicePackage';
 import { IotDeviceDTO } from './IotDeviceDTO';
 
-import {Sleep} from './IoTHelper';
+import {Sleep} from './Helper/IoTHelper';
 
 import { IotResult,StatusResult } from './IotResult';
 import {IotConfiguration} from './IotConfiguration';

@@ -9,7 +9,7 @@ import { IotDeviceInformation } from './IotDeviceInformation';
 import { IotItemTree } from './IotItemTree';
 import { IotDevicePackage } from './IotDevicePackage';
 import { IotLaunchConfiguration } from './IotLaunchConfiguration';
-import {Sleep} from './IoTHelper';
+import {Sleep} from './Helper/IoTHelper';
 
 import { IotResult,StatusResult } from './IotResult';
 import {IotConfiguration} from './IotConfiguration';

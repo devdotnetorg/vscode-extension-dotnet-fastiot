@@ -116,6 +116,10 @@
 				"title": "Reboot"
 			},
 			{
+				"command": "viewDevices.ShutdownDevice",
+				"title": "Shutdown"
+			},
+			{
 				"command": "viewDevices.CopyToClipboard",
 				"title": "Copy to Clipboard"
 			},
@@ -310,6 +314,10 @@
 					"when": "view == viewDevices && viewItem == iotdevice"
 				},
 				{
+					"command": "viewDevices.ShutdownDevice",
+					"when": "view == viewDevices && viewItem == iotdevice"
+				},
+				{
 					"command": "viewDevices.CopyToClipboard",
 					"when": "view == viewDevices && viewItem == iotitemtree"
 				},
@@ -406,11 +414,11 @@
 		"viewsWelcome": [
 			{
 				"view": "viewDevices",
-				"contents": "No devices added [learn more](https://devdotnet.org/).\n[Add Device](command:viewDevices.AddDevice)"
+				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Device](command:viewDevices.AddDevice)"
 			},
 			{
 				"view": "viewConfigurations",
-				"contents": "No configurations [learn more](https://devdotnet.org/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)"
+				"contents": "No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)"
 			}
 		]
 	},
