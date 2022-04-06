@@ -10,29 +10,31 @@ import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
 
 export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>): Promise<void> {                
+        
         const host = await vscode.window.showInputBox({            
             prompt: 'prompt',
-            title: 'Enter the host of the developer board',
-            value:'192.168.43.208'
+            title: 'Add Device (1/5). Enter the host of the developer board',
+            value:'192.168.43.208',            
         });
+        
         if(host==undefined) return;
 
         const port = await vscode.window.showInputBox({				
             prompt: 'prompt',
-            title: 'Enter a number port ssh',
+            title: 'Add Device (2/5). Enter a number port ssh',
             value:'22'
         });
         if(port==undefined) return;
 
         const userName = await vscode.window.showInputBox({				
             prompt: 'prompt',
-            title: 'Enter username with sudo rights (usually root)',
+            title: 'Add Device (3/5). Enter username with sudo rights (usually root)',
             value:'root'
         });
         if(userName==undefined) return;
 
         const password = await vscode.window.showInputBox({
-            placeHolder: `Enter user password ${userName}`,
+            placeHolder: `Add Device (4/5). Enter user password ${userName}`,
             password: true
        });
        if(password==undefined) return;
@@ -44,7 +46,7 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
        item = new ItemQuickPick("root","Select if you have problems accessing /dev/* and /sys/* devices","root");
        itemAccounts.push(item);
        const SELECTED_ITEM = await vscode.window.showQuickPick
-        (itemAccounts,{title: 'Select an account to debugging .NET applications:',});
+        (itemAccounts,{title: 'Add Device (5/5). Select an account to debugging .NET applications:',});
        if(!SELECTED_ITEM) return;       
        //Info
        vscode.window.showInformationMessage('It may take 2 to 7 minutes to initialize and configure the device.');
