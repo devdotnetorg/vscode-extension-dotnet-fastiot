@@ -16,6 +16,10 @@ fi
 
 export DEBIAN_FRONTEND="noninteractive"
 
+#Package removal
+sudo apt-get remove -y libgpiod-dev &>/dev/null || echo "Package libgpiod-dev has been removed"
+sudo apt-get remove -y gpiod &>/dev/null || echo "Package gpiod has been removed"
+
 #========================================
 #https://raw.githubusercontent.com/devdotnetorg/docker-libgpiod/master/remove-libgpiod.sh
 

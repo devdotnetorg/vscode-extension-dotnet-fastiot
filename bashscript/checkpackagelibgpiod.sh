@@ -19,4 +19,12 @@ declare listdata=($(gpiodetect --version))
 #echo "My array: ${listdata[@]}"
 #echo "Number of elements in the array: ${#listdata[@]}"
 
-echo "${listdata[2]} [/usr/share/libgpiod]"	 
+#
+INSTALLPATH=/usr/share/libgpiod
+if [ -d "$INSTALLPATH" ]; then
+  ### Take action if $INSTALLPATH exists ###
+  echo "${listdata[2]} [${INSTALLPATH}]"	 
+else
+  ###  Control will jump here if $INSTALLPATH does NOT exists ###
+  echo "${listdata[2]} [repository]"	 
+fi
