@@ -22,6 +22,19 @@ export class IotDeviceAccount extends BaseTreeItem{
   public get PathKey(): string| undefined {
     return this.Device?.Config.AccountPathFolderKeys +"\\"+this.Identity;}
     
+  public get SshConfig(): any {
+    var sshconfig  = {
+      host: this.Host,
+      port: this.Port,
+      username: this.UserName,
+      identity: this.PathKey,
+      setTimeout
+    };
+    //
+    return sshconfig;    
+    }
+
+
   /*
   private _host: string| undefined;
   private _port: string| undefined;

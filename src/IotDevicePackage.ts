@@ -102,13 +102,14 @@ export class IotDevicePackage extends BaseTreeItem {
     return await this.Install(objJSON);    
   }
 
-  public async Uninstall(objJSON:any): Promise<IotResult>{        
-    var sshconfig  = {
-      host: this.Device.Account.Host,
-      port: this.Device.Account.Port,
-      username: this.Device.Account.UserName,
-      identity: this.Device.Account.PathKey
-    };    
+  public async Uninstall(objJSON:any): Promise<IotResult>{           
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      const result=await this.Client.Ping(this.Device.Account.Host);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }    
+    //
     //get namepackage 
     let namePackage = GetNamePackageByType(this.NamePackage);     
     //uninstallpackagedotnetsdk.sh
@@ -116,19 +117,18 @@ export class IotDevicePackage extends BaseTreeItem {
     //Params
     let paramsScript=this.GetParamsScript(this.NamePackage,objJSON);    
     //Exec
-    let result = await this.Client.RunScript(sshconfig,undefined,this.Device.Config.PathFolderExtension,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.PathFolderExtension,
       nameScript,paramsScript,false,false);    
     return Promise.resolve(result);    
   }
     
-  public async Install(objJSON:any): Promise<IotResult>{    
-    var sshconfig  = {
-      host: this.Device.Account.Host,
-      port: this.Device.Account.Port,
-      username: this.Device.Account.UserName,
-      identity: this.Device.Account.PathKey,
-      setTimeout
-    };    
+  public async Install(objJSON:any): Promise<IotResult>{        
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      const result=await this.Client.Ping(this.Device.Account.Host);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }    
     //get namepackage 
     let namePackage = GetNamePackageByType(this.NamePackage);     
     //installpackagedotnetsdk.sh
@@ -136,24 +136,18 @@ export class IotDevicePackage extends BaseTreeItem {
     //Params
     let paramsScript=this.GetParamsScript(this.NamePackage,objJSON);    
     //Exec
-    let result = await this.Client.RunScript(sshconfig,undefined,this.Device.Config.PathFolderExtension,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.PathFolderExtension,
       nameScript,paramsScript, true,false);    
     return Promise.resolve(result); 
   }  
 
   public async Check(): Promise<IotResult>{    
-    var sshconfig  = {
-      host: this.Device.Account.Host,
-      port: this.Device.Account.Port,
-      username: this.Device.Account.UserName,
-      identity: this.Device.Account.PathKey
-    };
     //get namepackage 
     let namePackage = GetNamePackageByType(this.NamePackage);    
     //checkpackagedotnetsdk.sh
     let nameScript=`checkpackage${namePackage}`;
     //Exec
-    let result = await this.Client.RunScript(sshconfig,undefined,this.Device.Config.PathFolderExtension,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.PathFolderExtension,
       nameScript,undefined, false,false); 
     if(result.Status==StatusResult.Ok)
     {
@@ -189,18 +183,12 @@ export class IotDevicePackage extends BaseTreeItem {
 
   public async Test(): Promise<IotResult>{  
     //TODO:
-    var sshconfig  = {
-      host: this.Device.Account.Host,
-      port: this.Device.Account.Port,
-      username: this.Device.Account.UserName,
-      identity: this.Device.Account.PathKey
-    };
     //get namepackage 
     let namePackage = GetNamePackageByType(this.NamePackage);    
     //testpackagedotnetsdk.sh
     let nameScript=`testpackage${namePackage}`;
     //Exec
-    let result = await this.Client.RunScript(sshconfig,undefined,this.Device.Config.PathFolderExtension,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.PathFolderExtension,
       nameScript,undefined, false,false); 
     return Promise.resolve(result);
   }

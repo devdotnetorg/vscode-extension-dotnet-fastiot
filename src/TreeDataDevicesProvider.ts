@@ -216,6 +216,10 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   //------------ Devices ------------
   public async AddDevice(toHost: string,toPort: string,toUserName: string,toPassword: string,accountNameDebug:string): Promise<IotResult> {         
       let device = new IotDevice(this.Config);
+      //Ping
+      let result=await device.Client.Ping(toHost);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+      //
       this.ShowStatusBar("Create a device");
       this.OutputChannel.appendLine("Create a device");
       //event subscription
@@ -224,7 +228,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
         if(event.status) this.OutputChannel.appendLine(event.status);
         if(event.console) this.OutputChannel.appendLine(event.console); 
       });
-      let result = await device.Create(toHost,toPort,toUserName, toPassword,accountNameDebug,this.Config);
+      result = await device.Create(toHost,toPort,toUserName, toPassword,accountNameDebug,this.Config);
       if(result.Status==StatusResult.Error)
       {
         this.HideStatusBar();
@@ -298,11 +302,17 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   } 
 
   //------------ Packages ------------
-  public async CheckAllPackages(idDevice:string):  Promise<IotResult> {
-    this.ShowStatusBar("Checking for packages");
+  public async CheckAllPackages(idDevice:string):  Promise<IotResult> {    
     let device = this.FindbyIdDevice(idDevice);
     let result = new IotResult(StatusResult.None,undefined,undefined);    
     if(device){      
+      //Ping
+      if(device.Account.Host)
+        {
+          const result=await device.Client.Ping(device.Account.Host);
+          if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+        }
+    this.ShowStatusBar("Checking for packages");    
       //event subscription
       let handler=device.PackagesLinux.Client.OnChangedStateSubscribe(event => {
         //output
@@ -435,6 +445,13 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     let result = new IotResult(StatusResult.None,undefined,undefined);
     if(device)
     {
+      //Ping
+      if(device.Account.Host)
+      {
+        const result=await device.Client.Ping(device.Account.Host);
+        if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+      }    
+      //
       result= await device.GpioChips.Detect();
       if(result.Status==StatusResult.Ok)
       {

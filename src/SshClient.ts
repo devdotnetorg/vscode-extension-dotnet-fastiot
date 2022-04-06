@@ -55,20 +55,7 @@ export class SshClient {
         console.log(`Bash script file not found! ${nameScript}`);
         return Promise.resolve(new IotResult(StatusResult.Error,"Bash script file not found!",undefined));   
       }
-      let dataFile:string= fs.readFileSync(pathFile, 'utf8');
-      //checking host availability by IPAddress      
-      const ping = require('pingman');
-      try
-      {
-        const response = await ping(sshConfig.host,{logToFile:false, numberOfEchos: 2, timeout: 1, IPV4: true});
-        const packetLoss=<number>response.packetLoss;
-        if(packetLoss>=50) 
-          return Promise.resolve(new IotResult(StatusResult.Error,`The host with IP-Address ${sshConfig.host} is unavailable.
-            Check your network connection`,undefined));        
-      } catch (err:any) {
-        return Promise.resolve(new IotResult(StatusResult.Error,`The host with IP-Address ${sshConfig.host} is unavailable.
-          Check your network connection`,err));   
-      }      
+      let dataFile:string= fs.readFileSync(pathFile, 'utf8');      
       //connect
       if(!ssh)
       {
@@ -288,7 +275,7 @@ export class SshClient {
       return Promise.resolve(result);   
   }
   
-  public async Ping(ipAddress:string, numberOfEchos: 2, timeout: 1): Promise<IotResult>{
+  public async Ping(ipAddress:string, numberOfEchos = 3, timeout = 1): Promise<IotResult>{
     //checking host availability by IPAddress
     const ping = require('pingman');
     try
@@ -303,10 +290,8 @@ export class SshClient {
            Check your network connection`,err));   
     }
     //end processing
-    return Promise.resolve(new IotResult(StatusResult.Ok,undefined,undefined));    
+    return Promise.resolve(new IotResult(StatusResult.Ok,undefined,undefined));
   }
-  
-  
 }
 
 export interface IChangedStateEvent {

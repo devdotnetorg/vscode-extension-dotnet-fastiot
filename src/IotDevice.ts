@@ -87,8 +87,7 @@ export class IotDevice extends BaseTreeItem {
           obj:undefined
         });
       }       
-    });
-    //
+    });    
     let result=await this.Information.Get(host, port,userName, password,config);
     //event unsubscription    
     this.Information.Client.OnChangedStateUnsubscribe(handler);
@@ -287,14 +286,15 @@ export class IotDevice extends BaseTreeItem {
     if(obj.IotDTO) this.DtoLinux.Config=obj.IotDTO.Config;    
   }
 
-  public async Ping(): Promise<IotResult>{
-    var sshconfig:any  = {
-      host: this.Account.Host,
-      port: this.Account.Port,
-      username: this.Account.UserName,
-      identity: this.Account.PathKey
-    };    
-    let ssh = new SSH2Promise(sshconfig,undefined);
+  public async Ping(): Promise<IotResult>{ 
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      const result=await this.Client.Ping(this.Device.Account.Host);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }    
+    //   
+    let ssh = new SSH2Promise(this.Account.SshConfig,undefined);
     try
       {
         await ssh.connect();
@@ -310,13 +310,14 @@ export class IotDevice extends BaseTreeItem {
   }
 
   public async Reboot(): Promise<IotResult>{
-    var sshconfig  = {
-      host: this.Account.Host,
-      port: this.Account.Port,
-      username: this.Account.UserName,
-      identity: this.Account.PathKey
-    };
-    const result=await this.Client.RunScript(sshconfig,undefined,this.Config.PathFolderExtension,"reboot",
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      const result=await this.Client.Ping(this.Device.Account.Host,2,1);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }    
+    //
+    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.PathFolderExtension,"reboot",
       undefined,false,false);
     //if(result.status==StatusResult.Error) return Promise.resolve(result);
     

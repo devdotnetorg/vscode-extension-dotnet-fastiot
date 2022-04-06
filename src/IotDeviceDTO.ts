@@ -86,6 +86,12 @@ export class IotDeviceDTO extends BaseTreeItem {
     if(!this._dto) this._dto= new IoTDTO(this.Device);
     if(!this._dto.Compatible)
       return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      const result=await this.Client.Ping(this.Device.Account.Host);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }    
     //
     let result = await this._dto.GetAll();
     if(result.Status==StatusResult.Ok)
@@ -101,8 +107,14 @@ export class IotDeviceDTO extends BaseTreeItem {
   public async Put(fileName:string, fileData:string):Promise<IotResult>{
     if(!this._dto) this._dto= new IoTDTO(this.Device);
     if(!this._dto.Compatible)
-      return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));
-    //   
+      return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));    
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      let result=await this.Client.Ping(this.Device.Account.Host);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }
+    //
     const result= await this._dto.Put(fileName,fileData);
     if(result.Status==StatusResult.Ok)
     {
@@ -114,8 +126,14 @@ export class IotDeviceDTO extends BaseTreeItem {
   public async Delete():Promise<IotResult>{
     if(!this._dto) this._dto= new IoTDTO(this.Device);
     if(!this._dto.Compatible)
-      return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));
-    //   
+      return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));    
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      const result=await this.Client.Ping(this.Device.Account.Host);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }    
+    //
     const result= await this._dto.Delete();
     if(result.Status==StatusResult.Ok)
     {
@@ -127,8 +145,14 @@ export class IotDeviceDTO extends BaseTreeItem {
   public async Enable():Promise<IotResult>{
     if(!this._dto) this._dto= new IoTDTO(this.Device);
     if(!this._dto.Compatible)
-      return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));
-    //   
+      return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));    
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      const result=await this.Client.Ping(this.Device.Account.Host);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }    
+    //
     const result= await this._dto.Enable();
     if(result.Status==StatusResult.Ok)
     {
@@ -140,8 +164,14 @@ export class IotDeviceDTO extends BaseTreeItem {
   public async Disable():Promise<IotResult>{
     if(!this._dto) this._dto= new IoTDTO(this.Device);
     if(!this._dto.Compatible)
-      return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));
-    //   
+      return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));    
+    //Ping
+    if(this.Device.Account.Host)
+    {
+      const result=await this.Client.Ping(this.Device.Account.Host);
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    }    
+    //
     const result= await this._dto.Disable();
     if(result.Status==StatusResult.Ok)
     {

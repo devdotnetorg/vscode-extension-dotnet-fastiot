@@ -34,21 +34,15 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
   public async GetAll():Promise<IotResult> {
     //Overlaydir definition
     this._config.overlaydir= this.GetOverlayDir(this.Device.Information.LinuxFamily);
-    //Read armbianEnv.txt and getting a list of DTO
-    var sshconfig  = {
-      host: this.Device.Account.Host,
-      port: this.Device.Account.Port,
-      username: this.Device.Account.UserName,
-      identity: this.Device.Account.PathKey,      
-    };    
-    let result = await this.Device.Client.RunScript(sshconfig,undefined, this.Device.Config.PathFolderExtension,
+    //Read armbianEnv.txt and getting a list of DTO  
+    let result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.PathFolderExtension,
         "dto/armbiangetalloverlays",undefined, false,false);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     //Parse
     //Enabled DTO
     const enabledDTOs = this.ParseInfornation(<string>result.SystemMessage);
     //Get all DTOs
-    result = await this.Device.Client.ReadDir(sshconfig,undefined,this._config.overlaydir,false);
+    result = await this.Device.Client.ReadDir(this.Device.Account.SshConfig,undefined,this._config.overlaydir,false);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     //Merge
     const dtosArray=this.MergeDTOs(enabledDTOs,result.SystemMessage);
@@ -63,50 +57,32 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
     if(fileName.substring(0,this._config.overlay_prefix.length)!=this._config.overlay_prefix)
       fileName = `${this._config.overlay_prefix}-${fileName}`;      
     //writing a file to the overlaydir folder
-    var sshconfig  = {
-      host: this.Device.Account.Host,
-      port: this.Device.Account.Port,
-      username: this.Device.Account.UserName,
-      identity: this.Device.Account.PathKey,      
-    };
     //put file    
-    let result = await this.Device.Client.PutFile(sshconfig,undefined,fileName,fileData, false);
+    let result = await this.Device.Client.PutFile(this.Device.Account.SshConfig,undefined,fileName,fileData, false);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     //copy to folder overlays
     const paramsScript=`${fileName} ${this._config.overlaydir}`;
-    result = await this.Device.Client.RunScript(sshconfig,undefined, this.Device.Config.PathFolderExtension,
+    result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.PathFolderExtension,
         "dto/armbianputoverlay",paramsScript, false,false);    
     //output
     //result= new IotResult(StatusResult.Ok,undefined,undefined);
     return Promise.resolve(result);    
   }
 
-  public async Delete(FsPath:string):Promise<IotResult>{
-    var sshconfig  = {
-      host: this.Device.Account.Host,
-      port: this.Device.Account.Port,
-      username: this.Device.Account.UserName,
-      identity: this.Device.Account.PathKey,      
-    };    
+  public async Delete(FsPath:string):Promise<IotResult>{   
     const paramsScript=FsPath;
-    const result = await this.Device.Client.RunScript(sshconfig,undefined, this.Device.Config.PathFolderExtension,
+    const result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.PathFolderExtension,
         "dto/armbiandeleteoverlay",paramsScript, false,false);    
     //output    
     return Promise.resolve(result);
   }
 
   private async BaseActionOverlay(FsPath:string,namescript:string):Promise<IotResult>{
-    var sshconfig  = {
-      host: this.Device.Account.Host,
-      port: this.Device.Account.Port,
-      username: this.Device.Account.UserName,
-      identity: this.Device.Account.PathKey,      
-    };
     //Making changes to /boot/armbianEnv.txt
     FsPath=path.basename(FsPath);
     FsPath=FsPath.substring(this._config.overlay_prefix.length+1,FsPath.length-5);        
     const paramsScript=FsPath;
-    const result = await this.Device.Client.RunScript(sshconfig,undefined, this.Device.Config.PathFolderExtension,
+    const result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.PathFolderExtension,
       namescript,paramsScript, false,false);
     //output    
     return Promise.resolve(result);
