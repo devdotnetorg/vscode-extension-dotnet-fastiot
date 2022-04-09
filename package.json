@@ -1,7 +1,7 @@
 {
 	"name": "vscode-extension-dotnet-fastiot",
 	"displayName": ".NET FastIoT",
-	"description": "Configuring Remote Debugging of a .NET application for embedded Linux devices",	
+	"description": "Configuring Remote Debugging of a .NET application for embedded Linux devices",
 	"icon": "assets/fastiot-logo-128.png",
 	"license": "LGPL-3.0-only",
 	"preview": true,
@@ -11,9 +11,18 @@
 	"publisher": "devdotnetorg",
 	"private": "false",
 	"identity": {
-		"internalName": "vscode-extension-dotnet-fastiot"	
+		"internalName": "vscode-extension-dotnet-fastiot"
 	},
-	"keywords": ["Debugging", "Embedded", "IoT", "Linux", "SBC", "Raspberry", "Remote", "csproj"],	
+	"keywords": [
+		"Debugging",
+		"Embedded",
+		"IoT",
+		"Linux",
+		"SBC",
+		"Raspberry",
+		"Remote",
+		"csproj"
+	],
 	"engines": {
 		"vscode": "^1.63.0"
 	},
@@ -27,7 +36,7 @@
 		"email": "fastiot@devdotnet.org"
 	},
 	"categories": [
-		"Programming Languages",		
+		"Programming Languages",
 		"Other"
 	],
 	"activationEvents": [
@@ -69,7 +78,7 @@
 						"type": "object",
 						"default": {},
 						"description": "Configuration of all devices in JSON format."
-					},					
+					},
 					"conf.resource.insertEmptyLastLine": {
 						"type": "object",
 						"default": {},
@@ -452,6 +461,7 @@
 	},
 	"dependencies": {
 		"@lolpants/pingman": "^1.0.6",
+		"hjson": "^3.2.2",
 		"node-stream-zip": "^1.14.0",
 		"pingman": "^1.1.5",
 		"ssh2": "^1.5.0",
