@@ -1,7 +1,7 @@
 ## Schedule
 
 - [x] DTS control.
-- [ ] Добавление поддержки проектов Mono.
+- [ ] Adding support for Mono projects.
 - [ ] Running on linux.
 - [ ] Adding `keyboard-interactive` authentication method for ssh-server.
 - [ ] Custom BASH scripts to run on the device.
