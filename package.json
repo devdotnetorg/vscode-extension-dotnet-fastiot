@@ -60,11 +60,16 @@
 						"default": "C:\\RemoteCode\\cwrsync",
 						"markdownDescription": "The folder with the [cwRsync](https://itefix.net/cwrsync) package to copy the application to a remote device and provide a transport for the debugger."
 					},
+					"fastiot.launch.templatetitle": {
+						"type": "string",
+						"default": "Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)",
+						"markdownDescription": "Template for creating a launch title. Variable names see [link](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/docs/master/Launch-title-template.md)."
+					},
 					"fastiot.device.all.JSON": {
 						"type": "object",
 						"default": {},
 						"description": "Configuration of all devices in JSON format."
-					},
+					},					
 					"conf.resource.insertEmptyLastLine": {
 						"type": "object",
 						"default": {},

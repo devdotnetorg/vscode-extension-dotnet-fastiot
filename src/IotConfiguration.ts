@@ -10,6 +10,7 @@ export class IotConfiguration {
   public AccountPathFolderKeys:string="";
   public PathFolderExtension:string="";
   public PathFoldercwRsync:string="";  
+  public TemplateTitleLaunch:string="";
   //public SharedPathFolder:string="";
 
   constructor(               

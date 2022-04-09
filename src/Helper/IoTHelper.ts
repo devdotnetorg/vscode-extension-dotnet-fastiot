@@ -18,6 +18,7 @@ export function GetConfiguration(context: vscode.ExtensionContext):IotConfigurat
 	//config.SharedPathFolder= <string>vscode.workspace.getConfiguration().get('fastiot.device.sharedpathfolder');
 	config.PathFoldercwRsync= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfoldercwrsync');
 	config.PathFolderExtension=context.extensionUri.fsPath;	
+	config.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
 	//Check config
 	//create folder
 	MakeDirSync(config.AccountPathFolderKeys);
@@ -122,7 +123,16 @@ export function GetWorkspaceFolder(): string| undefined {
     }
 	//
 	return result;
-}
+  }
+
+  export function MergeWithDictionary(dictionary:Map<string,string>,data:string):string{
+    let result:string=data;
+    dictionary.forEach((value,key) => {      
+      const re = new RegExp(key, 'g');
+      result=result.replace(re,value);      
+    });
+    return result;
+  }
 
 
   

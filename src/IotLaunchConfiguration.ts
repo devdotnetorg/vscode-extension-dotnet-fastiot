@@ -16,7 +16,7 @@ import {IotLaunchOptions} from './IotLaunchOptions';
 import {IotLaunchEnvironment} from './IotLaunchEnvironment';
 import {IotLaunchProject} from './IotLaunchProject';
 
-import {GetUniqueLabel,MakeDirSync,ReverseSeparatorReplacement} from './Helper/IoTHelper';
+import {GetUniqueLabel,MakeDirSync,MergeWithDictionary} from './Helper/IoTHelper';
 //
 
 export class IotLaunchConfiguration extends BaseTreeItem {  
@@ -73,10 +73,14 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       this.Options.Device=this.Device;
       this.Options.Build();      
       //Set label
+      /*
       const labelConfiguration=
         `.NET Remote Launch on ${(<IotDevice>this.Device).label} `+
         `(${(<IotDevice>this.Device).Information.BoardName}, `+
         `${(<IotDevice>this.Device).Account.UserName})`;
+      */
+      const labelConfiguration=
+        MergeWithDictionary(this.Options.MergeDictionary,this.Config.TemplateTitleLaunch);  
       //Create files .vscode      
       result=await this.CreateLaunch(labelConfiguration);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
@@ -150,13 +154,13 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       {
         //create launch.json
         let datafile:string= fs.readFileSync(`${this.Config.PathFolderExtension}\\vscodetemplates\\launch.json`, 'utf8');
-        datafile=this.MergeDictionaryWithJSON(this.Options.MergeDictionary,datafile);      
+        datafile=MergeWithDictionary(this.Options.MergeDictionary,datafile);      
         fs.writeFileSync(pathLaunchFile,datafile);
       }    
       //Preparation insert_configuration.json
       let datafile:string= fs.readFileSync(`${this.Config.PathFolderExtension}\\vscodetemplates\\insert_configuration.json`,
         'utf8');
-      let insertConf=this.MergeDictionaryWithJSON(this.Options.MergeDictionary,datafile);    
+      let insertConf=MergeWithDictionary(this.Options.MergeDictionary,datafile);    
       let jsonInsertConf = JSON.parse(insertConf); 
       //Add in file
       datafile= fs.readFileSync(pathLaunchFile, 'utf8');
@@ -191,22 +195,22 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       {
         //create tasks.json
         let dataFile= fs.readFileSync(`${this.Config.PathFolderExtension}\\vscodetemplates\\tasks.json`, 'utf8');
-        dataFile=this.MergeDictionaryWithJSON(this.Options.MergeDictionary,dataFile);
+        dataFile=MergeWithDictionary(this.Options.MergeDictionary,dataFile);
         fs.writeFileSync(pathTasksFile,dataFile);      
       }
       //Preparation Tasks
       const pathTemplates=`${this.Config.PathFolderExtension}\\vscodetemplates`;
       //insert_task_build_linux.json
       let dataFile:string= fs.readFileSync(`${pathTemplates}\\insert_task_build_linux.json`, 'utf8');
-      let insertData=this.MergeDictionaryWithJSON(this.Options.MergeDictionary,dataFile);
+      let insertData=MergeWithDictionary(this.Options.MergeDictionary,dataFile);
       const jsonInsert_build_linux = JSON.parse(insertData);
       //insert_task_copy_app_to_device.json
       dataFile= fs.readFileSync(`${pathTemplates}\\insert_task_copy_app_to_device.json`, 'utf8');
-      insertData=this.MergeDictionaryWithJSON(this.Options.MergeDictionary,dataFile);
+      insertData=MergeWithDictionary(this.Options.MergeDictionary,dataFile);
       const jsonInsert_copy_app_to_device = JSON.parse(insertData);
       //insert_task_create_folder.json
       dataFile= fs.readFileSync(`${pathTemplates}\\insert_task_create_folder.json`, 'utf8');
-      insertData=this.MergeDictionaryWithJSON(this.Options.MergeDictionary,dataFile);
+      insertData=MergeWithDictionary(this.Options.MergeDictionary,dataFile);
       const jsonInsert_create_folder = JSON.parse(insertData);        
       //Add in file
       dataFile= fs.readFileSync(pathTasksFile, 'utf8');
@@ -225,15 +229,6 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       tasks.json file creation issue. Try deleting the tasks.json file and retrying the task.`,err));
     }
     return Promise.resolve(new IotResult(StatusResult.Ok,undefined,undefined));
-  }
-
-  private MergeDictionaryWithJSON(dictionary:Map<string,string>,data:string):string{
-    let result:string=data;
-    dictionary.forEach((value,key) => {      
-      const re = new RegExp(key, 'g');
-      result=result.replace(re,value);      
-    });
-    return result;
   }
 
   public Refresh() {              
