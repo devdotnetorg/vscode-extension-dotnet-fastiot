@@ -9,3 +9,4 @@
 - [ ] Display available devices: `/dev/*` and sysfs.
 - [ ] I2C device scanner.
 - [ ] Adding a description of DTS files as JSON.
+- [ ] Custom BASH scripts to run on the device.
