@@ -63,7 +63,7 @@
 					"fastiot.launch.templatetitle": {
 						"type": "string",
 						"default": "Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)",
-						"markdownDescription": "Template for creating a launch title. Variable names see [link](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/docs/master/Launch-title-template.md)."
+						"markdownDescription": "Template for creating a launch title. Variable names see [link](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md)."
 					},
 					"fastiot.device.all.JSON": {
 						"type": "object",
