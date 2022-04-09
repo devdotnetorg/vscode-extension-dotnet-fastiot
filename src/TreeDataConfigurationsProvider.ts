@@ -9,7 +9,7 @@ import { IotDeviceInformation } from './IotDeviceInformation';
 import { IotItemTree } from './IotItemTree';
 import { IotDevicePackage } from './IotDevicePackage';
 import { IotLaunchConfiguration } from './IotLaunchConfiguration';
-import {Sleep} from './Helper/IoTHelper';
+import {Sleep,DeleteComments} from './Helper/IoTHelper';
 
 import { IotResult,StatusResult } from './IotResult';
 import {IotConfiguration} from './IotConfiguration';
@@ -164,7 +164,8 @@ export class TreeDataConfigurationsProvider implements vscode.TreeDataProvider<B
     //fromJSON
     try
     {
-      const datafile:string= fs.readFileSync(pathLaunchFile, 'utf8');
+      let datafile:string= fs.readFileSync(pathLaunchFile, 'utf8');
+      datafile=DeleteComments(datafile);     
       var obj = JSON.parse(datafile);
       //Recovery of every Launch    
       let index=0;    

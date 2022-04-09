@@ -134,11 +134,9 @@ export function GetWorkspaceFolder(): string| undefined {
     return result;
   }
 
-
-  
-
-
-
-
-
-  
+  export function DeleteComments(data:string):string{
+	  //removes comments like '//'
+	  const matchHashComment = new RegExp(/(\/\/.*)/, 'gi');
+	  const resultJson = data.replace(matchHashComment, '').trim();
+	  return resultJson;
+  }

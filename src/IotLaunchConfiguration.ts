@@ -16,7 +16,7 @@ import {IotLaunchOptions} from './IotLaunchOptions';
 import {IotLaunchEnvironment} from './IotLaunchEnvironment';
 import {IotLaunchProject} from './IotLaunchProject';
 
-import {GetUniqueLabel,MakeDirSync,MergeWithDictionary} from './Helper/IoTHelper';
+import {GetUniqueLabel,MakeDirSync,MergeWithDictionary,DeleteComments} from './Helper/IoTHelper';
 //
 
 export class IotLaunchConfiguration extends BaseTreeItem {  
@@ -139,7 +139,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       arrayNameConf.push(element.name);
     });    
     //Label    
-    nameConfiguration=GetUniqueLabel(nameConfiguration,'#',undefined,arrayNameConf);    
+    nameConfiguration=GetUniqueLabel(nameConfiguration,'#',undefined,arrayNameConf);
     this.label=this.tooltip=nameConfiguration;
   }
 
@@ -164,6 +164,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       let jsonInsertConf = JSON.parse(insertConf); 
       //Add in file
       datafile= fs.readFileSync(pathLaunchFile, 'utf8');
+      datafile=DeleteComments(datafile); 
       let jsonLaunch = JSON.parse(datafile);
       //Label
       this.CreateLabel(jsonLaunch,nameConfiguration);    
@@ -214,6 +215,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       const jsonInsert_create_folder = JSON.parse(insertData);        
       //Add in file
       dataFile= fs.readFileSync(pathTasksFile, 'utf8');
+      dataFile=DeleteComments(dataFile);      
       let jsonTasks = JSON.parse(dataFile);
       //Push    
       jsonTasks.tasks.push(jsonInsert_build_linux);    
@@ -242,7 +244,8 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     const pathLaunchFile=<string>this.Project.WorkspaceDirectory+"\\.vscode\\launch.json";
     if (!fs.existsSync(pathLaunchFile)) return result;
     //Change in file
-    const datafile= fs.readFileSync(pathLaunchFile, 'utf8');
+    let datafile= fs.readFileSync(pathLaunchFile, 'utf8');
+    datafile=DeleteComments(datafile);
     let jsonLaunch = JSON.parse(datafile);
     //    
     jsonLaunch.configurations.forEach((element:any) => {
@@ -266,7 +269,8 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     const pathLaunchFile=<string>this.Project.WorkspaceDirectory+"\\.vscode\\launch.json";
     if (fs.existsSync(pathLaunchFile)){
       //delete
-      const datafile= fs.readFileSync(pathLaunchFile, 'utf8');
+      let datafile= fs.readFileSync(pathLaunchFile, 'utf8');
+      datafile=DeleteComments(datafile); 
       let jsonLaunch = JSON.parse(datafile);            
       //filter
       jsonLaunch.configurations=jsonLaunch.configurations.filter((e:any) => e.fastiotId !=this.IdConfiguration);
@@ -278,7 +282,8 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     const pathTasksFile=<string>this.Project.WorkspaceDirectory+"\\.vscode\\tasks.json";
     if (fs.existsSync(pathTasksFile))    
     {
-      const dataFile= fs.readFileSync(pathTasksFile, 'utf8');
+      let dataFile= fs.readFileSync(pathTasksFile, 'utf8');
+      dataFile=DeleteComments(dataFile); 
       let jsonTasks = JSON.parse(dataFile);
       //filter. fastiot-67c94b5e
       const taskLabel=`fastiot-${this.IdConfiguration}`;
@@ -304,7 +309,8 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     const pathLaunchFile=<string>this.Project.WorkspaceDirectory+"\\.vscode\\launch.json";
     if (!fs.existsSync(pathLaunchFile)) return result;
     //Change in file
-    const datafile= fs.readFileSync(pathLaunchFile, 'utf8');
+    let datafile= fs.readFileSync(pathLaunchFile, 'utf8');
+    datafile=DeleteComments(datafile); 
     let jsonLaunch = JSON.parse(datafile);
     //    
     jsonLaunch.configurations.forEach((element:any) => {
