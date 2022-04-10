@@ -102,11 +102,49 @@ Selecting the **debugvscode** option creates a permissions configuration file [2
 
 ### Step 3 — Installing packages
 
-**Coming soon**
+To run a .NET IoT application and perform remote debugging, you need to install:
 
-See (YouTube):
+- Runtime - .NET Runtime.
+- Remote debugger - .NET Debugger (vsdbg).
+- GPIO line control library - Libgpiod (optional).
 
-1. [Step 1. Configuring SSH access](https://www.youtube.com/watch?v=pusO7PV4NL4 "Step 1. Configuring SSH access")
+Installing the Libgpiod library is possible from the repository and source code. If the repository contains an old version of the library, then install the library from source.
+
+### Шаг 4 — Launch configuration
+
+Now you need to open the project or create it. Project example [dotnet-iot-fastiot-test](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/dotnet-iot-fastiot-test "dotnet-iot-fastiot-test").
+
+To create a remote debugging configuration on the device, you must click on the *Add Configuration* button:
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-1.png)
+
+Select project:
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-2.png)
+
+Select a device for remote debugging:
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-3.png)
+
+The application launch configuration has been created.
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-4.png)
+
+Now you need to go to `Run and Debug`:
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-5.png)
+
+Select configuration to run:
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-6.png)
+
+Run the project on debugging menu `Run > Start Debugging`.
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-7.png)
+
+## Videos (YouTube):
+
+1. [Step 1. Configuring SSH access](https://www.youtube.com/watch?v=-xgAP1qsVsw "Step 1. Configuring SSH access")
 2. [Step 2. Adding a device](https://www.youtube.com/watch?v=pusO7PV4NL4 "Step 2. Adding a device")
 3. [Step 3. Installing packages](https://www.youtube.com/watch?v=Y8U2V0THQh4 "Step 3. Installing packages")
 4. [Step 4. Creating a .NET console application and remote debugging](https://www.youtube.com/watch?v=oghH3oHIZgE "Step 4. Creating a .NET console application and remote debugging")
