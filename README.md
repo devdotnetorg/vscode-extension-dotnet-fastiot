@@ -142,6 +142,26 @@ Run the project on debugging menu `Run > Start Debugging`.
 
 ![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-7.png)
 
+## Test projects
+
+The `*.csproj` test projects are located in the folder [samples](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/ "samples"). The first base project for testing remote debugging is `dotnet-iot-fastiot-test`.
+
+## Extension settings
+
+To change the extension settings, open the menu item `File > Preferences > Settings`. Then go to the `User` tab and select `Extensions`.
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-settings-1.png)
+
+Settings:
+
+- **Conf › Resource: Insert Empty Last Line** - device data is stored in the `fastiot.device.all.JSON` node in JSON format, it is not recommended to change it manually. Due to incorrect changes, the device list may not load.
+- **Fastiot › Device › Account: Groups** - Linux user group on a remote device (eg Raspberry Pi) to which the account (`debugvscode`) will be added to control the device. This group must have Administrator rights.
+- **Fastiot › Device › Account: Username** - account name created on the remote device. Used to control the device and perform remote debugging. Default value: `debugvscode`.
+- **Fastiot › Device › All: JSON** - device settings in JSON format, it is not recommended to change them manually. Due to incorrect changes, the device list may not load.
+- **Fastiot › Device: Pathfoldercwrsync** - folder with [cwRsync](https://itefix.net/cwrsync "cwRsync") program. Default value: `C:\RemoteCode\cwrsync`.
+- **Fastiot › Device: Pathfolderkeys** - folder for storing access keys to devices (eg Raspberry Pi).
+- **Fastiot › Launch: Templatetitle** - template for forming the name of the debugging profile. The values of the variables can be viewed at the [link](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md "link"). Default value: `Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)`.
+
 ## Videos (YouTube):
 
 1. [Step 1. Configuring SSH access](https://www.youtube.com/watch?v=-xgAP1qsVsw "Step 1. Configuring SSH access")

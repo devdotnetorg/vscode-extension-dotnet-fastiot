@@ -2,6 +2,8 @@
 
 # .NET FastIoT VS Code Extension
 
+[.NET FastIoT Extension](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot ".NET FastIoT Extension") in Visual Studio Code Marketplace.
+
 [README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README.md "README") in English | [README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README_ru.md "README") на русском языке | Habr.com (Russian) - [Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux").
 
 This extension allows you configures an ARMv7 or ARMv8 Linux embedded device to run .NET applications, and configures `*.csproj` projects for remote debugging via an ssh-tunnel. This has been tested on Windows (64 bits).
@@ -17,7 +19,7 @@ This extension allows you configures an ARMv7 or ARMv8 Linux embedded device to 
 1. Easy installation .NET SDK, .NET Runtimes, .NET Debugger (vsdbg), Libgpiod, Docker for Linux;
 2. Setting up .NET projects for remote debugging, adding environment variables (Method [Environment.GetEnvironmentVariable](https://docs.microsoft.com/en-us/dotnet/api/system.environment.getenvironmentvariable "Environment.GetEnvironmentVariable"));
 3. Device Tree overlays management. Required to turn on/off devices such as I2C, SPI, PWM, etc. Available remote download of files `* .DTS` and enable/disable "layers". See [Working with GPIO. Part 2. Device Tree overlays (RU)](https://devdotnet.org/post/rabota-s-gpio-na-primere-banana-pi-bpi-m64-chast-2-device-tree-overlays/ "Working with GPIO. Part 2. Device Tree overlays"). Only the [Armbian](https://www.armbian.com/ "Armbian") distribution is supported. To support other distributions, the adapter must be implemented using the [IDtoAdapter.ts](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/src/DTO/IDtoAdapter.ts "IDtoAdapter.ts") interface. Armbian implementation example - [IoTDTOArmbianAdapter.ts](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/src/DTO/IoTDTOArmbianAdapter.ts "IoTDTOArmbianAdapter.ts");
-4. GPIO pin control (not fully implemented yet). Detecting available Gpiochip ~~and lines. Applying `0/1` to the contact, reading the state of the contact. Generation of C# code for the selected contact for transferring to the project one-to-one.~~
+4. GPIO pin control (not fully implemented yet). Detecting available Gpiochip.
 
 ## System requirements
 
@@ -100,11 +102,69 @@ Selecting the **debugvscode** option creates a permissions configuration file [2
 
 ### Step 3 — Installing packages
 
-**Coming soon**
+To run a .NET IoT application and perform remote debugging, you need to install:
 
-See (YouTube):
+- Runtime - .NET Runtime.
+- Remote debugger - .NET Debugger (vsdbg).
+- GPIO line control library - Libgpiod (optional).
 
-1. [Step 1. Configuring SSH access](https://www.youtube.com/watch?v=pusO7PV4NL4 "Step 1. Configuring SSH access")
+Installing the Libgpiod library is possible from the repository and source code. If the repository contains an old version of the library, then install the library from source.
+
+### Шаг 4 — Launch configuration
+
+Now you need to open the project or create it. Project example [dotnet-iot-fastiot-test](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/dotnet-iot-fastiot-test "dotnet-iot-fastiot-test").
+
+To create a remote debugging configuration on the device, you must click on the *Add Configuration* button:
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-1.png)
+
+Select project:
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-2.png)
+
+Select a device for remote debugging:
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-3.png)
+
+The application launch configuration has been created.
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-4.png)
+
+Now you need to go to `Run and Debug`:
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-5.png)
+
+Select configuration to run:
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-6.png)
+
+Run the project on debugging menu `Run > Start Debugging`.
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-7.png)
+
+## Test projects
+
+The `*.csproj` test projects are located in the folder [samples](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/ "samples"). The first base project for testing remote debugging is `dotnet-iot-fastiot-test`.
+
+## Extension settings
+
+To change the extension settings, open the menu item `File > Preferences > Settings`. Then go to the `User` tab and select `Extensions`.
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-settings-1.png)
+
+Settings:
+
+- **Conf › Resource: Insert Empty Last Line** - device data is stored in the `fastiot.device.all.JSON` node in JSON format, it is not recommended to change it manually. Due to incorrect changes, the device list may not load.
+- **Fastiot › Device › Account: Groups** - Linux user group on a remote device (eg Raspberry Pi) to which the account (`debugvscode`) will be added to control the device. This group must have Administrator rights.
+- **Fastiot › Device › Account: Username** - account name created on the remote device. Used to control the device and perform remote debugging. Default value: `debugvscode`.
+- **Fastiot › Device › All: JSON** - device settings in JSON format, it is not recommended to change them manually. Due to incorrect changes, the device list may not load.
+- **Fastiot › Device: Pathfoldercwrsync** - folder with [cwRsync](https://itefix.net/cwrsync "cwRsync") program. Default value: `C:\RemoteCode\cwrsync`.
+- **Fastiot › Device: Pathfolderkeys** - folder for storing access keys to devices (eg Raspberry Pi).
+- **Fastiot › Launch: Templatetitle** - template for forming the name of the debugging profile. The values of the variables can be viewed at the [link](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md "link"). Default value: `Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)`.
+
+## Videos (YouTube):
+
+1. [Step 1. Configuring SSH access](https://www.youtube.com/watch?v=-xgAP1qsVsw "Step 1. Configuring SSH access")
 2. [Step 2. Adding a device](https://www.youtube.com/watch?v=pusO7PV4NL4 "Step 2. Adding a device")
 3. [Step 3. Installing packages](https://www.youtube.com/watch?v=Y8U2V0THQh4 "Step 3. Installing packages")
 4. [Step 4. Creating a .NET console application and remote debugging](https://www.youtube.com/watch?v=oghH3oHIZgE "Step 4. Creating a .NET console application and remote debugging")

@@ -142,6 +142,26 @@ sudo systemctl status ssh
 
 ![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-7.png)
 
+## Тестовые проекты
+
+Тестовые проекты `*.csproj` располагаются в папке [samples](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/ "samples"). Первый базовый проект для проверки удаленной отладки `dotnet-iot-fastiot-test`.
+
+## Настройки расширения
+
+Для изменения настроек расширения необходимо открыть пункт меню `File > Preferences > Settings`. Затем перейти на закладку `User` и выбрать `Extensions`.
+
+![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-settings-1.png)
+
+Настройки:
+
+- **Conf › Resource: Insert Empty Last Line** - данные об устройствах хранятся в узле `fastiot.device.all.JSON` в JSON формате, не рекомендуется изменять вручную. Из-за неверных изменений, список устройств может не загрузиться.
+- **Fastiot › Device › Account: Groups** - группа пользователей в Linux на удаленном устройстве (например, Raspberry Pi), в которую будет добавлена учетная запись (`debugvscode`) для управления устройством. Данная группа должна обладать правами Администратора.
+- **Fastiot › Device › Account: Username** - название учетной записи, создается на удаленном устройстве. Используется для управления устройством и выполнения удаленной отладки. Значение по умолчанию: `debugvscode`.
+- **Fastiot › Device › All: JSON** - настройки устройств в JSON формате, не рекомендуется изменять вручную. Из-за неверных изменений, список устройств может не загрузиться.
+- **Fastiot › Device: Pathfoldercwrsync** - папка с программой [cwRsync](https://itefix.net/cwrsync "cwRsync"). Значение по умолчанию: `C:\RemoteCode\cwrsync`.
+- **Fastiot › Device: Pathfolderkeys** - папка для хранения ключей доступа к устройствам (например, Raspberry Pi).
+- **Fastiot › Launch: Templatetitle** - шаблон для формирования названия профиля отладки. Значения переменных можно посмотреть по [ссылке](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md "ссылке"). Значение по умолчанию: `Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)`.
+
 ## Ролики (YouTube):
 
 1. [Step 1. Configuring SSH access](https://www.youtube.com/watch?v=-xgAP1qsVsw "Step 1. Configuring SSH access")
