@@ -22,9 +22,14 @@ if [ -f /etc/armbian-release ]; then
 	echo "armbianVersion:$(cat /etc/armbian-release | grep 'VERSION' | sed 's/.*=\s*//')"
 	echo "linuxFamily:$(cat /etc/armbian-release | grep 'LINUXFAMILY' | sed 's/.*=\s*//')"
 else
-	#/proc/cpuinfo	
-	declare boardName=($(cat /proc/cpuinfo | grep 'model\|Model' | sed 's/.*:\s*//'))	
+	#/proc/cpuinfo
+	#/root/rpiz.txt
+	#TODO: заменить велосипед на более простой
+	declare boardName=("$(cat /proc/cpuinfo | grep 'model\|Model' | grep -v 'name' | sed 's/.*:\s*//' | head -n1)")	
 	if [ "$boardName" != "" ]; then
-		echo "boardName:${boardName}"
+		#string must be longer than 2 characters
+		if [ ${#boardName} -gt 2 ]; then
+			echo "boardName:${boardName}"
+		fi
 	fi	
 fi

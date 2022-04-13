@@ -8,7 +8,9 @@
 
 This extension allows you configures an ARMv7 or ARMv8 Linux embedded device to run .NET applications, and configures `*.csproj` projects for remote debugging via an ssh-tunnel. This has been tested on Windows (64 bits).
 
-*.NET FastIoT Extension Interface*
+Devices supported: Raspberry Pi, Banana Pi, Orange Pi, Radxa, Tinkerboard, Odroid, Khadas VIM, NanoPi, Pine.
+
+*.NET FastIoT Extension UI*
 
 ![.NET FastIoT title](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot.png)
 
@@ -40,6 +42,11 @@ Third-party applications:
 Third-party bash scripts to install packages/libraries: 
 
 - [.NET SDK](https://dot.net/v1/dotnet-install.sh ".NET SDK"), [.NET Runtimes](https://dot.net/v1/dotnet-install.sh ".NET Runtimes"), [.NET Debugger (vsdbg)](https://aka.ms/getvsdbgsh ".NET Debugger (vsdbg)"), Libgpiod, [Docker](https://get.docker.com/ "Docker"), are downloaded from the official sites of the package developers, excluding the Libgpiod library. The script for installing this library is downloaded from the GitHub resource — [devdotnetorg/docker-libgpiod](https://raw.githubusercontent.com/devdotnetorg/docker-libgpiod/master/setup-libgpiod.sh "devdotnetorg/docker-libgpiod"). Next, the uploaded script downloads the source code of the library from the official [Libgpiod](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/ "Libgpiod") repository and compiles the library.
+
+## System requirements for the device
+
+- **Processor.** ARMv7 or ARMv8;
+- **OS version.** Linux distribution based on at least Ubuntu 18.04 (Bionic Beaver), or at least Debian 10.11 (Buster);
 
 ## Getting started
 

@@ -8,6 +8,8 @@
 
 Расширение настраивает встраиваемое устройство на архитектуре ARMv7 или ARMv8, работающее под Linux, для запуска .NET приложений, и конфигурирует проекты `*.csproj` для удаленной отладки по ssh-туннелю. Работает только на Windows (64 бит).
 
+Поддерживаются устройства: Raspberry Pi, Banana Pi, Orange Pi, Radxa, Tinkerboard, Odroid, Khadas VIM, NanoPi, Pine.
+
 *Интерфейс расширения .NET FastIoT*
 
 ![.NET FastIoT title](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot.png)
@@ -40,6 +42,11 @@
 Сторонние bash-скрипты для установки пакетов/библиотек:
 
 - [.NET SDK](https://dot.net/v1/dotnet-install.sh ".NET SDK"), [.NET Runtimes](https://dot.net/v1/dotnet-install.sh ".NET Runtimes"), [.NET Debugger (vsdbg)](https://aka.ms/getvsdbgsh ".NET Debugger (vsdbg)"), Libgpiod, [Docker](https://get.docker.com/ "Docker"), загружаются с официальных сайтов разработчиков пакетов, за исключением библиотеки Libgpiod. Скрипт для установки данной библиотеки загружается с ресурса GitHub — [devdotnetorg/docker-libgpiod](https://raw.githubusercontent.com/devdotnetorg/docker-libgpiod/master/setup-libgpiod.sh "devdotnetorg/docker-libgpiod"). Далее, загруженный скрипт скачивает исходный текст библиотеки с официального репозитория [Libgpiod](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/ "Libgpiod") и выполняется компиляция библиотеки.
+
+## Системные требования для устройства
+
+- **Процессор.** ARMv7 или ARMv8;
+- **Версия ОС.** Linux дистрибутив построенный на основе Ubuntu версии не ниже 18.04 (Bionic Beaver), или на основе Debian версии не ниже 10.11 (Buster);
 
 ## Быстрый старт
 

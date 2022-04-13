@@ -2,7 +2,7 @@
 
 ## v0.1.5 (12-04-2022)
 
-- [Issue #1](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues/1 "Issue #1"). Added a template for creating a launch name. See [Launch-title-template](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md "Launch-title-template").
+- [Issue 1](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues/1 "Issue 1"). Added a template for creating a launch name. See [Launch-title-template](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md "Launch-title-template").
 - Added option to install Libgpiod from repository or from source.
 - Added board model detection for Raspberry Pi.
 - Added support for .NET Runtime & SDK 7.0.

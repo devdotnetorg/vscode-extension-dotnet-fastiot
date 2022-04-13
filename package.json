@@ -5,7 +5,7 @@
 	"icon": "assets/fastiot-logo-128.png",
 	"license": "LGPL-3.0-only",
 	"preview": true,
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"overview": "assets/marketplace/vscode-marketplace-overview.md",
 	"priceCategory": "free",
 	"publisher": "devdotnetorg",
@@ -43,6 +43,9 @@
 		"onView:viewDevices",
 		"onCommand:vscode-extension-dotnet-fastiot.helloWorld"
 	],
+	"os": [
+        "win32"        
+    ],
 	"main": "./out/extension.js",
 	"contributes": {
 		"configuration": [
