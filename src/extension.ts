@@ -65,7 +65,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const outputChannel = vscode.window.createOutputChannel(".NET FastIoT");	
 	outputChannel.appendLine("Welcome to .NET FastIoT!");	
 	outputChannel.appendLine("----------------------------------");
-	outputChannel.appendLine("Version: 0.1.6");	
+	outputChannel.appendLine("Version: 0.2.0");	
 	outputChannel.appendLine("Feedback: fastiot@devdotnet.org");
 	outputChannel.appendLine("----------------------------------");
 	//TreeView Devices

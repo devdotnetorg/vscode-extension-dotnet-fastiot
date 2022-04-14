@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.0 (14-04-2022)
+
+- Bugs fixed.
+
 ## v0.1.5 (12-04-2022)
 
 - [Issue 1](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues/1 "Issue 1"). Added a template for creating a launch name. See [Launch-title-template](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md "Launch-title-template").
