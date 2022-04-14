@@ -117,7 +117,7 @@ To run a .NET IoT application and perform remote debugging, you need to install:
 
 Installing the Libgpiod library is possible from the repository and source code. If the repository contains an old version of the library, then install the library from source.
 
-### Шаг 4 — Launch configuration
+### Step 4 — Launch configuration
 
 Now you need to open the project or create it. Project example [dotnet-iot-fastiot-test](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/dotnet-iot-fastiot-test "dotnet-iot-fastiot-test"). Other projects are located in the [devdotnetorg/dotnet-iot-samples](https://github.com/devdotnetorg/dotnet-iot-samples "devdotnetorg/dotnet-iot-samples") repository.
 
