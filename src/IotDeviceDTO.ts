@@ -199,11 +199,49 @@ export class IotDeviceDTO extends BaseTreeItem {
   }
 
   public ToJSON():any{
-    console.log("Not Implemented")
+    //==========================
+    let jsonObj = {
+      config: {},
+      items:[]            
+    };
+    //==========================
+    //Fill
+    //config
+    jsonObj.config=this.Config;
+    //Items
+    this.Items.forEach(item =>
+      {       
+        jsonObj.items.push(<never>item.ToJSON());
+      });
+    //
+    return jsonObj;    
   }
 
   public FromJSON(obj:any):any{
-    console.log("Not Implemented")
+    //Fill
+    //config
+    this.Config=obj.config;
+    //items
+    let index=0;    
+    do {
+      let item=obj.items[index];
+      if(item)
+        {
+          //create DTO          
+          let dtoName = <string> item.name;
+          let dtoEnabled = <boolean> item.enabled;
+          let dtofsPath = <string> item.fspath;
+          let dto = new IoTDTO(this.Device);
+          dto.Init(dtoEnabled,dtoName,dtofsPath);
+          //push
+          this.Items.push(dto);
+          //next position
+          index=index+1;
+        }else break;      
+      } 
+    while(true)        
+    //create child elements
+    if( this.Items.length>0 ) this.Build();
   }
     
 }

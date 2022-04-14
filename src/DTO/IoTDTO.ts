@@ -109,6 +109,26 @@ export class IoTDTO {
     }
     return Promise.resolve(new IotResult(StatusResult.Error,"DTO object not initialized or no fsPath",undefined));
   };
+
+  public ToJSON():any{    
+    //Fill
+    const json="{}";
+    let jsonObj = JSON.parse(json); 
+    //name    
+    let keyItem="name";
+    let valueItem=this.Name;
+    jsonObj[keyItem]=valueItem;
+    //IsEnabled
+    keyItem="enabled";
+    let valueItemBool=this.IsEnabled;
+    jsonObj[keyItem]=valueItemBool;
+    //FsPath
+    keyItem="fspath";
+    valueItem=this.FsPath;
+    jsonObj[keyItem]=valueItem;
+    //          
+    return jsonObj;
+  }
 }
 
 export function compare( a:IoTDTO, b:IoTDTO ) {

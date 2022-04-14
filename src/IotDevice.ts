@@ -179,9 +179,7 @@ export class IotDevice extends BaseTreeItem {
           linuxFamily:""
         },
         IotPackages:[],
-        IotDTO:{
-          Config:{}
-        }        
+        IotDTO:{}
     };
     //==========================
     //Fill
@@ -228,7 +226,7 @@ export class IotDevice extends BaseTreeItem {
         jsonObj.IotPackages.push(<never>item.ToJSON());
       });
     //DTO
-    jsonObj.IotDTO.Config=this.DtoLinux.Config;
+    jsonObj.IotDTO=this.DtoLinux.ToJSON();
     return jsonObj;
     //return Promise.resolve(jsonObj); 
   }
@@ -283,7 +281,7 @@ export class IotDevice extends BaseTreeItem {
     //IotPackages  
     this.PackagesLinux.FromJSON(obj.IotPackages);    
     //DTO
-    if(obj.IotDTO) this.DtoLinux.Config=obj.IotDTO.Config;    
+    if(obj.IotDTO) this.DtoLinux.FromJSON(obj.IotDTO);
   }
 
   public async Ping(): Promise<IotResult>{ 

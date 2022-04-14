@@ -209,7 +209,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     }
     catch (err:any)
     {        
-          return Promise.resolve(new IotResult(StatusResult.Error,`Error parsing JSON file `,err));
+        return Promise.resolve(new IotResult(StatusResult.Error,`Error parsing JSON file `,err));
     }    
   }
 
