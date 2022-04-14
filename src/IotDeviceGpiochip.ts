@@ -112,11 +112,42 @@ export class IotDeviceGpiochip extends BaseTreeItem {
   }
 
   public ToJSON():any{
-    console.log("Not Implemented")
+    //Fill
+    const json="[]";
+    let jsonObj = JSON.parse(json);
+    //Items
+    this.Items.forEach(item =>
+      {
+        jsonObj.push(<never>item.ToJSON());
+      });
+    //
+    return jsonObj;    
   }
 
   public FromJSON(obj:any):any{
-    console.log("Not Implemented")
-  }
-    
+    //Fill        
+    //items
+    let index=0;    
+    do {
+      let item=obj[index];
+      if(item)
+        {
+          //create Gpiochip
+          let idGpiochip = <number> item.id;
+          let nameGpiochip = <string> item.name;
+          let descriptionGpiochip = <string> item.description;
+          let numberlinesGpiochip = <number> item.numberlines;
+          //
+          let gpiochip = new IoTGpiochip(idGpiochip,nameGpiochip,
+            descriptionGpiochip,numberlinesGpiochip);          
+          //push
+          this.Items.push(gpiochip);
+          //next position
+          index=index+1;
+        }else break;      
+      } 
+    while(true)        
+    //create child elements
+    if( this.Items.length>0 ) this.Build();
+  }   
 }

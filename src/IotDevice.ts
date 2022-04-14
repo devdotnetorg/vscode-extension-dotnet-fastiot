@@ -179,7 +179,8 @@ export class IotDevice extends BaseTreeItem {
           linuxFamily:""
         },
         IotPackages:[],
-        IotDTO:{}
+        IotDTO:{},
+        IotGpiochips:[]
     };
     //==========================
     //Fill
@@ -227,8 +228,10 @@ export class IotDevice extends BaseTreeItem {
       });
     //DTO
     jsonObj.IotDTO=this.DtoLinux.ToJSON();
-    return jsonObj;
-    //return Promise.resolve(jsonObj); 
+    //Gpiochips
+    jsonObj.IotGpiochips=this.GpioChips.ToJSON();
+    //
+    return jsonObj;    
   }
 
   public FromJSON(obj:any):any{    
@@ -281,7 +284,9 @@ export class IotDevice extends BaseTreeItem {
     //IotPackages  
     this.PackagesLinux.FromJSON(obj.IotPackages);    
     //DTO
-    if(obj.IotDTO) this.DtoLinux.FromJSON(obj.IotDTO);
+    this.DtoLinux.FromJSON(obj.IotDTO);
+    //Gpiochips
+    this.GpioChips.FromJSON(obj.IotGpiochips)
   }
 
   public async Ping(): Promise<IotResult>{ 

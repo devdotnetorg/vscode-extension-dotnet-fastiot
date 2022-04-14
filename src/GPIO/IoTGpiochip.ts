@@ -38,5 +38,29 @@ export class IoTGpiochip {
     this._description=array1[1].substring(1,array1[1].length-1);
     //NumberLines;    
     this._numberLines=parseInt(array1[2].substring(1,undefined));
-  }    
+  }
+
+  public ToJSON():any{    
+    //Fill
+    const json="{}";
+    let jsonObj = JSON.parse(json);   
+    //Id
+    let keyItem="id";
+    let valueItemNumber=this.Id;
+    jsonObj[keyItem]=valueItemNumber;
+    //Name
+    keyItem="name";
+    let valueItemString=this.Name;
+    jsonObj[keyItem]=valueItemString;
+    //Description
+    keyItem="description";
+    valueItemString=this.Description;
+    jsonObj[keyItem]=valueItemString;
+    //NumberLines
+    keyItem="numberlines";
+    valueItemNumber=this.NumberLines;
+    jsonObj[keyItem]=valueItemNumber;
+    //          
+    return jsonObj;
+  } 
 }
