@@ -8,6 +8,8 @@
 			"%SSH_KEY%",
 			"-o",
 			"StrictHostKeyChecking no",
+			"-p",
+			"%REMOTE_PORT%",
 			"%USER_DEBUG%@%REMOTE_HOST%",
 			"mkdir -p ~/fastiot/%NAME_PROJECT%"
 	],

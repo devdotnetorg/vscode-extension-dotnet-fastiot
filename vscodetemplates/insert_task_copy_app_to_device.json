@@ -8,7 +8,7 @@
 		"--progress",
 		"-avz" ,
 		"-e",
-		"%PIPEPROGRAM% -i %SSH_KEY% -o 'StrictHostKeyChecking no'",
+		"%PIPEPROGRAM% -i %SSH_KEY% -o 'StrictHostKeyChecking no' -p %REMOTE_PORT%",
 		"%CY_PATH_PROJECT%/bin/Debug/%TARGET_FRAMEWORK%/%PLATFORM%/",
 		"%USER_DEBUG%@%REMOTE_HOST%:~/fastiot/%NAME_PROJECT%"
 	],

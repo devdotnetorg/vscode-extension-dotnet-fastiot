@@ -83,6 +83,8 @@ export class IotLaunchOptions extends BaseTreeItem{
     this.MergeDictionary.set("%SSH_KEY%",ssh_key);
     this.MergeDictionary.set("%USER_DEBUG%",<string>this.Device?.Account.UserName);
     this.MergeDictionary.set("%REMOTE_HOST%",<string>this.Device?.Account.Host);
+    //22
+    this.MergeDictionary.set("%REMOTE_PORT%",<string>this.Device?.Account.Port);
     //
     this.MergeDictionary.set("%DEVICE_LABEL%",<string>this.Device?.label);
     this.MergeDictionary.set("%BOARD_NAME%",<string>this.Device?.Information.BoardName);

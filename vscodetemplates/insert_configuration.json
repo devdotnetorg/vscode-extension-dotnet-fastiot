@@ -19,6 +19,8 @@
 			"%SSH_KEY%",
 			"-o",
 			"StrictHostKeyChecking no",
+			"-p",
+			"%REMOTE_PORT%",
 			"%USER_DEBUG%@%REMOTE_HOST%"
 		],
 		"debuggerPath": "/usr/share/vsdbg/vsdbg --engineLogging=/var/log/vsdbg.log"

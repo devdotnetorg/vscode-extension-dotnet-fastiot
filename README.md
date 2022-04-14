@@ -119,7 +119,7 @@ Installing the Libgpiod library is possible from the repository and source code.
 
 ### Шаг 4 — Launch configuration
 
-Now you need to open the project or create it. Project example [dotnet-iot-fastiot-test](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/dotnet-iot-fastiot-test "dotnet-iot-fastiot-test").
+Now you need to open the project or create it. Project example [dotnet-iot-fastiot-test](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/dotnet-iot-fastiot-test "dotnet-iot-fastiot-test"). Other projects are located in the [devdotnetorg/dotnet-iot-samples](https://github.com/devdotnetorg/dotnet-iot-samples "devdotnetorg/dotnet-iot-samples") repository.
 
 To create a remote debugging configuration on the device, you must click on the *Add Configuration* button:
 

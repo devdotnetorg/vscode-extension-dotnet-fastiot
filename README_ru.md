@@ -119,7 +119,7 @@ sudo systemctl status ssh
 
 ### Шаг 4 — Конфигурация запуска
 
-Теперь необходимо открыть проект или его создать. Пример проекта [dotnet-iot-fastiot-test](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/dotnet-iot-fastiot-test "dotnet-iot-fastiot-test").
+Теперь необходимо открыть проект или его создать. Пример проекта [dotnet-iot-fastiot-test](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/dotnet-iot-fastiot-test "dotnet-iot-fastiot-test"). Другие проекты располагаются в репозитории [devdotnetorg/dotnet-iot-samples](https://github.com/devdotnetorg/dotnet-iot-samples "devdotnetorg/dotnet-iot-samples").
 
 Для создание конфигурации удаленной отладки на устройстве, необходимо нажать на кнопку *Add Configuration*:
 
