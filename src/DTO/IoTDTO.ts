@@ -70,13 +70,13 @@ export class IoTDTO {
     return Promise.resolve(new IotResult(StatusResult.Error,"DTO adapter not initialized",undefined));
   }
 
-  public async Put(fileName:string, fileData:string):Promise<IotResult>{
+  public async Put(fileName:string, fileData:string,fileType:string):Promise<IotResult>{
     //low case
     fileName=fileName.toLowerCase();
     //
     if(this._adapterDTO)
     {
-      const result = await this._adapterDTO.Put(fileName,fileData);      
+      const result = await this._adapterDTO.Put(fileName,fileData,fileType);      
       return Promise.resolve(result);
     }
     return Promise.resolve(new IotResult(StatusResult.Error,"DTO object not initialized",undefined));

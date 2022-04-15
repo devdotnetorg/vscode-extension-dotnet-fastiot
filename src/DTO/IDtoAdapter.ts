@@ -11,7 +11,7 @@ export interface IDtoAdapter {
   WriteConfig():any;
   //  
   GetAll(): Promise<IotResult>;
-  Put(fileName:string, fileData:string):Promise<IotResult>;
+  Put(fileName:string, fileData:string,fileType:string):Promise<IotResult>;
   Delete(FsPath:string):Promise<IotResult>;
   Enable(FsPath:string):Promise<IotResult>;
 	Disable(FsPath:string):Promise<IotResult>;

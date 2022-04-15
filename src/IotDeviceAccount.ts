@@ -173,7 +173,7 @@ export class IotDeviceAccount extends BaseTreeItem{
           console:`Put file: ${pathFile}"`,
           obj:undefined
         });      
-        result = await this.Client.PutFile(sshconfig,undefined,pathFile,dataFile,false);
+        result = await this.Client.PutFile(sshconfig,undefined,pathFile,dataFile,"utf8",false);
         if(result.Status==StatusResult.Error) return Promise.resolve(result);            
         //add udev rules
         result = await this.Client.RunScript(sshconfig,undefined, config.PathFolderExtension,

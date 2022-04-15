@@ -514,13 +514,13 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     return Promise.resolve(result); 
   }
 
-  public async AddDTO(idDevice:string, fileName:string, fileData:string):  Promise<IotResult> {
+  public async AddDTO(idDevice:string, fileName:string, fileData:string,fileType:string):  Promise<IotResult> {
     this.ShowStatusBar("Adding a DTO");
     let device = this.FindbyIdDevice(idDevice);
     let result = new IotResult(StatusResult.None,undefined,undefined);
     if(device)
     {
-      result= await device.DtoLinux.Put(fileName,fileData);
+      result= await device.DtoLinux.Put(fileName,fileData,fileType);
       if(result.Status==StatusResult.Error)
       {
         this.HideStatusBar(); 

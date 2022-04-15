@@ -52,13 +52,14 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
     return Promise.resolve(result);
   }
 
-  public async Put(fileName:string, fileData:string):Promise<IotResult>{
+  public async Put(fileName:string, fileData:string,fileType:string):Promise<IotResult>{
     //determining the file name given the prefix    
     if(fileName.substring(0,this._config.overlay_prefix.length)!=this._config.overlay_prefix)
       fileName = `${this._config.overlay_prefix}-${fileName}`;      
     //writing a file to the overlaydir folder
     //put file    
-    let result = await this.Device.Client.PutFile(this.Device.Account.SshConfig,undefined,fileName,fileData, false);
+    let result = await this.Device.Client.PutFile(this.Device.Account.SshConfig,undefined,fileName,
+      fileData,fileType, false);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     //copy to folder overlays
     const paramsScript=`${fileName} ${this._config.overlaydir}`;

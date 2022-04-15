@@ -104,7 +104,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     return Promise.resolve(result);    
   }
 
-  public async Put(fileName:string, fileData:string):Promise<IotResult>{
+  public async Put(fileName:string, fileData:string,fileType:string):Promise<IotResult>{
     if(!this._dto) this._dto= new IoTDTO(this.Device);
     if(!this._dto.Compatible)
       return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));    
@@ -115,7 +115,7 @@ export class IotDeviceDTO extends BaseTreeItem {
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }
     //
-    const result= await this._dto.Put(fileName,fileData);
+    const result= await this._dto.Put(fileName,fileData,fileType);
     if(result.Status==StatusResult.Ok)
     {
       await this.GetAll();

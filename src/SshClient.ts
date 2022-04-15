@@ -201,8 +201,9 @@ export class SshClient {
   }
 
   public async PutFile(sshConfig:any| undefined, ssh:SSH2Promise| undefined,
-    pathFile:string, dataFile:string, returnSSH2Promise:boolean): Promise<IotResult>
-  {    
+    pathFile:string, dataFile:string, fileType:string, returnSSH2Promise:boolean): Promise<IotResult>
+  {   
+      //fileType - The encoding can be 'utf8', 'ascii', or 'base64'.
       //connect
       if(!ssh)
       {
@@ -219,10 +220,16 @@ export class SshClient {
           }
         }          
       //put file
-	    var sftp = ssh.sftp();		
+	    var sftp = ssh.sftp();
+      //fileType
+      let jsonOptions = {
+        encoding:fileType,
+        flag:"w"
+      };
+      //
       try
         {        
-          await sftp.writeFile(pathFile,dataFile,{encoding:"utf8",flag:"w"});
+          await sftp.writeFile(pathFile,dataFile,jsonOptions);
           console.log(`Ok. Put file ${pathFile}`);
         }
       catch (err:any)

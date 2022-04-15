@@ -12,20 +12,13 @@ export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice): 
     if(item.DtoLinux.Items.length==0)
         await refreshDTO(treeData,item);        
     if(item.DtoLinux.Items.length==0) return;
-    //
-    //TODO: dtbo files are corrupted. Adding dtbo files is currently locked
-    /*
-    filters: {
-           'DTS files': ['dts'],
-           'DTBO files': ['dtbo']
-       }
-    */
     const options: vscode.OpenDialogOptions = {
         defaultUri: vscode.Uri.file(`overlay.dts`),
         canSelectMany: false,        
         openLabel: 'Open',
         filters: {
-           'DTS files': ['dts']           
+           'DTS files': ['dts'],
+           'DTBO files': ['dtbo']        
        }
     }; 
     //
@@ -34,9 +27,22 @@ export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice): 
     {
         treeData.OutputChannel.appendLine("----------------------------------");
         treeData.OutputChannel.appendLine(`Action: Adding a DTO file ${file[0].fsPath}`);
-        const fileData = fs.readFileSync(file[0].fsPath, 'utf-8');
+        //dts or dtbo
+        const dtoExt = path.extname(file[0].fsPath); // returns '.dts' or '.dtbo'
+        let fileData:string;
+        let fileType:string;
+        if(dtoExt=='.dts') {
+            fileData = fs.readFileSync(file[0].fsPath, 'utf-8');
+            fileType="utf8";
+        }else
+        {
+            //'.dtbo'
+            fileData = fs.readFileSync(file[0].fsPath, 'binary'); //binary base64
+            fileType="ascii"; //ascii base64
+        }
+        //
         const fileName = path.parse(file[0].fsPath).base;        
-        const result = await treeData.AddDTO(<string>item.IdDevice,fileName,fileData);
+        const result = await treeData.AddDTO(<string>item.IdDevice,fileName,fileData,fileType);
         //Output 
         treeData.OutputChannel.appendLine("------------- Result -------------");
         treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
