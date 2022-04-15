@@ -10,7 +10,7 @@ echo "Run: pregetinformation.sh"
 export DEBIAN_FRONTEND="noninteractive"
 
 sudo apt-get update
-sudo apt-get install -y lsb-release rsync
+sudo apt-get install -y lsb-release rsync jq
 
 echo "Successfully"
 

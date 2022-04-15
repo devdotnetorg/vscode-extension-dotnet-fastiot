@@ -26,6 +26,7 @@ export class IoTGpiochip {
     this._numberLines=numberLines;
   };
 
+  /*
   public Parse(text:string):void
   {
     //text=gpiochip0 [1f02c00.pinctrl] (32 lines)    
@@ -39,6 +40,7 @@ export class IoTGpiochip {
     //NumberLines;    
     this._numberLines=parseInt(array1[2].substring(1,undefined));
   }
+  */
 
   public ToJSON():any{    
     //Fill

@@ -100,7 +100,11 @@ export async function activate(context: vscode.ExtensionContext) {
 		console.log("=========");
 		const msg='"Banana Pi M64"';
 		console.log(msg);
-		vscode.window.showInformationMessage('Function not implemented!');					 
+		vscode.window.showInformationMessage('Function not implemented!');	
+		//
+		const json="[{\"name\": \"gpiochip0\"},{\"name\": \"gpiochip1\"}]";
+    	let jsonObj = JSON.parse(json); 
+		vscode.window.showInformationMessage('Function not implemented!');	
 	});
 	
 	//Add new device		  

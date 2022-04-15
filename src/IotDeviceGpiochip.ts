@@ -69,7 +69,7 @@ export class IotDeviceGpiochip extends BaseTreeItem {
       return Promise.resolve(new IotResult(StatusResult.Error,"Libgpiod library not installed.",undefined));   
     //
     let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.PathFolderExtension,
-        "gpiodetect",undefined, false,false);
+        "gpiodetecttojson",undefined, false,false);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     //parse result
     this.ParseInfornation(result.SystemMessage);
@@ -79,6 +79,7 @@ export class IotDeviceGpiochip extends BaseTreeItem {
     return Promise.resolve(result);        
   }
 
+  /*
   private ParseInfornation(msg:string|undefined):void{
     if (!msg) return;
     console.log(`parseInfornation = ${msg}`);        
@@ -93,6 +94,33 @@ export class IotDeviceGpiochip extends BaseTreeItem {
           this.Items.push(gpiochip);
         }        
       });
+  }
+  */
+
+  private ParseInfornation(msg:string|undefined):void{
+    if (!msg) return;
+    console.log(`parseInfornation = ${msg}`);
+    //Fill    
+    let jsonObj = JSON.parse(msg);    
+    //items
+    this.Items=[];
+    let index=0;    
+    do {
+      let item=jsonObj[index];
+      if(item)
+        {
+          //create DTO          
+          let chipId = parseInt(item.id);
+          let chipDescription = <string> item.description;
+          let chipNumberlines = parseInt(item.numberlines);
+          //
+          let gpiochip = new IoTGpiochip(chipId,"gpiochip"+chipId,chipDescription,chipNumberlines);
+          this.Items.push(gpiochip);
+          //next position
+          index=index+1;
+        }else break;      
+      } 
+    while(true)
   }
 
   private CreateChildElements(){
