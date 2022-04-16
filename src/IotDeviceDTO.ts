@@ -217,11 +217,12 @@ export class IotDeviceDTO extends BaseTreeItem {
     return jsonObj;    
   }
 
-  public FromJSON(obj:any):any{
+  public FromJSON(obj:any){
     //Fill
     //config
     this.Config=obj.config;
     //items
+    if(!obj.items) return;
     let index=0;    
     do {
       let item=obj.items[index];

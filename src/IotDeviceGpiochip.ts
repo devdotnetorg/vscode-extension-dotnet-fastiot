@@ -152,9 +152,10 @@ export class IotDeviceGpiochip extends BaseTreeItem {
     return jsonObj;    
   }
 
-  public FromJSON(obj:any):any{
+  public FromJSON(obj:any){
     //Fill        
     //items
+    if(!obj) return;
     let index=0;    
     do {
       let item=obj[index];
