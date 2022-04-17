@@ -22,4 +22,4 @@ fi
 set -e #Exit immediately if a comman returns a non-zero status
 
 #run
-echo "[$((echo "id description numberlines" && gpiodetect) | jq -Rn 'input  | split(" ") as $head | [ inputs | split(" ") | to_entries | map(.key = $head[.key]) | [ .[:3][] ] | from_entries]' | tr -d '()[]' | sed 's/gpiochip//g')]"
+(echo "id description numberlines" && gpiodetect) | tr -d '()[]' | sed 's/gpiochip//g' | jq -Rn 'input  | split(" ") as $head | [ inputs | split(" ") | to_entries | map(.key = $head[.key]) | [ .[:3][] ] | from_entries]'

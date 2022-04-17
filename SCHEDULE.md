@@ -2,7 +2,6 @@
 
 - Adding support for Mono projects.
 - Running on linux.
-- Adding `keyboard-interactive` authentication method for ssh-server.
 - Custom BASH scripts to run on the device.
 - GPIO: read chips, view line gpio, managment I/O.
 - Display available devices: `/dev/*` and sysfs.
