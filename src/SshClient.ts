@@ -55,13 +55,24 @@ export class SshClient {
         console.log(`Bash script file not found! ${nameScript}`);
         return Promise.resolve(new IotResult(StatusResult.Error,"Bash script file not found!",undefined));   
       }
-      let dataFile:string= fs.readFileSync(pathFile, 'utf8');      
+      let dataFile:string= fs.readFileSync(pathFile, 'utf8');
       //connect
       if(!ssh)
       {
         ssh = new SSH2Promise(sshConfig);
         try
-          {        
+          {
+            //keyboard-interactive
+            if(sshConfig.tryKeyboard)
+              {                
+                ssh = ssh.addListener(
+                'keyboard-interactive',
+                (name, instructions, instructionsLang, prompts, finish) => {
+                  console.log("Connection :: keyboard-interactive");
+                  finish([sshConfig.password]);
+                });
+              }
+            //            
             await ssh.connect();
             console.log("Connection established SSH");
           }

@@ -87,8 +87,18 @@ export class IotDevice extends BaseTreeItem {
           obj:undefined
         });
       }       
-    });    
-    let result=await this.Information.Get(host, port,userName, password,config);
+    });
+    //create connection info    
+    var sshconfig  = {
+      host: host,
+      port: port,
+      username: userName,
+      password: password,
+      tryKeyboard: true,
+			readyTimeout: 7000
+      };          
+    //
+    let result=await this.Information.Get(sshconfig,config);
     //event unsubscription    
     this.Information.Client.OnChangedStateUnsubscribe(handler);
     //    
@@ -116,7 +126,7 @@ export class IotDevice extends BaseTreeItem {
         });
       }
     });    
-    result=await this.Account.Create(host, port,userName, password,accountNameDebug,config,this.IdDevice);
+    result=await this.Account.Create(sshconfig,accountNameDebug,config,this.IdDevice);
     //event unsubscription    
     this.Account.Client.OnChangedStateUnsubscribe(handler);
     //

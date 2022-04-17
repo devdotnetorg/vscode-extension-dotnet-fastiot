@@ -28,12 +28,13 @@ export class IotDeviceAccount extends BaseTreeItem{
       port: this.Port,
       username: this.UserName,
       identity: this.PathKey,
-      setTimeout
+      readyTimeout: 7000
     };
+    //setTimeout
+    //readyTimeout: 7000
     //
     return sshconfig;    
     }
-
 
   /*
   private _host: string| undefined;
@@ -75,15 +76,8 @@ export class IotDeviceAccount extends BaseTreeItem{
     this.Device=device;
   }     
 
-  public async Create(toHost: string, toPort: string,toUserName: string, toPassword: string,accountNameDebug:string,
-    config:IotConfiguration,idDevice:string    
-    ): Promise<IotResult>{             
-      var sshconfig  = {
-        host: toHost,
-        port: toPort,
-        username: toUserName,
-        password: toPassword						
-        };      
+  public async Create(sshconfig:any,accountNameDebug:string,config:IotConfiguration,
+    idDevice:string): Promise<IotResult>{      
       //-------------------------------
       //create account
       let paramsScript:string;      
@@ -142,8 +136,8 @@ export class IotDeviceAccount extends BaseTreeItem{
         pathFile=`${config.AccountPathFolderKeys}\\${fileName}`;
         fs.writeFileSync(pathFile,data,undefined);
         //Attribute writing
-        this.Host=toHost;
-        this.Port=toPort;
+        this.Host=sshconfig.host.toString();
+        this.Port=sshconfig.port.toString();
         this.UserName=accountNameDebug;
         this.Identity=fileName;
         this.Groups.push(config.AccountGroups);	        
@@ -185,8 +179,25 @@ export class IotDeviceAccount extends BaseTreeItem{
                 obj:undefined
               });
           }   
-        if(result.Status==StatusResult.Error) return Promise.resolve(result);        
+        if(result.Status==StatusResult.Error) return Promise.resolve(result);
       }
+      //-------------------------------
+      //Change sshd_config
+      /*
+        PubkeyAuthentication yes
+        ChallengeResponseAuthentication yes
+        AuthenticationMethods publickey password
+      */
+      result = await this.Client.RunScript(sshconfig,undefined, config.PathFolderExtension,
+          "changeconfigssh",undefined, false,false);
+      if(result.SystemMessage){
+            this.Client.FireChangedState({
+              status:undefined,
+              console:result.SystemMessage,
+              obj:undefined
+            });
+        }   
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);
       //-------------------------------
       //create child elements
       await this.CreateChildElements();

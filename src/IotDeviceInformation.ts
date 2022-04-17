@@ -44,20 +44,12 @@ export class IotDeviceInformation extends BaseTreeItem{
     this.Device=device;
   }
 
-  public async Get(toHost: string, toPort: string,toUserName: string, toPassword: string,
-    config:IotConfiguration    
-    ): Promise<IotResult>{         
-      var sshconfig  = {
-        host: toHost,
-        port: toPort,
-        username: toUserName,
-        password: toPassword						
-        };
+  public async Get(sshconfig:any, config:IotConfiguration): Promise<IotResult>{      
       this.Client.FireChangedState({
          status:undefined,
          console:"Run: pregetinformation.sh",
          obj:undefined
-       }); 
+       });       
       //Иногда с первого раза не устанавливается пакет в Ubuntu после его удаления
       //поэтому три попытки установить
       //1
