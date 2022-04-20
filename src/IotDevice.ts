@@ -14,6 +14,7 @@ import SSH2Promise from 'ssh2-promise';
 import {IotDeviceDTO } from './IotDeviceDTO';
 import {IotDeviceGpiochip } from './IotDeviceGpiochip';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
+import { strictEqual } from 'assert';
 //
 
 export class IotDevice extends BaseTreeItem {    
@@ -43,8 +44,21 @@ export class IotDevice extends BaseTreeItem {
       //view
       this.contextValue="iotdevice";
       //
-      this.Account = new IotDeviceAccount("Connection",undefined,"Ssh connection parameters",
-        vscode.TreeItemCollapsibleState.Collapsed,this,this);      
+      let str:string;      
+      str="Ssh connection parameters\nnew line **bold**";
+      const tooltip = new vscode.MarkdownString(`Ssh connection parameters \/ \/n new <br/> 
+        line 
+        **bold**          
+        `, true);
+
+        tooltip.appendMarkdown("value2 \n value3");
+
+      this.Account = new IotDeviceAccount("Connection",undefined,tooltip,
+        vscode.TreeItemCollapsibleState.Collapsed,this,this);    
+        
+      // this.Account = new IotDeviceAccount("Connection",undefined,"Ssh connection parameters",
+      //vscode.TreeItemCollapsibleState.Collapsed,this,this);  
+
       this.Information = new IotDeviceInformation("Information",undefined,"Device info",
         vscode.TreeItemCollapsibleState.Collapsed,this,this);               
       this.PackagesLinux = new IotDevicePackage(vscode.TreeItemCollapsibleState.Collapsed,this,this);
