@@ -44,7 +44,7 @@ export class IotDevice extends BaseTreeItem {
       //view
       this.contextValue="iotdevice";
       //
-      let tooltip = new vscode.MarkdownString(`Ssh connection parameters Ssh  \nsuch as host, port, username, ssh key`, true);      
+      let tooltip = new vscode.MarkdownString(`Ssh connection parameters Ssh  \nsuch as host, port, username, key`, true);
       this.Account = new IotDeviceAccount("Connection",undefined,tooltip,
         vscode.TreeItemCollapsibleState.Collapsed,this,this);
       this.Information = new IotDeviceInformation("Information",undefined,"Device info",
@@ -55,8 +55,10 @@ export class IotDevice extends BaseTreeItem {
       this.DtoLinux.InitRoot("Device Tree Overlays",undefined,"This is data structure describing a system's hardware",
         vscode.TreeItemCollapsibleState.Collapsed);
       this.GpioChips=new IotDeviceGpiochip(vscode.TreeItemCollapsibleState.Collapsed,this,this);
-      this.GpioChips.InitRoot("GPIO (gpiochips)",undefined,"Working with GPIO controllers (gpiochip) using the Libgpiod library (by Bartosz Golaszewski)",
-      vscode.TreeItemCollapsibleState.Collapsed);      
+      tooltip = new vscode.MarkdownString(`Working with GPIO controllers (gpiochip) using the Libgpiod library (by Bartosz Golaszewski).  \n`+
+        `Library source code [libgpiod/libgpiod.git](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git "C library and tools for interacting with the linux GPIO character device")  \n`
+        , true);
+      this.GpioChips.InitRoot("GPIO (gpiochips)", undefined, tooltip, vscode.TreeItemCollapsibleState.Collapsed);
       //Update info element
       this.Account.Device=this;
       this.Information.Device=this;

@@ -59,7 +59,7 @@ export class IotDeviceDTO extends BaseTreeItem {
   public InitRoot(
     label: string,
     description: string|  undefined,
-    tooltip: string|  undefined,  
+    tooltip: string | vscode.MarkdownString | undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,
     )
   {

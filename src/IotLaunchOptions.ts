@@ -30,7 +30,7 @@ export class IotLaunchOptions extends BaseTreeItem{
   constructor(
     label: string,
     description: string|  undefined,
-    tooltip: string|  undefined,
+    tooltip: string | vscode.MarkdownString | undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,
     parent: IotLaunchConfiguration| IotLaunchOptions,
     configurationLaunch: IotLaunchConfiguration,

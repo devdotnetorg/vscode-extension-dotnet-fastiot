@@ -20,7 +20,7 @@ export class IotItemTree extends BaseTreeItem {
   constructor(
     label: string,  
     description: string|  undefined,
-    tooltip: string|  undefined,
+    tooltip: string | vscode.MarkdownString | undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,
     parent: IotDevice| IotDeviceAccount| IotDeviceInformation| IotItemTree| 
       IotDevicePackage| IotLaunchConfiguration| IotLaunchOptions,
