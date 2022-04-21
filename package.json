@@ -276,11 +276,16 @@
 					"id": "viewDevices",
 					"name": "Devices",
 					"contextualTitle": "Devices"
-				},
+				},				
 				{
 					"id": "viewConfigurations",
 					"name": "Configurations",
 					"contextualTitle": "Configurations"
+				},
+				{
+					"id": "viewProjects",
+					"name": "Projects",
+					"contextualTitle": "Projects"
 				}
 			]
 		},
@@ -436,7 +441,12 @@
 			{
 				"view": "viewConfigurations",
 				"contents": "No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)"
+			},
+			{
+				"view": "viewProjects",
+				"contents": "No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)"
 			}
+
 		]
 	},
 	"scripts": {
