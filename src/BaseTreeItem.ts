@@ -20,21 +20,21 @@ import { lookup } from 'dns';
 
 //
 
-export abstract class BaseTreeItem extends vscode.TreeItem {  
+export abstract class BaseTreeItem extends vscode.TreeItem {
   public abstract Parent: BaseTreeItem| any| undefined;
   public abstract Childs: Array<BaseTreeItem| any>;
   public Client:SshClient;
-    
+  
   constructor(
     label: string,
     description: string|  undefined,
     tooltip: string | vscode.MarkdownString | undefined,
-    collapsibleState: vscode.TreeItemCollapsibleState,    
-  ){    
+    collapsibleState: vscode.TreeItemCollapsibleState,  
+  ){
     super(label, collapsibleState);
-    this.description = description;    
-    this.tooltip = tooltip
-    //
+    this.description = description;
+    //tooltip Markdown
+    this.tooltip = tooltip;
     this.Client = new SshClient();
-  }  
+  }
 }

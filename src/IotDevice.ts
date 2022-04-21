@@ -44,21 +44,9 @@ export class IotDevice extends BaseTreeItem {
       //view
       this.contextValue="iotdevice";
       //
-      let str:string;      
-      str="Ssh connection parameters\nnew line **bold**";
-      const tooltip = new vscode.MarkdownString(`Ssh connection parameters \/ \/n new <br/> 
-        line 
-        **bold**          
-        `, true);
-
-        tooltip.appendMarkdown("value2 \n value3");
-
+      let tooltip = new vscode.MarkdownString(`Ssh connection parameters Ssh  \nsuch as host, port, username, ssh key`, true);      
       this.Account = new IotDeviceAccount("Connection",undefined,tooltip,
-        vscode.TreeItemCollapsibleState.Collapsed,this,this);    
-        
-      // this.Account = new IotDeviceAccount("Connection",undefined,"Ssh connection parameters",
-      //vscode.TreeItemCollapsibleState.Collapsed,this,this);  
-
+        vscode.TreeItemCollapsibleState.Collapsed,this,this);
       this.Information = new IotDeviceInformation("Information",undefined,"Device info",
         vscode.TreeItemCollapsibleState.Collapsed,this,this);               
       this.PackagesLinux = new IotDevicePackage(vscode.TreeItemCollapsibleState.Collapsed,this,this);
