@@ -285,7 +285,8 @@
 				{
 					"id": "viewProjects",
 					"name": "Projects",
-					"contextualTitle": "Projects"
+					"contextualTitle": "Projects",
+					"visibility": "hidden"
 				}
 			]
 		},
