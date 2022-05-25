@@ -97,12 +97,7 @@ export async function activate(context: vscode.ExtensionContext) {
     let vscodeTreeViewProjects=vscode.window.createTreeView('viewProjects', {
 		treeDataProvider: treeDataProjectsProvider
 	  });
-	vscodeTreeViewProjects.description="description";
-	
-	vscodeTreeViewProjects.message=`message  \n  `+
-	  `No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)`;
-	vscodeTreeViewProjects.title="title";
-	
+	vscodeTreeViewProjects.description="Create a project from a template";
 	//Commands
 	let commandHelloWorld = vscode.commands.registerCommand('vscode-extension-dotnet-fastiot.helloWorld', () => {
 		// The code you place here will be executed every time your command is executed

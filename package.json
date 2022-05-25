@@ -284,9 +284,9 @@
 				},
 				{
 					"id": "viewProjects",
-					"name": "Projects",
+					"name": "Projects",					
 					"contextualTitle": "Projects",
-					"visibility": "hidden"
+					"visibility": "collapsed"
 				}
 			]
 		},
@@ -437,15 +437,15 @@
 		"viewsWelcome": [
 			{
 				"view": "viewDevices",
-				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Device](command:viewDevices.AddDevice)"
+				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).  \n[Add Device](command:viewDevices.AddDevice)"
 			},
 			{
 				"view": "viewConfigurations",
-				"contents": "No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)"
+				"contents": "No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).  \n[Add Configuration](command:viewConfigurations.AddConfiguration)"
 			},
 			{
 				"view": "viewProjects",
-				"contents": "No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)"
+				"contents": "[Create project](command:1viewConfigurations.AddConfiguration)  \n [About projects](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/)."
 			}
 
 		]
