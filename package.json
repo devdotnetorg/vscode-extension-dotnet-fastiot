@@ -44,8 +44,8 @@
 		"onCommand:vscode-extension-dotnet-fastiot.helloWorld"
 	],
 	"os": [
-        "win32"        
-    ],
+		"win32"
+	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"configuration": [
@@ -276,7 +276,7 @@
 					"id": "viewDevices",
 					"name": "Devices",
 					"contextualTitle": "Devices"
-				},				
+				},
 				{
 					"id": "viewConfigurations",
 					"name": "Configurations",
@@ -284,7 +284,7 @@
 				},
 				{
 					"id": "viewProjects",
-					"name": "Projects",					
+					"name": "Projects",
 					"contextualTitle": "Projects",
 					"visibility": "collapsed"
 				}
@@ -447,7 +447,6 @@
 				"view": "viewProjects",
 				"contents": "[Create project](command:1viewConfigurations.AddConfiguration)  \n [About projects](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/)."
 			}
-
 		]
 	},
 	"scripts": {
@@ -469,7 +468,7 @@
 		"@typescript-eslint/parser": "^4.26.0",
 		"eslint": "^7.27.0",
 		"glob": "^7.1.7",
-		"mocha": "^8.4.0",
+		"mocha": "^10.0.0",
 		"typescript": "^4.3.2",
 		"vscode-test": "^1.5.2"
 	},
@@ -478,7 +477,7 @@
 		"node-stream-zip": "^1.14.0",
 		"pingman": "^1.1.5",
 		"ssh2": "^1.9.0",
-		"ssh2-promise": "^1.0.2",
+		"ssh2-promise": "^1.0.3",
 		"uuid": "^8.3.2",
 		"xmldom": "^0.6.0",
 		"xpath": "0.0.32"
