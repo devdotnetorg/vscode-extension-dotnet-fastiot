@@ -28,7 +28,7 @@ export class IotDeviceAccount extends BaseTreeItem{
       port: this.Port,
       username: this.UserName,
       identity: this.PathKey,
-      //readyTimeout: 7000
+      readyTimeout: 7000
     };
     //setTimeout
     //readyTimeout: 7000

@@ -40,7 +40,7 @@ if [ -f /home/$NEWUSERNAME/.ssh/id_rsa.pub ]; then
 fi
 
 NAMEHOST=$(uname -n)
-ssh-keygen -t rsa -f /home/$NEWUSERNAME/.ssh/id_rsa -C $NEWUSERNAME@$NAMEHOST -N ""
+ssh-keygen -t rsa-sha2-256 -f /home/$NEWUSERNAME/.ssh/id_rsa -C $NEWUSERNAME@$NAMEHOST -N ""
 cat /home/$NEWUSERNAME/.ssh/id_rsa.pub > /home/$NEWUSERNAME/.ssh/authorized_keys
 sudo systemctl reload ssh
 sudo systemctl status ssh
