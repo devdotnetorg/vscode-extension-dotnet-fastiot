@@ -59,6 +59,10 @@ if [[ "$osName" == "Ubuntu" || "$osName" == "Debian" || "$osName" == "Raspbian" 
 		echo "Ubuntu or Debian"
 		case $osCodename in
 			#Ubuntu
+			jammy)
+				echo "focal"
+				echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee $filename
+				;;			
 			focal)
 				echo "focal"
 				echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee $filename
