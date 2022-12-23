@@ -62,15 +62,20 @@
 						"default": "sudo",
 						"description": "Linux group for a new user (debugvscode) of a development device."
 					},
+					"fastiot.device.sharedpathfolder": {
+						"type": "string",
+						"default": "",
+						"description": "Shared folder for storing keys, applications, templates"
+					},
 					"fastiot.device.pathfolderkeys": {
 						"type": "string",
-						"default": "C:\\RemoteCode\\keys",
-						"description": "Path to ssh key storage folder"
+						"default": "",
+						"description": "![Not used] Path to ssh key storage folder"
 					},
 					"fastiot.device.pathfoldercwrsync": {
 						"type": "string",
 						"default": "C:\\RemoteCode\\cwrsync",
-						"markdownDescription": "The folder with the [cwRsync](https://itefix.net/cwrsync) package to copy the application to a remote device and provide a transport for the debugger."
+						"markdownDescription": "![Not used] The folder with the [cwRsync](https://itefix.net/cwrsync) package to copy the application to a remote device and provide a transport for the debugger."
 					},
 					"fastiot.launch.templatetitle": {
 						"type": "string",
@@ -474,6 +479,7 @@
 	},
 	"dependencies": {
 		"@lolpants/pingman": "^1.0.6",
+		"fs-extra": "^11.1.0",
 		"node-stream-zip": "^1.14.0",
 		"pingman": "^1.1.5",
 		"ssh2": "^1.9.0",

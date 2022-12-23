@@ -14,23 +14,51 @@ export function GetConfiguration(context: vscode.ExtensionContext):IotConfigurat
 	//
 	config.AccountName= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
 	config.AccountGroups= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.groups');
-	config.AccountPathFolderKeys= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfolderkeys');	
-	//config.SharedPathFolder= <string>vscode.workspace.getConfiguration().get('fastiot.device.sharedpathfolder');
-	config.PathFoldercwRsync= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfoldercwrsync');
 	config.PathFolderExtension=context.extensionUri.fsPath;	
 	config.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
-	//Check config
-	//create folder
+	//Main settings folder
+	config.SharedPathFolder= <string>vscode.workspace.getConfiguration().get('fastiot.device.sharedpathfolder');
+	const FolderPreviousKeys:string= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfolderkeys');
+	//Create settings folder
+	if(config.SharedPathFolder == null||config.SharedPathFolder == undefined||config.SharedPathFolder == "") 
+	{
+		/* Get home directory of the user in Node.js */
+		// import os module
+		const os = require("os");
+		// check the available memory
+		const userHomeDir = os.homedir();
+		config.SharedPathFolder=userHomeDir+"\\fastiot";
+		//Saving settings
+		vscode.workspace.getConfiguration().update('fastiot.device.sharedpathfolder',config.SharedPathFolder,true);
+	}
+	config.AccountPathFolderKeys=config.SharedPathFolder+"\\settings\\keys";
+	config.PathFoldercwRsync=config.SharedPathFolder+"\\settings\\cwrsync";
+	//Create folders
+	MakeDirSync(config.SharedPathFolder);
 	MakeDirSync(config.AccountPathFolderKeys);
-	//MakeDirSync(config.SharedPathFolder);
 	MakeDirSync(config.PathFoldercwRsync);
-    //creating additional folders
-	//MakeDirSync(config.SharedPathFolder+"\\logs");	
-	//MakeDirSync(config.SharedPathFolder+"\\config");
 	//Check App cwRsync
 	CheckAppcwRsync(config.PathFoldercwRsync,
 		config.PathFolderExtension+"\\apps\\cwrsync.zip");
-	//
+	//Migrating key files from a previous version of the extension
+	if(FolderPreviousKeys != "")
+	{
+		const fse = require('fs-extra')
+		const srcDir = FolderPreviousKeys;
+		const destDir = config.AccountPathFolderKeys;
+		// To copy a folder or file, select overwrite accordingly
+		try {
+			fse.copySync(srcDir, destDir);
+			} catch (err) {
+			console.error(err)
+		}
+		//Saving settings
+		vscode.workspace.getConfiguration().update('fastiot.device.pathfolderkeys',"",true);
+		vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
+	}
+    //creating additional folders
+	//MakeDirSync(config.SharedPathFolder+"\\logs");	
+	//MakeDirSync(config.SharedPathFolder+"\\config");
 	return config	
 }
 
