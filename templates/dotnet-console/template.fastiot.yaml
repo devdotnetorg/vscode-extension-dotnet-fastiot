@@ -1,0 +1,24 @@
+#YAML
+id: main-dotnet-console
+dependsOn: none # template inheritance
+platform: windows # *, windows, linux. Only Windows is currently supported
+type: dotnet # template type is related to processing logic
+version: 1
+releaseDate: 24/12/2022
+author: DevDotNet.ORG
+label: .NET Console Application
+detail: Creates a minimal console application sample
+language: csharp
+endDeviceArchitecture: # *, armv6l, armv7l, aarch64, riscv64, x86_64
+  - armv7l
+  - aarch64
+  - x86_64
+projName: DotnetConsoleApp
+mainFileProj: dotnetapp.csproj
+tags:
+  - console
+filesToProcess:
+  - dotnetcoreapp.csproj
+  - Program.cs
+fileNameReplacement:
+  - dotnetapp.csproj=%{project.name}.csproj

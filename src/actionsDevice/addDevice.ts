@@ -41,7 +41,7 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
 
        //select account: debugvscode or root 
        let itemAccounts:Array<ItemQuickPick>=[];     
-       let item = new ItemQuickPick(treeData.Config.AccountName,"(default)",treeData.Config.AccountName);
+       let item = new ItemQuickPick(treeData.Config.UsernameAccountDevice,"(default)",treeData.Config.UsernameAccountDevice);
        itemAccounts.push(item);
        item = new ItemQuickPick("root","Select if you have problems accessing /dev/* and /sys/* devices","root");
        itemAccounts.push(item);

@@ -334,7 +334,7 @@ export class IotDevice extends BaseTreeItem {
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
-    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.PathFolderExtension,"reboot",
+    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.ExtensionPath,"reboot",
       undefined,false,false);
     //if(result.status==StatusResult.Error) return Promise.resolve(result);
     
@@ -349,7 +349,7 @@ export class IotDevice extends BaseTreeItem {
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
-    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.PathFolderExtension,"shutdown",
+    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.ExtensionPath,"shutdown",
       undefined,false,false);    
     return Promise.resolve(result);    
   }

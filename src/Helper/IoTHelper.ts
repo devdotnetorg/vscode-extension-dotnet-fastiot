@@ -12,40 +12,40 @@ export function  Sleep (time:number) {
 export function GetConfiguration(context: vscode.ExtensionContext):IotConfiguration {    
 	let config:IotConfiguration= new IotConfiguration();
 	//
-	config.AccountName= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
-	config.AccountGroups= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.groups');
-	config.PathFolderExtension=context.extensionUri.fsPath;	
+	config.UsernameAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
+	config.GroupsAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.groups');
+	config.ExtensionPath=context.extensionUri.fsPath;	
 	config.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
 	//Main settings folder
-	config.SharedPathFolder= <string>vscode.workspace.getConfiguration().get('fastiot.device.sharedpathfolder');
+	config.UserProfilePath= <string>vscode.workspace.getConfiguration().get('fastiot.device.sharedpathfolder');
 	const FolderPreviousKeys:string= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfolderkeys');
 	//Create settings folder
-	if(config.SharedPathFolder == null||config.SharedPathFolder == undefined||config.SharedPathFolder == "") 
+	if(config.UserProfilePath == null||config.UserProfilePath == undefined||config.UserProfilePath == "") 
 	{
 		/* Get home directory of the user in Node.js */
 		// import os module
 		const os = require("os");
 		// check the available memory
 		const userHomeDir = os.homedir();
-		config.SharedPathFolder=userHomeDir+"\\fastiot";
+		config.UserProfilePath=userHomeDir+"\\fastiot";
 		//Saving settings
-		vscode.workspace.getConfiguration().update('fastiot.device.sharedpathfolder',config.SharedPathFolder,true);
+		vscode.workspace.getConfiguration().update('fastiot.device.sharedpathfolder',config.UserProfilePath,true);
 	}
-	config.AccountPathFolderKeys=config.SharedPathFolder+"\\settings\\keys";
-	config.PathFoldercwRsync=config.SharedPathFolder+"\\settings\\cwrsync";
+	config.KeysPathSettings=config.UserProfilePath+"\\settings\\keys";
+	//config.PathFoldercwRsync=config.SharedPathFolder+"\\settings\\apps\\cwrsync";
 	//Create folders
-	MakeDirSync(config.SharedPathFolder);
-	MakeDirSync(config.AccountPathFolderKeys);
-	MakeDirSync(config.PathFoldercwRsync);
+	MakeDirSync(config.UserProfilePath);
+	MakeDirSync(config.KeysPathSettings);
+	MakeDirSync(config.UserProfilePath+"\\settings\\apps\\cwrsync");
 	//Check App cwRsync
-	CheckAppcwRsync(config.PathFoldercwRsync,
-		config.PathFolderExtension+"\\apps\\cwrsync.zip");
+	CheckAppcwRsync(config.UserProfilePath+"\\settings\\apps\\cwrsync",
+		config.ExtensionPath+"\\apps\\cwrsync.zip");
 	//Migrating key files from a previous version of the extension
 	if(FolderPreviousKeys != "")
 	{
 		const fse = require('fs-extra')
 		const srcDir = FolderPreviousKeys;
-		const destDir = config.AccountPathFolderKeys;
+		const destDir = config.KeysPathSettings;
 		// To copy a folder or file, select overwrite accordingly
 		try {
 			fse.copySync(srcDir, destDir);
@@ -57,8 +57,8 @@ export function GetConfiguration(context: vscode.ExtensionContext):IotConfigurat
 		vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
 	}
     //creating additional folders
-	//MakeDirSync(config.SharedPathFolder+"\\logs");	
-	//MakeDirSync(config.SharedPathFolder+"\\config");
+	MakeDirSync(config.UserProfilePath+"\\templates");	
+	//MakeDirSync(config.SharedPathFolder+"\\log");
 	return config	
 }
 
