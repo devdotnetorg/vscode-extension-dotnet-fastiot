@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
+//import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import {IotConfiguration} from '../IotConfiguration';
 import {IotDevice} from '../IotDevice';
@@ -43,12 +44,11 @@ export function GetConfiguration(context: vscode.ExtensionContext):IotConfigurat
 	//Migrating key files from a previous version of the extension
 	if(FolderPreviousKeys != "")
 	{
-		const fse = require('fs-extra')
 		const srcDir = FolderPreviousKeys;
 		const destDir = config.KeysPathSettings;
 		// To copy a folder or file, select overwrite accordingly
 		try {
-			fse.copySync(srcDir, destDir);
+			fs.copyFileSync(srcDir, destDir);
 			} catch (err) {
 			console.error(err)
 		}
@@ -58,7 +58,8 @@ export function GetConfiguration(context: vscode.ExtensionContext):IotConfigurat
 	}
     //creating additional folders
 	MakeDirSync(config.UserProfilePath+"\\templates\\download");
-	MakeDirSync(config.UserProfilePath+"\\templates\\user");	
+	MakeDirSync(config.UserProfilePath+"\\templates\\user");
+	MakeDirSync(config.UserProfilePath+"\\tmp");
 	//MakeDirSync(config.SharedPathFolder+"\\log");
 	return config	
 }
