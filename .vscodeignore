@@ -17,6 +17,7 @@ assets/source/**
 vscodetemplates/source**
 docs/**
 samples/**
+templates/**
 installation.md
 CHANGELOG_ru.md
 README.md

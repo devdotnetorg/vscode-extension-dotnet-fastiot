@@ -39,7 +39,7 @@ export function GetConfiguration(context: vscode.ExtensionContext):IotConfigurat
 	MakeDirSync(config.UserProfilePath+"\\settings\\apps\\cwrsync");
 	//Check App cwRsync
 	CheckAppcwRsync(config.UserProfilePath+"\\settings\\apps\\cwrsync",
-		config.ExtensionPath+"\\apps\\cwrsync.zip");
+		config.ExtensionPath+"\\windows\\apps\\cwrsync.zip");
 	//Migrating key files from a previous version of the extension
 	if(FolderPreviousKeys != "")
 	{
@@ -57,7 +57,8 @@ export function GetConfiguration(context: vscode.ExtensionContext):IotConfigurat
 		vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
 	}
     //creating additional folders
-	MakeDirSync(config.UserProfilePath+"\\templates");	
+	MakeDirSync(config.UserProfilePath+"\\templates\\download");
+	MakeDirSync(config.UserProfilePath+"\\templates\\user");	
 	//MakeDirSync(config.SharedPathFolder+"\\log");
 	return config	
 }

@@ -1,0 +1,6 @@
+#YAML
+templates:
+  - id: dotnet-console-2
+    releaseDate: 24/12/2022
+#  - id: dotnet-console-3
+#    releaseDate: 24/12/2022
