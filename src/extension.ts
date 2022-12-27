@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 //shared
-import {GetWorkspaceFolder,GetConfiguration,CheckAppcwRsync} from './Helper/IoTHelper'; 
+import {GetWorkspaceFolder,GetConfiguration} from './Helper/IoTHelper'; 
 import { IotItemTree } from './IotItemTree';
 
 //Devices
@@ -72,11 +72,13 @@ export async function activate(context: vscode.ExtensionContext) {
 	//TreeView Devices
 	let statusBarItemDevice = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
 	//statusBarItem.color="red";	
-	statusBarItemDevice.hide();    
+	statusBarItemDevice.hide();
+	//Get config
+	let config=GetConfiguration(context);
 	//read JSON devices
 	const jsonDevices=vscode.workspace.getConfiguration().get('fastiot.device.all.JSON');	 
     let treeDataDevicesProvider = new TreeDataDevicesProvider(outputChannel,statusBarItemDevice,
-		SaveDevicesCallback,GetConfiguration(context),jsonDevices);	
+		SaveDevicesCallback,config,jsonDevices);	
     let vscodeTreeViewDevices=vscode.window.createTreeView('viewDevices', {
 		treeDataProvider: treeDataDevicesProvider
 	  });
@@ -86,14 +88,14 @@ export async function activate(context: vscode.ExtensionContext) {
 	statusBarItemConfiguration.hide();
 	const workspaceFolder=GetWorkspaceFolder();
     let treeDataConfigurationsProvider = new TreeDataConfigurationsProvider(statusBarItemConfiguration,
-		GetConfiguration(context),treeDataDevicesProvider.RootItems,workspaceFolder);	
+		config,treeDataDevicesProvider.RootItems,workspaceFolder);	
     let vscodeTreeViewConfigurations=vscode.window.createTreeView('viewConfigurations', {
 		treeDataProvider: treeDataConfigurationsProvider
 	  });
 
 	//TreeView Projects	
     let treeDataProjectsProvider = new TreeDataProjectsProvider(statusBarItemConfiguration,
-		GetConfiguration(context),treeDataDevicesProvider.RootItems,workspaceFolder);	
+		config,treeDataDevicesProvider.RootItems,workspaceFolder);	
     let vscodeTreeViewProjects=vscode.window.createTreeView('viewProjects', {
 		treeDataProvider: treeDataProjectsProvider
 	  });
@@ -255,9 +257,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	let eventChangeConfiguration=vscode.workspace.onDidChangeConfiguration((e) => {		
 		if(e.affectsConfiguration('fastiot'))
 		{
-			treeDataDevicesProvider.Config=GetConfiguration(context);
-			treeDataConfigurationsProvider.Config=GetConfiguration(context);
-			treeDataProjectsProvider.Config=GetConfiguration(context);
+			treeDataDevicesProvider.Config=config;
+			treeDataConfigurationsProvider.Config=config;
+			treeDataProjectsProvider.Config=config;
 			vscode.window.showInformationMessage('Changed extension settings: .NET FastIoT');		
 		}
     }, undefined, context.subscriptions);	

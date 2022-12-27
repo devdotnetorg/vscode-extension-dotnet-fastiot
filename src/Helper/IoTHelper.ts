@@ -2,9 +2,9 @@ import * as vscode from 'vscode';
 //import * as fs from 'fs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as os from 'os';
 import {IotConfiguration} from '../IotConfiguration';
 import {IotDevice} from '../IotDevice';
-import StreamZip from 'node-stream-zip';
 
 export function  Sleep (time:number) {
   return new Promise((resolve) => setTimeout(resolve, time));
@@ -18,14 +18,13 @@ export function GetConfiguration(context: vscode.ExtensionContext):IotConfigurat
 	config.ExtensionPath=context.extensionUri.fsPath;	
 	config.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
 	//Main settings folder
+	// TODO: Move code to IotConfiguration class
 	config.UserProfilePath= <string>vscode.workspace.getConfiguration().get('fastiot.device.sharedpathfolder');
 	const FolderPreviousKeys:string= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfolderkeys');
 	//Create settings folder
 	if(config.UserProfilePath == null||config.UserProfilePath == undefined||config.UserProfilePath == "") 
 	{
 		/* Get home directory of the user in Node.js */
-		// import os module
-		const os = require("os");
 		// check the available memory
 		const userHomeDir = os.homedir();
 		config.UserProfilePath=userHomeDir+"\\fastiot";
@@ -39,8 +38,7 @@ export function GetConfiguration(context: vscode.ExtensionContext):IotConfigurat
 	MakeDirSync(config.KeysPathSettings);
 	MakeDirSync(config.UserProfilePath+"\\settings\\apps\\cwrsync");
 	//Check App cwRsync
-	CheckAppcwRsync(config.UserProfilePath+"\\settings\\apps\\cwrsync",
-		config.ExtensionPath+"\\windows\\apps\\cwrsync.zip");
+	config.CheckAppcwRsync();
 	//Migrating key files from a previous version of the extension
 	if(FolderPreviousKeys != "")
 	{
@@ -70,15 +68,6 @@ export function MakeDirSync(dir: string) {
 		MakeDirSync(path.dirname(dir));
 	}
 	fs.mkdirSync(dir);
-}
-
-export async function CheckAppcwRsync(checkDir: string,pathCwRsyncZip:string):Promise<void> {	
-	if (fs.existsSync(checkDir+"\\rsync.exe")&&fs.existsSync(checkDir+"\\ssh.exe")) return;
-	//Put App cwRsync
-	const zip = new StreamZip.async({ file: pathCwRsyncZip });
-	const count = await zip.extract(null, checkDir);
-	console.log(`Extracted ${count} entries`);
-	await zip.close();
 }
 
 export function GetWorkspaceFolder(): string| undefined {
@@ -120,6 +109,7 @@ export function GetWorkspaceFolder(): string| undefined {
 	return result;	
   }
 
+  // TODO: Move to project class dotNET
   export function GetDotnetRID(osName:string,architecture:string): string {
 	//Platform
     //NET RID Catalog
@@ -155,6 +145,7 @@ export function GetWorkspaceFolder(): string| undefined {
 	return result;
   }
 
+  // TODO: Move to template class
   export function MergeWithDictionary(dictionary:Map<string,string>,data:string):string{
     let result:string=data;
     dictionary.forEach((value,key) => {      
@@ -164,6 +155,7 @@ export function GetWorkspaceFolder(): string| undefined {
     return result;
   }
 
+  // TODO: Move to template class
   export function DeleteComments(data:string):string{
 	  //removes comments like '//'
 	  const matchHashComment = new RegExp(/(\/\/.*)/, 'gi');
