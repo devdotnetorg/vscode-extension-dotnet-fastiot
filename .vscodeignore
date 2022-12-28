@@ -15,6 +15,7 @@ src/**
 .gitattributes
 assets/source/**
 vscodetemplates/source**
+vscodetemplates/**
 docs/**
 samples/**
 templates/**

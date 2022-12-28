@@ -117,7 +117,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //Params
     let paramsScript=this.GetParamsScript(this.NamePackage,objJSON);    
     //Exec
-    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.ExtensionPath,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
       nameScript,paramsScript,false,false);    
     return Promise.resolve(result);    
   }
@@ -136,7 +136,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //Params
     let paramsScript=this.GetParamsScript(this.NamePackage,objJSON);    
     //Exec
-    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.ExtensionPath,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
       nameScript,paramsScript, true,false);    
     return Promise.resolve(result); 
   }  
@@ -147,7 +147,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //checkpackagedotnetsdk.sh
     let nameScript=`checkpackage${namePackage}`;
     //Exec
-    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.ExtensionPath,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
       nameScript,undefined, false,false); 
     if(result.Status==StatusResult.Ok)
     {
@@ -193,7 +193,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //testpackagedotnetsdk.sh
     let nameScript=`testpackage${namePackage}`;
     //Exec
-    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.ExtensionPath,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
       nameScript,undefined, false,false); 
     return Promise.resolve(result);
   }

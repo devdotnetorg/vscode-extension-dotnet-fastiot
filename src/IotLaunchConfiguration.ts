@@ -153,12 +153,12 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       if (!fs.existsSync(pathLaunchFile))
       {
         //create launch.json
-        let datafile:string= fs.readFileSync(`${this.Config.ExtensionPath}\\vscodetemplates\\launch.json`, 'utf8');
+        let datafile:string= fs.readFileSync(`${this.Config.Folder.Extension}\\vscodetemplates\\launch.json`, 'utf8');
         datafile=MergeWithDictionary(this.Options.MergeDictionary,datafile);      
         fs.writeFileSync(pathLaunchFile,datafile);
       }    
       //Preparation insert_configuration.json
-      let datafile:string= fs.readFileSync(`${this.Config.ExtensionPath}\\vscodetemplates\\insert_configuration.json`,
+      let datafile:string= fs.readFileSync(`${this.Config.Folder.Extension}\\vscodetemplates\\insert_configuration.json`,
         'utf8');
       let insertConf=MergeWithDictionary(this.Options.MergeDictionary,datafile);    
       let jsonInsertConf = JSON.parse(insertConf); 
@@ -195,12 +195,12 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       if (!fs.existsSync(pathTasksFile))    
       {
         //create tasks.json
-        let dataFile= fs.readFileSync(`${this.Config.ExtensionPath}\\vscodetemplates\\tasks.json`, 'utf8');
+        let dataFile= fs.readFileSync(`${this.Config.Folder.Extension}\\vscodetemplates\\tasks.json`, 'utf8');
         dataFile=MergeWithDictionary(this.Options.MergeDictionary,dataFile);
         fs.writeFileSync(pathTasksFile,dataFile);      
       }
       //Preparation Tasks
-      const pathTemplates=`${this.Config.ExtensionPath}\\vscodetemplates`;
+      const pathTemplates=`${this.Config.Folder.Extension}\\vscodetemplates`;
       //insert_task_build_linux.json
       let dataFile:string= fs.readFileSync(`${pathTemplates}\\insert_task_build_linux.json`, 'utf8');
       let insertData=MergeWithDictionary(this.Options.MergeDictionary,dataFile);

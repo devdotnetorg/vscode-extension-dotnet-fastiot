@@ -35,7 +35,7 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
     //Overlaydir definition
     this._config.overlaydir= this.GetOverlayDir(this.Device.Information.LinuxFamily);
     //Read armbianEnv.txt and getting a list of DTO  
-    let result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.ExtensionPath,
+    let result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.Folder.Extension,
         "dto/armbiangetalloverlays",undefined, false,false);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     //Parse
@@ -63,7 +63,7 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     //copy to folder overlays
     const paramsScript=`${fileName} ${this._config.overlaydir}`;
-    result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.ExtensionPath,
+    result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.Folder.Extension,
         "dto/armbianputoverlay",paramsScript, false,false);    
     //output
     //result= new IotResult(StatusResult.Ok,undefined,undefined);
@@ -72,7 +72,7 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
 
   public async Delete(FsPath:string):Promise<IotResult>{   
     const paramsScript=FsPath;
-    const result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.ExtensionPath,
+    const result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.Folder.Extension,
         "dto/armbiandeleteoverlay",paramsScript, false,false);    
     //output    
     return Promise.resolve(result);
@@ -83,7 +83,7 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
     FsPath=path.basename(FsPath);
     FsPath=FsPath.substring(this._config.overlay_prefix.length+1,FsPath.length-5);        
     const paramsScript=FsPath;
-    const result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.ExtensionPath,
+    const result = await this.Device.Client.RunScript(this.Device.Account.SshConfig,undefined, this.Device.Config.Folder.Extension,
       namescript,paramsScript, false,false);
     //output    
     return Promise.resolve(result);

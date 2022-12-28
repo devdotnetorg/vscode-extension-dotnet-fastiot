@@ -20,7 +20,7 @@ export class IotDeviceAccount extends BaseTreeItem{
   public Groups: Array<string>=[]; // $ groups debugvscode = debugvscode : debugvscode sudo docker
 
   public get PathKey(): string| undefined {
-    return this.Device?.Config.KeysPathSettings +"\\"+this.Identity;}
+    return this.Device?.Config.Folder.DeviceKeys +"\\"+this.Identity;}
     
   public get SshConfig(): any {
     var sshconfig  = {
@@ -90,7 +90,7 @@ export class IotDeviceAccount extends BaseTreeItem{
           obj:undefined
         });
         //
-        result = await this.Client.RunScript(sshconfig,undefined, config.ExtensionPath,
+        result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
           "createaccountroot",undefined, false,false);
       }else
       {
@@ -101,7 +101,7 @@ export class IotDeviceAccount extends BaseTreeItem{
           obj:undefined
         });
         //
-        result = await this.Client.RunScript(sshconfig,undefined, config.ExtensionPath,
+        result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
           "createaccount",paramsScript, false,false);
       }
       if(result.SystemMessage){
@@ -133,7 +133,7 @@ export class IotDeviceAccount extends BaseTreeItem{
       if(data)
       {
         const fileName=`id-rsa-${idDevice}-${accountNameDebug}`;
-        pathFile=`${config.KeysPathSettings}\\${fileName}`;
+        pathFile=`${config.Folder.DeviceKeys}\\${fileName}`;
         fs.writeFileSync(pathFile,data,undefined);
         //Attribute writing
         this.Host=sshconfig.host.toString();
@@ -154,7 +154,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         //put file 20-gpio-fastiot.rules in folder /etc/udev/rules.d
         //read file 20-gpio-fastiot.rules
         const nameFile = "20-gpio-fastiot.rules";
-        const pathFileLocalRules= `${config.ExtensionPath}\\vscodetemplates\\${nameFile}`;
+        const pathFileLocalRules= `${config.Folder.Extension}\\vscodetemplates\\${nameFile}`;
         if (!fs.existsSync(pathFileLocalRules))
         {
           return Promise.resolve(new IotResult(StatusResult.Error,`File not found! ${pathFileLocalRules}`,undefined));   
@@ -170,7 +170,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         result = await this.Client.PutFile(sshconfig,undefined,pathFile,dataFile,"utf8",false);
         if(result.Status==StatusResult.Error) return Promise.resolve(result);            
         //add udev rules
-        result = await this.Client.RunScript(sshconfig,undefined, config.ExtensionPath,
+        result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
             "addudevrules",paramsScript, false,false);
         if(result.SystemMessage){
               this.Client.FireChangedState({
@@ -188,7 +188,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         ChallengeResponseAuthentication yes
         AuthenticationMethods publickey password
       */
-      result = await this.Client.RunScript(sshconfig,undefined, config.ExtensionPath,
+      result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
           "changeconfigssh",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({

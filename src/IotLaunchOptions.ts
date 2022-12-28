@@ -78,7 +78,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     //let rsync_program=this.ConfigurationLaunch.Config.PathFoldercwRsync+"\\rsync.exe";
     //rsync_program=ReverseSeparatorReplacement(rsync_program);
    // this.MergeDictionary.set("%RSYNCPROGRAM%",rsync_program);    
-    let ssh_key=this.ConfigurationLaunch.Config.KeysPathSettings+"\\"+<string>this.Device?.Account.Identity;
+    let ssh_key=this.ConfigurationLaunch.Config.Folder.DeviceKeys+"\\"+<string>this.Device?.Account.Identity;
     ssh_key=ReverseSeparatorReplacement(ssh_key);
     this.MergeDictionary.set("%SSH_KEY%",ssh_key);
     this.MergeDictionary.set("%USER_DEBUG%",<string>this.Device?.Account.UserName);

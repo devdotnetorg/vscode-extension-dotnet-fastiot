@@ -1,9 +1,10 @@
 #YAML
 id: dotnet-console
 #dependsOn: none # dependencies/inheritance in templates. Coming in one of the next version
-platform: windows # *, windows, linux. Only Windows is currently supported
-version: 1
-releaseDate: 24/12/2022
+platform: # *, windows, linux. Only Windows is currently supported
+  - windows
+version: 0.1
+releaseDate: 24.12.2022
 author: DevDotNet.ORG
 label: .NET Console Application
 detail: Creates a minimal console application sample
@@ -12,6 +13,9 @@ endDeviceArchitecture: # *, armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l
   - aarch64
   - x86_64
+dependOnPackages: # none
+  - dotnetruntimes
+  - debugger
 typeProj: dotnet # template type is related to processing logic
 projName: DotnetConsoleApp
 mainFileProj: dotnetapp.csproj

@@ -53,7 +53,7 @@ export class IotDeviceInformation extends BaseTreeItem{
       //Иногда с первого раза не устанавливается пакет в Ubuntu после его удаления
       //поэтому три попытки установить
       //1
-      let result = await this.Client.RunScript(sshconfig,undefined, config.ExtensionPath,
+      let result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
           "pregetinformation",undefined, false,false);
       if(result.SystemMessage){
          this.Client.FireChangedState({
@@ -63,7 +63,7 @@ export class IotDeviceInformation extends BaseTreeItem{
           });
       }      
       //2
-      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, config.ExtensionPath,
+      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
          "pregetinformation",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({
@@ -73,7 +73,7 @@ export class IotDeviceInformation extends BaseTreeItem{
              });
          }    
       //3
-      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, config.ExtensionPath,
+      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
          "pregetinformation",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({
@@ -90,7 +90,7 @@ export class IotDeviceInformation extends BaseTreeItem{
          console:"Run: getinformation.sh",
          obj:undefined
        });
-      result = await this.Client.RunScript(sshconfig,undefined, config.ExtensionPath,
+      result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
           "getinformation",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({

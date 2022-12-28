@@ -14,14 +14,17 @@
 		"internalName": "vscode-extension-dotnet-fastiot"
 	},
 	"keywords": [
+		".NET",
+		".NET Core",
+		"dotnet",
 		"Debugging",
 		"Embedded",
 		"IoT",
 		"Linux",
 		"SBC",
+		"Board",
 		"Raspberry",
-		"Remote",
-		"csproj"
+		"Remote"
 	],
 	"engines": {
 		"vscode": "^1.63.0"
@@ -62,10 +65,10 @@
 						"default": "sudo",
 						"description": "Linux group for a new user (debugvscode) of a development device."
 					},
-					"fastiot.device.sharedpathfolder": {
+					"fastiot.device.applicationdatafolder": {
 						"type": "string",
 						"default": "",
-						"description": "Shared folder for storing keys, applications, templates"
+						"description": "Shared folder for storing keys, templates"
 					},
 					"fastiot.device.pathfolderkeys": {
 						"type": "string",
