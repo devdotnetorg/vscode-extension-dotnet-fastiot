@@ -4,7 +4,7 @@ id: dotnet-console
 platform: # *, windows, linux. Only Windows is currently supported
   - windows
 version: 0.1
-releaseDate: 24.12.2022
+releaseDate: 2022-12-29
 author: DevDotNet.ORG
 label: .NET Console Application
 detail: Creates a minimal console application sample

@@ -15,10 +15,10 @@ src/**
 .gitattributes
 assets/source/**
 vscodetemplates/source**
-vscodetemplates/**
+#vscodetemplates/**
 docs/**
 samples/**
-templates/**
+#templates/**
 installation.md
 CHANGELOG_ru.md
 README.md
