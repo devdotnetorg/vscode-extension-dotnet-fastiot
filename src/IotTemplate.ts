@@ -32,12 +32,14 @@ export class IotTemplate {
       return this._path+"\\template.fastiot.yaml";}
   //YAML file attributes
   public Attributes: IotTemplateAttribute; 
+  public SystemType:TypeTemplate;
 
-  constructor(path:string
+  constructor(path:string,systemType:TypeTemplate
     ){
       this._path=path;
       this.Validation();
-      this.Attributes= new IotTemplateAttribute(this.YAMLDescriptionPath);  
+      this.Attributes= new IotTemplateAttribute(this.YAMLDescriptionPath);
+      this.SystemType= systemType;
     }
   
   private Validation()
@@ -58,4 +60,11 @@ export class IotTemplate {
       throw new Error(`${this.YAMLDescriptionPath} file does not exist`);
     }
   }
+}
+
+export enum TypeTemplate {
+  none = "None",
+  system = "System",
+  download = "Download",
+  user  = "User"
 }

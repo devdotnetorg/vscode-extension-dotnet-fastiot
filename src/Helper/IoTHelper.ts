@@ -10,19 +10,19 @@ export function  Sleep (time:number) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-export function GetConfiguration(context: vscode.ExtensionContext):IotConfiguration {    
-	let applicationDataFolder: string=<string>vscode.workspace.getConfiguration().get('fastiot.device.applicationdatafolder');
+export function GetConfiguration(context: vscode.ExtensionContext,outputChannel:vscode.OutputChannel):IotConfiguration {    
+	let applicationDataPath: string=<string>vscode.workspace.getConfiguration().get('fastiot.device.applicationdatafolder');
 	//Application folder definition
-	if(applicationDataFolder == null||applicationDataFolder == undefined||applicationDataFolder == "") 
+	if(applicationDataPath == null||applicationDataPath == undefined||applicationDataPath == "") 
 	{
 		/* Get home directory of the user in Node.js */
 		// check the available memory
 		const userHomeDir = os.homedir();
-		applicationDataFolder=userHomeDir+"\\fastiot";
+		applicationDataPath=userHomeDir+"\\fastiot";
 		//Saving settings
-		vscode.workspace.getConfiguration().update('fastiot.device.applicationdatafolder',applicationDataFolder,true);
+		vscode.workspace.getConfiguration().update('fastiot.device.applicationdatafolder',applicationDataPath,true);
 	}
-	let config:IotConfiguration= new IotConfiguration(applicationDataFolder,context);
+	let config:IotConfiguration= new IotConfiguration(applicationDataPath,context);
 	config.UsernameAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
 	config.GroupsAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.groups');
 	config.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
@@ -42,6 +42,12 @@ export function GetConfiguration(context: vscode.ExtensionContext):IotConfigurat
 		vscode.workspace.getConfiguration().update('fastiot.device.pathfolderkeys',"",true);
 		vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
 	}
+	//Clear
+	//config.Folder.ClearTmp();
+	//Templates
+	const uri="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono/templates/templatelist.fastiot.yaml";
+	config.Templates.Load().finally(()=>config.Templates.DownloadAndLoad(uri));
+	//
 	return config	
 }
 

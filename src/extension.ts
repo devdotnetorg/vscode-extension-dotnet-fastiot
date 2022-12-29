@@ -74,7 +74,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	//statusBarItem.color="red";	
 	statusBarItemDevice.hide();
 	//Get config
-	let config=GetConfiguration(context);
+	let config=GetConfiguration(context,outputChannel);
 	//read JSON devices
 	const jsonDevices=vscode.workspace.getConfiguration().get('fastiot.device.all.JSON');	 
     let treeDataDevicesProvider = new TreeDataDevicesProvider(outputChannel,statusBarItemDevice,

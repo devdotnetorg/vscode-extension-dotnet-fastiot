@@ -26,10 +26,10 @@ export class IotConfigurationFolder {
     return this.ApplicationData+"\\tmp";}
 
   constructor(
-    applicationDataFolder: string,
+    applicationDataPath: string,
     context: vscode.ExtensionContext
     ){
-      this._applicationData=applicationDataFolder;
+      this._applicationData=applicationDataPath;
       this._context=context;
       //Create folders
       MakeDirSync(this.ApplicationData);
@@ -37,8 +37,6 @@ export class IotConfigurationFolder {
       MakeDirSync(this.TemplatesUser);
       MakeDirSync(this.TemplatesDownload);
       MakeDirSync(this.Temp);
-      //
-      this.ClearTmp();
     }
 
   /*
