@@ -6,7 +6,7 @@ import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation} from './IotDeviceInformation';
 import {IotConfiguration } from './IotConfiguration';
    
-export enum StatusResult { None="None", Ok="Ok", Error="Error"};
+export enum StatusResult { None="None", Ok="Ok", No ="No", Error="Error"};
 
 export class IotResult {  
   private _status: StatusResult;  

@@ -13,12 +13,20 @@ export class IotConfiguration {
   public TemplateTitleLaunch:string="";
   public Folder: IotConfigurationFolder;
   public Templates: IotTemplateCollection;
+  private _outputChannel: vscode.OutputChannel;
+
   constructor(
     applicationDataPath: string,
-    context: vscode.ExtensionContext             
+    context: vscode.ExtensionContext,
+    outputChannel:vscode.OutputChannel
     ){
+      this._outputChannel=outputChannel;
       this.Folder = new IotConfigurationFolder(applicationDataPath,context);
       this.Templates= new IotTemplateCollection(this)
+    }
+
+    public async Log(value:string):Promise<void> {
+      this._outputChannel.append(value);
     }
     
 }

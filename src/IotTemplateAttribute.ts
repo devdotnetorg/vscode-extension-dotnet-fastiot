@@ -72,11 +72,18 @@ export class IotTemplateAttribute {
   private _fileNameReplacement:Array<string>=[]; 
   public get FileNameReplacement(): Array<string> {
     return this._fileNameReplacement;}
+  //Validation
+  private _isValid:boolean=false;
+  public get IsValid(): boolean {
+    return this._isValid;}
+  private _validationErrors:Array<string>=[]; 
+  public get ValidationErrors(): Array<string> {
+      return this._validationErrors;}
 
   constructor(path:string
     ){
       this.Validation();
-      this.Parse(path);
+      if(this.IsValid) this.Parse(path);
     }
 
   private Parse(path:string)
@@ -170,7 +177,9 @@ export class IotTemplateAttribute {
   // TODO: do validation
   private Validation()
   {
-    
+
+    //result
+    if(this._validationErrors.length=0) this._isValid=true;
   }
 
 }

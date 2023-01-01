@@ -14,12 +14,13 @@ src/**
 
 .gitattributes
 assets/source/**
-vscodetemplates/source**
 vscodetemplates/**
 docs/**
 samples/**
-templates/**
 installation.md
 CHANGELOG_ru.md
 README.md
 README_ru.md
+
+templates/system/dotnet-console/**
+templates/system/*.yaml

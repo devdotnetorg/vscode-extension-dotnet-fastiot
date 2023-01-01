@@ -16,10 +16,10 @@ import {IotLaunchOptions} from './IotLaunchOptions';
 import {IotLaunchEnvironment} from './IotLaunchEnvironment';
 import {IotLaunchProject} from './IotLaunchProject';
 import {IotTemplateAttribute} from './IotTemplateAttribute';
-import {GetUniqueLabel,MakeDirSync,MergeWithDictionary,DeleteComments} from './Helper/IoTHelper';
+import {EntityType,GetUniqueLabel,MakeDirSync,MergeWithDictionary,DeleteComments} from './Helper/IoTHelper';
 
 export class IotTemplate {
-  private _path:string  
+  private _path:string;
   public get Path(): string {
     return this._path;}
   public get AppsPath(): string {
@@ -30,41 +30,45 @@ export class IotTemplate {
     return this._path+"\\template.fastiot.png";}
   public get YAMLDescriptionPath(): string {
       return this._path+"\\template.fastiot.yaml";}
+  //Validation
+  private _isValid:boolean=false;
+  public get IsValid(): boolean {
+    return this._isValid;}
+  private _validationErrors:Array<string>=[]; 
+  public get ValidationErrors(): Array<string> {
+      return this._validationErrors;}
   //YAML file attributes
   public Attributes: IotTemplateAttribute; 
-  public SystemType:TypeTemplate;
+  public Type:EntityType=EntityType.none;
 
-  constructor(path:string,systemType:TypeTemplate
+  constructor(path:string,type:EntityType
     ){
       this._path=path;
-      this.Validation();
       this.Attributes= new IotTemplateAttribute(this.YAMLDescriptionPath);
-      this.SystemType= systemType;
+      if(!this.Attributes.IsValid) 
+        this._validationErrors = this.Attributes.ValidationErrors.slice();
+      this.Validation();
+      //
+      if(this.IsValid){
+        this.Type= type;
+      }
     }
   
   private Validation()
   {
-    if (!fs.existsSync(this.Path)) {
-      throw new Error(`${this.Path} folder does not exist`);
-    }
-    if (!fs.existsSync(this.AppsPath)) {
-      throw new Error(`${this.AppsPath} folder does not exist`);
-    }
-    if (!fs.existsSync(this.TemplatePath)) {
-      throw new Error(`${this.TemplatePath} folder does not exist`);
-    }
-    if (!fs.existsSync(this.ImagePath)) {
-      throw new Error(`${this.ImagePath} file does not exist`);
-    }
-    if (!fs.existsSync(this.YAMLDescriptionPath)) {
-      throw new Error(`${this.YAMLDescriptionPath} file does not exist`);
-    }
+    if (!fs.existsSync(this.Path)) 
+      this._validationErrors.push(`${this.Path} folder does not exist`);
+    if (!fs.existsSync(this.AppsPath)) 
+      this._validationErrors.push(`${this.AppsPath} folder does not exist`);
+    if (!fs.existsSync(this.TemplatePath)) 
+      this._validationErrors.push(`${this.TemplatePath} folder does not exist`);
+    if (!fs.existsSync(this.ImagePath)) 
+      this._validationErrors.push(`${this.ImagePath} file does not exist`);
+    if (!fs.existsSync(this.YAMLDescriptionPath)) 
+      this._validationErrors.push(`${this.YAMLDescriptionPath} file does not exist`);
+    //result
+    if(this._validationErrors.length=0) this._isValid=true;
   }
 }
 
-export enum TypeTemplate {
-  none = "None",
-  system = "System",
-  download = "Download",
-  user  = "User"
-}
+

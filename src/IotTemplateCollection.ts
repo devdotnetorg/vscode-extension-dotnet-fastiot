@@ -24,8 +24,8 @@ import {IotLaunchOptions} from './IotLaunchOptions';
 import {IotLaunchEnvironment} from './IotLaunchEnvironment';
 import {IotLaunchProject} from './IotLaunchProject';
 import {IotTemplateAttribute} from './IotTemplateAttribute';
-import {IotTemplate,TypeTemplate} from './IotTemplate';
-import {GetUniqueLabel,MakeDirSync,MergeWithDictionary,DeleteComments} from './Helper/IoTHelper';
+import {IotTemplate} from './IotTemplate';
+import {EntityType,GetUniqueLabel,MakeDirSync,MergeWithDictionary,DeleteComments} from './Helper/IoTHelper';
 
 export class IotTemplateCollection {
   public Templates:Map<string,IotTemplate>;
@@ -34,7 +34,179 @@ export class IotTemplateCollection {
     ){
       this.Templates= new Map<string,IotTemplate>();
       this._config=config;
+  }
+  
+  private TemplateCanAddedToCollection(path:string,type:EntityType):IotResult
+  {
+    let template = new IotTemplate(path,type);
+    let result:IotResult;
+    if(!template.IsValid)
+    {
+      let errors:string="";
+      template.ValidationErrors.forEach(error =>
+        {
+          errors=errors + error + '\n ';
+        });
+      //error
+      result = new IotResult(StatusResult.Error,`Template ${path} has not been validated`,errors);
+      return result;
     }
+    //checking
+    if(!this.Templates.has(template.Attributes.Id))
+      {
+        //add new
+        result = new IotResult(StatusResult.Ok,"new",undefined);
+        result.returnObject=template;
+      }else
+      {
+        //update
+        const existingTemplate=this.Templates.get(template.Attributes.Id);
+        if(existingTemplate){
+          //system type checking
+          if (existingTemplate.Type==template.Type){
+            //template version comparison
+            if(compare(template.Attributes.Version, existingTemplate.Attributes.Version, '>'))
+            {
+              result = new IotResult(StatusResult.Ok,"update",undefined);
+              result.returnObject=template;
+            }else result = new IotResult(StatusResult.No,undefined,undefined);
+          }else result = new IotResult(StatusResult.No,undefined,undefined);
+        }else result = new IotResult(StatusResult.Ok,"new",undefined);
+      }
+    //end processing
+    return result;
+  }
+
+  private DeleteTemplateFromDisk(path:string)
+  {
+    //delete directory recursively
+    fs.rmdirSync(path, { recursive: true }); 
+  }
+  
+  private async LoadTemplatesFromFolder(path:string,type:EntityType):Promise<void>
+  {
+    let result= new IotResult(StatusResult.None,undefined,undefined);;
+    //getting a list of template directories
+    const files = fs.readdirSync(path);
+    //getting a list of folders
+    let listFolders:Array<string>=[]; 
+    files.forEach(name => {
+      //directory
+      const dir=`${path}\\${name}`;  
+      if(fs.lstatSync(dir).isDirectory())
+      {
+        listFolders.push(dir);
+      }
+    });
+    //ckeck
+    if (listFolders.length==0)
+    {
+      result=new IotResult(StatusResult.Error,`${path} folder is empty`,undefined);
+      //return Promise.resolve(result);
+    }
+    //checking all folders
+    listFolders.forEach(dir => {
+      const resultCanAddTemplate= this.TemplateCanAddedToCollection(dir,type);
+      switch(resultCanAddTemplate.Status) { 
+        case StatusResult.Error: {
+          result.AppendResult(resultCanAddTemplate);
+          break; 
+        } 
+        case StatusResult.Ok: {
+          const template:IotTemplate=resultCanAddTemplate.returnObject;
+          if(resultCanAddTemplate.Message=="update")
+          {
+             //removal previous version
+             this.Templates.delete(template.Attributes.Id);
+             //remove previous version from disk
+             this.DeleteTemplateFromDisk(dir);
+          }
+          //add template
+          this.Templates.set(template.Attributes.Id,template);
+          break; 
+        }
+        case StatusResult.No: { 
+          result.AppendResult(resultCanAddTemplate);
+          break; 
+        } 
+        default: { 
+           //statements; 
+           break; 
+        } 
+     }
+    });
+  }
+
+  private async GetListBuiltInTemplateNames():Promise<string[]>
+  {
+    let listNames:Array<string>=[];
+    const dirTemplates=this._config.Folder.Extension+
+      "\\templates\\system\\";
+    //getting a list of template files
+    const files = fs.readdirSync(dirTemplates );
+    files.forEach(name => {
+      //file
+      if(fs.lstatSync(name).isFile())
+      {
+        const re = /(?:\.([^.]+))?$/;
+        const ext = re.exec(name);
+        if(ext?.length==2)
+        {
+          if(ext[1]=="zip")
+          {
+            const nameTemplate=name.substring(0,name.length-4)
+            listNames.push(nameTemplate);
+          }
+        }
+      }
+    });
+    return Promise.resolve(listNames);
+  }
+
+  private async RecoverySystemTemplate(destPath:string):Promise<void>
+  {
+    //destination path check
+    if (fs.existsSync(destPath)) this.DeleteTemplateFromDisk(destPath);
+    //create dir
+    MakeDirSync(destPath);
+    const sourceTemplateZipPath= this._config.Folder.Extension+
+      "\\templates\\system\\"+destPath.substring(destPath.lastIndexOf('/'))+".zip";
+    //unpack
+    const unpackPath=destPath;
+    const zip = new StreamZip.async({ file: sourceTemplateZipPath });
+    const count = await zip.extract(null, unpackPath);
+    console.log(`Extracted ${count} entries`);
+    await zip.close();
+  }
+  
+
+  public async LoadTemplatesSystem():Promise<void>
+  {
+
+  }
+
+  public async LoadTemplatesUser():Promise<void>
+  {
+
+  }
+
+  public async LoadTemplatesCommunity():Promise<void>
+  {
+
+  }
+
+  public async DownloadTemplates():Promise<void>
+  {
+
+  }
+
+  public async UpdateSystemTemplates():Promise<void>
+  {
+
+  }
+
+
+  //********************************************** */
   public async Load():Promise<void>
   {
     let path=this._config.Folder.TemplatesDownload;

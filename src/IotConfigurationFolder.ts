@@ -16,10 +16,12 @@ export class IotConfigurationFolder {
     return this._applicationData+"\\settings\\keys";}
   public get Extension(): string {
       return this._context.extensionUri.fsPath;}
+  public get TemplatesSystem(): string {
+    return this.ApplicationData+"\\templates\\system";}
   public get TemplatesUser(): string {
     return this.ApplicationData+"\\templates\\user";}
-  public get TemplatesDownload(): string {
-    return this.ApplicationData+"\\templates\\download";}
+  public get TemplatesCommunity(): string {
+    return this.ApplicationData+"\\templates\\community";}
   public get AppsBuiltIn(): string {
     return this.Extension+"\\windows\\apps";}
   public get Temp(): string {
@@ -34,8 +36,9 @@ export class IotConfigurationFolder {
       //Create folders
       MakeDirSync(this.ApplicationData);
       MakeDirSync(this.DeviceKeys);
+      MakeDirSync(this.TemplatesSystem);
       MakeDirSync(this.TemplatesUser);
-      MakeDirSync(this.TemplatesDownload);
+      MakeDirSync(this.TemplatesCommunity);
       MakeDirSync(this.Temp);
     }
 

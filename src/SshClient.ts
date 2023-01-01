@@ -252,7 +252,7 @@ export class SshClient {
       let result = new IotResult(StatusResult.Ok,"Successfully",undefined);
       if(returnSSH2Promise) result.returnObject=ssh; else await ssh.close();      
       //
-      return Promise.resolve(result);       
+      return Promise.resolve(result);
   }
   
   public async ReadDir(sshConfig:any| undefined, ssh:SSH2Promise| undefined,
