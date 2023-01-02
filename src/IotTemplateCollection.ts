@@ -82,22 +82,36 @@ export class IotTemplateCollection {
     //delete directory recursively
     fs.rmdirSync(path, { recursive: true }); 
   }
+  private GetListDirTemplatesFromFolder(path:string,type:EntityType):string[]
+  {
+    let listFolders:Array<string>=[];
+    //getting a list of template directories
+    if(type==EntityType.system)
+    {
+      this.GetListNameBuiltInTemplates().forEach(name => {
+        //directory
+        const dir=`${path}\\${name}`;
+        listFolders.push(dir);
+      });
+    }else{
+      const files = fs.readdirSync(path);
+      //getting a list of folders
+      files.forEach(name => {
+        //directory
+        const dir=`${path}\\${name}`;  
+        if(fs.lstatSync(dir).isDirectory())
+        {
+          listFolders.push(dir);
+        }
+      });
+    }
+    return listFolders;
+  }
   
   private async LoadTemplatesFromFolder(path:string,type:EntityType):Promise<void>
   {
-    let result= new IotResult(StatusResult.None,undefined,undefined);;
-    //getting a list of template directories
-    const files = fs.readdirSync(path);
-    //getting a list of folders
-    let listFolders:Array<string>=[]; 
-    files.forEach(name => {
-      //directory
-      const dir=`${path}\\${name}`;  
-      if(fs.lstatSync(dir).isDirectory())
-      {
-        listFolders.push(dir);
-      }
-    });
+    let result= new IotResult(StatusResult.None,undefined,undefined);
+    const listFolders=this.GetListDirTemplatesFromFolder(path,type);
     //ckeck
     if (listFolders.length==0)
     {
@@ -106,7 +120,14 @@ export class IotTemplateCollection {
     }
     //checking all folders
     listFolders.forEach(dir => {
-      const resultCanAddTemplate= this.TemplateCanAddedToCollection(dir,type);
+      let resultCanAddTemplate= this.TemplateCanAddedToCollection(dir,type);
+      //Recovery system template
+      if(type==EntityType.system&&StatusResult.Error==resultCanAddTemplate.Status)
+      {
+        this.RecoverySystemTemplate(dir);
+        resultCanAddTemplate= this.TemplateCanAddedToCollection(dir,type);
+      }
+      //
       switch(resultCanAddTemplate.Status) { 
         case StatusResult.Error: {
           result.AppendResult(resultCanAddTemplate);
@@ -137,7 +158,7 @@ export class IotTemplateCollection {
     });
   }
 
-  private async GetListBuiltInTemplateNames():Promise<string[]>
+  private GetListNameBuiltInTemplates():string[]
   {
     let listNames:Array<string>=[];
     const dirTemplates=this._config.Folder.Extension+
@@ -160,7 +181,7 @@ export class IotTemplateCollection {
         }
       }
     });
-    return Promise.resolve(listNames);
+    return listNames;
   }
 
   private async RecoverySystemTemplate(destPath:string):Promise<void>
@@ -178,25 +199,178 @@ export class IotTemplateCollection {
     console.log(`Extracted ${count} entries`);
     await zip.close();
   }
-  
 
   public async LoadTemplatesSystem():Promise<void>
   {
-
+    await this.LoadTemplatesFromFolder(this._config.Folder.TemplatesSystem,EntityType.system);
   }
 
   public async LoadTemplatesUser():Promise<void>
   {
-
+    await this.LoadTemplatesFromFolder(this._config.Folder.TemplatesUser,EntityType.user);
   }
 
   public async LoadTemplatesCommunity():Promise<void>
   {
-
+    await this.LoadTemplatesFromFolder(this._config.Folder.TemplatesCommunity,EntityType.community);
   }
 
-  public async DownloadTemplates():Promise<void>
+  public async GetDownloadListTemplates(url:string):Promise<EntityDownloadTemplate[]>
   {
+    let listDownloadTemplates:Array<EntityDownloadTemplate>=[];
+    //download templatelist.fastiot.yaml
+    const response = await axios.get(url);
+    console.log(response.status); //200
+    console.log(response.data);
+    //parse templatelist.fastiot.yaml
+    const obj=YAML.parse(response.data);
+    console.log(obj);  
+    //template download
+    let index=0; 
+    do { 				
+          let item=obj.templates[index];
+          if(item) {
+            const itemId=item.id;
+            const itemVersion=item.version;
+            const itemUrl=url.substring(0,url.lastIndexOf('/'))+"/"+itemId+".zip";
+            //const filename = uri.split('/').pop()?.substring(0,uri.split('/').pop()?.lastIndexOf('.'));
+            //const fileZipPath=this._config.Folder.Temp+"\\"+filename+".zip";
+            console.log(itemUrl);
+            const downloadTemplate=new EntityDownloadTemplate(
+                itemId,itemVersion,itemUrl);
+            listDownloadTemplates.push(downloadTemplate);
+            //next position
+            index=index+1;
+          }else break;
+        }  
+    while(true)
+    //result
+    return Promise.resolve(listDownloadTemplates);
+  }
+
+  private async DownloadTemplate(item:EntityDownloadTemplate,destPath:string,type:EntityType):Promise<IotResult>
+  {
+    let result:IotResult;
+    //clear
+    this._config.Folder.ClearTmp();
+    //download *.zip
+    const fileZipPath=this._config.Folder.Temp+"\\"+item.Id+".zip";
+    await downloadFile(item.Url,fileZipPath);
+    //unpack
+    let unpackPath=this._config.Folder.Temp+"\\"+item.Id;
+    const zip = new StreamZip.async({ file: fileZipPath });
+    const count = await zip.extract(null, unpackPath);
+    console.log(`Extracted ${count} entries`);
+    await zip.close();
+    //template can added
+    const resultCanAddTemplate= this.TemplateCanAddedToCollection(unpackPath,type);
+    //
+    switch(resultCanAddTemplate.Status) { 
+      case StatusResult.Error: {
+        result = new IotResult(StatusResult.Error,"update",undefined);
+        result.AppendResult(resultCanAddTemplate);
+        break; 
+      } 
+      case StatusResult.Ok: {
+        const template:IotTemplate=resultCanAddTemplate.returnObject;
+        if(resultCanAddTemplate.Message=="update")
+        {
+           //removal previous version
+           this.Templates.delete(template.Attributes.Id);
+           //remove previous version from disk
+           this.DeleteTemplateFromDisk(dir);
+        }
+        //add template
+        this.Templates.set(template.Attributes.Id,template);
+        break; 
+      }
+      case StatusResult.No: { 
+        result.AppendResult(resultCanAddTemplate);
+        break; 
+      } 
+      default: { 
+         //statements; 
+         break; 
+      } 
+   }
+
+
+
+    //move
+    const srcDir = unpackPath;
+		const destDir = destPath+"\\"+item.Id; //!!!! уязвимость
+    fs.moveSync(srcDir,destDir);
+
+    //result
+    result=new IotResult(StatusResult.Ok,undefined,undefined);
+    return Promise.resolve(result);
+  }
+
+
+
+
+  private async DownloadTemplates(url:string,destPath:string,type:EntityType):Promise<void>
+  {
+    const listDownloadTemplates= await this.GetDownloadListTemplates(url);
+    if(listDownloadTemplates.length==0)
+    {
+      return;
+    }
+    //next
+    listDownloadTemplates.forEach(item => {
+      //item
+      
+    });
+
+    :Array<EntityDownloadTemplate>=[];
+    const pathTemplates=this._config.Folder.TemplatesDownload;
+    const systemType:TypeTemplate=TypeTemplate.download;
+    //download templatelist.fastiot.yaml
+    const response = await axios.get(uriTemplateList);
+    console.log(response.status); //200
+    //const user = data.userDetails;
+    console.log("=====");
+    console.log(response.data);
+    //console.log(user);
+    //parse templatelist.fastiot.yaml
+    const obj=YAML.parse(response.data);
+    console.log(obj);  
+    //template download
+    let index=0; 
+    do { 				
+          let item=obj.templates[index];
+          if(item) {
+            const itemId=item.id;
+            const itemversion=item.version;
+            const uriTemplate=uriTemplateList.substring(0,uriTemplateList.lastIndexOf('/'))+"/"+itemId+".zip";
+            console.log(uriTemplate);
+            //existence check
+            if(this.Templates.has(itemId)) {
+              let existingTemplate=this.Templates.get(itemId);
+              //system type checking
+              if (existingTemplate?.SystemType==systemType){
+                //template version comparison
+                if(compare(itemversion, existingTemplate.Attributes.Version, '>')){
+                  //template update with larger version
+                  //download new template
+                  await this.DownloadAsZipAndUnpacking(uriTemplate);
+                };
+              }
+            }
+            else{
+              //download new template
+              await this.DownloadAsZipAndUnpacking(uriTemplate);
+            }
+            //next position
+            index=index+1;
+          }else break;
+        }  
+    while(true)
+    //load
+    await this.LoadFromFolder(pathTemplates,systemType);
+
+
+
 
   }
 
@@ -371,6 +545,29 @@ export class IotTemplateCollection {
   }
 
 }
+
+export class EntityDownloadTemplate {  
+  private _id: string;  
+  public get Id(): string {
+    return this._id;}
+
+  private _version: string;  
+  public get Version(): string {
+    return this._version;}
+
+  private _url: string;  
+  public get Url(): string {
+    return this._url;}
+  constructor(
+    id:string,
+    version:string,
+    url:string,
+    ){
+      this._id=id;
+      this._version=version;
+      this._url=url;
+    }
+ }
 
 const finished = promisify(stream.finished);
 
