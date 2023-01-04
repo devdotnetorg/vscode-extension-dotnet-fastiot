@@ -55,7 +55,8 @@ export class IotTemplateCollection {
     if(!this.Templates.has(template.Attributes.Id))
       {
         //add new
-        result = new IotResult(StatusResult.Ok,"new",undefined);
+        result = new IotResult(StatusResult.Ok,"",undefined);
+        result.tag="new";
         result.returnObject=template;
       }else
       {
@@ -67,11 +68,16 @@ export class IotTemplateCollection {
             //template version comparison
             if(compare(template.Attributes.Version, existingTemplate.Attributes.Version, '>'))
             {
-              result = new IotResult(StatusResult.Ok,"update",undefined);
+              result = new IotResult(StatusResult.Ok,"",undefined);
+              result.tag="update";
               result.returnObject=template;
             }else result = new IotResult(StatusResult.No,undefined,undefined);
           }else result = new IotResult(StatusResult.No,undefined,undefined);
-        }else result = new IotResult(StatusResult.Ok,"new",undefined);
+        }else
+        {
+          result = new IotResult(StatusResult.Ok,"",undefined);
+          result.tag="new";
+        }
       }
     //end processing
     return result;
@@ -265,49 +271,39 @@ export class IotTemplateCollection {
     //template can added
     const resultCanAddTemplate= this.TemplateCanAddedToCollection(unpackPath,type);
     //
+    result= resultCanAddTemplate;
     switch(resultCanAddTemplate.Status) { 
       case StatusResult.Error: {
-        result = new IotResult(StatusResult.Error,"update",undefined);
-        result.AppendResult(resultCanAddTemplate);
         break; 
       } 
       case StatusResult.Ok: {
-        const template:IotTemplate=resultCanAddTemplate.returnObject;
-        if(resultCanAddTemplate.Message=="update")
+        let template:IotTemplate=resultCanAddTemplate.returnObject;
+        if(resultCanAddTemplate.tag=="update")
         {
            //removal previous version
            this.Templates.delete(template.Attributes.Id);
            //remove previous version from disk
-           this.DeleteTemplateFromDisk(dir);
+           this.DeleteTemplateFromDisk(template.Path);
         }
+        //move
+        const srcDir = unpackPath;
+		    const destDir = destPath+"\\"+item.Id; //!!!! проверить уязвимость
+        fs.moveSync(srcDir,destDir);
+        template= new IotTemplate(destDir,type);
         //add template
         this.Templates.set(template.Attributes.Id,template);
         break; 
       }
-      case StatusResult.No: { 
-        result.AppendResult(resultCanAddTemplate);
+      case StatusResult.No: {
         break; 
       } 
-      default: { 
-         //statements; 
-         break; 
+      default: {
+        break; 
       } 
    }
-
-
-
-    //move
-    const srcDir = unpackPath;
-		const destDir = destPath+"\\"+item.Id; //!!!! уязвимость
-    fs.moveSync(srcDir,destDir);
-
     //result
-    result=new IotResult(StatusResult.Ok,undefined,undefined);
     return Promise.resolve(result);
   }
-
-
-
 
   private async DownloadTemplates(url:string,destPath:string,type:EntityType):Promise<void>
   {
@@ -318,7 +314,11 @@ export class IotTemplateCollection {
     }
     //next
     listDownloadTemplates.forEach(item => {
-      //item
+      //download item
+
+      
+
+
       
     });
 

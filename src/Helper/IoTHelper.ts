@@ -22,7 +22,7 @@ export function GetConfiguration(context: vscode.ExtensionContext,outputChannel:
 		//Saving settings
 		vscode.workspace.getConfiguration().update('fastiot.device.applicationdatafolder',applicationDataPath,true);
 	}
-	let config:IotConfiguration= new IotConfiguration(applicationDataPath,context);
+	let config:IotConfiguration= new IotConfiguration(applicationDataPath,context,outputChannel);
 	config.UsernameAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
 	config.GroupsAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.groups');
 	config.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
