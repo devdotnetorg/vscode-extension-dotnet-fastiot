@@ -7,8 +7,9 @@ import {EntityType} from './EntityType';
 import {EntityBaseAttribute} from './EntityBaseAttribute';
 import {MakeDirSync} from '../Helper/IoTHelper';
 import {IotResult,StatusResult } from '../IotResult';
+import { V1Options } from 'uuid';
 
-export abstract class EntityBase {
+export abstract class EntityBase<T extends EntityBaseAttribute> {
   protected _entityIntLabel:string; //for understandable log
   //
   private _descFilePath:string="";
@@ -27,36 +28,40 @@ export abstract class EntityBase {
   private _validationErrors:Array<string>=[]; 
   public get ValidationErrors(): Array<string> {
       return this._validationErrors;}
-  public Attributes: EntityBaseAttribute|undefined; 
+  //public Attributes: EntityBaseAttribute|undefined;
+  public Attributes: T;
   public Type:EntityType=EntityType.none;
 
-  constructor(type:EntityType,entityIntLabel:string,
+  constructor(entityIntLabel:string, attribute:T
     ){
-      this.Type= type;
       this._entityIntLabel=entityIntLabel;
+      this.Attributes=attribute;
+      //
       this._validationErrors.push("non");
   }
 
-  public Init(filePath:string,entityBaseAttribute:EntityBaseAttribute,recoverySourcePath:string|undefined)
+  public Init(type:EntityType,filePath:string,recoverySourcePath:string|undefined)
   {
+    this.Type= type;
     this._recoverySourcePath=recoverySourcePath;
     this._descFilePath=filePath;
     this.Validation();
     if(!this.IsValid) return;
     //if(this.IsValid) this.Parse(path);
-    this.Attributes= entityBaseAttribute;
-    this.Attributes.Init(this._descFilePath);
-    if(this.Attributes.IsValid)
+    let attributes = this.Attributes as any; 
+
+    attributes.Init(this._descFilePath);
+    if(attributes.IsValid)
     {
       //ok
       //check if folder matches entity and id
-      if(this.ParentNameDir!=this.Attributes.Id)
+      if(this.ParentNameDir!=attributes.Id)
         this._validationErrors.push(`${this._entityIntLabel} folder name ${this.ParentNameDir} `+
-          `does not match id value ${this.Attributes.Id}.`+
+          `does not match id value ${attributes.Id}.`+
           `You need to rename the folder or change the ${this._entityIntLabel} id`);
     }else{
       //error
-      this._validationErrors = this.Attributes.ValidationErrors.slice();
+      this._validationErrors = attributes.ValidationErrors.slice();
     }
   }
 
@@ -109,13 +114,18 @@ export abstract class EntityBase {
     return result;
   }
 
-  protected Compare(entityBase:EntityBase):number{
+  public Compare1(entityBase:EntityBase<T>):number{
     //0 - equal, 1 - entityBase up, -1 - entityBase down
-    if(entityBase.Attributes?.Version==this.Attributes?.Version) return 0;
-    if(entityBase.Attributes&&this.Attributes){
-      if(compare(entityBase.Attributes?.Version, this.Attributes.Version, '>'))
-        return 1;
-    } 
+    return this.Compare2(entityBase.Type,entityBase.Attributes.Version);
+  }
+
+  public Compare2(type:EntityType, version:string):number{
+    //0 - equal, 1 - entityBase up, -1 - entityBase down
+    if(type==this.Type){
+      //
+      if(compare(version,this.Attributes.Version, '=')) return 0;
+      if(compare(version, this.Attributes.Version, '>')) return 1;
+    }
     return -1;
   }
 
