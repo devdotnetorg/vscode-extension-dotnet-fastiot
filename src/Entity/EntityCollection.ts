@@ -63,58 +63,25 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return ContainsType.yesMoreVersion;
   }
 
-  public LoadFromFolder(path:string,nameFile:string, type:EntityType):IotResult
+  protected GetListDirWithEntity(path:string):string[]
   {
-    let result= new IotResult(StatusResult.None,undefined,undefined);
-    const listFolders=this.GetListDirTemplatesFromFolder(path,type);
-    //ckeck
-    if (listFolders.length==0)
-    {
-      result=new IotResult(StatusResult.Error,`${path} folder is empty`,undefined);
-      //return Promise.resolve(result);
-    }
-    //checking all folders
-    listFolders.forEach(dir => {
-      let resultCanAddTemplate= this.TemplateCanAddedToCollection(dir,type);
-      //Recovery system template
-      if(type==EntityType.system&&StatusResult.Error==resultCanAddTemplate.Status)
-      {
-        this.RecoverySystemTemplate(dir);
-        resultCanAddTemplate= this.TemplateCanAddedToCollection(dir,type);
-      }
-      //
-      switch(resultCanAddTemplate.Status) { 
-        case StatusResult.Error: {
-          result.AppendResult(resultCanAddTemplate);
-          break; 
-        } 
-        case StatusResult.Ok: {
-          const template:IotTemplate=resultCanAddTemplate.returnObject;
-          if(resultCanAddTemplate.Message=="update")
-          {
-             //removal previous version
-             this.Templates.delete(template.Attributes.Id);
-             //remove previous version from disk
-             this.DeleteTemplateFromDisk(dir);
-          }
-          //add template
-          this.Templates.set(template.Attributes.Id,template);
-          break; 
+    let listFolders:Array<string>=[];
+    //getting a list of entity directories
+    const files = fs.readdirSync(path);
+    //getting a list of folders
+    files.forEach(name => {
+      //directory
+      const dir=`${path}\\${name}`;
+      if(fs.lstatSync(dir).isDirectory())
+        {
+          listFolders.push(dir);
         }
-        case StatusResult.No: { 
-          result.AppendResult(resultCanAddTemplate);
-          break; 
-        } 
-        default: { 
-           //statements; 
-           break; 
-        } 
-     }
-    });
-
-
-    //
+      });
+    return listFolders;
   }
+
+  abstract LoadFromFolder(path:string, type:EntityType):IotResult
+
 }
 
 export enum ContainsType {
