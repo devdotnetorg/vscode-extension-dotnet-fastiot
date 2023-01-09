@@ -11,8 +11,7 @@ import { V1Options } from 'uuid';
 
 export abstract class EntityBase<T extends EntityBaseAttribute> {
   protected _entityIntLabel:string; //for understandable log
-  //
-  private _descFilePath:string="";
+  private _descFilePath:string=""; //YAML file
   public get DescriptionFilePath(): string {
     return this._descFilePath;}
   public get ParentDir(): string {
@@ -25,7 +24,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   //Validation
   public get IsValid(): boolean {
     if(this._validationErrors.length=0) return true;else return false;}
-  private _validationErrors:Array<string>=[]; 
+  protected _validationErrors:Array<string>=[]; 
   public get ValidationErrors(): Array<string> {
       return this._validationErrors;}
   //public Attributes: EntityBaseAttribute|undefined;

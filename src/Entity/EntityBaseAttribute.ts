@@ -25,6 +25,9 @@ export class EntityBaseAttribute {
   private _detail:string="";  
   public get Detail(): string {
     return this._detail;}
+  private _language:string="";  
+  public get Language(): string {
+    return this._language;}
   private _endDeviceArchitecture:Array<string>=[]; 
   public get EndDeviceArchitecture(): Array<string> {
     return this._endDeviceArchitecture;}
@@ -38,7 +41,7 @@ export class EntityBaseAttribute {
   //Validation
   public get IsValid(): boolean {
     if(this._validationErrors.length=0) return true;else return false;}
-  private _validationErrors:Array<string>=[]; 
+  protected _validationErrors:Array<string>=[]; 
   public get ValidationErrors(): Array<string> {
       return this._validationErrors;}
 
@@ -47,7 +50,7 @@ export class EntityBaseAttribute {
       this._validationErrors.push("non");
     }
 
-  public Init(filePath:string)
+  protected Init(filePath:string)
   {
     this.Validation();
     if(this.IsValid) this.Parse(filePath);
@@ -64,6 +67,7 @@ export class EntityBaseAttribute {
       this._author=obj.author;
       this._label=obj.label;
       this._detail=obj.detail;
+      this._language=obj.language;
       //arrays
       let index=0; 
       //platform

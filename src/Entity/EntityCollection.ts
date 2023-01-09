@@ -80,7 +80,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return listFolders;
   }
 
-  abstract LoadFromFolder(path:string, type:EntityType):IotResult
+  abstract LoadFromFolder(path:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
 
 }
 
