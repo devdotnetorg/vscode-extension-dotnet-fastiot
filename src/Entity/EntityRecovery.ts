@@ -8,7 +8,7 @@ export abstract class EntityRecovery {
   constructor(
     ){}
 
-  protected RestoryDirStructure(sourceDir:string,destDir:string):IotResult
+  public RestoryDirStructure(sourceDir:string,destDir:string):IotResult
   {
     let result:IotResult;
     try {

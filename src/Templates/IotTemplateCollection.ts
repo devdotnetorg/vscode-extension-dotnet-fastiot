@@ -8,6 +8,7 @@ import {EntityBaseAttribute} from '../Entity/EntityBaseAttribute';
 import {IotTemplate} from './IotTemplate';
 import {IotTemplateAttribute} from './IotTemplateAttribute';
 import {IotResult,StatusResult } from '../IotResult';
+import {IotTemplateRecovery} from './IotTemplateRecovery';
 
 export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute,IotTemplate> {
 
@@ -20,7 +21,8 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
   {
     let result= new IotResult(StatusResult.None,undefined,undefined);
     //Recovery
-
+    let recovery = new IotTemplateRecovery(type); 
+    if(type==EntityType.system&&recoverySourcePath) recovery.RestoryDirStructure(recoverySourcePath,path);
     //
     const listFolders=this.GetListDirWithEntity(path);
     //ckeck
@@ -37,7 +39,8 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       if(!template.IsValid&&type==EntityType.system)
       {
         //Recovery
-
+        template.Recovery();
+        template.Init(type,filePath,recoverySourcePath);
       }
       //main
       if(template.IsValid)

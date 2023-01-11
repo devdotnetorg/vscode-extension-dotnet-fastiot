@@ -128,7 +128,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
     return -1;
   }
 
-  protected async Recovery():Promise<IotResult>
+  public async Recovery():Promise<IotResult>
   {
     let result:IotResult;
     const fileZipPath=`${this.RecoverySourcePath}\\${this.ParentNameDir}.zip`;

@@ -15,7 +15,7 @@ export abstract class EntityDownloader {
   constructor(
     ){}
 
-  private async DownloadEntity(item:EntityDownload,destPath:string):Promise<IotResult>
+  protected async DownloadEntity(item:EntityDownload,destPath:string):Promise<IotResult>
   {
     let result:IotResult;
     try {
@@ -40,7 +40,7 @@ export abstract class EntityDownloader {
     return Promise.resolve(result);
   }
 
-  private async GetDownloadListEntity(url:string):Promise<IotResult>
+  protected async GetDownloadListEntity(url:string):Promise<IotResult>
   {
     let result:IotResult;
     let listDownload:Array<EntityDownload>=[];
