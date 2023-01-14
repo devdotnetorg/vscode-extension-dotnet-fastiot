@@ -7,7 +7,6 @@ import {promisify} from 'util';
 
 import axios from 'axios';
 import YAML from 'yaml';
-import StreamZip from 'node-stream-zip';
 
 import {IotResult,StatusResult} from '../IotResult';
 
@@ -25,10 +24,10 @@ export abstract class EntityDownloader {
       await downloadFile(item.Url,fileZipPath);
       //unpack
       let unpackPath=`destPath\\${item.Id}`;
-      const zip = new StreamZip.async({ file: fileZipPath });
-      const count = await zip.extract(null, unpackPath);
-      console.log(`Extracted ${count} entries`);
-      await zip.close();
+      var AdmZip = require("adm-zip");
+      var zip = new AdmZip(fileZipPath);
+      // extracts everything
+      zip.extractAllTo(/*target path*/ unpackPath, /*overwrite*/ true);
       //delete zip
       fs.removeSync(fileZipPath);
       result = new IotResult(StatusResult.Ok,undefined,undefined);
@@ -48,7 +47,7 @@ export abstract class EntityDownloader {
       //download templatelist.fastiot.yaml
       const response = await axios.get(url);
       if(response.status!=200){
-        result = new IotResult(StatusResult.Error,`Unable to download file ${url}. Server response http code ${response.status}`,undefined);
+        result = new IotResult(StatusResult.Error,`Unable to download file ${url}. Server response http code ${response.status}`,`${response.statusText}`);
         return Promise.resolve(result);
       }
       //parse templatelist.fastiot.yaml
@@ -95,14 +94,20 @@ export class EntityDownload {
   private _url: string;  
   public get Url(): string {
     return this._url;}
+  private _forVersionExt:string;  
+  public get ForVersionExt(): string {
+    return this._forVersionExt;}
+  
   constructor(
     id:string,
     version:string,
     url:string,
+    forVersionExt:string
     ){
       this._id=id;
       this._version=version;
       this._url=url;
+      this._forVersionExt=forVersionExt;
     }
  }
 

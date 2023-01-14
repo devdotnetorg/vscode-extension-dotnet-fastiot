@@ -10,7 +10,7 @@ export function  Sleep (time:number) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-export function GetConfiguration(context: vscode.ExtensionContext,outputChannel:vscode.OutputChannel):IotConfiguration {    
+export function GetConfiguration(context: vscode.ExtensionContext,logCallback:(value:string) =>void,versionExt:string):IotConfiguration {    
 	let applicationDataPath: string=<string>vscode.workspace.getConfiguration().get('fastiot.device.applicationdatafolder');
 	//Application folder definition
 	if(applicationDataPath == null||applicationDataPath == undefined||applicationDataPath == "") 
@@ -22,7 +22,7 @@ export function GetConfiguration(context: vscode.ExtensionContext,outputChannel:
 		//Saving settings
 		vscode.workspace.getConfiguration().update('fastiot.device.applicationdatafolder',applicationDataPath,true);
 	}
-	let config:IotConfiguration= new IotConfiguration(applicationDataPath,context,outputChannel);
+	let config = new IotConfiguration(applicationDataPath,context,logCallback,versionExt);
 	config.UsernameAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
 	config.GroupsAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.groups');
 	config.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
@@ -43,10 +43,24 @@ export function GetConfiguration(context: vscode.ExtensionContext,outputChannel:
 		vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
 	}
 	//Clear
-	//config.Folder.ClearTmp();
+	config.Folder.ClearTmp();
 	//Templates
-	const uri="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono/templates/templatelist.fastiot.yaml";
-	config.Templates.Load().finally(()=>config.Templates.DownloadAndLoad(uri));
+	let url:string="";
+	if(context.extensionMode==vscode.ExtensionMode.Production)
+	{
+		url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
+	}else{
+		url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono/templates/system/templatelist.fastiot.yaml";
+	}
+	//for test
+	url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono/templates/system/templatelist.fastiot.yaml";
+	//
+	const LoadTemplates = async () => {
+		await config.Templates.LoadTemplatesSystem();
+		await config.Templates.UpdateSystemTemplate(url,config.Folder.Temp);
+		await config.Templates.LoadTemplatesUser();
+	  };
+	LoadTemplates();
 	//
 	return config	
 }

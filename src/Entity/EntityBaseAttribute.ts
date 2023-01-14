@@ -16,6 +16,9 @@ export class EntityBaseAttribute {
   private _releaseDate:Date=new Date();  
   public get ReleaseDate(): Date {
     return this._releaseDate;}
+  private _forVersionExt:string="";  
+  public get ForVersionExt(): string {
+    return this._forVersionExt;}
   private _author:string="";  
   public get Author(): string {
     return this._author;}
@@ -40,7 +43,7 @@ export class EntityBaseAttribute {
     return this._tags;}
   //Validation
   public get IsValid(): boolean {
-    if(this._validationErrors.length=0) return true;else return false;}
+    if(this._validationErrors.length==0) return true;else return false;}
   protected _validationErrors:Array<string>=[]; 
   public get ValidationErrors(): Array<string> {
       return this._validationErrors;}
@@ -50,12 +53,6 @@ export class EntityBaseAttribute {
       this._validationErrors.push("non");
     }
 
-  protected Init(filePath:string)
-  {
-    this.Validation();
-    if(this.IsValid) this.Parse(filePath);
-  }
-
   protected Parse(filePath:string){
     try {
       const file = fs.readFileSync(filePath, 'utf8');
@@ -64,6 +61,7 @@ export class EntityBaseAttribute {
       this._id=obj.id;
       this._version=obj.version;
       this._releaseDate=new Date(obj.releaseDate);
+      this._forVersionExt=obj.forVersionExt;
       this._author=obj.author;
       this._label=obj.label;
       this._detail=obj.detail;

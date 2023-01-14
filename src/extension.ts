@@ -63,18 +63,23 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	//OutputChannel
-	const outputChannel = vscode.window.createOutputChannel(".NET FastIoT");	
+	const versionExt=context.extension.packageJSON.version;
+	const outputChannel = vscode.window.createOutputChannel(".NET FastIoT");
 	outputChannel.appendLine("Welcome to .NET FastIoT!");	
 	outputChannel.appendLine("----------------------------------");
-	outputChannel.appendLine("Version: 0.2.0");	
+	outputChannel.appendLine(`Version: ${versionExt}`);	
 	outputChannel.appendLine("Feedback: fastiot@devdotnet.org");
 	outputChannel.appendLine("----------------------------------");
 	//TreeView Devices
 	let statusBarItemDevice = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
 	//statusBarItem.color="red";	
 	statusBarItemDevice.hide();
+	//Log function
+	const logCallback = (value:string) => {
+		outputChannel.appendLine(value);
+	  };
 	//Get config
-	let config=GetConfiguration(context,outputChannel);
+	let config=GetConfiguration(context,logCallback,versionExt);
 	//read JSON devices
 	const jsonDevices=vscode.workspace.getConfiguration().get('fastiot.device.all.JSON');	 
     let treeDataDevicesProvider = new TreeDataDevicesProvider(outputChannel,statusBarItemDevice,

@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 //import * as fs from 'fs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import StreamZip from 'node-stream-zip';
 import { MakeDirSync } from './Helper/IoTHelper';
 
 export class IotConfigurationFolder {
@@ -16,12 +15,14 @@ export class IotConfigurationFolder {
     return this._applicationData+"\\settings\\keys";}
   public get Extension(): string {
       return this._context.extensionUri.fsPath;}
+  public get Templates(): string {
+    return this.ApplicationData+"\\templates";}
   public get TemplatesSystem(): string {
-    return this.ApplicationData+"\\templates\\system";}
+    return this.Templates+"\\system";}
   public get TemplatesUser(): string {
-    return this.ApplicationData+"\\templates\\user";}
+    return this.Templates+"\\user";}
   public get TemplatesCommunity(): string {
-    return this.ApplicationData+"\\templates\\community";}
+    return this.Templates+"\\community";}
   public get AppsBuiltIn(): string {
     return this.Extension+"\\windows\\apps";}
   public get Temp(): string {
@@ -41,19 +42,6 @@ export class IotConfigurationFolder {
       MakeDirSync(this.TemplatesCommunity);
       MakeDirSync(this.Temp);
     }
-
-  /*
-  public async CheckAppcwRsync():Promise<void> {	
-    const checkDir=this.AppsBuiltIn+"\\settings\\apps\\cwrsync";
-    const pathCwRsyncZip=this.Extension+"\\windows\\apps\\cwrsync.zip";
-    if (fs.existsSync(checkDir+"\\rsync.exe")&&fs.existsSync(checkDir+"\\ssh.exe")) return;
-    //Put App cwRsync
-    const zip = new StreamZip.async({ file: pathCwRsyncZip });
-    const count = await zip.extract(null, checkDir);
-    console.log(`Extracted ${count} entries`);
-    await zip.close();
-  }
-  */
 
   //clearing temporary files
   public ClearTmp() {

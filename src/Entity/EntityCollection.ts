@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import {compare} from 'compare-versions';
 import {EntityBase} from './EntityBase';
 import {EntityBaseAttribute} from './EntityBaseAttribute';
 import {EntityType} from './EntityType';
@@ -8,9 +9,30 @@ import {IotResult,StatusResult } from '../IotResult';
 
 export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> {
   private _data:Map<string,T>;
-  constructor(
+
+  private _versionExt:string;  
+  public get VersionExt(): string {
+    return this._versionExt;}
+
+  private _basePath:string;  
+  public get BasePath(): string {
+    return this._basePath;}
+  private _recoverySourcePath:string;  
+  public get RecoverySourcePath(): string {
+    return this._recoverySourcePath;}
+
+  public get Count(): number {
+      return this._data.size;}
+
+  protected LogCallback:(value:string) =>void;
+
+  constructor(basePath: string, recoverySourcePath:string,logCallback:(value:string) =>void,versionExt:string
     ){
-      this._data = new Map<string,T>();  
+      this.LogCallback=logCallback;
+      this._data = new Map<string,T>(); 
+      this._basePath=basePath;
+      this._recoverySourcePath=recoverySourcePath;
+      this._versionExt = versionExt;
     }
 
   public Add(id:string,value:T):boolean
@@ -42,6 +64,18 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public Clear()
   {
     this._data.clear();
+  }
+
+  public IsCompatible1(value:T):boolean
+  {
+    const forVersionExt=value.Attributes.ForVersionExt;
+    return this.IsCompatible2(forVersionExt);
+  }
+
+  public IsCompatible2(forVersionExt:string):boolean
+  {
+    const currentVersionExt=this.VersionExt;
+    return compare(`${currentVersionExt}`,`${forVersionExt}`, '>=');
   }
 
   public Contains1(value:T):ContainsType
@@ -80,7 +114,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return listFolders;
   }
 
-  abstract LoadFromFolder(path:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
+  protected abstract LoadFromFolder(path:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
 
 }
 

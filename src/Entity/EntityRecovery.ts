@@ -32,7 +32,7 @@ export abstract class EntityRecovery {
     const files = fs.readdirSync(sourceDir);
     files.forEach(name => {
       //file
-      if(fs.lstatSync(name).isFile())
+      if(fs.lstatSync(`${sourceDir}\\${name}`).isFile())
       {
         const re = /(?:\.([^.]+))?$/;
         const ext = re.exec(name);
