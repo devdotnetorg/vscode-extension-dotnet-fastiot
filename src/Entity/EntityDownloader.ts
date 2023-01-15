@@ -96,7 +96,7 @@ export abstract class EntityDownloader {
           }else break;      
     } 
     while(true)
-    const downloadTemplate=new EntityDownload(obj,objVersion,objUrl,
+    const downloadTemplate=new EntityDownload(objId,objVersion,objUrl,
         objforVersionExt,platform);
     return downloadTemplate;
   }
