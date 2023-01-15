@@ -22,8 +22,9 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
   public async LoadTemplatesSystem():Promise<void>
   {
     this.LogCallback("Loading system templates");
-    const path=`${this.BasePath}\\${EntityType.system}`;
     const type=EntityType.system;
+    //
+    const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,this.RecoverySourcePath);
     this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
   }
@@ -31,17 +32,21 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
   public async LoadTemplatesUser():Promise<void>
   {
     this.LogCallback("Loading custom templates");
-    const path=`${this.BasePath}\\${EntityType.user}`;
-    const type=EntityType.system;
+    const type=EntityType.user;
+    //
+    const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,undefined);
     this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
   }
 
   public async LoadTemplatesCommunity():Promise<void>
   {
-    const path=`${this.BasePath}\\${EntityType.community}`;
-    const type=EntityType.system;
-    await this.LoadFromFolder(path,type,undefined);
+    this.LogCallback("Loading community templates");
+    const type=EntityType.community;
+    //
+    const path=`${this.BasePath}\\${type}`;
+    const result = await this.LoadFromFolder(path,type,undefined);
+    this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
   }
 
   protected async LoadFromFolder(path:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
@@ -126,133 +131,76 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
   public async UpdateSystemTemplate(url:string,tempPath:string):Promise<void>
   {
     this.LogCallback("Updating system templates");
-    //
-    const destPath=`${this.BasePath}\\${EntityType.system}`;
-    let downloader = new IotTemplateDownloader();
-    let result= new IotResult(StatusResult.None,undefined,undefined);
-    result= await downloader.GetDownloadListTemplate(url);
-    if(result.Status==StatusResult.Error)
-    {
-      this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
-      return;
-    }
-    this.LogCallback(`List of system templates loaded ${url}`);
-    let listDownload:Array<EntityDownload>=result.returnObject;
-    if(listDownload.length==0)
-    {
-      result= new IotResult(StatusResult.Ok,`Url: ${url}. No templates to download`,undefined);
-      this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
-      return;
-    }
-    //next
-    listDownload.forEach(async (item) => {
-      const isContains=this.Contains2(item.Id,EntityType.system,item.Version);
-      switch(isContains) { 
-        case ContainsType.no: {
-          result= await downloader.DownloadTemplate(item,tempPath);
-          if(result.Status==StatusResult.Ok)
-          {
-           const unpackPath= <string> result.returnObject;
-           let template=new  IotTemplate();
-           template.Init(EntityType.system,unpackPath,undefined);
-           if(template.IsValid)
-           {
-            template.Move(destPath);
-            this.Add(template.Attributes.Id,template);
-           }
-          }
-          break; 
-        }
-        case ContainsType.yesVersionSmaller: {
-          result= await downloader.DownloadTemplate(item,tempPath);
-          if(result.Status==StatusResult.Ok)
-          {
-           const unpackPath= <string> result.returnObject;
-           let template=new  IotTemplate();
-           template.Init(EntityType.system,unpackPath,undefined);
-           if(template.IsValid)
-           {
-            template.Move(destPath);
-            this.Update(template.Attributes.Id,template);
-           }
-          }
-          break; 
-        }
-        default: { 
-           //statements; 
-           break; 
-        } 
-      }
-    });
+    const result = await this.UpdateTemplate(url,EntityType.system,tempPath);
+    this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
     //result
-    this.LogCallback("Update of system templates completed successfully");
+    if(!(result.Status==StatusResult.Error)) this.LogCallback("Update of system templates completed successfully");
     return;
   }
 
-  public async UpdateTemplate(url:string,type:EntityType,tempPath:string):Promise<void>
+  public async UpdateTemplate(url:string,type:EntityType,tempPath:string):Promise<IotResult>
   {
-    this.LogCallback("Updating system templates");
-    //
-    const destPath=`${this.BasePath}\\${EntityType.system}`;
+    const destPath=`${this.BasePath}\\${type}`;
     let downloader = new IotTemplateDownloader();
     let result= new IotResult(StatusResult.None,undefined,undefined);
     result= await downloader.GetDownloadListTemplate(url);
-    if(result.Status==StatusResult.Error)
-    {
-      this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
-      return;
-    }
-    this.LogCallback(`List of system templates loaded ${url}`);
+    if(result.Status==StatusResult.Error) return Promise.resolve(result);
+    this.LogCallback(`List of templates loaded ${url}`);
     let listDownload:Array<EntityDownload>=result.returnObject;
     if(listDownload.length==0)
     {
       result= new IotResult(StatusResult.Ok,`Url: ${url}. No templates to download`,undefined);
-      this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
-      return;
+      return Promise.resolve(result);
     }
     //next
     listDownload.forEach(async (item) => {
-      const isContains=this.Contains2(item.Id,EntityType.system,item.Version);
-      switch(isContains) { 
-        case ContainsType.no: {
-          result= await downloader.DownloadTemplate(item,tempPath);
-          if(result.Status==StatusResult.Ok)
-          {
-           const unpackPath= <string> result.returnObject;
-           let template=new  IotTemplate();
-           template.Init(EntityType.system,unpackPath,undefined);
-           if(template.IsValid)
-           {
-            template.Move(destPath);
-            this.Add(template.Attributes.Id,template);
-           }
+      if(this.IsCompatible2(item.ForVersionExt,item.platform))
+      {
+        const isContains=this.Contains2(item.Id,EntityType.system,item.Version);
+        switch(isContains) { 
+          case ContainsType.no: {
+            result= await downloader.DownloadTemplate(item,tempPath);
+            if(result.Status==StatusResult.Ok)
+            {
+              const unpackPath= <string> result.returnObject;
+              let template=new  IotTemplate();
+              template.Init(EntityType.system,unpackPath,undefined);
+              if(template.IsValid)
+              {
+                template.Move(destPath);
+                this.Add(template.Attributes.Id,template);
+              }
+            }
+            break; 
           }
-          break; 
-        }
-        case ContainsType.yesVersionSmaller: {
-          result= await downloader.DownloadTemplate(item,tempPath);
-          if(result.Status==StatusResult.Ok)
-          {
-           const unpackPath= <string> result.returnObject;
-           let template=new  IotTemplate();
-           template.Init(EntityType.system,unpackPath,undefined);
-           if(template.IsValid)
-           {
-            template.Move(destPath);
-            this.Update(template.Attributes.Id,template);
-           }
+          case ContainsType.yesVersionSmaller: {
+            result= await downloader.DownloadTemplate(item,tempPath);
+            if(result.Status==StatusResult.Ok)
+            {
+              const unpackPath= <string> result.returnObject;
+              let template=new  IotTemplate();
+              template.Init(EntityType.system,unpackPath,undefined);
+              if(template.IsValid)
+              {
+                template.Move(destPath);
+                this.Update(template.Attributes.Id,template);
+              }
+            }
+            break; 
           }
-          break; 
+          default: { 
+            //statements; 
+            break; 
+          } 
         }
-        default: { 
-           //statements; 
-           break; 
-        } 
+      }else{
+        this.LogCallback(`Error. The template ${item.Url} is for a newer version of the extension.` +
+            `Update the extension.`);
       }
     });
     //result
-    this.LogCallback("Update of system templates completed successfully");
-    return;
+    result= new IotResult(StatusResult.Ok,undefined,undefined);
+    return Promise.resolve(result);
   }
 
 }

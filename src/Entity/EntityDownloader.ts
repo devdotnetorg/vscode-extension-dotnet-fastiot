@@ -57,19 +57,13 @@ export abstract class EntityDownloader {
       do { 				
             let item=obj.templates[index];
             if(item) {
-              const itemId=item.id;
-              const itemVersion=item.version;
-              const itemUrl=url.substring(0,url.lastIndexOf('/'))+"/"+itemId+".zip";
-              //const filename = uri.split('/').pop()?.substring(0,uri.split('/').pop()?.lastIndexOf('.'));
-              //const fileZipPath=this._config.Folder.Temp+"\\"+filename+".zip";
-              const downloadTemplate=new EntityDownload(
-                  itemId,itemVersion,itemUrl);
+              const downloadTemplate=this.ParseEntityDownload(item,url);
               listDownload.push(downloadTemplate);
               //next position
               index=index+1;
             }else break;
           }  
-    while(true)
+      while(true)
     } catch (err: any){
         result = new IotResult(StatusResult.Error,`Unable to download file ${url}.`,err);
         return Promise.resolve(result);
@@ -80,6 +74,32 @@ export abstract class EntityDownloader {
     return Promise.resolve(result);
   }
 
+  protected ParseEntityDownload(obj:any,url:string):EntityDownload
+  {
+    const objId=obj.id;
+    const objVersion=obj.version;
+    const objforVersionExt=obj.forVersionExt;
+    const objUrl=url.substring(0,url.lastIndexOf('/'))+"/"+objId+".zip";
+    //const filename = uri.split('/').pop()?.substring(0,uri.split('/').pop()?.lastIndexOf('.'));
+    //const fileZipPath=this._config.Folder.Temp+"\\"+filename+".zip";
+    //arrays
+    let platform:Array<string>=[];  
+    let index=0; 
+    //platform
+    index=0;
+    do { 				
+          let item=obj.platform[index];
+          if(item) {
+            platform.push(<string>item);            
+            //next position
+            index=index+1;
+          }else break;      
+    } 
+    while(true)
+    const downloadTemplate=new EntityDownload(obj,objVersion,objUrl,
+        objforVersionExt,platform);
+    return downloadTemplate;
+  }
 }
 
 export class EntityDownload {  
@@ -97,17 +117,22 @@ export class EntityDownload {
   private _forVersionExt:string;  
   public get ForVersionExt(): string {
     return this._forVersionExt;}
+  private _platform:Array<string>=[];  
+  public get platform(): Array<string> {
+    return this._platform;}
   
   constructor(
     id:string,
     version:string,
     url:string,
-    forVersionExt:string
+    forVersionExt:string,
+    platform:Array<string>
     ){
       this._id=id;
       this._version=version;
       this._url=url;
       this._forVersionExt=forVersionExt;
+      this._platform=platform;
     }
  }
 

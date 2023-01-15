@@ -69,13 +69,20 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public IsCompatible1(value:T):boolean
   {
     const forVersionExt=value.Attributes.ForVersionExt;
-    return this.IsCompatible2(forVersionExt);
+    const platform = value.Attributes.platform;
+    return this.IsCompatible2(forVersionExt,platform);
   }
 
-  public IsCompatible2(forVersionExt:string):boolean
+  public IsCompatible2(forVersionExt:string,platform:Array<string>):boolean
   {
     const currentVersionExt=this.VersionExt;
-    return compare(`${currentVersionExt}`,`${forVersionExt}`, '>=');
+    const isCompatibleVersion=compare(`${currentVersionExt}`,`${forVersionExt}`, '>=');
+    const currentPlatform=process.platform.toString();
+    const foundPlatform = platform.find(element => element == currentPlatform);
+    let isCompatiblePlatform=false;
+    if(foundPlatform) isCompatiblePlatform=true;
+    return (isCompatibleVersion&&isCompatiblePlatform);
+    //if(isCompatibleVersion&&isCompatiblePlatform) return true; else return false;
   }
 
   public Contains1(value:T):ContainsType
