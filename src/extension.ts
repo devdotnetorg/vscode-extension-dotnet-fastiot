@@ -99,8 +99,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	  });
 
 	//TreeView Projects	
-    let treeDataProjectsProvider = new TreeDataProjectsProvider(statusBarItemConfiguration,
-		config,treeDataDevicesProvider.RootItems,workspaceFolder);	
+    let treeDataProjectsProvider = new TreeDataProjectsProvider();	
     let vscodeTreeViewProjects=vscode.window.createTreeView('viewProjects', {
 		treeDataProvider: treeDataProjectsProvider
 	  });
@@ -262,10 +261,13 @@ export async function activate(context: vscode.ExtensionContext) {
 	let eventChangeConfiguration=vscode.workspace.onDidChangeConfiguration((e) => {		
 		if(e.affectsConfiguration('fastiot'))
 		{
+			/*
 			treeDataDevicesProvider.Config=config;
 			treeDataConfigurationsProvider.Config=config;
 			treeDataProjectsProvider.Config=config;
-			vscode.window.showInformationMessage('Changed extension settings: .NET FastIoT');		
+			*/
+			vscode.window.showInformationMessage('Changed extension settings: .NET FastIoT');
+			//vscode.window.showInformationMessage('You must restart the .NET FastIoT extension or VSCode to apply the new settings');	
 		}
     }, undefined, context.subscriptions);	
 	//Subscriptions
