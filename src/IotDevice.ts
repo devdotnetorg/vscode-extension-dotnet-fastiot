@@ -5,7 +5,7 @@ import {BaseTreeItem} from './BaseTreeItem';
 import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation, Existences} from './IotDeviceInformation';
 import {TypePackage,IotDevicePackage} from './IotDevicePackage';
-import {IotConfiguration } from './IotConfiguration';
+import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IotResult,StatusResult } from './IotResult';
 import {v4 as uuidv4} from 'uuid';
 import {IotItemTree } from './IotItemTree';

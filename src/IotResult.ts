@@ -4,7 +4,6 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation} from './IotDeviceInformation';
-import {IotConfiguration } from './IotConfiguration';
    
 export enum StatusResult { None="None", Ok="Ok", No ="No", Error="Error"};
 

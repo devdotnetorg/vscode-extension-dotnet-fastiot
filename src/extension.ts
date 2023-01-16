@@ -2,7 +2,8 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 //shared
-import {GetWorkspaceFolder,GetConfiguration} from './Helper/IoTHelper'; 
+import {GetWorkspaceFolder} from './Helper/IoTHelper';
+import {IotConfiguration} from './Configuration/IotConfiguration';
 import { IotItemTree } from './IotItemTree';
 
 //Devices
@@ -79,7 +80,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		outputChannel.appendLine(value);
 	  };
 	//Get config
-	let config=GetConfiguration(context,logCallback,versionExt);
+	let config=new IotConfiguration(context,logCallback,versionExt);
 	//read JSON devices
 	const jsonDevices=vscode.workspace.getConfiguration().get('fastiot.device.all.JSON');	 
     let treeDataDevicesProvider = new TreeDataDevicesProvider(outputChannel,statusBarItemDevice,

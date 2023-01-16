@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 //import * as fs from 'fs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { MakeDirSync } from './Helper/IoTHelper';
+import { MakeDirSync } from '../Helper/IoTHelper';
 
 export class IotConfigurationFolder {
   //from https://learn.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=net-7.0

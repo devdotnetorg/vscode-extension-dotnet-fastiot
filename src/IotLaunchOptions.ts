@@ -4,7 +4,7 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotItemTree} from './IotItemTree';
-import {IotConfiguration} from './IotConfiguration';
+import {IotConfiguration} from './Configuration/IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 import {IotLaunchConfiguration} from './IotLaunchConfiguration';
 import {MakeDirSync,ReverseSeparatorReplacement,ReverseSeparatorWinToLinux,GetDotnetRID} from './Helper/IoTHelper';

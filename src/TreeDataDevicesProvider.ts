@@ -14,7 +14,7 @@ import { IotDeviceDTO } from './IotDeviceDTO';
 import {Sleep} from './Helper/IoTHelper';
 
 import { IotResult,StatusResult } from './IotResult';
-import {IotConfiguration} from './IotConfiguration';
+import {IotConfiguration} from './Configuration/IotConfiguration';
 import {EventDispatcher,Handler} from './EventDispatcher';
 
 export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTreeItem> {    

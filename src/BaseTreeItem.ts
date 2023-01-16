@@ -6,7 +6,7 @@ import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation} from './IotDeviceInformation';
 import {IotItemTree} from './IotItemTree';
 import {IotDevicePackage} from './IotDevicePackage';
-import {IotConfiguration} from './IotConfiguration';
+import {IotConfiguration} from './Configuration/IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 import {SshClient} from './SshClient';
 

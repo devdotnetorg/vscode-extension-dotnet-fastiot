@@ -12,7 +12,7 @@ import { IotLaunchConfiguration } from './IotLaunchConfiguration';
 import {Sleep,DeleteComments} from './Helper/IoTHelper';
 
 import { IotResult,StatusResult } from './IotResult';
-import {IotConfiguration} from './IotConfiguration';
+import {IotConfiguration} from './Configuration/IotConfiguration';
 
 export class TreeDataProjectsProvider implements vscode.TreeDataProvider<BaseTreeItem> {
 
