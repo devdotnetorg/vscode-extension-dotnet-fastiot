@@ -52,6 +52,9 @@ import { deleteConfiguration } from './actionsConfiguration/deleteConfiguration'
 import { gotoDevice } from './actionsConfiguration/gotoDevice';
 import { addEnviroment,renameEnviroment,editEnviroment,deleteEnviroment } from './actionsConfiguration/managementEnviroment';
 
+//Project.actions
+import { createProject } from './actionsProject/createProject';
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -100,7 +103,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	  });
 
 	//TreeView Projects	
-    let treeDataProjectsProvider = new TreeDataProjectsProvider();	
+    let treeDataProjectsProvider = new TreeDataProjectsProvider(config);	
     let vscodeTreeViewProjects=vscode.window.createTreeView('viewProjects', {
 		treeDataProvider: treeDataProjectsProvider
 	  });
@@ -256,6 +259,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		(item:IotLaunchEnvironment) => {
 		deleteEnviroment(treeDataConfigurationsProvider,item);		
 	});
+	//Create project
+	let commandCreateProject = vscode.commands.registerCommand('viewProjects.CreateProject', () => {	
+		createProject(treeDataProjectsProvider,treeDataDevicesProvider.RootItems);	
+	});
 
 	//Events
 	//Extension configuration change event 
@@ -313,7 +320,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandAddEnviroment);
 	context.subscriptions.push(commandRenameEnviroment);
 	context.subscriptions.push(commandEditEnviroment);
-	context.subscriptions.push(commandDeleteEnviroment);	
+	context.subscriptions.push(commandDeleteEnviroment);
+	context.subscriptions.push(commandCreateProject);
 	//events
 	context.subscriptions.push(eventChangeConfiguration);
 }

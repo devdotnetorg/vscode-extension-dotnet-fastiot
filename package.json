@@ -453,7 +453,7 @@
 			},
 			{
 				"view": "viewProjects",
-				"contents": "[Create project](command:1viewConfigurations.AddConfiguration)  \n [About projects](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/)."
+				"contents": "[Create project](command:viewProjects.CreateProject)  \n [About projects](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/)."
 			}
 		]
 	},

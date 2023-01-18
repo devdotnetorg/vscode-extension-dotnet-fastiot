@@ -123,6 +123,16 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
   protected abstract LoadFromFolder(path:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
 
+  public Select(endDeviceArchitecture:string|undefined):Array<T>
+  {
+    let listEntitys:Array<T>=[];
+    this._data.forEach(entiny => {
+      //Entiny
+      let found=entiny.Attributes.EndDeviceArchitecture.find(value=>value==endDeviceArchitecture);
+      if(found) listEntitys.push(entiny);
+      });
+    return listEntitys;
+  }
 }
 
 export enum ContainsType {

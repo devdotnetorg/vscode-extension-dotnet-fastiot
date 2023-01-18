@@ -75,8 +75,8 @@ export class IotConfiguration {
 	  //
     const LoadTemplates = async () => {
       await this.Templates.LoadTemplatesSystem();
-      await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
-      await this.Templates.LoadTemplatesUser();
+      //await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
+      //await this.Templates.LoadTemplatesUser();
       };
 	  LoadTemplates();
 	//
