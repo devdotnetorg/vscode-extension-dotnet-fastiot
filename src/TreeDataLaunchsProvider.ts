@@ -13,12 +13,14 @@ import {Sleep,DeleteComments} from './Helper/IoTHelper';
 
 import { IotResult,StatusResult } from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
+import {IotTemplate} from './Templates/IotTemplate';
 
-export class TreeDataConfigurationsProvider implements vscode.TreeDataProvider<BaseTreeItem> {    
+export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTreeItem> {    
   public RootItems:Array<IotLaunchConfiguration>=[];
 
   private _isStopStatusBar:boolean=false;
   private _statusBarText:string="";
+  public OutputChannel:vscode.OutputChannel;
 
   private _config:IotConfiguration
   public get Config(): IotConfiguration {
@@ -46,11 +48,13 @@ export class TreeDataConfigurationsProvider implements vscode.TreeDataProvider<B
 
   constructor(    
     statusBarItem:vscode.StatusBarItem,
+    outputChannel:vscode.OutputChannel,
     config:IotConfiguration,
     devices: Array<IotDevice>,
     workspaceDirectory:string|undefined
   ) {            
-      this._statusBarItem=statusBarItem;      
+      this._statusBarItem=statusBarItem;
+      this.OutputChannel=outputChannel;     
       //Set config
       this._config=config;
       this._devices=devices;
@@ -233,5 +237,11 @@ export class TreeDataConfigurationsProvider implements vscode.TreeDataProvider<B
   {
     let configuration=this.FindbyIdConfiguration(idConfiguration);
     if(configuration) configuration.Rebuild();
+  }
+
+  public async CreateProject(device:IotDevice,template:IotTemplate, dstPath:string,nameProject:string,objJSON:any):Promise<IotResult> {
+    const result=template.CreateProject(device,this.Config,dstPath,nameProject,objJSON);
+    //result
+    return Promise.resolve(result);  
   }
 }

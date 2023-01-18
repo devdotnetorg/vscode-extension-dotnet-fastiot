@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataConfigurationsProvider } from '../TreeDataConfigurationsProvider';
+import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { GetWorkspaceFolder } from '../Helper/IoTHelper';
 import { IotDevice } from '../IotDevice';
@@ -10,7 +10,7 @@ import { IotLaunchProject } from '../IotLaunchProject';
 import { IotLaunchConfiguration } from '../IotLaunchConfiguration';
 import { IotLaunchEnvironment } from '../IotLaunchEnvironment';
 
-export async function addEnviroment(treeData: TreeDataConfigurationsProvider,item:IotLaunchEnvironment):
+export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
         let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdConfiguration);
         if(configuration)
@@ -36,7 +36,7 @@ export async function addEnviroment(treeData: TreeDataConfigurationsProvider,ite
         } 
 }
 
-export async function renameEnviroment(treeData: TreeDataConfigurationsProvider,item:IotLaunchEnvironment):
+export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
         //name
         const newName = await vscode.window.showInputBox({				
@@ -54,7 +54,7 @@ export async function renameEnviroment(treeData: TreeDataConfigurationsProvider,
         }
 }
 
-export async function editEnviroment(treeData: TreeDataConfigurationsProvider,item:IotLaunchEnvironment):
+export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
         //value
         const newValue = await vscode.window.showInputBox({				
@@ -71,7 +71,7 @@ export async function editEnviroment(treeData: TreeDataConfigurationsProvider,it
         }        
 }
 
-export async function deleteEnviroment(treeData: TreeDataConfigurationsProvider,item:IotLaunchEnvironment):
+export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
         let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdConfiguration);
         if(configuration){

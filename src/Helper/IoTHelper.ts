@@ -56,42 +56,6 @@ export function StringTrim(data:string): string {
 	return result;	
 }
 
-  // TODO: Move to project class dotNET
-export function GetDotnetRID(osName:string,architecture:string): string {
-  //Platform
-  //NET RID Catalog
-  //https://docs.microsoft.com/en-us/dotnet/core/rid-catalog	
-	let result:string;
-	//	
-    if(osName=="Alpine")
-    {
-		result="linux-musl-x64";
-    }else
-    {      
-      switch(architecture) { 
-        case "x86_64": { 
-			result="linux-x64";
-           	break; 
-        } 
-        case "armv7l": { 
-			result="linux-arm";
-			break; 
-        }
-        case "aarch64": {
-			result="linux-arm64";
-			break; 
-        } 
-        default: {
-			//statements;
-			result="linux-arm";
-			break; 
-        } 
-     }      
-    }
-	//
-	return result;
-}
-
 // TODO: Move to template class
 export function MergeWithDictionary(dictionary:Map<string,string>,data:string):string{
   let result:string=data;
@@ -113,28 +77,3 @@ export function DeleteComments(data:string):string{
 export function ConvertToValidFilename(value:string,replacement:string) {
   return (value.replace(/[\/|\\:*?"<>]/g, replacement));
 }
-
-// TODO: Move to dotnetHelper class
-/**
- * appname is used also as namespaces and rules for namespaces in C# are more restrictive
- * than those for folder names, so we have a custom check function
- * @param value appname
- */
-export function ConvertToValidDotNetAppName(value:string,replacement:string) {
-  return (value.replace(/^[a-zA-Z][a-zA-Z0-9_.]*[a-zA-Z0-9_]$/g, replacement));
-}
-
-/**
- * appname is used also as namespaces and rules for namespaces in C# are more restrictive
- * than those for folder names, so we have a custom check function
- * @param value appname
- */
-export function CheckDotNetAppName(value:string) {
-  //V1=^[a-zA-Z][a-zA-Z0-9_.]*[a-zA-Z0-9_]$
-  //V2=^[A-Za-z]+[\s][A-Za-z]+[.][A-Za-z]+$
-  var r = new RegExp("^[A-Za-z]+[\s][A-Za-z]+[.][A-Za-z]+$");
-  return r.test(value);
-}
-
-
-

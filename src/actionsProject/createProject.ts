@@ -7,11 +7,22 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
-import { MakeDirSync,ConvertToValidFilename,ConvertToValidDotNetAppName,CheckDotNetAppName } from '../Helper/IoTHelper';
+import { MakeDirSync,ConvertToValidFilename } from '../Helper/IoTHelper';
+import { CheckDotNetAppName } from '../Helper/dotnetHelper';
 import { config } from 'process';
 import {IotTemplate} from '../Templates/IotTemplate';
+import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
+import { GetDotNetTargets } from '../Helper/dotnetHelper';
 
-export async function createProject(treeData: TreeDataProjectsProvider,devices:Array<IotDevice>): Promise<void> {
+export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>): Promise<void> {
+    //objJSON: preparation of input parameters    
+    let jsonObj = {
+        dotnetTarget:""//,
+        //installpath:"",
+        //username:"",
+        //name:"",
+        //version:""        
+    };
     //Devices
     if(devices.length==0) {
         vscode.window.showErrorMessage(`Error. No available devices. Add device`);
@@ -49,9 +60,13 @@ export async function createProject(treeData: TreeDataProjectsProvider,devices:A
         canSelectMany: false,
         openLabel: 'Select a folder for the project (3/5)',
     };
+    /* TEST
     const folders = await vscode.window.showOpenDialog(options);
     if ((folders === undefined) || (folders[0] === undefined)) return;
     let folder=folders[0].fsPath;
+    */
+    let folder ="D:\\Anton\\Projects\\Tests";
+    //
     //Select name project
     let nameProject = await vscode.window.showInputBox({				
         prompt: 'prompt',
@@ -80,9 +95,34 @@ export async function createProject(treeData: TreeDataProjectsProvider,devices:A
             return;
         }
     }
+    //depending on project type
+    if(selectTemplate.Attributes.TypeProj=="dotnet"){
+        //Shows a selection list allowing multiple selections.
+        let itemTarget:Array<ItemQuickPick>=[];
+        //select target
+        GetDotNetTargets().forEach((value, key) => {
+            const item = new ItemQuickPick(value,"",key);
+            itemTarget.push(item);
+        });
+        SELECTED_ITEM = await vscode.window.showQuickPick(itemTarget,{title: 'Choose a .NET Target framework:',});
+        if(!SELECTED_ITEM) return;
+        //formation jsonObj
+        jsonObj.dotnetTarget=SELECTED_ITEM.value;
+    }
     //Main process
-    treeData.CreateProject(selectDevice,selectTemplate,selectFolder,nameProject)
-        
-
-
+    treeData.OutputChannel.appendLine(`Action: create an ${nameProject} project, ${selectTemplate.ParentDir} template`);
+    const result=await treeData.CreateProject(selectDevice,selectTemplate,selectFolder,nameProject,jsonObj);
+    //Output       
+    treeData.OutputChannel.appendLine("------------- Result -------------");
+    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
+    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
+    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+    //Message       
+    if(result.Status==StatusResult.Ok)
+    {
+        vscode.window.showInformationMessage(`${nameProject} project successfully created`);
+    }else
+    {            
+        vscode.window.showErrorMessage(`Error. Project not created! \n${result.Message}`);            
+    }
 }

@@ -37,7 +37,7 @@ import { enableDTO } from './actionsDevice/enableDTO';
 import { disableDTO } from './actionsDevice/disableDTO';
 
 //Configurations
-import { TreeDataConfigurationsProvider } from './TreeDataConfigurationsProvider';
+import { TreeDataLaunchsProvider } from './TreeDataLaunchsProvider';
 import { TreeDataProjectsProvider } from './TreeDataProjectsProvider';
 import { IotLaunchConfiguration } from './IotLaunchConfiguration';
 import { IotLaunchEnvironment } from './IotLaunchEnvironment';
@@ -96,14 +96,14 @@ export async function activate(context: vscode.ExtensionContext) {
 	let statusBarItemConfiguration = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);	
 	statusBarItemConfiguration.hide();
 	const workspaceFolder=GetWorkspaceFolder();
-    let treeDataConfigurationsProvider = new TreeDataConfigurationsProvider(statusBarItemConfiguration,
-		config,treeDataDevicesProvider.RootItems,workspaceFolder);	
+    let treeDataLaunchsProvider = new TreeDataLaunchsProvider(statusBarItemConfiguration,
+		outputChannel,config,treeDataDevicesProvider.RootItems,workspaceFolder);	
     let vscodeTreeViewConfigurations=vscode.window.createTreeView('viewConfigurations', {
-		treeDataProvider: treeDataConfigurationsProvider
+		treeDataProvider: treeDataLaunchsProvider
 	  });
 
 	//TreeView Projects	
-    let treeDataProjectsProvider = new TreeDataProjectsProvider(config);	
+    let treeDataProjectsProvider = new TreeDataProjectsProvider();	
     let vscodeTreeViewProjects=vscode.window.createTreeView('viewProjects', {
 		treeDataProvider: treeDataProjectsProvider
 	  });
@@ -213,55 +213,55 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Add new configuration		  
 	let commandAddConfiguration = vscode.commands.registerCommand('viewConfigurations.AddConfiguration', () => {	
-		addConfiguration(treeDataConfigurationsProvider,treeDataDevicesProvider.RootItems);	
+		addConfiguration(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems);	
 	});
 	//Refresh Configurations
 	let commandRefreshConfigurations = vscode.commands.registerCommand('viewConfigurations.RefreshConfigurations', () => {
-		refreshConfigurations(treeDataConfigurationsProvider);		
+		refreshConfigurations(treeDataLaunchsProvider);		
 	});
 	//Rename Configuration
 	let commandRenameConfiguration = vscode.commands.registerCommand('viewConfigurations.RenameConfiguration', 
 		(item:IotLaunchConfiguration) => {
-		renameConfiguration(treeDataConfigurationsProvider,item);
+		renameConfiguration(treeDataLaunchsProvider,item);
 	});
 	//Delete Configuration
 	let commandDeleteConfiguration = vscode.commands.registerCommand('viewConfigurations.DeleteConfiguration', 
 		(item:IotLaunchConfiguration) => {
-		deleteConfiguration(treeDataConfigurationsProvider,item);
+		deleteConfiguration(treeDataLaunchsProvider,item);
 	});
 	//Rebuild Configuration
 	let commandRebuildConfiguration = vscode.commands.registerCommand('viewConfigurations.RebuildConfiguration', 
 		(item:IotLaunchConfiguration) => {
-		rebuildConfiguration(treeDataConfigurationsProvider,item);
+		rebuildConfiguration(treeDataLaunchsProvider,item);
 	});
 	//Go to device 
 	let commandGoToDevice = vscode.commands.registerCommand('viewConfigurations.GoToDevice', 
 		(item:IotLaunchConfiguration) => {
-			gotoDevice(treeDataConfigurationsProvider,item,vscodeTreeViewDevices);
+			gotoDevice(treeDataLaunchsProvider,item,vscodeTreeViewDevices);
 	});
 	//Add Enviroment
 	let commandAddEnviroment = vscode.commands.registerCommand('viewConfigurations.AddEnviroment',
 		(item:IotLaunchEnvironment) => {
-		addEnviroment(treeDataConfigurationsProvider,item);
+		addEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Rename Enviroment
 	let commandRenameEnviroment = vscode.commands.registerCommand('viewConfigurations.RenameEnviroment',
 		(item:IotLaunchEnvironment) => {
-		renameEnviroment(treeDataConfigurationsProvider,item);
+		renameEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Edit Enviroment
 	let commandEditEnviroment = vscode.commands.registerCommand('viewConfigurations.EditEnviroment', 
 		(item:IotLaunchEnvironment) => {
-		editEnviroment(treeDataConfigurationsProvider,item);
+		editEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Delete Enviroment
 	let commandDeleteEnviroment = vscode.commands.registerCommand('viewConfigurations.DeleteEnviroment', 
 		(item:IotLaunchEnvironment) => {
-		deleteEnviroment(treeDataConfigurationsProvider,item);		
+		deleteEnviroment(treeDataLaunchsProvider,item);		
 	});
 	//Create project
 	let commandCreateProject = vscode.commands.registerCommand('viewProjects.CreateProject', () => {	
-		createProject(treeDataProjectsProvider,treeDataDevicesProvider.RootItems);	
+		createProject(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems);	
 	});
 
 	//Events

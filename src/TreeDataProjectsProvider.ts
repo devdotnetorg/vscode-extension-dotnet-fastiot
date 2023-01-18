@@ -18,14 +18,8 @@ import { MakeDirSync } from './Helper/IoTHelper';
 
 export class TreeDataProjectsProvider implements vscode.TreeDataProvider<BaseTreeItem> {
 
-  private _config:IotConfiguration
-  public get Config(): IotConfiguration {
-    return this._config;}
-  
-  constructor(config:IotConfiguration 
-  ) {
-    //Set config
-    this._config=config;          
+  constructor() {
+        
   }
 
   public getTreeItem(element: BaseTreeItem): vscode.TreeItem | Thenable<BaseTreeItem> {
@@ -38,12 +32,4 @@ export class TreeDataProjectsProvider implements vscode.TreeDataProvider<BaseTre
       return Promise.resolve(RootItems);        
   }
 
-  public CreateProject(device:IotDevice,template:IotTemplate, folderPath:string,nameProject:string) {
-    //Create dir
-    MakeDirSync(folderPath);
-    //next
-
-
-  }
- 
 }

@@ -2,14 +2,14 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataConfigurationsProvider } from '../TreeDataConfigurationsProvider';
+import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { GetWorkspaceFolder } from '../Helper/IoTHelper';
 import { IotDevice } from '../IotDevice';
 import { IotLaunchProject } from '../IotLaunchProject';
 import { ItemQuickPick } from '../Helper/actionHelper';
 
-export async function addConfiguration(treeData: TreeDataConfigurationsProvider,devices:Array<IotDevice>): Promise<void> {                
+export async function addConfiguration(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>): Promise<void> {                
 		//Workspace		
 		const workspaceDirectory = GetWorkspaceFolder();
         if(!workspaceDirectory) {

@@ -36,15 +36,22 @@ export class IotConfiguration {
       this.Templates= new IotTemplateCollection(this.Folder.Templates,this.Folder.Extension+"\\templates\\system",logCallback,versionExt);
       this._context=context;
       //Init
-      this.Init();
+      this.Init(logCallback);
     }
 
-  private Init()
+  private Init(logCallback:(value:string) =>void)
   {
     this.UsernameAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
 	  this.GroupsAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.groups');
 	  this.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
-	  //Migrating key files from a previous version of the extension
+	  //replace old format
+    const oldFormatTitleLaunch="Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)";
+    if(this.TemplateTitleLaunch==oldFormatTitleLaunch)
+    {
+      this.TemplateTitleLaunch="Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})";
+      vscode.workspace.getConfiguration().update('fastiot.launch.templatetitle',this.TemplateTitleLaunch,true);
+    }
+    //Migrating key files from a previous version of the extension
 	  const PreviousKeysFolder:string= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfolderkeys');
     if(PreviousKeysFolder != "")
     {
@@ -52,6 +59,7 @@ export class IotConfiguration {
       const destDir = this.Folder.DeviceKeys;
       // To copy a folder or file, select overwrite accordingly
       try {
+        //??? fs.copySync
         fs.copyFileSync(srcDir, destDir);
         } catch (err) {
         console.error(err)
@@ -77,6 +85,8 @@ export class IotConfiguration {
       await this.Templates.LoadTemplatesSystem();
       //await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
       //await this.Templates.LoadTemplatesUser();
+      //Logs
+      logCallback("----------------------------------");
       };
 	  LoadTemplates();
 	//

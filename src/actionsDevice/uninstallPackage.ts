@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataConfigurationsProvider } from '../TreeDataConfigurationsProvider';
+import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { pingDevice } from './pingDevice';
 import { IotDevice } from '../IotDevice';

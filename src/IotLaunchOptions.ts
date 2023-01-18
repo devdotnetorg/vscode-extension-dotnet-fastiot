@@ -7,7 +7,8 @@ import {IotItemTree} from './IotItemTree';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 import {IotLaunchConfiguration} from './IotLaunchConfiguration';
-import {MakeDirSync,ReverseSeparatorReplacement,ReverseSeparatorWinToLinux,GetDotnetRID} from './Helper/IoTHelper';
+import {MakeDirSync,ReverseSeparatorReplacement,ReverseSeparatorWinToLinux} from './Helper/IoTHelper';
+import {GetDotNetRID} from './Helper/dotnetHelper';
 //
 
 export class IotLaunchOptions extends BaseTreeItem{  
@@ -52,7 +53,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     this._targetFramework=nodes[0].firstChild.data;
     //Platform
     //NET RID Catalog
-    this._platform=GetDotnetRID(<string>this.Device?.Information.OsName,<string>this.Device?.Information.Architecture);
+    this._platform=GetDotNetRID(<string>this.Device?.Information.OsName,<string>this.Device?.Information.Architecture);
     //Create Map
     this.CreatingMergeDictionary ();
     //Create childs

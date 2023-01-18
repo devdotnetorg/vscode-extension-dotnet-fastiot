@@ -2,11 +2,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataConfigurationsProvider } from '../TreeDataConfigurationsProvider';
+import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotLaunchConfiguration } from '../IotLaunchConfiguration';
 
-export async function renameConfiguration(treeData: TreeDataConfigurationsProvider,item:IotLaunchConfiguration): Promise<void> {                    
+export async function renameConfiguration(treeData: TreeDataLaunchsProvider,item:IotLaunchConfiguration): Promise<void> {                    
     const newLabel = await vscode.window.showInputBox({				
         prompt: 'prompt',
         title: 'Enter a new name configuration',
