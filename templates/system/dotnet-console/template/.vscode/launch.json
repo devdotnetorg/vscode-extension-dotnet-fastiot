@@ -9,7 +9,7 @@
             "program": "${workspaceFolder}%{project.path.relative.aslinux}/bin/Debug/%{project.dotnet.targetframework}/%{project.name}.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
+            "console": "internalConsole",
             "stopAtEntry": false
         },
         {

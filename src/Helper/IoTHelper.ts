@@ -66,7 +66,6 @@ export function MergeWithDictionary(dictionary:Map<string,string>,data:string):s
   return result;
 }
 
-// TODO: Move to template class
 export function DeleteComments(data:string):string{
   //removes comments like '//'
   const matchHashComment = new RegExp(/(\/\/.*)/, 'gi');

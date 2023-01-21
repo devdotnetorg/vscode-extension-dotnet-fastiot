@@ -57,7 +57,8 @@ export class IotLaunchProject {
   
   public FindProjects(pathFolder:string): Array<string>{    
     //search for projects in depth on three levels
-    const projects = this.GetProjectsFromFolder(pathFolder,"csproj", this._depthLevel,undefined);    
+    //const projects = this.GetProjectsFromFolder(pathFolder,"csproj", this._depthLevel,undefined);    
+    let projects:Array<string>=[];
     return projects;
   }
 

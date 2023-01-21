@@ -8,7 +8,7 @@ import {EntityBase} from '../Entity/EntityBase';
 import {EntityBaseAttribute} from '../Entity/EntityBaseAttribute';
 import {IotTemplateAttribute} from './IotTemplateAttribute';
 import {IotResult,StatusResult } from '../IotResult';
-import {MakeDirSync,ReverseSeparatorReplacement,ReverseSeparatorWinToLinux } from '../Helper/IoTHelper';
+import {MakeDirSync,ReverseSeparatorReplacement,ReverseSeparatorWinToLinux,DeleteComments} from '../Helper/IoTHelper';
 import {GetDotNetRID,GetDotNetValidNamespace} from '../Helper/dotnetHelper';
 import { IotDevice } from '../IotDevice';
 import { IotConfiguration } from '../Configuration/IotConfiguration';
@@ -75,15 +75,15 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       result=this.FileNameReplacement(dstPath);
       if(result.Status==StatusResult.Error) return result;
       //Insert Launch
-      result=this.InsertLaunch(device,dstPath,nameProject);
+      result=this.InsertLaunchOrTask(dstPath,"launch");
       if(result.Status==StatusResult.Error) return result;
       //Insert Tasks
-      
-
-      
-
-      
-
+      result=this.InsertLaunchOrTask(dstPath,"tasks");
+      if(result.Status==StatusResult.Error) return result;
+      //Open Workspace
+      let folderPathParsed = "/"+dstPath.split(`\\`).join(`/`);
+      let folderUri = vscode.Uri.parse(folderPathParsed);
+      vscode.commands.executeCommand(`vscode.openFolder`, folderUri);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,"An error occurred while creating the project",err);
@@ -157,41 +157,48 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     return result;
   }
 
-  private InsertLaunch(device:IotDevice, dstPath:string,nameProject:string):IotResult {
+  private InsertLaunchOrTask(dstPath:string,entity:string /*launch or tasks*/):IotResult {
     let result:IotResult;
     try {
+      //debug
+      const debugFilePath=`${dstPath}\\debug_${entity}_json.txt`;
       //open files
-      const fileLauhchPath=`${dstPath}\\.vscode\\launch.json`;
-      let dataLaunch:string= fs.readFileSync(fileLauhchPath,'utf8');
-      const fileInsertLauhchPath=`${this.TemplatePath}\\.vscode\\insert_launch.json`;
-      let insertDataLaunch:string= fs.readFileSync(fileInsertLauhchPath,'utf8');
+      const fileEntityPath=`${dstPath}\\.vscode\\${entity}.json`;
+      let dataEntity:string= fs.readFileSync(fileEntityPath,'utf8');
+      dataEntity=DeleteComments(dataEntity);
+      const fileInsertEntityPath=`${this.TemplatePath}\\.vscode\\insert_${entity}_key.json`;
+      let insertDataEntitys:string= fs.readFileSync(fileInsertEntityPath,'utf8');
+      insertDataEntitys=DeleteComments(insertDataEntitys);
       //toJSON
-      let jsonDataLaunch = JSON.parse(dataLaunch);
-      const jsonInsertDataLaunch = JSON.parse(insertDataLaunch);
-      //insert
-      jsonDataLaunch.configurations.push(<never>jsonInsertDataLaunch);
+      fs.writeFileSync(debugFilePath, dataEntity,undefined);
+      let jsonDataEntity = JSON.parse(dataEntity);
+      fs.writeFileSync(debugFilePath, insertDataEntitys,undefined);
+      const jsonInsertDataEntitys = JSON.parse(insertDataEntitys);
+      //insert entitys
+      let index=0;    
+      do {
+        const jsonInsertDataEntity=jsonInsertDataEntitys.values[index];
+        if(jsonInsertDataEntity)
+        {
+          if(entity=="launch") jsonDataEntity.configurations.push(<never>jsonInsertDataEntity);
+          if(entity=="tasks") jsonDataEntity.tasks.push(<never>jsonInsertDataEntity);
+          //next position
+          index=index+1;
+        }else break;      
+      } 
+      while(true)
       //toTXT
-      let data=JSON.stringify(jsonDataLaunch);
+      let data=JSON.stringify(jsonDataEntity,null,2);
       //Merge
       data=this.MergeWithDictionary(this.MergeDictionary,data);
-      //save in file  
-      fs.writeFileSync(fileLauhchPath, data,undefined);
-      /*
-      const insertLaunch=this.MergeWithDictionary(this.MergeDictionary,insertDate); 
-      const jsonInsertLaunch = JSON.parse(insertLaunch); 
-      let jsonLaunch = JSON.parse(fileDataLaunch);
-      //Launch
-      if(jsonInsertLaunch)
-        jsonLaunch.configurations.push(<never>jsonInsertLaunch);
       //save in file
-      const strJSON=JSON.stringify(jsonLaunch);        
-      fs.writeFileSync(fileLauhchPath, strJSON,undefined);
-      */
+      fs.writeFileSync(fileEntityPath, data,undefined);
       //result
+      fs.removeSync(debugFilePath);
       result = new IotResult(StatusResult.Ok,undefined,undefined);
     } catch (err: any){
       //result
-      result = new IotResult(StatusResult.Error,"Unable to create Launch for /.vscode. File launch.json or insert_launch.json",err);
+      result = new IotResult(StatusResult.Error,`Unable to create ${entity} for /.vscode. File ${entity}.json or insert_${entity}_*.json. See file debug_${entity}_json.txt`,err);
     }
     return result;
   }
@@ -201,13 +208,14 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     try {
       //Create dir
       MakeDirSync(dstPath);
-      fs.copySync(this.ParentDir+"\\template", dstPath);
+      fs.copySync(this.TemplatePath, dstPath);
       // remove files
-      let file=dstPath+"\\.vscode\\insert_launch.json";
+      let file=dstPath+"\\.vscode\\insert_launch_key.json";
       if (fs.existsSync(file)) fs.removeSync(file);
-      file=dstPath+"\\.vscode\\insert_tasks.json";
+      file=dstPath+"\\.vscode\\insert_tasks_key.json";
       if (fs.existsSync(file)) fs.removeSync(file);
-      //
+      //copy template.fastiot.yaml
+      fs.copyFileSync(this.DescriptionFilePath,dstPath+"\\template.fastiot.yaml");
       result = new IotResult(StatusResult.Ok,undefined,undefined);
     } catch (err: any){
       //result

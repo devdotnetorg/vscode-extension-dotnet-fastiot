@@ -60,7 +60,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       this._devices=devices;
       this._workspaceDirectory=workspaceDirectory;
       //Recovery devices
-      if(workspaceDirectory) this.RecoveryLaunchs(devices,workspaceDirectory);  
+      //if(workspaceDirectory) this.RecoveryLaunchs(devices,workspaceDirectory);  
   }
 
   public getTreeItem(element: BaseTreeItem): vscode.TreeItem | Thenable<BaseTreeItem> {

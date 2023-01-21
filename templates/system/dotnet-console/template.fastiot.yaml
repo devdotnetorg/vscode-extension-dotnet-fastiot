@@ -1,5 +1,5 @@
 #YAML
-id: dotnet-console
+id: dotnet-console # unique
 #dependsOn: none # dependencies/inheritance in templates. Coming in one of the next version
 platform: # win32, linux. Only Windows is currently supported
   - win32
@@ -15,8 +15,8 @@ endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - aarch64
   - x86_64
 dependOnPackages: # none
-  - dotnetruntimes
-  - debugger
+  - dotnetruntime-%{dotnetTarget}
+  - vsdbg
 typeProj: dotnet # template type is related to processing logic
 projName: DotnetConsoleApp
 mainFileProj: dotnetapp.csproj
