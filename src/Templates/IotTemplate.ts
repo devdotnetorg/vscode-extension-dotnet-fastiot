@@ -8,8 +8,8 @@ import {EntityBase} from '../Entity/EntityBase';
 import {EntityBaseAttribute} from '../Entity/EntityBaseAttribute';
 import {IotTemplateAttribute} from './IotTemplateAttribute';
 import {IotResult,StatusResult } from '../IotResult';
-import {MakeDirSync,ReverseSeparatorReplacement,ReverseSeparatorWinToLinux,DeleteComments} from '../Helper/IoTHelper';
-import {GetDotNetRID,GetDotNetValidNamespace} from '../Helper/dotnetHelper';
+import {IoTHelper} from '../Helper/IoTHelper';
+import {dotnetHelper} from '../Helper/dotnetHelper';
 import { IotDevice } from '../IotDevice';
 import { IotConfiguration } from '../Configuration/IotConfiguration';
 
@@ -137,11 +137,11 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
               const projectMainfilePath=newPath;
               //full
               this.MergeDictionary.set("%{project.mainfile.path.full.aswindows}",projectMainfilePath);
-              let path_project_win_to_linux=ReverseSeparatorWinToLinux(projectMainfilePath);
+              let path_project_win_to_linux=IoTHelper.ReverseSeparatorWinToLinux(projectMainfilePath);
               this.MergeDictionary.set("%{project.mainfile.path.full.aslinux}",path_project_win_to_linux);
               //
               const mainfileRelativeWinPath=projectMainfilePath.substring(dstPath.length+1);
-              const mainfileRelativeLinuxPath=ReverseSeparatorWinToLinux(mainfileRelativeWinPath);
+              const mainfileRelativeLinuxPath=IoTHelper.ReverseSeparatorWinToLinux(mainfileRelativeWinPath);
               this.MergeDictionary.set("%{project.mainfile.path.relative.aswindows}",<string>mainfileRelativeWinPath);
               this.MergeDictionary.set("%{project.mainfile.path.relative.aslinux}",<string>mainfileRelativeLinuxPath);
             }
@@ -165,10 +165,10 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //open files
       const fileEntityPath=`${dstPath}\\.vscode\\${entity}.json`;
       let dataEntity:string= fs.readFileSync(fileEntityPath,'utf8');
-      dataEntity=DeleteComments(dataEntity);
+      dataEntity=IoTHelper.DeleteComments(dataEntity);
       const fileInsertEntityPath=`${this.TemplatePath}\\.vscode\\insert_${entity}_key.json`;
       let insertDataEntitys:string= fs.readFileSync(fileInsertEntityPath,'utf8');
-      insertDataEntitys=DeleteComments(insertDataEntitys);
+      insertDataEntitys=IoTHelper.DeleteComments(insertDataEntitys);
       //toJSON
       fs.writeFileSync(debugFilePath, dataEntity,undefined);
       let jsonDataEntity = JSON.parse(dataEntity);
@@ -207,7 +207,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     let result:IotResult;
     try {
       //Create dir
-      MakeDirSync(dstPath);
+      IoTHelper.MakeDirSync(dstPath);
       fs.copySync(this.TemplatePath, dstPath);
       // remove files
       let file=dstPath+"\\.vscode\\insert_launch_key.json";
@@ -272,16 +272,16 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       }
     }
     this.MergeDictionary.set("%{project.path.relative.aswindows}",<string>relativePath);
-    relativePath=ReverseSeparatorWinToLinux(relativePath);
+    relativePath=IoTHelper.ReverseSeparatorWinToLinux(relativePath);
     this.MergeDictionary.set("%{project.path.relative.aslinux}",<string>relativePath);
     //
     const projectMainfilePath=dstPath+"\\"+this.Attributes.MainFileProj;
     this.MergeDictionary.set("%{project.mainfile.path.full.aswindows}",projectMainfilePath);
-    let path_project_win_to_linux=ReverseSeparatorWinToLinux(projectMainfilePath);
+    let path_project_win_to_linux=IoTHelper.ReverseSeparatorWinToLinux(projectMainfilePath);
     this.MergeDictionary.set("%{project.mainfile.path.full.aslinux}",path_project_win_to_linux);
     //
     const mainfileRelativeWinPath=relativePath+this.Attributes.MainFileProj;
-    const mainfileRelativeLinuxPath=ReverseSeparatorWinToLinux(mainfileRelativeWinPath);
+    const mainfileRelativeLinuxPath=IoTHelper.ReverseSeparatorWinToLinux(mainfileRelativeWinPath);
     this.MergeDictionary.set("%{project.mainfile.path.relative.aswindows}",<string>mainfileRelativeWinPath);
     this.MergeDictionary.set("%{project.mainfile.path.relative.aslinux}",<string>mainfileRelativeLinuxPath);
     //
@@ -290,7 +290,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     //device
     this.MergeDictionary.set("%{device.id}",<string>device.IdDevice); 
     let ssh_key= config.Folder.DeviceKeys+"\\"+<string>device?.Account.Identity;
-    ssh_key=ReverseSeparatorReplacement(ssh_key);
+    ssh_key=IoTHelper.ReverseSeparatorReplacement(ssh_key);
     this.MergeDictionary.set("%{device.ssh.key.path.full.aswindows}",ssh_key);
     this.MergeDictionary.set("%{device.ssh.port}",<string>device?.Account.Port);
     this.MergeDictionary.set("%{device.user.debug}",<string>device?.Account.UserName);
@@ -301,15 +301,15 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     this.MergeDictionary.set("%{launch.id}",this.CreateGuid());
     //dotnet
     //RID Catalog
-    const rid=GetDotNetRID(<string>device?.Information.OsName,<string>device?.Information.Architecture);
+    const rid=dotnetHelper.GetDotNetRID(<string>device?.Information.OsName,<string>device?.Information.Architecture);
     this.MergeDictionary.set("%{device.dotnet.rid}",<string>rid);
     //target
     if(objJSON.dotnetTarget) this.MergeDictionary.set("%{project.dotnet.targetframework}",<string>objJSON.dotnetTarget);
     //namespace
-    this.MergeDictionary.set("%{project.dotnet.namespace}",<string>GetDotNetValidNamespace(nameProject));
-    GetDotNetValidNamespace(nameProject);
+    this.MergeDictionary.set("%{project.dotnet.namespace}",<string>dotnetHelper.GetDotNetValidNamespace(nameProject));
+    dotnetHelper.GetDotNetValidNamespace(nameProject);
     //template app folder
-    const appsPath=ReverseSeparatorReplacement(this.AppsPath);
+    const appsPath=IoTHelper.ReverseSeparatorReplacement(this.AppsPath);
     this.MergeDictionary.set("%{fastiot.settings.apps.path.aswindows}",<string>appsPath);
     //launch. Always last
     const label=this.MergeWithDictionary(this.MergeDictionary,config.TemplateTitleLaunch);

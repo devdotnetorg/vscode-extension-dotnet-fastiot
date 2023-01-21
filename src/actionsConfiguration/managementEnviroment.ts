@@ -4,7 +4,6 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { GetWorkspaceFolder } from '../Helper/IoTHelper';
 import { IotDevice } from '../IotDevice';
 import { IotLaunchProject } from '../IotLaunchProject';
 import { IotLaunchConfiguration } from '../IotLaunchConfiguration';

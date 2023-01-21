@@ -9,7 +9,7 @@ import { IotDeviceInformation } from './IotDeviceInformation';
 import { IotItemTree } from './IotItemTree';
 import { IotDevicePackage } from './IotDevicePackage';
 import { IotLaunchConfiguration } from './IotLaunchConfiguration';
-import {Sleep,DeleteComments} from './Helper/IoTHelper';
+import {IoTHelper} from './Helper/IoTHelper';
 
 import { IotResult,StatusResult } from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
@@ -129,7 +129,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
             this._statusBarItem.tooltip=this._statusBarText;
             posProgressChars=posProgressChars+1;
             if(posProgressChars>lengthProgressChars) posProgressChars=0; 
-            await Sleep(150);
+            await IoTHelper.Sleep(150);
            } 
            while(!this._isStopStatusBar)
       }    
@@ -169,7 +169,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     try
     {
       let datafile:string= fs.readFileSync(pathLaunchFile, 'utf8');
-      datafile=DeleteComments(datafile);     
+      datafile=IoTHelper.DeleteComments(datafile);     
       var obj = JSON.parse(datafile);
       //Recovery of every Launch    
       let index=0;    

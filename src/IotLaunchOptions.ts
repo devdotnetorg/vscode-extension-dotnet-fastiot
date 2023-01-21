@@ -7,8 +7,8 @@ import {IotItemTree} from './IotItemTree';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 import {IotLaunchConfiguration} from './IotLaunchConfiguration';
-import {MakeDirSync,ReverseSeparatorReplacement,ReverseSeparatorWinToLinux} from './Helper/IoTHelper';
-import {GetDotNetRID} from './Helper/dotnetHelper';
+import {IoTHelper} from './Helper/IoTHelper';
+import {dotnetHelper} from './Helper/dotnetHelper';
 //
 
 export class IotLaunchOptions extends BaseTreeItem{  
@@ -53,7 +53,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     this._targetFramework=nodes[0].firstChild.data;
     //Platform
     //NET RID Catalog
-    this._platform=GetDotNetRID(<string>this.Device?.Information.OsName,<string>this.Device?.Information.Architecture);
+    this._platform=dotnetHelper.GetDotNetRID(<string>this.Device?.Information.OsName,<string>this.Device?.Information.Architecture);
     //Create Map
     this.CreatingMergeDictionary ();
     //Create childs
@@ -68,9 +68,9 @@ export class IotLaunchOptions extends BaseTreeItem{
     this.MergeDictionary.set("%FASTID%",this.ConfigurationLaunch.IdConfiguration);
     this.MergeDictionary.set("%FASTID_DEVICE%",<string>this.Device?.IdDevice);    
     const path_project=<string>this.ConfigurationLaunch.Project.RelativePath;
-    let path_project_double=ReverseSeparatorReplacement(path_project);
+    let path_project_double=IoTHelper.ReverseSeparatorReplacement(path_project);
     this.MergeDictionary.set("%PATH_PROJECT%",path_project_double);
-    let path_project_win_to_linux=ReverseSeparatorWinToLinux(path_project);
+    let path_project_win_to_linux=IoTHelper.ReverseSeparatorWinToLinux(path_project);
     this.MergeDictionary.set("%PATH_PROJECT_REVERSE%",path_project_win_to_linux);
     this.MergeDictionary.set("%NAME%",<string>this.ConfigurationLaunch.label);
     //let pipe_program=this.ConfigurationLaunch.Config.PathFoldercwRsync+"\\ssh.exe";
@@ -80,7 +80,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     //rsync_program=ReverseSeparatorReplacement(rsync_program);
    // this.MergeDictionary.set("%RSYNCPROGRAM%",rsync_program);    
     let ssh_key=this.ConfigurationLaunch.Config.Folder.DeviceKeys+"\\"+<string>this.Device?.Account.Identity;
-    ssh_key=ReverseSeparatorReplacement(ssh_key);
+    ssh_key=IoTHelper.ReverseSeparatorReplacement(ssh_key);
     this.MergeDictionary.set("%SSH_KEY%",ssh_key);
     this.MergeDictionary.set("%USER_DEBUG%",<string>this.Device?.Account.UserName);
     this.MergeDictionary.set("%REMOTE_HOST%",<string>this.Device?.Account.Host);
@@ -96,7 +96,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     if(this.ConfigurationLaunch.Project.RelativeFolderPath!=".")
     {
       relativeFolderPath= "\\"+<string>this.ConfigurationLaunch.Project.RelativeFolderPath;
-      relativeFolderPath=ReverseSeparatorWinToLinux(relativeFolderPath);
+      relativeFolderPath=IoTHelper.ReverseSeparatorWinToLinux(relativeFolderPath);
     }    
     this.MergeDictionary.set("%RELATIVE_FOLDER_PATH%",relativeFolderPath);
   }

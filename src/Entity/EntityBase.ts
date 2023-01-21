@@ -4,7 +4,7 @@ import * as path from 'path';
 import {compare} from 'compare-versions';
 import {EntityType} from './EntityType';
 import {EntityBaseAttribute} from './EntityBaseAttribute';
-import {MakeDirSync} from '../Helper/IoTHelper';
+import {IoTHelper} from '../Helper/IoTHelper';
 import {IotResult,StatusResult } from '../IotResult';
 import { V1Options } from 'uuid';
 
@@ -79,7 +79,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       //clear
       if (fs.existsSync(unpackDir)) fs.emptyDirSync(unpackDir);
       //mkdir
-      MakeDirSync(unpackDir);
+      IoTHelper.MakeDirSync(unpackDir);
       //unpack
       var AdmZip = require("adm-zip");
       var zip = new AdmZip(fileZipPath);
@@ -109,7 +109,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       //clear
       if (fs.existsSync(destDir)) fs.emptyDirSync(destDir);
       //mkdir
-      MakeDirSync(destDir);
+      IoTHelper.MakeDirSync(destDir);
       fs.moveSync(this.ParentDir,destDir);
       //replace fields
       this._descFilePath=`${destDir}\\${this.ParentNameDir}`;

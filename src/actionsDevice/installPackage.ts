@@ -5,8 +5,7 @@ import * as path from 'path';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { pingDevice } from './pingDevice';
-import { GetWorkspaceFolder } from '../Helper/IoTHelper';
-import { GetDotNetRID } from '../Helper/dotnetHelper';
+import { dotnetHelper } from '../Helper/dotnetHelper';
 import { IotDevice } from '../IotDevice';
 import { IotLaunchProject } from '../IotLaunchProject';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';
@@ -73,7 +72,7 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
             break; 
         }
         case TypePackage.debugger: { 
-            const dotnetRID=GetDotNetRID(
+            const dotnetRID=dotnetHelper.GetDotNetRID(
                     <string>item.Device.Information.OsName,<string>item.Device.Information.Architecture);
             //formation jsonObj
             jsonObj.dotnetrid=dotnetRID;

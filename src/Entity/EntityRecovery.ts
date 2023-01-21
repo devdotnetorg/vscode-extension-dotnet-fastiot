@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import {IotResult,StatusResult } from '../IotResult';
-import {MakeDirSync} from '../Helper/IoTHelper';
+import {IoTHelper} from '../Helper/IoTHelper';
 
 export abstract class EntityRecovery {
   constructor(
@@ -16,7 +16,7 @@ export abstract class EntityRecovery {
         //directory
         const dir=`${destDir}\\${name}`;
         //MkDir
-        MakeDirSync(dir);
+        IoTHelper.MakeDirSync(dir);
       });
       result = new IotResult(StatusResult.Ok,undefined,undefined);
     } catch (err: any){

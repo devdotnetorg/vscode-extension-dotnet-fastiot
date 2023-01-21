@@ -5,7 +5,7 @@ import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotResult,StatusResult } from './IotResult';
 
-import {StringTrim} from './Helper/IoTHelper';
+import {IoTHelper} from './Helper/IoTHelper';
 import { exit } from 'process';
 
 export class IotDevicePackage extends BaseTreeItem {
@@ -151,11 +151,11 @@ export class IotDevicePackage extends BaseTreeItem {
       nameScript,undefined, false,false); 
     if(result.Status==StatusResult.Ok)
     {
-      if(StringTrim(<string>result.SystemMessage)=="notinstalled"){
+      if(IoTHelper.StringTrim(<string>result.SystemMessage)=="notinstalled"){
         this.VersionPackage=undefined;
       }else
       {
-        this.VersionPackage=StringTrim(<string>result.SystemMessage);
+        this.VersionPackage=IoTHelper.StringTrim(<string>result.SystemMessage);
       }
     }
     return Promise.resolve(result); 
@@ -300,7 +300,7 @@ export class IotDevicePackage extends BaseTreeItem {
       } 
     }
     //Trim
-    if(params) params=StringTrim(params);
+    if(params) params=IoTHelper.StringTrim(params);
     return params;
   }
 

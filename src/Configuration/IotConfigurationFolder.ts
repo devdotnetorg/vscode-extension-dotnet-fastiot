@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 //import * as fs from 'fs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { MakeDirSync } from '../Helper/IoTHelper';
+import {IoTHelper} from '../Helper/IoTHelper';
 
 export class IotConfigurationFolder {
   //from https://learn.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=net-7.0
@@ -35,12 +35,12 @@ export class IotConfigurationFolder {
       this._applicationData=applicationDataPath;
       this._context=context;
       //Create folders
-      MakeDirSync(this.ApplicationData);
-      MakeDirSync(this.DeviceKeys);
-      MakeDirSync(this.TemplatesSystem);
-      MakeDirSync(this.TemplatesUser);
-      MakeDirSync(this.TemplatesCommunity);
-      MakeDirSync(this.Temp);
+      IoTHelper.MakeDirSync(this.ApplicationData);
+      IoTHelper.MakeDirSync(this.DeviceKeys);
+      IoTHelper.MakeDirSync(this.TemplatesSystem);
+      IoTHelper.MakeDirSync(this.TemplatesUser);
+      IoTHelper.MakeDirSync(this.TemplatesCommunity);
+      IoTHelper.MakeDirSync(this.Temp);
     }
 
   //clearing temporary files

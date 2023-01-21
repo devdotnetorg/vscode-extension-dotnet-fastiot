@@ -5,7 +5,7 @@ import {IotDevice} from '../IotDevice';
 import {IDtoAdapter} from './IDtoAdapter';
 import {IoTDTO} from './IoTDTO';
 import { IotResult,StatusResult } from '../IotResult';
-import { StringTrim } from '../Helper/IoTHelper';
+import { IoTHelper } from '../Helper/IoTHelper';
 
 export class IoTDTOArmbianAdapter implements IDtoAdapter {
   private _config = {
@@ -141,11 +141,11 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
             //
             switch(array2[0]) { 
                case "overlay_prefix": {
-                 this._config.overlay_prefix=StringTrim(array2[1]);
+                 this._config.overlay_prefix=IoTHelper.StringTrim(array2[1]);
                  break; 
                } 
                case "overlays": {
-                 overlays=StringTrim(array2[1]);
+                 overlays=IoTHelper.StringTrim(array2[1]);
                  break; 
                }               
                default: { 

@@ -7,12 +7,11 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
-import { MakeDirSync,StringTrim,ConvertToValidFilename } from '../Helper/IoTHelper';
-import { CheckDotNetAppName } from '../Helper/dotnetHelper';
+import { IoTHelper } from '../Helper/IoTHelper';
+import { dotnetHelper } from '../Helper/dotnetHelper';
 import { config } from 'process';
 import {IotTemplate} from '../Templates/IotTemplate';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
-import { GetDotNetTargets } from '../Helper/dotnetHelper';
 
 export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>): Promise<void> {
     //objJSON: preparation of input parameters    
@@ -74,9 +73,9 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         value: selectTemplate.Attributes.ProjName
     });
     if(nameProject==undefined) return;
-    nameProject=StringTrim(nameProject);
-    nameProject=ConvertToValidFilename(nameProject,'_');
-    if(CheckDotNetAppName(nameProject)){
+    nameProject=IoTHelper.StringTrim(nameProject);
+    nameProject=IoTHelper.ConvertToValidFilename(nameProject,'_');
+    if(dotnetHelper.CheckDotNetAppName(nameProject)){
         vscode.window.showErrorMessage(`${nameProject}: The project name contains prohibited characters`);
         return;
     }
@@ -88,7 +87,7 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         value: folder
     });
     if(selectFolder==undefined) return;
-    selectFolder=StringTrim(selectFolder);
+    selectFolder=IoTHelper.StringTrim(selectFolder);
     if (fs.existsSync(selectFolder)){
         const files = fs.readdirSync(selectFolder);
         if(files.length>0)
@@ -102,7 +101,7 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         //Shows a selection list allowing multiple selections.
         let itemTarget:Array<ItemQuickPick>=[];
         //select target
-        GetDotNetTargets().forEach((value, key) => {
+        dotnetHelper.GetDotNetTargets().forEach((value, key) => {
             const item = new ItemQuickPick(value,"",key);
             itemTarget.push(item);
         });

@@ -4,14 +4,14 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { GetWorkspaceFolder } from '../Helper/IoTHelper';
+import {IoTHelper} from '../Helper/IoTHelper';
 import { IotDevice } from '../IotDevice';
 import { IotLaunchProject } from '../IotLaunchProject';
 import { ItemQuickPick } from '../Helper/actionHelper';
 
 export async function addConfiguration(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>): Promise<void> {                
 		//Workspace		
-		const workspaceDirectory = GetWorkspaceFolder();
+		const workspaceDirectory = IoTHelper.GetWorkspaceFolder();
         if(!workspaceDirectory) {
             vscode.window.showErrorMessage(`Error. No Workspace. Open the menu: File -> Open Folder ...`);
             return;

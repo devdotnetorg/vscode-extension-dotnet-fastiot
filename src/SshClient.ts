@@ -8,7 +8,7 @@ import {IotItemTree} from './IotItemTree';
 import {IotDevicePackage} from './IotDevicePackage';
 import {StatusResult,IotResult} from './IotResult';
 
-import {Sleep,StringTrim} from './Helper/IoTHelper';
+import {IoTHelper} from './Helper/IoTHelper';
 import SSH2Promise from 'ssh2-promise';
 import SFTP from 'ssh2-promise';
 import { stringify } from 'querystring';
@@ -135,9 +135,9 @@ export class SshClient {
             flagExit=true;
           });                    
           //circle          
-          do{await Sleep(300);}while(!flagExit);
+          do{await IoTHelper.Sleep(300);}while(!flagExit);
           //Check "Successfully"
-          lastConsoleLine=StringTrim(lastConsoleLine);
+          lastConsoleLine=IoTHelper.StringTrim(lastConsoleLine);
           if (lastConsoleLine!="Successfully"){            
             return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${nameScript}.sh script ended with an error`,lastConsoleLine));
           }

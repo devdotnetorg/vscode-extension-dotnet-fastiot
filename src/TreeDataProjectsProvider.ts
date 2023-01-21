@@ -9,12 +9,9 @@ import { IotDeviceInformation } from './IotDeviceInformation';
 import { IotItemTree } from './IotItemTree';
 import { IotDevicePackage } from './IotDevicePackage';
 import { IotLaunchConfiguration } from './IotLaunchConfiguration';
-import {Sleep,DeleteComments} from './Helper/IoTHelper';
-
 import { IotResult,StatusResult } from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IotTemplate} from './Templates/IotTemplate';
-import { MakeDirSync } from './Helper/IoTHelper';
 
 export class TreeDataProjectsProvider implements vscode.TreeDataProvider<BaseTreeItem> {
 

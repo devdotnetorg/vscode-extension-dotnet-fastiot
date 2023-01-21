@@ -11,7 +11,7 @@ import { IotItemTree } from './IotItemTree';
 import { IotDevicePackage,TypePackage } from './IotDevicePackage';
 import { IotDeviceDTO } from './IotDeviceDTO';
 
-import {Sleep} from './Helper/IoTHelper';
+import {IoTHelper} from './Helper/IoTHelper';
 
 import { IotResult,StatusResult } from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
@@ -146,7 +146,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
             this._statusBarItem.tooltip=this._statusBarText;
             posProgressChars=posProgressChars+1;
             if(posProgressChars>lengthProgressChars) posProgressChars=0; 
-            await Sleep(150);
+            await IoTHelper.Sleep(150);
            } 
            while(!this._isStopStatusBar)
       }    

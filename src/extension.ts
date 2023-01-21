@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 //shared
-import {GetWorkspaceFolder} from './Helper/IoTHelper';
+import {IoTHelper} from './Helper/IoTHelper';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import { IotItemTree } from './IotItemTree';
 
@@ -95,7 +95,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	//TreeView Configurations
 	let statusBarItemConfiguration = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);	
 	statusBarItemConfiguration.hide();
-	const workspaceFolder=GetWorkspaceFolder();
+	const workspaceFolder=IoTHelper.GetWorkspaceFolder();
     let treeDataLaunchsProvider = new TreeDataLaunchsProvider(statusBarItemConfiguration,
 		outputChannel,config,treeDataDevicesProvider.RootItems,workspaceFolder);	
     let vscodeTreeViewConfigurations=vscode.window.createTreeView('viewConfigurations', {
