@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>%{project.net.targetframework}</TargetFramework>
-	<RootNamespace>%{project.net.namespace}</RootNamespace>
+    <TargetFramework>%{project.dotnet.targetframework}</TargetFramework>
+	<RootNamespace>%{project.dotnet.namespace}</RootNamespace>
   </PropertyGroup>
   
   <ItemGroup>

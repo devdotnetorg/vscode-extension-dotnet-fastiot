@@ -304,12 +304,13 @@ export class IotDevice extends BaseTreeItem {
   }
 
   public async Ping(): Promise<IotResult>{ 
-    //Ping
+    //Ping ipAddress
     if(this.Device.Account.Host)
     {
       const result=await this.Client.Ping(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
-    }    
+    }
+    // TODO: need ping port
     //   
     let ssh = new SSH2Promise(this.Account.SshConfig,undefined);
     try
@@ -317,10 +318,10 @@ export class IotDevice extends BaseTreeItem {
         await ssh.connect();
         console.log("Connection established SSH");
       }
-    catch (err)
+    catch (err: any)
       {
         console.log("Not Connected SSH");
-        return Promise.resolve(new IotResult(StatusResult.Error,"Not Connected SSH!",undefined));
+        return Promise.resolve(new IotResult(StatusResult.Error,"Not Connected SSH!",err));
       }
     ssh.close();
     return Promise.resolve(new IotResult(StatusResult.Ok,"Connected SSH!",undefined));          

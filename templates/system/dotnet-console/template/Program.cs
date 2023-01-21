@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace %{project.net.namespace}
+namespace %{project.dotnet.namespace}
 {
     class Program
     {

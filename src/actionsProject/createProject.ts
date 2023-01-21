@@ -7,7 +7,7 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
-import { MakeDirSync,ConvertToValidFilename } from '../Helper/IoTHelper';
+import { MakeDirSync,StringTrim,ConvertToValidFilename } from '../Helper/IoTHelper';
 import { CheckDotNetAppName } from '../Helper/dotnetHelper';
 import { config } from 'process';
 import {IotTemplate} from '../Templates/IotTemplate';
@@ -74,6 +74,7 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         value: selectTemplate.Attributes.ProjName
     });
     if(nameProject==undefined) return;
+    nameProject=StringTrim(nameProject);
     nameProject=ConvertToValidFilename(nameProject,'_');
     if(CheckDotNetAppName(nameProject)){
         vscode.window.showErrorMessage(`${nameProject}: The project name contains prohibited characters`);
@@ -87,6 +88,7 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         value: folder
     });
     if(selectFolder==undefined) return;
+    selectFolder=StringTrim(selectFolder);
     if (fs.existsSync(selectFolder)){
         const files = fs.readdirSync(selectFolder);
         if(files.length>0)

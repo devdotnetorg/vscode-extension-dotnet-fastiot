@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}%{project.path.aslinux}/bin/Debug/%{project.net.targetframework}/%{project.name}.dll",
+            "program": "${workspaceFolder}%{project.path.relative.aslinux}/bin/Debug/%{project.dotnet.targetframework}/%{project.name}.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",

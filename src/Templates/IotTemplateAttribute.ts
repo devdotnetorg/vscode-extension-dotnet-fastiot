@@ -23,8 +23,8 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
   private _filesToProcess:Array<string>=[]; 
   public get FilesToProcess(): Array<string> {
     return this._filesToProcess;}
-  private _fileNameReplacement:Array<string>=[]; 
-  public get FileNameReplacement(): Array<string> {
+  private _fileNameReplacement:Map<string,string>= new Map<string,string>();
+  public get FileNameReplacement():Map<string,string> {
     return this._fileNameReplacement;}
 
   constructor(
@@ -75,7 +75,10 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
       do { 				
             let item=obj.fileNameReplacement[index];
             if(item) {
-              this._fileNameReplacement.push(<string>item);            
+              const values=(<string>item).split('=');
+              const key=values[0];
+              const value=values[1];
+              this._fileNameReplacement.set(key,value);          
               //next position
               index=index+1;
             }else break;      

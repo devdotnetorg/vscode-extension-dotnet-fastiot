@@ -4,6 +4,8 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
 import {IotDevice} from '../IotDevice';
+import {StatOptions} from 'fs';
+import {StringTrim,ConvertToValidFilename} from './IoTHelper';
 
 export function GetDotNetRID(osName:string,architecture:string): string {
   // TODO: check rid
@@ -61,4 +63,12 @@ export function GetDotNetTargets(): Map<string,string> {
   dictionary.set("net5.0",".NET 5");
   dictionary.set("netcoreapp3.1",".NET Core 3.1");
   return dictionary;
+}
+
+export function GetDotNetValidNamespace(value:string): string {
+  value=StringTrim(value);
+  value=ConvertToValidFilename(value,"_");
+  const re = new RegExp('-', 'g');
+  value=value.replace(re,'_'); 
+  return value;
 }
