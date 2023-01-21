@@ -1,0 +1,38 @@
+{
+	"values": [
+		{
+			"fastiotIdLaunch": "%{launch.id}",
+			"fastiotIdDevice": "%{device.id}",
+			"fastiotTypeProject": "%{project.type}",
+			"fastiotProject":"%{project.mainfile.path.relative.aswindows}",
+			"name": "%{launch.label}",
+			"type": "coreclr",
+			"request": "launch",
+			"program": "dotnet",
+			"args": ["./%{project.name}.dll"],
+			"cwd": "~/fastiot/apps/%{project.name}",
+			"stopAtEntry": false,
+			"console": "integratedTerminal",
+			"env": {
+				"FASTIOT": "easy"
+			},
+			"pipeTransport": {
+				"pipeCwd": "${workspaceFolder}",
+				"pipeProgram": "%{fastiot.settings.apps.path.aswindows}\\cwrsync\\ssh.exe",
+				"pipeArgs": [
+					"-i",
+					"%{device.ssh.key.path.full.aswindows}",
+					"-o",
+					"StrictHostKeyChecking no",
+					"-o",
+					"UserKnownHostsFile /dev/null",
+					"-p",
+					"%{device.ssh.port}",
+					"%{device.user.debug}@%{device.host}"
+				],
+				"debuggerPath": "/usr/share/vsdbg/vsdbg --engineLogging=/var/log/vsdbg.log"
+			},            
+			"preLaunchTask": "fastiot-%{launch.id}-copy-app-to-device"
+		}
+    ]
+}

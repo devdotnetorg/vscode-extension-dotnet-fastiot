@@ -28,3 +28,4 @@ filesToProcess:
   - Program.cs
 fileNameReplacement:
   - dotnetapp.csproj=%{project.name}.csproj
+  - .gitignore_=.gitignore

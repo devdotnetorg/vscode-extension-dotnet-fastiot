@@ -226,10 +226,12 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
 
   private GetPathAsCygdrive(dirPath:string):string
   {
+    //first lowcase
+    dirPath=dirPath.substring(0,1).toLowerCase()+dirPath.substring(1);
     //folderPath    
-    const folderPath=path.dirname(dirPath);
+    //const folderPath=path.dirname(dirPath);
     //Rsync
-    let objArray=(<string>folderPath).split("\\"); 
+    let objArray=(<string>dirPath).split("\\"); 
     objArray[0]=objArray[0].replace(":","");
     let cyPath="/cygdrive";
     objArray.forEach(element =>{
