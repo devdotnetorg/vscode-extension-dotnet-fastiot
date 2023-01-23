@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.2.1 (24-01-2023)
+## v0.2.2 (24-01-2023)
 
 - Changed key type used to connect from rsa to rsa-sha2-256.
 - Added "PubkeyAcceptedAlgorithms=+ssh-rsa" line to `/etc/ssh/sshd_config` configuration file.
