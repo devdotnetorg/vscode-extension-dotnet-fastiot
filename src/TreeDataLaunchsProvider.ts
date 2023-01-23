@@ -240,7 +240,9 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
   }
 
   public async CreateProject(device:IotDevice,template:IotTemplate, dstPath:string,nameProject:string,objJSON:any):Promise<IotResult> {
+    this.ShowStatusBar(`Create a project ${nameProject} ...`);
     const result=template.CreateProject(device,this.Config,dstPath,nameProject,objJSON);
+    this.HideStatusBar();
     //result
     return Promise.resolve(result);  
   }
