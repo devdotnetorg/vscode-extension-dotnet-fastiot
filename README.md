@@ -26,7 +26,7 @@ Devices supported: Raspberry Pi, Banana Pi, Orange Pi, Radxa, Tinkerboard, Odroi
 ## System requirements
 
 - **OS version .** Windows 7-10 (x64). Linux version coming later;
-- **Visual Studio Code.** version not lower than [1.63](https://code.visualstudio.com/ "1.70.3");
+- **Visual Studio Code.** version not lower than [1.70.3](https://code.visualstudio.com/ "1.70.3");
 - **.NET.** Compiling a C# project requires [.NET SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks ".NET SDK") depending on which version of your project you are using (the extension itself is not required to work);
 
 Additional extensions required for developing .NET applications:
