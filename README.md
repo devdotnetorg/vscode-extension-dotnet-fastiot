@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Installs](https://vsmarketplacebadge.apphb.com/downloads-short/devdotnetorg.vscode-extension-dotnet-fastiot.svg)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://vsmarketplacebadge.apphb.com/rating-star/devdotnetorg.vscode-extension-dotnet-fastiot.svg)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
+[![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
 
 # .NET FastIoT VS Code Extension
 
@@ -75,6 +75,7 @@ PermitRootLogin yes
 PasswordAuthentication yes
 ChallengeResponseAuthentication yes
 AuthenticationMethods publickey keyboard-interactive password
+PubkeyAcceptedAlgorithms=+ssh-rsa
 ```
 
 Then save the changes <kbd>F2</kbd> and exit the editor <kbd>F10</kbd>.
