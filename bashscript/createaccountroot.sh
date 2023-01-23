@@ -19,7 +19,7 @@ if [ -f /root/.ssh/id_rsa.pub ]; then
 fi
 
 NAMEHOST=$(uname -n)
-ssh-keygen -t rsa -f /root/.ssh/id_rsa -C root@$NAMEHOST -N ""
+ssh-keygen -t rsa-sha2-256 -f /root/.ssh/id_rsa -C root@$NAMEHOST -N ""
 cat /root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys
 sudo systemctl reload ssh
 sudo systemctl status ssh

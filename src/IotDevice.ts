@@ -15,6 +15,7 @@ import {IotDeviceDTO } from './IotDeviceDTO';
 import {IotDeviceGpiochip } from './IotDeviceGpiochip';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { strictEqual } from 'assert';
+import {Sleep,StringTrim,GetMsgForSshErrorConnection} from './Helper/IoTHelper';
 //
 
 export class IotDevice extends BaseTreeItem {    
@@ -317,10 +318,12 @@ export class IotDevice extends BaseTreeItem {
         await ssh.connect();
         console.log("Connection established SSH");
       }
-    catch (err)
+    catch (err:any)
       {
         console.log("Not Connected SSH");
-        return Promise.resolve(new IotResult(StatusResult.Error,"Not Connected SSH!",undefined));
+        const msg=`${err}\n`+
+          GetMsgForSshErrorConnection();
+        return Promise.resolve(new IotResult(StatusResult.Error,"Not Connected SSH!",msg));
       }
     ssh.close();
     return Promise.resolve(new IotResult(StatusResult.Ok,"Connected SSH!",undefined));          

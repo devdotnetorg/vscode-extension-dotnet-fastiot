@@ -5,7 +5,7 @@
 	"icon": "assets/fastiot-logo-128.png",
 	"license": "LGPL-3.0-only",
 	"preview": true,
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"overview": "assets/marketplace/vscode-marketplace-overview.md",
 	"priceCategory": "free",
 	"publisher": "devdotnetorg",
@@ -44,8 +44,8 @@
 		"onCommand:vscode-extension-dotnet-fastiot.helloWorld"
 	],
 	"os": [
-        "win32"        
-    ],
+		"win32"
+	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"configuration": [
@@ -276,7 +276,7 @@
 					"id": "viewDevices",
 					"name": "Devices",
 					"contextualTitle": "Devices"
-				},				
+				},
 				{
 					"id": "viewConfigurations",
 					"name": "Configurations",
@@ -447,7 +447,6 @@
 				"view": "viewProjects",
 				"contents": "No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)"
 			}
-
 		]
 	},
 	"scripts": {
@@ -475,7 +474,7 @@
 	},
 	"dependencies": {
 		"@lolpants/pingman": "^1.0.6",
-		"node-stream-zip": "^1.14.0",
+		"node-stream-zip": "^1.15.0",
 		"pingman": "^1.1.5",
 		"ssh2": "^1.9.0",
 		"ssh2-promise": "^1.0.2",

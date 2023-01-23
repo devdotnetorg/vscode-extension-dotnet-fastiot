@@ -9,7 +9,7 @@ import {IotDevicePackage} from './IotDevicePackage';
 import {IotConfiguration} from './IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 
-import {Sleep,StringTrim} from './Helper/IoTHelper';
+import {Sleep,StringTrim,GetMsgForSshErrorConnection} from './Helper/IoTHelper';
 import SSH2Promise from 'ssh2-promise';
 import SFTP from 'ssh2-promise';
 import { stringify } from 'querystring';
@@ -79,7 +79,9 @@ export class SshClient {
         catch (err:any)
           {
             console.log("Not Connected SSH");
-            return Promise.resolve(new IotResult(StatusResult.Error,"Not Connected SSH! Check the login, password, ssh server and file /etc/ssh/sshd_config",err));
+            const msg=`${err}\n`+
+              GetMsgForSshErrorConnection();
+            return Promise.resolve(new IotResult(StatusResult.Error,"Not Connected SSH!",msg));
           }
         }          
       //put script
