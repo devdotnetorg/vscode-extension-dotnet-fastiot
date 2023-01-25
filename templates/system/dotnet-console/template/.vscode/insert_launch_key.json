@@ -5,7 +5,9 @@
 			"fastiotIdDevice": "%{device.id}",
 			"fastiotTypeProject": "%{project.type}",
 			"fastiotProject":"%{project.mainfile.path.relative.aswindows}",
-			"fastiotGroup": "%{launch.group.id}",
+			"fastiotIdGroup": "group-%{launch.group.id}",
+			"fastiotNumberInGroup": 1,
+			"fastiotIdTemplate": "%{template.id}",
 			"name": "%{launch.label}",
 			"type": "coreclr",
 			"request": "launch",
@@ -19,7 +21,7 @@
 			},
 			"pipeTransport": {
 				"pipeCwd": "${workspaceFolder}",
-				"pipeProgram": "%{fastiot.settings.apps.path.aswindows}\\cwrsync\\ssh.exe",
+				"pipeProgram": "%{template.apps.path.aswindows}\\cwrsync\\ssh.exe",
 				"pipeArgs": [
 					"-i",
 					"%{device.ssh.key.path.full.aswindows}",

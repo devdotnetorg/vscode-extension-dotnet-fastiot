@@ -221,7 +221,7 @@
 				}
 			},
 			{
-				"command": "viewConfigurations.AddLaunch",
+				"command": "viewLaunchs.AddLaunch",
 				"title": "Add Launch",
 				"icon": {
 					"light": "resources/light/add.svg",
@@ -229,27 +229,27 @@
 				}
 			},
 			{
-				"command": "viewConfigurations.RefreshConfigurations",
+				"command": "viewLaunchs.RefreshConfigurations",
 				"title": "Refresh"
 			},
 			{
-				"command": "viewConfigurations.RenameConfiguration",
+				"command": "viewLaunchs.RenameConfiguration",
 				"title": "Rename"
 			},
 			{
-				"command": "viewConfigurations.DeleteConfiguration",
+				"command": "viewLaunchs.DeleteConfiguration",
 				"title": "Delete"
 			},
 			{
-				"command": "viewConfigurations.RebuildConfiguration",
+				"command": "viewLaunchs.RebuildConfiguration",
 				"title": "Rebuild"
 			},
 			{
-				"command": "viewConfigurations.GoToDevice",
+				"command": "viewLaunchs.GoToDevice",
 				"title": "Go to device"
 			},
 			{
-				"command": "viewConfigurations.AddEnviroment",
+				"command": "viewLaunchs.AddEnviroment",
 				"title": "Add Enviroment",
 				"icon": {
 					"light": "resources/light/add.svg",
@@ -257,15 +257,15 @@
 				}
 			},
 			{
-				"command": "viewConfigurations.RenameEnviroment",
+				"command": "viewLaunchs.RenameEnviroment",
 				"title": "Rename"
 			},
 			{
-				"command": "viewConfigurations.EditEnviroment",
+				"command": "viewLaunchs.EditEnviroment",
 				"title": "Edit"
 			},
 			{
-				"command": "viewConfigurations.DeleteEnviroment",
+				"command": "viewLaunchs.DeleteEnviroment",
 				"title": "Delete"
 			}
 		],
@@ -286,9 +286,9 @@
 					"contextualTitle": "Devices"
 				},
 				{
-					"id": "viewConfigurations",
-					"name": "Configurations",
-					"contextualTitle": "Configurations"
+					"id": "viewLaunchs",
+					"name": "Launchs",
+					"contextualTitle": "Launchs"
 				},
 				{
 					"id": "viewProjects",
@@ -318,13 +318,13 @@
 					"when": "view == viewDevices"
 				},
 				{
-					"command": "viewConfigurations.AddConfiguration",
-					"when": "view == viewConfigurations",
+					"command": "viewLaunchs.AddLaunch",
+					"when": "view == viewLaunchs",
 					"group": "navigation"
 				},
 				{
-					"command": "viewConfigurations.RefreshConfigurations",
-					"when": "view == viewConfigurations"
+					"command": "viewLaunchs.RefreshConfigurations",
+					"when": "view == viewLaunchs"
 				}
 			],
 			"view/item/context": [
@@ -408,37 +408,37 @@
 					"group": "inline"
 				},
 				{
-					"command": "viewConfigurations.RenameConfiguration",
-					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+					"command": "viewLaunchs.RenameConfiguration",
+					"when": "view == viewLaunchs && viewItem == iotconfiguration"
 				},
 				{
-					"command": "viewConfigurations.DeleteConfiguration",
-					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+					"command": "viewLaunchs.DeleteConfiguration",
+					"when": "view == viewLaunchs && viewItem == iotconfiguration"
 				},
 				{
-					"command": "viewConfigurations.RebuildConfiguration",
-					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+					"command": "viewLaunchs.RebuildConfiguration",
+					"when": "view == viewLaunchs && viewItem == iotconfiguration"
 				},
 				{
-					"command": "viewConfigurations.GoToDevice",
-					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+					"command": "viewLaunchs.GoToDevice",
+					"when": "view == viewLaunchs && viewItem == iotconfiguration"
 				},
 				{
-					"command": "viewConfigurations.AddEnviroment",
-					"when": "view == viewConfigurations && viewItem == iotenviroments",
+					"command": "viewLaunchs.AddEnviroment",
+					"when": "view == viewLaunchs && viewItem == iotenviroments",
 					"group": "inline"
 				},
 				{
-					"command": "viewConfigurations.RenameEnviroment",
-					"when": "view == viewConfigurations && viewItem == iotenviroment"
+					"command": "viewLaunchs.RenameEnviroment",
+					"when": "view == viewLaunchs && viewItem == iotenviroment"
 				},
 				{
-					"command": "viewConfigurations.EditEnviroment",
-					"when": "view == viewConfigurations && viewItem == iotenviroment"
+					"command": "viewLaunchs.EditEnviroment",
+					"when": "view == viewLaunchs && viewItem == iotenviroment"
 				},
 				{
-					"command": "viewConfigurations.DeleteEnviroment",
-					"when": "view == viewConfigurations && viewItem == iotenviroment"
+					"command": "viewLaunchs.DeleteEnviroment",
+					"when": "view == viewLaunchs && viewItem == iotenviroment"
 				}
 			]
 		},
@@ -448,8 +448,8 @@
 				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).  \n[Add Device](command:viewDevices.AddDevice)"
 			},
 			{
-				"view": "viewConfigurations",
-				"contents": "No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).  \n[Add Configuration](command:viewConfigurations.AddConfiguration)"
+				"view": "viewLaunchs",
+				"contents": "No launchs [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).  \n[Add Launch](command:viewLaunchs.AddLaunch)"
 			},
 			{
 				"view": "viewProjects",

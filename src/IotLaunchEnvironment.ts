@@ -6,25 +6,25 @@ import {IotDevice} from './IotDevice';
 import {IotItemTree} from './IotItemTree';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
-import {IotLaunchConfiguration} from './IotLaunchConfiguration';
+import {IotLaunch} from './IotLaunch';
 
 export class IotLaunchEnvironment extends BaseTreeItem{
   
-  public Parent: IotLaunchConfiguration|IotLaunchEnvironment;
+  public Parent: IotLaunch|IotLaunchEnvironment;
   public Childs: Array<IotLaunchEnvironment>=[];
   public Device: IotDevice| undefined;
 
   public Items:Map<string, string>=new Map<string, string>();
 
-  public ConfigurationLaunch: IotLaunchConfiguration;    
+  public ConfigurationLaunch: IotLaunch;    
     
   constructor(
     label: string,
     description: string|  undefined,
     tooltip: string | vscode.MarkdownString | undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,    
-    parent: IotLaunchConfiguration|IotLaunchEnvironment,    
-    configurationLaunch: IotLaunchConfiguration    
+    parent: IotLaunch|IotLaunchEnvironment,    
+    configurationLaunch: IotLaunch   
   ){
     super(label,description,tooltip,collapsibleState);
     this.Parent=parent;

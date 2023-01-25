@@ -12,8 +12,4 @@ export class IotTemplateRecovery extends EntityRecovery {
     ){
       super();
   }
-
-  
 }
-
-

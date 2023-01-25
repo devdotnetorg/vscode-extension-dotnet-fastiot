@@ -3,6 +3,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
+import {v4 as uuidv4} from 'uuid';
+
 import {IotDevice} from '../IotDevice';
 
 export class IoTHelper {
@@ -35,19 +37,6 @@ export class IoTHelper {
     let regex = /\\/g;
     const result = data.replace(regex, "/");  	
     return result;	
-  }
-
-  static GetUniqueLabel(newLabel:string,suffix:string, increment:number|undefined,arrayName: Array<string>):string{
-    let checklabel=newLabel;
-    if(increment) checklabel=`${newLabel} ${suffix}${increment}`;    
-    const item = arrayName.find(x=>x==checklabel);
-    if(item)
-    {
-      if(!increment) increment=0; 
-      increment++;      
-      checklabel=IoTHelper.GetUniqueLabel(newLabel,suffix,increment,arrayName);
-    }
-    return checklabel;   
   }
 
   static StringTrim(data:string): string {
@@ -120,7 +109,7 @@ export class IoTHelper {
         } 
       if(fs.lstatSync(filename).isFile())
         {
-          if(filename.split('.').pop()==`.${fileExtension}`)
+          if(`.${filename.split('.').pop()}`==fileExtension)
           {
             console.log(filename);
             result.push(filename);
@@ -129,6 +118,12 @@ export class IoTHelper {
     });
     //
     return result;     
+  }
+
+  static CreateGuid():string
+  {
+    const guid = uuidv4();
+    return guid.substr(0,8);
   }
   
 }

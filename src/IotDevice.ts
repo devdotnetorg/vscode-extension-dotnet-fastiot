@@ -7,7 +7,6 @@ import {IotDeviceInformation, Existences} from './IotDeviceInformation';
 import {TypePackage,IotDevicePackage} from './IotDevicePackage';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IotResult,StatusResult } from './IotResult';
-import {v4 as uuidv4} from 'uuid';
 import {IotItemTree } from './IotItemTree';
 import { config } from 'process';
 import SSH2Promise from 'ssh2-promise';
@@ -15,6 +14,7 @@ import {IotDeviceDTO } from './IotDeviceDTO';
 import {IotDeviceGpiochip } from './IotDeviceGpiochip';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { strictEqual } from 'assert';
+import { IoTHelper } from './Helper/IoTHelper';
 //
 
 export class IotDevice extends BaseTreeItem {    
@@ -39,8 +39,6 @@ export class IotDevice extends BaseTreeItem {
     ){
       super("device","description", undefined,vscode.TreeItemCollapsibleState.Expanded);
       this.Config=config;
-      //const guid = uuidv4();
-      //this.idDevice=guid.substr(0,8);
       //view
       this.contextValue="iotdevice";
       //
@@ -107,9 +105,8 @@ export class IotDevice extends BaseTreeItem {
     this.Information.Client.OnChangedStateUnsubscribe(handler);
     //    
     if(result.Status==StatusResult.Error) return Promise.resolve(result);    
-    //Generating ID Device
-    const guid = uuidv4();
-		this.IdDevice=this.Information.Hostname+"-"+guid.substr(0,8);
+    //ID Device
+		this.IdDevice=this.Information.Hostname+"-"+IoTHelper.CreateGuid();
     //Add child: Id device
     this.AddidDeviceInChildsInformation();
     //--------------------------------------

@@ -5,13 +5,12 @@ import * as path from 'path';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
-import { IotLaunchProject } from '../IotLaunchProject';
-import { IotLaunchConfiguration } from '../IotLaunchConfiguration';
+import { IotLaunch } from '../IotLaunch';
 import { IotLaunchEnvironment } from '../IotLaunchEnvironment';
 
 export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
-        let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdConfiguration);
+        let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdLaunch);
         if(configuration)
         {
             //name
@@ -45,7 +44,7 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:Io
         });
         if(newName==undefined) return;
         //
-        const configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdConfiguration);
+        const configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdLaunch);
         if(configuration){
             configuration.Environments.Remove(<string>item.label);
             configuration.Environments.Add(newName,<string>item.description);
@@ -63,7 +62,7 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:IotL
         });
         if(newValue==undefined) return;
         //
-        let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdConfiguration);
+        let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdLaunch);
         if(configuration){
             configuration.Environments.Edit(<string>item.label,newValue);            
             treeData.Refresh();
@@ -72,7 +71,7 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:IotL
 
 export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
-        let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdConfiguration);
+        let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdLaunch);
         if(configuration){
             configuration.Environments.Remove(<string>item.label);            
             treeData.Refresh();

@@ -6,7 +6,6 @@ import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import {IoTHelper} from '../Helper/IoTHelper';
 import { IotDevice } from '../IotDevice';
-import { IotLaunchProject } from '../IotLaunchProject';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import {IotTemplate} from '../Templates/IotTemplate';
 import {IotTemplateAttribute} from '../Templates/IotTemplateAttribute';
@@ -31,7 +30,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
             `${device.Information.BoardName} ${device.Information.Architecture}`,device);            
         itemDevices.push(item);
     });
-    let SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: 'Choose a device (1/X):',});
+    let SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: 'Choose a device (1/4):',});
     if(!SELECTED_ITEM) return;
     const selectDevice= <IotDevice>SELECTED_ITEM.value;
     //Select template
@@ -57,7 +56,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         items.push(item);
         item = new ItemQuickPick("2. Choose another template from the collection","",undefined);
         items.push(item);
-        SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Select an action (2/X):',});
+        SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Select an action (2/4):',});
         if(!SELECTED_ITEM) return;
         selectTemplate=SELECTED_ITEM.value;
     }
@@ -75,7 +74,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
                 `${template.Attributes.Detail}. Language: ${template.Attributes.Language}`,template);            
             itemTemplates.push(item);
         });
-        SELECTED_ITEM = await vscode.window.showQuickPick(itemTemplates,{title: 'Choose a template (2/5):',});
+        SELECTED_ITEM = await vscode.window.showQuickPick(itemTemplates,{title: 'Choose a template (3/4):',});
         if(!SELECTED_ITEM) return;
         selectTemplate= <IotTemplate>SELECTED_ITEM.value;
     }
@@ -96,22 +95,28 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         const item = new ItemQuickPick(label,description,fileName);
         itemProjects.push(item);
     });
-    SELECTED_ITEM = await vscode.window.showQuickPick(itemProjects,{title: 'Choose a project:',});
+    SELECTED_ITEM = await vscode.window.showQuickPick(itemProjects,{title: 'Choose a project (4/4):'});
     if(!SELECTED_ITEM) return;
     selectProject=SELECTED_ITEM.value;
     //Preparing values
-    const mainfilePathFull=`${workspaceDirectory}\\${selectProject}`;
-    const projectName=path.basename(mainfilePathFull);
-    values.set("%{project.mainfile.path.full.aswindows}",mainfilePathFull);
+    const baseName=path.basename(selectProject);
+    const projectName=baseName.substring(0,baseName.length-selectTemplate.Attributes.ExtMainFileProj.length);
+    values.set("%{project.mainfile.path.full.aswindows}",selectProject);
     values.set("%{project.name}",projectName);
     //Main process
-    const result = await treeData.AddLaunch(selectDevice,selectTemplate,workspaceDirectory,values);
-    console.log(`result = ${result.Message} sysMsg=${result.SystemMessage}`);
+    treeData.OutputChannel.appendLine(`Action: adding Launch to the ${selectProject} project`);
+    const result = await treeData.AddLaunch(selectDevice,selectTemplate,values);
+    //Output
+    treeData.OutputChannel.appendLine("------------- Result -------------");
+    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
+    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
+    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+    //Message
     if(result.Status==StatusResult.Ok)
     {
         vscode.window.showInformationMessage('Launch and tasks added successfully');
     }else {
         vscode.window.showErrorMessage(`Error. Launch and tasks not added! \n${result.Message}. ${result.SystemMessage}`);            
-    }		
+    }
 }
 

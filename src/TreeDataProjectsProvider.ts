@@ -8,16 +8,14 @@ import { IotDeviceAccount } from './IotDeviceAccount';
 import { IotDeviceInformation } from './IotDeviceInformation';
 import { IotItemTree } from './IotItemTree';
 import { IotDevicePackage } from './IotDevicePackage';
-import { IotLaunchConfiguration } from './IotLaunchConfiguration';
+import { IotLaunch } from './IotLaunch';
 import { IotResult,StatusResult } from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IotTemplate} from './Templates/IotTemplate';
 
 export class TreeDataProjectsProvider implements vscode.TreeDataProvider<BaseTreeItem> {
 
-  constructor() {
-        
-  }
+  constructor() {}
 
   public getTreeItem(element: BaseTreeItem): vscode.TreeItem | Thenable<BaseTreeItem> {
     return element;
@@ -25,7 +23,7 @@ export class TreeDataProjectsProvider implements vscode.TreeDataProvider<BaseTre
   
   public getChildren(element?: BaseTreeItem): Thenable<BaseTreeItem[]> {
       //Creating a root structure   
-      let RootItems:Array<IotLaunchConfiguration>=[];         
+      let RootItems:Array<IotLaunch>=[];         
       return Promise.resolve(RootItems);        
   }
 

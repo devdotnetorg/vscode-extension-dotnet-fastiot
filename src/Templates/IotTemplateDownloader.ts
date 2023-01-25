@@ -30,5 +30,3 @@ export class IotTemplateDownloader extends EntityDownloader {
   }
 
 }
-
-

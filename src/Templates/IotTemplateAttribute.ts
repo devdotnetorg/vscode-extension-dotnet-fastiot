@@ -27,7 +27,6 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
   private _fileNameReplacement:Map<string,string>= new Map<string,string>();
   public get FileNameReplacement():Map<string,string> {
     return this._fileNameReplacement;}
-
   public get ExtMainFileProj():string {
     //dotnetapp.csproj => .csproj
     return IoTHelper.GetFileExtensions(this.MainFileProj);}
@@ -94,5 +93,4 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
       this._validationErrors.push(`File: ${filePath} Error parsing attributes: ${err}`);
     }
   }
-
 }
