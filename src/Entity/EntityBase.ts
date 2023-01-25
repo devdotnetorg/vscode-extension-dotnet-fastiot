@@ -143,4 +143,10 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
     //result
     return result;
   }
+
+  public IsCompatible1(endDeviceArchitecture:string|undefined):boolean
+  {
+    const result=this.Attributes.EndDeviceArchitecture.find(x=>x==endDeviceArchitecture);
+    if(result) return true; else  return false;
+  }
 }

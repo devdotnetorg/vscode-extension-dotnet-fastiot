@@ -34,16 +34,12 @@ export abstract class EntityRecovery {
       //file
       if(fs.lstatSync(`${sourceDir}\\${name}`).isFile())
       {
-        const re = /(?:\.([^.]+))?$/;
-        const ext = re.exec(name);
-        if(ext?.length==2)
-        {
-          if(ext[1]=="zip")
+        const extFile=IoTHelper.GetFileExtensions(name);
+        if(extFile==".zip")
           {
             const nameTemplate=name.substring(0,name.length-4)
             listNames.push(nameTemplate);
           }
-        }
       }
     });
     return listNames;

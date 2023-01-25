@@ -30,7 +30,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
   public Options: IotLaunchOptions;  
   public Environments: IotLaunchEnvironment; 
   public Config:IotConfiguration 
-
+  //DELL
   constructor(config:IotConfiguration
     ){
       super("Configuration",undefined, undefined,vscode.TreeItemCollapsibleState.Expanded);
@@ -52,13 +52,13 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       this.Childs.push(this.Options);
       this.Childs.push(this.Environments);      
     }
-  
+  //DELL
   public CreateGuid()
   {
     const guid = uuidv4();
     this.IdConfiguration=guid.substr(0,8);
   }
-  
+  //DELL
   public async Create(workspaceDirectory:string, projectPath:string,device: IotDevice
   ): Promise<IotResult>{    
     let result = new IotResult(StatusResult.None,undefined,undefined);
@@ -94,7 +94,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     //
     return Promise.resolve(result);   
   }
-
+  //DELL
   public FromJSON(jsonObj:any,devices: Array<IotDevice>,workspaceDirectory:string):boolean{
     try
     {        
@@ -130,7 +130,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     }
     return true;
   }
-
+  //DELL
   private CreateLabel(jsonLaunch:any,nameConfiguration:string)
   {
     //Rename. checking for matching names.
@@ -142,7 +142,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     nameConfiguration=IoTHelper.GetUniqueLabel(nameConfiguration,'#',undefined,arrayNameConf);
     this.label=this.tooltip=nameConfiguration;
   }
-
+  //DELL
   private CreateLaunch(nameConfiguration:string):Promise<IotResult> {
     try
     {
@@ -186,7 +186,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
      }
     return Promise.resolve(new IotResult(StatusResult.Ok,undefined,undefined));
   }
-  
+  //DELL
   private CreateTasks():Promise<IotResult> {
     try
     { 
@@ -232,12 +232,12 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     }
     return Promise.resolve(new IotResult(StatusResult.Ok,undefined,undefined));
   }
-
+  //DELL
   public Refresh() {              
     this.Options.Build();    
     this.Environments.Build();    
   }
-
+  //DELL
   public Rename(newLabel:string): boolean {    
     let result:boolean=false;
     //check launch.json
@@ -260,7 +260,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     });        
     return result;
   }
-
+  //DELL
   public Remove()
   {
     //deleting related configuration
@@ -292,7 +292,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
       fs.writeFileSync(pathTasksFile,JSON.stringify(jsonTasks,null,2));
    }    
   }
-  
+  //DELL
   public Rebuild()
   {
     //deleting related configuration and tasks
@@ -302,7 +302,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     //creating a tasks
     this.CreateTasks();
   }
-
+  //DELL
   public UpdateEnviroments(): boolean {  
     let result:boolean=false;
     //check launch.json
@@ -325,7 +325,7 @@ export class IotLaunchConfiguration extends BaseTreeItem {
     });
     return result;
   }
-
+  
   iconPath = {
     light: path.join(__filename, '..', '..', 'resources', 'light', 'lanch.svg'),
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'lanch.svg')

@@ -32,33 +32,33 @@ export class IotLaunchEnvironment extends BaseTreeItem{
     //view
     this.contextValue="iotenviroment";
   }
-    
+  //DELL
   public Add(key:string, value:string){
     this.Items.set(key,value);    
     this.ConfigurationLaunch.UpdateEnviroments();
     this.Build();
   }
-
+  //DELL
   public Remove(key:string){
    this.Items.delete(key);   
    this.ConfigurationLaunch.UpdateEnviroments();
    this.Build();   
   }
-
+  //DELL
   public Edit(key:string, newvalue:string){
     this.Items.set(key,newvalue);    
     this.ConfigurationLaunch.UpdateEnviroments();
     this.Build(); 
   }
-
+  //DELL
   public Clear(){
     this.Items.clear();
   }
-
+  //DELL
   public Build(){   
     this.CreateChildElements();
   }
-
+  //DELL
   private CreateChildElements(){
     //create child elements
     this.Childs=[];      
@@ -76,12 +76,12 @@ export class IotLaunchEnvironment extends BaseTreeItem{
 
       this.Childs.push(element);      
     });        
-   }
-  
+  }
+  //DELL
   public Update(): void{
     console.log("Not Implemented");
   }
-
+  //DELL
   public ToJSON():any{    
     //Fill
     const json="{}";
@@ -92,7 +92,7 @@ export class IotLaunchEnvironment extends BaseTreeItem{
     //    
     return jsonObj;    
   }
-
+  //DELL
   public FromJSON(jsonObj:any):any{
     this.Clear();               
     //environments

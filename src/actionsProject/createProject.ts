@@ -14,14 +14,7 @@ import {IotTemplate} from '../Templates/IotTemplate';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 
 export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>): Promise<void> {
-    //objJSON: preparation of input parameters    
-    let jsonObj = {
-        dotnetTarget:""//,
-        //installpath:"",
-        //username:"",
-        //name:"",
-        //version:""        
-    };
+    let values:Map<string,string>= new Map<string,string>()
     //Devices
     if(devices.length==0) {
         vscode.window.showErrorMessage(`Error. No available devices. Add device`);
@@ -107,12 +100,14 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         });
         SELECTED_ITEM = await vscode.window.showQuickPick(itemTarget,{title: 'Choose a .NET Target framework:',});
         if(!SELECTED_ITEM) return;
-        //formation jsonObj
-        jsonObj.dotnetTarget=SELECTED_ITEM.value;
+        //
+        values.set("%{project.dotnet.targetframework}",<string>SELECTED_ITEM.value);
     }
+    //Подготовка values
+    values.set("%{project.name}",nameProject);
     //Main process
     treeData.OutputChannel.appendLine(`Action: create an ${nameProject} project, ${selectTemplate.ParentDir} template`);
-    const result=await treeData.CreateProject(selectDevice,selectTemplate,selectFolder,nameProject,jsonObj);
+    const result=await treeData.CreateProject(selectDevice,selectTemplate,selectFolder,values);
     //Output       
     treeData.OutputChannel.appendLine("------------- Result -------------");
     treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);

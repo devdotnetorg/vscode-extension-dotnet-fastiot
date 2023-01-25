@@ -5,6 +5,7 @@
 			"fastiotIdDevice": "%{device.id}",
 			"fastiotTypeProject": "%{project.type}",
 			"fastiotProject":"%{project.mainfile.path.relative.aswindows}",
+			"fastiotGroup": "%{launch.group.id}",
 			"name": "%{launch.label}",
 			"type": "coreclr",
 			"request": "launch",

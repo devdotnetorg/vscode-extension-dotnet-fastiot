@@ -27,7 +27,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     return this._platform;}    
 
   public ConfigurationLaunch: IotLaunchConfiguration;    
-  
+  //DELL
   constructor(
     label: string,
     description: string|  undefined,
@@ -42,7 +42,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     this.Device=device;
     this.ConfigurationLaunch=configurationLaunch;
   }
-
+  //DELL
   public Build(){
     //read *.csproj for get TargetFramework
     const xmlFile:string= fs.readFileSync(<string>this.ConfigurationLaunch.Project.FullPath, 'utf8');
@@ -59,7 +59,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     //Create childs
     this.CreateChildElements();
   }
-
+  //DELL
   private CreatingMergeDictionary () {        
     this.MergeDictionary.clear();
     //
@@ -100,7 +100,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     }    
     this.MergeDictionary.set("%RELATIVE_FOLDER_PATH%",relativeFolderPath);
   }
-
+  //DELL
   private CreateChildElements()
   {
       //create child elements
@@ -129,9 +129,8 @@ export class IotLaunchOptions extends BaseTreeItem{
         this.Childs.push(element);
      }
      //
-   }
-
-  
+  }
+  //DELL
   public Update(): void{
     console.log("Not Implemented");
   }

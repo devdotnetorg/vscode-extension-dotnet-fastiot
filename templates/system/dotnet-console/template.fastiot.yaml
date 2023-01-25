@@ -4,11 +4,12 @@ id: dotnet-console # unique
 platform: # win32, linux. Only Windows is currently supported
   - win32
 version: 0.1
-releaseDate: 2022-12-29
+releaseDate: 2022-12-29 # YYYY-MM-DD
 forVersionExt: 0.3.0
 author: DevDotNet.ORG
 label: .NET Console Application
 detail: Creates a minimal console application sample
+description: The application out the text "Hello, World!" in the console
 language: csharp
 endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l

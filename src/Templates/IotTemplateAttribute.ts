@@ -6,6 +6,7 @@ import YAML from 'yaml';
 import {EntityType} from '../Entity/EntityType';
 import {EntityBase} from '../Entity/EntityBase';
 import {EntityBaseAttribute} from '../Entity/EntityBaseAttribute';
+import { IoTHelper } from '../Helper/IoTHelper';
 
 export class IotTemplateAttribute extends EntityBaseAttribute {
   private _typeProj:string="";  
@@ -27,6 +28,10 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
   public get FileNameReplacement():Map<string,string> {
     return this._fileNameReplacement;}
 
+  public get ExtMainFileProj():string {
+    //dotnetapp.csproj => .csproj
+    return IoTHelper.GetFileExtensions(this.MainFileProj);}
+  
   constructor(
     ){
       super();

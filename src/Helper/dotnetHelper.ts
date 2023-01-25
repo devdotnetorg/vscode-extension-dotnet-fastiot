@@ -75,4 +75,18 @@ export class dotnetHelper {
     return value;
   }
 
+  static GetTargetFrameworkFromCsprojFile(filePath:string): string|undefined {
+    try {
+      //read *.csproj for get TargetFramework
+      const xmlFile:string= fs.readFileSync(filePath, 'utf8');
+      let xpath = require('xpath');
+      let dom = require('xmldom').DOMParser;
+      let doc = new dom().parseFromString(xmlFile);
+      let nodes = xpath.select("//TargetFramework", doc);
+      const targetFramework=nodes[0].firstChild.data;
+      return targetFramework;
+    } catch (err: any){
+      return undefined;
+    } 
+  }
 }

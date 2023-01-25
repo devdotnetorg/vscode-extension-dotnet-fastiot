@@ -102,13 +102,26 @@ export class EntityBaseAttribute {
       } 
       while(true)
       //next
-  } catch (err: any){
+    } catch (err: any){
       this._validationErrors.push(`File: ${filePath} Error parsing attributes: ${err}`);
     }
   }
   
   protected Validation(){
     this._validationErrors=[];
+  }
+
+  public ForceGetID(filePath:string):string|undefined
+  {
+    try {
+      const file = fs.readFileSync(filePath, 'utf8');
+      const obj=YAML.parse(file);
+      //one value
+      const id=<string>obj.id;
+      return id;
+    } catch (err: any){
+      return undefined;
+    }
   }
 
 }

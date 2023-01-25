@@ -25,12 +25,12 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
   private _config:IotConfiguration
   public get Config(): IotConfiguration {
     return this._config;}
-
+  
   private _onDidChangeTreeData: vscode.EventEmitter<BaseTreeItem| undefined | null | void> = 
     new vscode.EventEmitter<BaseTreeItem| undefined | null | void>();
   public readonly onDidChangeTreeData: vscode.Event<BaseTreeItem| undefined | null | void> = 
     this._onDidChangeTreeData.event;
-
+  //DELL
   public set Config(newConfig:IotConfiguration){
     this._config=newConfig;    
     //devices
@@ -45,7 +45,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
   private _statusBarItem:vscode.StatusBarItem;
   private _devices: Array<IotDevice>;
   private _workspaceDirectory:string|undefined;
-
+  //DELL
   constructor(    
     statusBarItem:vscode.StatusBarItem,
     outputChannel:vscode.OutputChannel,
@@ -62,11 +62,11 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       //Recovery devices
       //if(workspaceDirectory) this.RecoveryLaunchs(devices,workspaceDirectory);  
   }
-
+  //DELL
   public getTreeItem(element: BaseTreeItem): vscode.TreeItem | Thenable<BaseTreeItem> {
     return element;
   }  
-  
+  //DELL
   public getChildren(element?: BaseTreeItem): Thenable<BaseTreeItem[]> {
     if (element) {
       //Creating a child element
@@ -82,11 +82,11 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       return Promise.resolve(this.RootItems);        
     }    
   }
-
+  //DELL
   public Refresh(): void {        
     this._onDidChangeTreeData.fire();    
   }
-
+  //DELL
   public RefreshsFull(): void {
     //Clear
     this.RootItems = [];
@@ -94,7 +94,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     //
     this._onDidChangeTreeData.fire();    
   }
-
+  //DELL
   public async AddConfiguration(workspaceDirectory:string, projectPath:string,device: IotDevice): Promise<IotResult> {
     this.ShowStatusBar("Create a configuration");    
     let configuration = new IotLaunchConfiguration(this.Config);
@@ -108,7 +108,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     this.HideStatusBar();
     return Promise.resolve(result);    
   }
-        
+  //DELL    
   private async ShowStatusBar(textStatusBar:string): Promise<void>{      
     this._isStopStatusBar=false;
     //  
@@ -134,14 +134,14 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
            while(!this._isStopStatusBar)
       }    
     }
-
+  //DELL
   private async SetTextStatusBar(textStatusBar:string): Promise<void>{
     if(this._statusBarItem)
     {
       this._statusBarText=textStatusBar;      
     }    
   }
-  
+  //DELL
   private async HideStatusBar(): Promise<void>{
     if(this._statusBarItem)
     {
@@ -149,7 +149,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       this._statusBarItem.hide();						
     }    
   }
-
+  //DELL
   private async RecoveryLaunchs(devices: Array<IotDevice>,workspaceDirectory:string): Promise<void>{    
     //Clear
     this.RootItems = [];
@@ -205,7 +205,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       return;
     }
   }  
-
+  //DELL
   public async RenameConfiguration(item:IotLaunchConfiguration,newLabel:string): Promise<boolean> {
     if(this.RootItems.find(x=>x.label==newLabel)) return Promise.resolve(false);     
     let configuration = this.FindbyIdConfiguration(<string>item.IdConfiguration);
@@ -216,12 +216,12 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     }
     return Promise.resolve(false);   
   }  
-
+  //DELL
   public FindbyIdConfiguration(idConfiguration:string): IotLaunchConfiguration|undefined {
     let configuration = this.RootItems.find(x=>x.IdConfiguration==idConfiguration);
     return configuration;    
   }
-
+  //DELL
   public async DeleteConfiguration(idConfiguration:string): Promise<boolean> {
     let configuration=this.FindbyIdConfiguration(idConfiguration);
     if(configuration){
@@ -232,16 +232,26 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     }
     return Promise.resolve(false);   
   }  
-
+  //DELL
   public async RebuildConfiguration(idConfiguration:string): Promise<void>
   {
     let configuration=this.FindbyIdConfiguration(idConfiguration);
     if(configuration) configuration.Rebuild();
   }
-
-  public async CreateProject(device:IotDevice,template:IotTemplate, dstPath:string,nameProject:string,objJSON:any):Promise<IotResult> {
+  // Create project from a template
+  public async CreateProject(device:IotDevice,template:IotTemplate, dstPath:string,values:Map<string,string>):Promise<IotResult> {
+    const nameProject= values.get("%{project.name}") ?? "";
     this.ShowStatusBar(`Create a project ${nameProject} ...`);
-    const result=template.CreateProject(device,this.Config,dstPath,nameProject,objJSON);
+    const result=template.CreateProject(device,this.Config,dstPath,values);
+    this.HideStatusBar();
+    //result
+    return Promise.resolve(result);  
+  }
+  // Add Launch
+  public async AddLaunch(device:IotDevice,template:IotTemplate, dstPath:string,values:Map<string,string>):Promise<IotResult> {
+    const nameProject= values.get("%{project.name}") ?? "";
+    this.ShowStatusBar(`Create a project ${nameProject} ...`);
+    const result=template.AddConfigurationVscode(device,this.Config,dstPath,values);
     this.HideStatusBar();
     //result
     return Promise.resolve(result);  

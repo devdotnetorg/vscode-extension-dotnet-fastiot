@@ -42,7 +42,10 @@ import { TreeDataProjectsProvider } from './TreeDataProjectsProvider';
 import { IotLaunchConfiguration } from './IotLaunchConfiguration';
 import { IotLaunchEnvironment } from './IotLaunchEnvironment';
 
+//actionsLaunch.actions
+import {addLaunch} from './actionsLaunch/addLaunch';
 
+//DELL
 //Configurations.actions
 import { addConfiguration } from './actionsConfiguration/addConfiguration';
 import { refreshConfigurations } from './actionsConfiguration/refreshConfigurations';
@@ -211,9 +214,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandDetectGpiochips = vscode.commands.registerCommand("viewDevices.DetectGpiochips", (item:IotDeviceGpiochip) => {
 		detectGpiochips(treeDataDevicesProvider,item.Device);
 	});
-	//Add new configuration		  
-	let commandAddConfiguration = vscode.commands.registerCommand('viewConfigurations.AddConfiguration', () => {	
-		addConfiguration(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems);	
+	//Add new launch		  
+	let commandAddLaunch = vscode.commands.registerCommand('viewConfigurations.AddLaunch', () => {	
+		addLaunch(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems);	
 	});
 	//Refresh Configurations
 	let commandRefreshConfigurations = vscode.commands.registerCommand('viewConfigurations.RefreshConfigurations', () => {
@@ -310,8 +313,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandEnableDTO);
 	context.subscriptions.push(commandDisableDTO);
 	context.subscriptions.push(commandDetectGpiochips);
-	//configurations
-	context.subscriptions.push(commandAddConfiguration);
+	//Launchs
+	context.subscriptions.push(commandAddLaunch);
 	context.subscriptions.push(commandRefreshConfigurations);
 	context.subscriptions.push(commandRenameConfiguration);
 	context.subscriptions.push(commandRebuildConfiguration);

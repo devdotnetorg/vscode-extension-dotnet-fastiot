@@ -79,6 +79,58 @@ export class IoTHelper {
     return (value.replace(/[\/|\\:*?"<>]/g, replacement));
   }
 
+  static GetFileExtensions(value:string):string {
+    //dotnetapp.csproj => .csproj
+    let extmainFileProj:string="";
+    const re = /(?:\.([^.]+))?$/;
+    const ext = re.exec(value);
+    if(ext?.length==2) extmainFileProj=ext[0];
+    return extmainFileProj;
+  }
+
+  static GetAllFilesByExt(dir:string,fileExtension:string):Array<string> {
+    //search for files in depth on three levels
+    const depthLevel=3;
+    const helper= new IoTHelper();
+    const files = helper.GetAllFilesByExtRecurc(dir,fileExtension, depthLevel,undefined);    
+    return files;
+  }
+
+  private GetAllFilesByExtRecurc(pathFolder:string, fileExtension:string, depthLevel:number| undefined,currenDepthLevel:number| undefined): Array<string> {
+    let result:Array<string>=[];
+    if(depthLevel){
+      if(currenDepthLevel)
+      {
+        if(currenDepthLevel>depthLevel) return result;
+      }
+    }
+    //    
+    let files=fs.readdirSync(pathFolder);
+    files.forEach((name) => {
+      const filename=`${pathFolder}\\${name}`;      
+      if(fs.lstatSync(filename).isDirectory())
+        {          
+          if(!currenDepthLevel) currenDepthLevel=0;
+          currenDepthLevel++
+          const helper= new IoTHelper();
+          const result2=helper.GetAllFilesByExtRecurc(filename, fileExtension, depthLevel,currenDepthLevel);
+          result2.forEach((element) => {
+            result.push(element);
+          });          
+        } 
+      if(fs.lstatSync(filename).isFile())
+        {
+          if(filename.split('.').pop()==`.${fileExtension}`)
+          {
+            console.log(filename);
+            result.push(filename);
+          }          
+        }       
+    });
+    //
+    return result;     
+  }
+  
 }
  
 

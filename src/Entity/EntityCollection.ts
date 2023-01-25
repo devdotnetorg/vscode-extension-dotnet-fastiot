@@ -133,6 +133,13 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       });
     return listEntitys;
   }
+
+  public FindbyId(idEntity:string):T|undefined
+  {
+    const entity = this._data.get(idEntity);
+    return entity;
+  }
+
 }
 
 export enum ContainsType {

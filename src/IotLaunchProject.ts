@@ -32,7 +32,7 @@ export class IotLaunchProject {
 
   constructor(){    
   };
-
+  //DELL
   public Build(workspaceDirectory:string, fullPath:string){    
     //FullPath
     this._fullPath=fullPath;
@@ -54,14 +54,14 @@ export class IotLaunchProject {
       this._cyPath=this._cyPath+`/${element}`;
     });
   }
-  
+  //DELL
   public FindProjects(pathFolder:string): Array<string>{    
     //search for projects in depth on three levels
     //const projects = this.GetProjectsFromFolder(pathFolder,"csproj", this._depthLevel,undefined);    
     let projects:Array<string>=[];
     return projects;
   }
-
+  //DELL
   private GetProjectsFromFolder(pathFolder:string, fileExtension:string, depthLevel:number| undefined,currenDepthLevel:number| undefined): Array<string> {
     let result:Array<string>=[];
     if(depthLevel){
