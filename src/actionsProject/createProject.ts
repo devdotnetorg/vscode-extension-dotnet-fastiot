@@ -103,7 +103,7 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         //
         values.set("%{project.dotnet.targetframework}",<string>SELECTED_ITEM.value);
     }
-    //Подготовка values
+    //values
     values.set("%{project.name}",nameProject);
     //Main process
     treeData.OutputChannel.appendLine(`Action: create an ${nameProject} project, ${selectTemplate.ParentDir} template`);

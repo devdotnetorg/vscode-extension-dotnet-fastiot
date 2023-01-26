@@ -6,15 +6,15 @@ import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotLaunch } from '../IotLaunch';
 
-export async function renameConfiguration(treeData: TreeDataLaunchsProvider,item:IotLaunch): Promise<void> {                    
+export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch): Promise<void> {                    
     const newLabel = await vscode.window.showInputBox({				
         prompt: 'prompt',
-        title: 'Enter a new name configuration',
+        title: 'Enter a new name launch',
         value:<string>item.label
     });
     if((newLabel==undefined)||(newLabel==item.label)) return;
     //Rename
-    if(await treeData.RenameConfiguration(item,newLabel))
+    if(await treeData.RenameLaunch(item,newLabel))
     {        
         treeData.Refresh();    
     }    

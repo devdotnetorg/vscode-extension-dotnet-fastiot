@@ -191,37 +191,37 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       return;
     }
   }  
-  //DELL
-  public async RenameConfiguration(item:IotLaunch,newLabel:string): Promise<boolean> {
+
+  public async RenameLaunch(item:IotLaunch,newLabel:string): Promise<boolean> {
     if(this.RootItems.find(x=>x.label==newLabel)) return Promise.resolve(false);     
-    let configuration = this.FindbyIdConfiguration(<string>item.IdLaunch);
-    if(configuration){
-      configuration.Rename(newLabel);      
+    let launch = this.FindbyIdLaunch(<string>item.IdLaunch);
+    if(launch){
+      launch.Rename(newLabel);      
       //
       return Promise.resolve(true);   
     }
     return Promise.resolve(false);   
   }  
-  //DELL
-  public FindbyIdConfiguration(idConfiguration:string): IotLaunch|undefined {
-    let configuration = this.RootItems.find(x=>x.IdLaunch==idConfiguration);
-    return configuration;    
+
+  public FindbyIdLaunch(idLaunch:string): IotLaunch|undefined {
+    let launch = this.RootItems.find(x=>x.IdLaunch==idLaunch);
+    return launch;    
   }
-  //DELL
-  public async DeleteConfiguration(idConfiguration:string): Promise<boolean> {
-    let configuration=this.FindbyIdConfiguration(idConfiguration);
-    if(configuration){
-      configuration.Remove();
-      const index=this.RootItems.indexOf(configuration);
+
+  public async DeleteLaunch(idLaunch:string): Promise<boolean> {
+    let launch=this.FindbyIdLaunch(idLaunch);
+    if(launch){
+      launch.Remove();
+      const index=this.RootItems.indexOf(launch);
       this.RootItems.splice(index,1);      
       return Promise.resolve(true);   
     }
     return Promise.resolve(false);   
   }  
   //DELL
-  public async RebuildConfiguration(idConfiguration:string): Promise<void>
+  public async RebuildConfiguration(idLaunch:string): Promise<void>
   {
-    let configuration=this.FindbyIdConfiguration(idConfiguration);
+    let configuration=this.FindbyIdLaunch(idLaunch);
     if(configuration) configuration.Rebuild();
   }
   // Create project from a template
@@ -233,7 +233,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     //result
     return Promise.resolve(result);  
   }
-  // Add Launch
+  //Add Launch
   public async AddLaunch(device:IotDevice,template:IotTemplate,values:Map<string,string>):Promise<IotResult> {
     const nameProject= values.get("%{project.name}") ?? "";
     this.ShowStatusBar(`Create a project ${nameProject} ...`);

@@ -34,16 +34,16 @@ export class IotLaunch extends BaseTreeItem {
   public Options: IotLaunchOptions;  
   public Environments: IotLaunchEnvironment; 
   public Config:IotConfiguration;
-  private _workspaceDirectory:string;
+  public WorkspaceDirectory:string;
   //DELL
   //??? config
   constructor(config:IotConfiguration,workspaceDirectory:string
     ){
       super("Configuration",undefined, undefined,vscode.TreeItemCollapsibleState.Expanded);
       this.Config=config;
-      this._workspaceDirectory=workspaceDirectory;
+      this.WorkspaceDirectory=workspaceDirectory;
       //view
-      this.contextValue="iotconfiguration";
+      this.contextValue="iotlaunch";
       //
       this.Options = new IotLaunchOptions("Options",undefined,"Options",
         vscode.TreeItemCollapsibleState.Collapsed,this,this);      
@@ -55,7 +55,7 @@ export class IotLaunch extends BaseTreeItem {
       this.Childs.push(this.Options);
       this.Childs.push(this.Environments);      
     }
-  //DELL
+
   public FromJSON(jsonObj:any,devices: Array<IotDevice>):boolean{
     try
     {        
@@ -64,14 +64,13 @@ export class IotLaunch extends BaseTreeItem {
       //find device
       const idDevice:string=jsonObj.fastiotIdDevice;
       const device=devices.find(x=>x.IdDevice==idDevice);
-      if(!device) return false;
-      this.Device=device;
+      //if(!device) return false;
       //find project
-      const projectPath=this._workspaceDirectory+"\\"+jsonObj.fastiotProject;
-      if (!fs.existsSync(projectPath)) false;      
+      //const projectPath=this.WorkspaceDirectory+"\\"+jsonObj.fastiotProject;
+      //if (!fs.existsSync(projectPath)) false;      
       //Recovery
       //reading variables
-      this.Device=device;
+      if(device) this.Device=device;
       this.IdLaunch=jsonObj.fastiotIdLaunch;
       this.TypeProject=jsonObj.fastiotTypeProject;
       this.PathProject=jsonObj.fastiotProject;
@@ -81,7 +80,7 @@ export class IotLaunch extends BaseTreeItem {
       //Options
       this.Options.Build();
       //Environments
-      //this.Environments.FromJSON(jsonObj.env);  
+      if(jsonObj.env) this.Environments.FromJSON(jsonObj.env);  
       //Label-name
       this.label=this.tooltip=jsonObj.name;
     }
@@ -97,12 +96,13 @@ export class IotLaunch extends BaseTreeItem {
     this.Options.Build();    
     this.Environments.Build();    
   }
-  //DELL
+
   public Rename(newLabel:string): boolean {    
     let result:boolean=false;
+    newLabel=IoTHelper.StringTrim(newLabel);
+    if(newLabel=="") return false;
     //check launch.json
-    //const pathLaunchFile=<string>this.Project.WorkspaceDirectory+"\\.vscode\\launch.json";
-    const pathLaunchFile="";
+    const pathLaunchFile=<string>this.WorkspaceDirectory+"\\.vscode\\launch.json";
     if (!fs.existsSync(pathLaunchFile)) return result;
     //Change in file
     let datafile= fs.readFileSync(pathLaunchFile, 'utf8');
@@ -110,7 +110,7 @@ export class IotLaunch extends BaseTreeItem {
     let jsonLaunch = JSON.parse(datafile);
     //    
     jsonLaunch.configurations.forEach((element:any) => {
-      const fastiotId = element.fastiotId;
+      const fastiotId = element.fastiotIdLaunch;
       if(this.IdLaunch==fastiotId)
       {
         this.label=this.tooltip=element.name=newLabel;
@@ -121,28 +121,26 @@ export class IotLaunch extends BaseTreeItem {
     });        
     return result;
   }
-  //DELL
+
   public Remove()
   {
     //deleting related configuration
     //launch.json
     //check launch.json
-    //const pathLaunchFile=<string>this.Project.WorkspaceDirectory+"\\.vscode\\launch.json";
-    const pathLaunchFile="";
+    const pathLaunchFile=<string>this.WorkspaceDirectory+"\\.vscode\\launch.json";
     if (fs.existsSync(pathLaunchFile)){
       //delete
       let datafile= fs.readFileSync(pathLaunchFile, 'utf8');
       datafile=IoTHelper.DeleteComments(datafile); 
       let jsonLaunch = JSON.parse(datafile);            
       //filter
-      jsonLaunch.configurations=jsonLaunch.configurations.filter((e:any) => e.fastiotId !=this.IdLaunch);
+      jsonLaunch.configurations=jsonLaunch.configurations.filter((e:any) => e.fastiotIdLaunch !=this.IdLaunch);
       //write file
       fs.writeFileSync(pathLaunchFile,JSON.stringify(jsonLaunch,null,2));      
     }    
     //deleting related tasks
     //tasks.json
-    //const pathTasksFile=<string>this.Project.WorkspaceDirectory+"\\.vscode\\tasks.json";
-    const pathTasksFile=""
+    const pathTasksFile=<string>this.WorkspaceDirectory+"\\.vscode\\tasks.json";
     if (fs.existsSync(pathTasksFile))    
     {
       let dataFile= fs.readFileSync(pathTasksFile, 'utf8');
@@ -164,30 +162,6 @@ export class IotLaunch extends BaseTreeItem {
     //this.CreateLaunch(<string>this.label);    
     //creating a tasks
     //this.CreateTasks();
-  }
-  //DELL
-  public UpdateEnviroments(): boolean {  
-    let result:boolean=false;
-    //check launch.json
-    //const pathLaunchFile=<string>this.Project.WorkspaceDirectory+"\\.vscode\\launch.json";
-    const pathLaunchFile="";
-    if (!fs.existsSync(pathLaunchFile)) return result;
-    //Change in file
-    let datafile= fs.readFileSync(pathLaunchFile, 'utf8');
-    datafile=IoTHelper.DeleteComments(datafile); 
-    let jsonLaunch = JSON.parse(datafile);
-    //    
-    jsonLaunch.configurations.forEach((element:any) => {
-      const fastiotId = element.fastiotId;
-      if(this.IdLaunch==fastiotId)
-      {
-        element.env=this.Environments.ToJSON();        
-        result=true;
-        //write file
-        fs.writeFileSync(pathLaunchFile,JSON.stringify(jsonLaunch,null,2));
-      }
-    });
-    return result;
   }
   
   iconPath = {

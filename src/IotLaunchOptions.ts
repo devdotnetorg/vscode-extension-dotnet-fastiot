@@ -37,22 +37,42 @@ export class IotLaunchOptions extends BaseTreeItem{
  
   private CreateChildElements()
   {
-      //create child elements
-      this.Childs=[];      
-      let element:IotItemTree;
-      //       
-      element = new IotItemTree("Project",this._launch.PathProject,
-        this._launch.PathProject,
-        vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
-      this.Childs.push(element);    
-      let label=<string>(this._launch.Device?.label)+" "+this._launch.Device?.Information.Architecture;
-      element = new IotItemTree("Device",label,this._launch.Device?.IdDevice,
-        vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
-      this.Childs.push(element);    
-      element = new IotItemTree("Username",this._launch.Device?.Account.UserName,this._launch.Device?.Account.UserName,
-        vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
-      this.Childs.push(element);          
-      //
+    //create child elements
+    this.Childs=[];      
+    let element:IotItemTree;
+    const iconPathError = {
+      light: path.join(__filename, '..', '..', 'resources', 'light', 'error.svg'),
+      dark: path.join(__filename, '..', '..', 'resources', 'dark', 'error.svg')
+    };
+    //
+    element = new IotItemTree("Project",this._launch.PathProject,
+      this._launch.PathProject,
+      vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
+    if(!this._launch.PathProject||this._launch.PathProject=="")
+    {
+      element.description=element.tooltip="not found";
+      element.iconPath=iconPathError;
+    }
+    this.Childs.push(element);
+    //
+    let label=<string>(this._launch.Device?.label)+" "+this._launch.Device?.Information.Architecture;
+    element = new IotItemTree("Device",label,this._launch.Device?.IdDevice,
+      vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
+    if(!this._launch.Device)
+    {
+      element.description=element.tooltip="not found";
+      element.iconPath=iconPathError;
+    }
+    this.Childs.push(element);
+    //
+    element = new IotItemTree("Username",this._launch.Device?.Account.UserName,this._launch.Device?.Account.UserName,
+      vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
+    if(!this._launch.Device)
+    {
+      element.description=element.tooltip="not found";
+      element.iconPath=iconPathError;
+    }
+    this.Childs.push(element);
   }
 
   iconPath = {

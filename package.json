@@ -82,7 +82,7 @@
 					},
 					"fastiot.launch.templatetitle": {
 						"type": "string",
-						"default": "Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)",
+						"default": "Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})",
 						"markdownDescription": "Template for creating a launch title. Variable names see [link](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md)."
 					},
 					"fastiot.device.all.JSON": {
@@ -221,7 +221,7 @@
 				}
 			},
 			{
-				"command": "viewLaunchs.AddLaunch",
+				"command": "viewLaunchs.Add",
 				"title": "Add Launch",
 				"icon": {
 					"light": "resources/light/add.svg",
@@ -229,19 +229,19 @@
 				}
 			},
 			{
-				"command": "viewLaunchs.RefreshConfigurations",
+				"command": "viewLaunchs.Refresh",
 				"title": "Refresh"
 			},
 			{
-				"command": "viewLaunchs.RenameConfiguration",
+				"command": "viewLaunchs.Rename",
 				"title": "Rename"
 			},
 			{
-				"command": "viewLaunchs.DeleteConfiguration",
+				"command": "viewLaunchs.Delete",
 				"title": "Delete"
 			},
 			{
-				"command": "viewLaunchs.RebuildConfiguration",
+				"command": "viewLaunchs.Rebuild",
 				"title": "Rebuild"
 			},
 			{
@@ -318,12 +318,12 @@
 					"when": "view == viewDevices"
 				},
 				{
-					"command": "viewLaunchs.AddLaunch",
+					"command": "viewLaunchs.Add",
 					"when": "view == viewLaunchs",
 					"group": "navigation"
 				},
 				{
-					"command": "viewLaunchs.RefreshConfigurations",
+					"command": "viewLaunchs.Refresh",
 					"when": "view == viewLaunchs"
 				}
 			],
@@ -408,20 +408,20 @@
 					"group": "inline"
 				},
 				{
-					"command": "viewLaunchs.RenameConfiguration",
-					"when": "view == viewLaunchs && viewItem == iotconfiguration"
+					"command": "viewLaunchs.Rename",
+					"when": "view == viewLaunchs && viewItem == iotlaunch"
 				},
 				{
-					"command": "viewLaunchs.DeleteConfiguration",
-					"when": "view == viewLaunchs && viewItem == iotconfiguration"
+					"command": "viewLaunchs.Delete",
+					"when": "view == viewLaunchs && viewItem == iotlaunch"
 				},
 				{
-					"command": "viewLaunchs.RebuildConfiguration",
-					"when": "view == viewLaunchs && viewItem == iotconfiguration"
+					"command": "viewLaunchs.Rebuild",
+					"when": "view == viewLaunchs && viewItem == iotlaunch"
 				},
 				{
 					"command": "viewLaunchs.GoToDevice",
-					"when": "view == viewLaunchs && viewItem == iotconfiguration"
+					"when": "view == viewLaunchs && viewItem == iotlaunch"
 				},
 				{
 					"command": "viewLaunchs.AddEnviroment",
@@ -449,7 +449,7 @@
 			},
 			{
 				"view": "viewLaunchs",
-				"contents": "No launchs [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).  \n[Add Launch](command:viewLaunchs.AddLaunch)"
+				"contents": "No launchs [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).  \n[Add Launch](command:viewLaunchs.Add)"
 			},
 			{
 				"view": "viewProjects",

@@ -7,6 +7,7 @@ import {IotItemTree} from './IotItemTree';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 import {IotLaunch} from './IotLaunch';
+import {IoTHelper} from './Helper/IoTHelper';
 
 export class IotLaunchEnvironment extends BaseTreeItem{
   
@@ -16,7 +17,7 @@ export class IotLaunchEnvironment extends BaseTreeItem{
 
   public Items:Map<string, string>=new Map<string, string>();
 
-  public ConfigurationLaunch: IotLaunch;    
+  public Launch: IotLaunch;    
     
   constructor(
     label: string,
@@ -24,41 +25,61 @@ export class IotLaunchEnvironment extends BaseTreeItem{
     tooltip: string | vscode.MarkdownString | undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,    
     parent: IotLaunch|IotLaunchEnvironment,    
-    configurationLaunch: IotLaunch   
+    launch: IotLaunch   
   ){
     super(label,description,tooltip,collapsibleState);
     this.Parent=parent;
-    this.ConfigurationLaunch=configurationLaunch;
+    this.Launch=launch;
     //view
     this.contextValue="iotenviroment";
   }
-  //DELL
+
+  public WriteToFile(): boolean {  
+    let result:boolean=false;
+    //check launch.json
+    const pathLaunchFile=<string>this.Launch.WorkspaceDirectory+"\\.vscode\\launch.json";
+    if (!fs.existsSync(pathLaunchFile)) return result;
+    //Change in file
+    let datafile= fs.readFileSync(pathLaunchFile, 'utf8');
+    datafile=IoTHelper.DeleteComments(datafile); 
+    let jsonLaunch = JSON.parse(datafile);
+    //    
+    jsonLaunch.configurations.forEach((element:any) => {
+      const fastiotId = element.fastiotIdLaunch;
+      if(this.Launch.IdLaunch==fastiotId)
+      {
+        element.env=this.ToJSON();        
+        result=true;
+        //write file
+        fs.writeFileSync(pathLaunchFile,JSON.stringify(jsonLaunch,null,2));
+      }
+    });
+    return result;
+  }
+
   public Add(key:string, value:string){
     this.Items.set(key,value);    
-    this.ConfigurationLaunch.UpdateEnviroments();
     this.Build();
   }
-  //DELL
+
   public Remove(key:string){
    this.Items.delete(key);   
-   this.ConfigurationLaunch.UpdateEnviroments();
    this.Build();   
   }
-  //DELL
+
   public Edit(key:string, newvalue:string){
-    this.Items.set(key,newvalue);    
-    this.ConfigurationLaunch.UpdateEnviroments();
+    this.Items.set(key,newvalue);
     this.Build(); 
   }
-  //DELL
+
   public Clear(){
     this.Items.clear();
   }
-  //DELL
+
   public Build(){   
     this.CreateChildElements();
   }
-  //DELL
+
   private CreateChildElements(){
     //create child elements
     this.Childs=[];      
@@ -66,7 +87,7 @@ export class IotLaunchEnvironment extends BaseTreeItem{
     //
     this.Items.forEach((value,key) => {      
       element = new IotLaunchEnvironment(key,value,value,vscode.TreeItemCollapsibleState.None,
-        this,this.ConfigurationLaunch);
+        this,this.Launch);
         element.iconPath = undefined;
         
         /*element.iconPath= {
@@ -77,11 +98,7 @@ export class IotLaunchEnvironment extends BaseTreeItem{
       this.Childs.push(element);      
     });        
   }
-  //DELL
-  public Update(): void{
-    console.log("Not Implemented");
-  }
-  //DELL
+  
   public ToJSON():any{    
     //Fill
     const json="{}";
@@ -92,7 +109,7 @@ export class IotLaunchEnvironment extends BaseTreeItem{
     //    
     return jsonObj;    
   }
-  //DELL
+
   public FromJSON(jsonObj:any):any{
     this.Clear();               
     //environments

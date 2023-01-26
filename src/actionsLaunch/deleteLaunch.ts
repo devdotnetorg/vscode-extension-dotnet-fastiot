@@ -6,8 +6,8 @@ import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotLaunch } from '../IotLaunch';
 
-export async function deleteConfiguration(treeData: TreeDataLaunchsProvider,item:IotLaunch): Promise<void> {                    
-    await treeData.DeleteConfiguration(item.IdLaunch);
+export async function deleteLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch): Promise<void> {                    
+    await treeData.DeleteLaunch(item.IdLaunch);
     treeData.Refresh();
 }
 

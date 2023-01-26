@@ -10,7 +10,7 @@ import { IotLaunchEnvironment } from '../IotLaunchEnvironment';
 
 export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
-        let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdLaunch);
+        let configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
         if(configuration)
         {
             //name
@@ -29,6 +29,7 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLa
             if(valueEnviroment==undefined) return;
             //
             configuration.Environments.Add(nameEnviroment,valueEnviroment);
+            configuration.Environments.WriteToFile();
             treeData.Refresh();
             vscode.window.showInformationMessage('Enviroment added successfully');
         } 
@@ -44,10 +45,11 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:Io
         });
         if(newName==undefined) return;
         //
-        const configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdLaunch);
+        const configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
         if(configuration){
             configuration.Environments.Remove(<string>item.label);
             configuration.Environments.Add(newName,<string>item.description);
+            configuration.Environments.WriteToFile();
             treeData.Refresh();
         }
 }
@@ -62,18 +64,20 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:IotL
         });
         if(newValue==undefined) return;
         //
-        let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdLaunch);
+        let configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
         if(configuration){
-            configuration.Environments.Edit(<string>item.label,newValue);            
+            configuration.Environments.Edit(<string>item.label,newValue);
+            configuration.Environments.WriteToFile();           
             treeData.Refresh();
         }        
 }
 
 export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
-        let configuration=treeData.FindbyIdConfiguration(item.ConfigurationLaunch.IdLaunch);
+        let configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
         if(configuration){
-            configuration.Environments.Remove(<string>item.label);            
+            configuration.Environments.Remove(<string>item.label);
+            configuration.Environments.WriteToFile();           
             treeData.Refresh();
         }                
 }

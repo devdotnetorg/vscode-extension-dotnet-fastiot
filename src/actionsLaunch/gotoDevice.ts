@@ -9,8 +9,11 @@ import { BaseTreeItem } from '../BaseTreeItem';
 import { IotDevice } from '../IotDevice';
 
 export async function gotoDevice(treeData: TreeDataLaunchsProvider,item:IotLaunch,treeViewDevices:vscode.TreeView<BaseTreeItem>): Promise<void> {                    
-    const device = <BaseTreeItem>treeData.FindbyIdConfiguration(item.IdLaunch)?.Device;
-    //Set focus    
-    treeViewDevices.reveal(device, {focus: true});
+    const device = <BaseTreeItem>treeData.FindbyIdLaunch(item.IdLaunch)?.Device;
+    //Set focus
+    if(device) {
+        treeViewDevices.reveal(device, {focus: true});
+    }else{
+        vscode.window.showErrorMessage('Device not found.');
+    } 
 }
-

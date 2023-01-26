@@ -5,8 +5,8 @@ import * as path from 'path';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 
-export async function refreshConfigurations(treeData: TreeDataLaunchsProvider): Promise<void> {        
+export async function refreshLaunch(treeData: TreeDataLaunchsProvider): Promise<void> {        
     treeData.RefreshsFull();
-    vscode.window.showInformationMessage("Refresh configurations");
+    vscode.window.showInformationMessage("Refresh launchs");
 }
 
