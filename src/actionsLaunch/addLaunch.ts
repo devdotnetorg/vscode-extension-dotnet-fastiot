@@ -65,7 +65,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         //select template
         const listTemplates= treeData.Config.Templates.Select(selectDevice.Information.Architecture);
         if(listTemplates.length==0) {
-            vscode.window.showErrorMessage(`No projects available for device ${selectDevice.label} ${selectDevice.Information.Architecture}`);
+            vscode.window.showErrorMessage(`No templates compatible with ${selectDevice.label} ${selectDevice.Information.Architecture} device`);
             return;
         }
         let itemTemplates:Array<ItemQuickPick>=[];
