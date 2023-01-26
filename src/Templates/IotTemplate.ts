@@ -378,7 +378,6 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     this._mergeDictionary.set("%{device.board.name}",<string>device?.Information.BoardName);
     //fastiot
     this._mergeDictionary.set("%{launch.id}", IoTHelper.CreateGuid());
-    this._mergeDictionary.set("%{launch.group.id}",IoTHelper.CreateGuid());
     this._mergeDictionary.set("%{template.id}", this.Attributes.Id);
     //template app folder
     const appsPath=IoTHelper.ReverseSeparatorReplacement(this.AppsPath);

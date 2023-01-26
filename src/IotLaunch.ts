@@ -25,22 +25,15 @@ export class IotLaunch extends BaseTreeItem {
   public Device: IotDevice| undefined;
   
   public IdLaunch:string="";
-  public TypeProject:string="";
   public PathProject:string="";
-  public IdGroup:string="";
-  public NumberInGroup:number=0;
   public IdTemplate:string="";
 
   public Options: IotLaunchOptions;  
   public Environments: IotLaunchEnvironment; 
-  public Config:IotConfiguration;
   public WorkspaceDirectory:string;
-  //DELL
-  //??? config
-  constructor(config:IotConfiguration,workspaceDirectory:string
-    ){
+
+  constructor(workspaceDirectory:string){
       super("Configuration",undefined, undefined,vscode.TreeItemCollapsibleState.Expanded);
-      this.Config=config;
       this.WorkspaceDirectory=workspaceDirectory;
       //view
       this.contextValue="iotlaunch";
@@ -64,18 +57,10 @@ export class IotLaunch extends BaseTreeItem {
       //find device
       const idDevice:string=jsonObj.fastiotIdDevice;
       const device=devices.find(x=>x.IdDevice==idDevice);
-      //if(!device) return false;
-      //find project
-      //const projectPath=this.WorkspaceDirectory+"\\"+jsonObj.fastiotProject;
-      //if (!fs.existsSync(projectPath)) false;      
-      //Recovery
       //reading variables
       if(device) this.Device=device;
       this.IdLaunch=jsonObj.fastiotIdLaunch;
-      this.TypeProject=jsonObj.fastiotTypeProject;
       this.PathProject=jsonObj.fastiotProject;
-      this.IdGroup=jsonObj.fastiotIdGroup;
-      this.NumberInGroup=<number>jsonObj.fastiotNumberInGroup;
       this.IdTemplate=jsonObj.fastiotIdTemplate;
       //Options
       this.Options.Build();
@@ -153,17 +138,7 @@ export class IotLaunch extends BaseTreeItem {
       fs.writeFileSync(pathTasksFile,JSON.stringify(jsonTasks,null,2));
    }    
   }
-  //DELL
-  public Rebuild()
-  {
-    //deleting related configuration and tasks
-    this.Remove();            
-    //creating a configuration    
-    //this.CreateLaunch(<string>this.label);    
-    //creating a tasks
-    //this.CreateTasks();
-  }
-  
+
   iconPath = {
     light: path.join(__filename, '..', '..', 'resources', 'light', 'lanch.svg'),
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'lanch.svg')

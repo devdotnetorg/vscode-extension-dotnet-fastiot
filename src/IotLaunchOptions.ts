@@ -45,6 +45,11 @@ export class IotLaunchOptions extends BaseTreeItem{
       dark: path.join(__filename, '..', '..', 'resources', 'dark', 'error.svg')
     };
     //
+    element = new IotItemTree("ID Launch",this._launch.IdLaunch,
+    this._launch.IdLaunch,
+      vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
+    this.Childs.push(element);
+    //
     element = new IotItemTree("Project",this._launch.PathProject,
       this._launch.PathProject,
       vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);

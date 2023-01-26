@@ -13,7 +13,7 @@ import { config } from 'process';
 import {IotTemplate} from '../Templates/IotTemplate';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 
-export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>): Promise<void> {
+export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>,context: vscode.ExtensionContext): Promise<void> {
     let values:Map<string,string>= new Map<string,string>()
     //Devices
     if(devices.length==0) {
@@ -52,13 +52,15 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         canSelectMany: false,
         openLabel: 'Select a folder for the project (3/5)',
     };
-    /* TEST
-    const folders = await vscode.window.showOpenDialog(options);
-    if ((folders === undefined) || (folders[0] === undefined)) return;
-    let folder=folders[0].fsPath;
-    */
-    let folder ="D:\\Anton\\Projects\\Tests";
-    //
+    let folder="";
+    if(context.extensionMode==vscode.ExtensionMode.Production){
+        const folders = await vscode.window.showOpenDialog(options);
+        if ((folders === undefined) || (folders[0] === undefined)) return;
+        folder=folders[0].fsPath;
+    }else{
+        //TEST
+        folder ="D:\\Anton\\Projects\\Tests";
+    }
     //Select name project
     let nameProject = await vscode.window.showInputBox({				
         prompt: 'prompt',

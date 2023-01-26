@@ -49,10 +49,7 @@ import { gotoDevice } from './actionsLaunch/gotoDevice';
 import { renameLaunch} from './actionsLaunch/renameLaunch';
 import { refreshLaunch } from './actionsLaunch/refreshLaunch';
 import { deleteLaunch } from './actionsLaunch/deleteLaunch';
-
-//DELL
-//Configurations.actions
-import { rebuildConfiguration } from './actionsConfiguration/rebuildConfiguration';
+import { rebuildLaunch } from './actionsLaunch/rebuildLaunch';
 
 //Project.actions
 import { createProject } from './actionsProject/createProject';
@@ -236,7 +233,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Rebuild Configuration
 	let commandRebuildLaunch = vscode.commands.registerCommand('viewLaunchs.Rebuild', 
 		(item:IotLaunch) => {
-			rebuildConfiguration(treeDataLaunchsProvider,item);
+			rebuildLaunch(treeDataLaunchsProvider,item);
 	});
 	//Go to device 
 	let commandGoToDevice = vscode.commands.registerCommand('viewLaunchs.GoToDevice', 
@@ -265,7 +262,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Create project
 	let commandCreateProject = vscode.commands.registerCommand('viewProjects.CreateProject', () => {	
-			createProject(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems);	
+			createProject(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,context);	
 	});
 
 	//Events

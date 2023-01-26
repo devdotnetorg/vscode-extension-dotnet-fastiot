@@ -25,22 +25,14 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
   private _config:IotConfiguration
   public get Config(): IotConfiguration {
     return this._config;}
+  public set Config(newConfig:IotConfiguration){
+    this._config=newConfig;
+  }
   
   private _onDidChangeTreeData: vscode.EventEmitter<BaseTreeItem| undefined | null | void> = 
     new vscode.EventEmitter<BaseTreeItem| undefined | null | void>();
   public readonly onDidChangeTreeData: vscode.Event<BaseTreeItem| undefined | null | void> = 
     this._onDidChangeTreeData.event;
-
-  public set Config(newConfig:IotConfiguration){
-    this._config=newConfig;    
-    //devices
-    this.RootItems.forEach(item =>
-      {	                
-        item.Config=newConfig;        
-      });
-    //
-    this.RefreshsFull();
-  }
 
   private _statusBarItem:vscode.StatusBarItem;
   private _devices: Array<IotDevice>;
@@ -60,7 +52,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       this._devices=devices;
       this._workspaceDirectory=workspaceDirectory ?? "non";
       //Recovery devices
-      if(workspaceDirectory!="non") this.RecoveryLaunchs();  
+      if(this._workspaceDirectory!="non") this.RecoveryLaunchs();  
   }
 
   public getTreeItem(element: BaseTreeItem): vscode.TreeItem | Thenable<BaseTreeItem> {
@@ -90,7 +82,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
   public RefreshsFull(): void {
     //Clear
     this.RootItems = [];
-    if(this._workspaceDirectory) this.RecoveryLaunchs();
+    if(this._workspaceDirectory!="non") this.RecoveryLaunchs();  
     //
     this._onDidChangeTreeData.fire();    
   }
@@ -166,7 +158,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
               if(jsonLaunch.fastiotIdLaunch)
               {
                 //parse
-                let launch = new IotLaunch(this.Config,this._workspaceDirectory);
+                let launch = new IotLaunch(this._workspaceDirectory);
                 const resultBool=launch.FromJSON(jsonLaunch,this._devices);
                 if(resultBool){
                   launch.collapsibleState=vscode.TreeItemCollapsibleState.Collapsed;
@@ -218,11 +210,17 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     }
     return Promise.resolve(false);   
   }  
-  //DELL
-  public async RebuildConfiguration(idLaunch:string): Promise<void>
+
+  public async RebuildLaunch(idLaunch:string): Promise<void>
   {
-    let configuration=this.FindbyIdLaunch(idLaunch);
-    if(configuration) configuration.Rebuild();
+    let launch=this.FindbyIdLaunch(idLaunch);
+    
+    
+   
+
+
+
+
   }
   // Create project from a template
   public async CreateProject(device:IotDevice,template:IotTemplate, dstPath:string,values:Map<string,string>):Promise<IotResult> {
