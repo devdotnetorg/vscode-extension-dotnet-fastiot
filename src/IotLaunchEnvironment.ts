@@ -34,16 +34,10 @@ export class IotLaunchEnvironment extends BaseTreeItem{
     this.contextValue="iotenviroment";
   }
 
-  public WriteToFile(): boolean {  
+  public Write(): boolean {  
     let result:boolean=false;
-    //check launch.json
-    const pathLaunchFile=<string>this.Launch.WorkspaceDirectory+"\\.vscode\\launch.json";
-    if (!fs.existsSync(pathLaunchFile)) return result;
-    //Change in file
-    let datafile= fs.readFileSync(pathLaunchFile, 'utf8');
-    datafile=IoTHelper.DeleteComments(datafile); 
-    let jsonLaunch = JSON.parse(datafile);
-    //    
+    if (!this.Launch.existsLaunchTasks) return result;
+    let jsonLaunch = this.Launch.GetJsonLaunch();
     jsonLaunch.configurations.forEach((element:any) => {
       const fastiotId = element.fastiotIdLaunch;
       if(this.Launch.IdLaunch==fastiotId)
@@ -51,7 +45,7 @@ export class IotLaunchEnvironment extends BaseTreeItem{
         element.env=this.ToJSON();        
         result=true;
         //write file
-        fs.writeFileSync(pathLaunchFile,JSON.stringify(jsonLaunch,null,2));
+        this.Launch.SaveLaunch(jsonLaunch);
       }
     });
     return result;
@@ -89,12 +83,6 @@ export class IotLaunchEnvironment extends BaseTreeItem{
       element = new IotLaunchEnvironment(key,value,value,vscode.TreeItemCollapsibleState.None,
         this,this.Launch);
         element.iconPath = undefined;
-        
-        /*element.iconPath= {
-          light: "",
-          dark: ""
-        };*/
-
       this.Childs.push(element);      
     });        
   }
@@ -105,8 +93,7 @@ export class IotLaunchEnvironment extends BaseTreeItem{
     let jsonObj = JSON.parse(json); 
     this.Items.forEach((value,key) => { 
       jsonObj[key]=value;      
-    });  
-    //    
+    }); 
     return jsonObj;    
   }
 
@@ -117,7 +104,6 @@ export class IotLaunchEnvironment extends BaseTreeItem{
           const value=jsonObj[key];
           this.Add(key,value);        
     }
-    //
     this.Build();
   }
 

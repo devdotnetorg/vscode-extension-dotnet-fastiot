@@ -29,7 +29,7 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLa
             if(valueEnviroment==undefined) return;
             //
             configuration.Environments.Add(nameEnviroment,valueEnviroment);
-            configuration.Environments.WriteToFile();
+            configuration.Environments.Write();
             treeData.Refresh();
             vscode.window.showInformationMessage('Enviroment added successfully');
         } 
@@ -49,7 +49,7 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:Io
         if(configuration){
             configuration.Environments.Remove(<string>item.label);
             configuration.Environments.Add(newName,<string>item.description);
-            configuration.Environments.WriteToFile();
+            configuration.Environments.Write();
             treeData.Refresh();
         }
 }
@@ -67,7 +67,7 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:IotL
         let configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
         if(configuration){
             configuration.Environments.Edit(<string>item.label,newValue);
-            configuration.Environments.WriteToFile();           
+            configuration.Environments.Write();           
             treeData.Refresh();
         }        
 }
@@ -77,7 +77,7 @@ export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:Io
         let configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
         if(configuration){
             configuration.Environments.Remove(<string>item.label);
-            configuration.Environments.WriteToFile();           
+            configuration.Environments.Write();           
             treeData.Refresh();
         }                
 }

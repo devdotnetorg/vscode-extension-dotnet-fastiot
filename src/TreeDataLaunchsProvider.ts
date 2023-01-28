@@ -136,8 +136,8 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     this.ShowStatusBar("Reading extension settings");
     //check folder .vscode with launch.json
     //launch.json
-    const pathLaunchFile=this._workspaceDirectory+"\\.vscode\\launch.json";    
-    if (!fs.existsSync(pathLaunchFile))
+    const launchBase= new IotLaunch(this._workspaceDirectory);  
+    if (!launchBase.existsLaunchTasks)
     {
       //end processing
       this.HideStatusBar();
@@ -146,9 +146,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     //fromJSON
     try
     {
-      let datafile:string= fs.readFileSync(pathLaunchFile, 'utf8');
-      datafile=IoTHelper.DeleteComments(datafile);     
-      var obj = JSON.parse(datafile);
+      var obj = launchBase.GetJsonLaunch();
       //Recovery of every Launch    
       let index=0;    
       do { 				
@@ -214,13 +212,91 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
   public async RebuildLaunch(idLaunch:string): Promise<void>
   {
     let launch=this.FindbyIdLaunch(idLaunch);
-    
-    
-   
+    if(launch){
+      //get linked Launchs
+      const sourceIdLaunch = launch.IdLaunch ?? "non";
+      const jsonLaunch=launch.GetJsonLaunch();
+      let linkedLaunchs=jsonLaunch.configurations.filter((e:any) => e.fastiotIdLaunch);
+      linkedLaunchs=linkedLaunchs.filter((e:any) => e.fastiotIdLaunch.includes(sourceIdLaunch.substring(0,8)));
+      let msg="\n";
+      let index=1;
+      linkedLaunchs.forEach((item:any) => {
+        msg= msg + `${index}) ${item.fastiotIdLaunch} ${item.name}\n`;
+        index++;
+      });
+      vscode.window.showInformationMessage(`Rebuilding Launches: ${msg}`);
+      //check device
+      const device=this._devices.find(x=>x.IdDevice==launch?.Device?.IdDevice);
+      if(!device) {
+        vscode.window.showErrorMessage(`Missing device: ${launch?.Device?.IdDevice} ${launch?.Device?.label}`);
+        return;
+      }
+      //check project
+      const projectMainfilePath=`${this._workspaceDirectory}\\${launch.PathProject}`;
+      if (!fs.existsSync(projectMainfilePath)) {
+        vscode.window.showErrorMessage(`Missing project: ${projectMainfilePath}`);
+        return;
+      }
+      //check template
+      const template = this.Config.Templates.FindbyId(launch.IdTemplate);
+      if (!template) {
+        vscode.window.showErrorMessage(`Missing template: ${launch.IdTemplate}`);
+        return;
+      }
+      //remove linked launchs
+      let launchs= this.RootItems.filter((e:IotLaunch) => e.IdLaunch.includes(sourceIdLaunch.substring(0,8)));
+      launchs.forEach((item) => {
+        item.Remove();  
+      });
+      //Add Configuration Vscode
+      let values:Map<string,string>= new Map<string,string>();
+      //Preparing values
+      const baseName=path.basename(projectMainfilePath);
+      const projectName=baseName.substring(0,baseName.length-template.Attributes.ExtMainFileProj.length);
+      values.set("%{project.mainfile.path.full.aswindows}",projectMainfilePath);
+      values.set("%{project.name}",projectName);
+      const result = template.AddConfigurationVscode(device,this.Config,this._workspaceDirectory,values);
+      if(result.Status==StatusResult.Ok)
+      {
+        const newLaunchId=result.tag;
+        let jsonNewLaunch = launch.GetJsonLaunch();
+        //launchs
+        let index=0;
+        do {
+          let newItemLaunch=jsonNewLaunch.configurations[index];
+          if(newItemLaunch)
+          {
+            if(newItemLaunch.fastiotIdLaunch){
+              if(newItemLaunch.fastiotIdLaunch.includes(newLaunchId)){
+                //const a0=linkedLaunchs[0].fastiotIdLaunch.substring(8);
+                //const a1=linkedLaunchs[1].fastiotIdLaunch.substring(8);
+                //const b=newItemLaunch.fastiotIdLaunch.substring(8);
 
-
-
-
+                const oldItemLaunch=linkedLaunchs.find((x:any)=>x.fastiotIdLaunch.substring(8)==newItemLaunch.fastiotIdLaunch.substring(8));
+                if(oldItemLaunch)
+                {
+                  //replace name
+                  newItemLaunch.name=oldItemLaunch.name;
+                  //replace env
+                  if(oldItemLaunch.env){
+                    if(newItemLaunch.env){
+                      if(JSON.stringify(oldItemLaunch.env)!="{}")
+                        newItemLaunch.env=oldItemLaunch.env;
+                    }else{
+                      newItemLaunch.push(oldItemLaunch.env);
+                    }
+                  }
+                }
+              }
+            }
+            index=index+1;
+          }else break;      
+        } 
+        while(true)
+        launch.SaveLaunch(jsonNewLaunch);
+        this.RefreshsFull();
+      }
+    }
   }
   // Create project from a template
   public async CreateProject(device:IotDevice,template:IotTemplate, dstPath:string,values:Map<string,string>):Promise<IotResult> {

@@ -120,6 +120,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //result
       result = new IotResult(StatusResult.Error,`Error when adding Launch to ${dstPath} project`,err);
     }
+    result.tag=this._mergeDictionary.get("%{launch.id}");
     return result;
   }
   //---------------------------------

@@ -51,7 +51,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     {
         //Choice of two options
         let items:Array<ItemQuickPick>=[];
-        let item = new ItemQuickPick("1. Select template: "+<string>selectTemplate.Attributes.Label,
+        let item = new ItemQuickPick("1. Select template (recommended): "+<string>selectTemplate.Attributes.Label,
             `${selectTemplate.Attributes.Detail}. Language: ${selectTemplate.Attributes.Language}`,selectTemplate);
         items.push(item);
         item = new ItemQuickPick("2. Choose another template from the collection","",undefined);
