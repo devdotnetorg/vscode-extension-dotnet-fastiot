@@ -72,6 +72,6 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
             
        }else
        {            
-            vscode.window.showErrorMessage(`Error. Device not added! \n${result.Message}`);            
+            vscode.window.showErrorMessage(`Error. Device not added! \n${result.Message}`);
        }       
 }

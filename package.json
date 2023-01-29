@@ -70,6 +70,16 @@
 						"default": "",
 						"description": "Shared folder for storing keys, templates"
 					},
+					"fastiot.device.ssh.key.type": {
+						"type": "string",
+						"default": "ed25519",
+						"markdownDescription": "Type of key generation algorithm for ssh. Can take values: ed25519 (default), ecdsa, dsa, rsa. Used to authenticate with a device after it has been added to the device list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the PubkeyAcceptedAlgorithms=+ssh-rsa line to the /etc/ssh/sshd_config file."
+					},
+					"fastiot.device.ssh.key.bits": {
+						"type": "number",
+						"default": 256,
+						"markdownDescription": "Key length in bits. Can take values: 256, 384, 521, 512, 1024, 2048, 3072, 4096. ED25519 only 256. ECDSA key length: valid lengths are 256, 384, 521, recommended 521. DSA only 1024. RSA key length: valid lengths are 1024, 2048, 3072, 4096, recommended 4096."
+					},
 					"fastiot.device.pathfolderkeys": {
 						"type": "string",
 						"default": "",

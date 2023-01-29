@@ -228,7 +228,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
         if(event.status) this.OutputChannel.appendLine(event.status);
         if(event.console) this.OutputChannel.appendLine(event.console); 
       });
-      result = await device.Create(toHost,toPort,toUserName, toPassword,accountNameDebug,this.Config);
+      result = await device.Create(toHost,toPort,toUserName, toPassword,accountNameDebug);
       if(result.Status==StatusResult.Error)
       {
         this.HideStatusBar();

@@ -44,7 +44,7 @@ export class IotDeviceInformation extends BaseTreeItem{
     this.Device=device;
   }
 
-  public async Get(sshconfig:any, config:IotConfiguration): Promise<IotResult>{      
+  public async Get(sshconfig:any): Promise<IotResult>{      
       this.Client.FireChangedState({
          status:undefined,
          console:"Run: pregetinformation.sh",
@@ -53,7 +53,7 @@ export class IotDeviceInformation extends BaseTreeItem{
       //Иногда с первого раза не устанавливается пакет в Ubuntu после его удаления
       //поэтому три попытки установить
       //1
-      let result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
+      let result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
           "pregetinformation",undefined, false,false);
       if(result.SystemMessage){
          this.Client.FireChangedState({
@@ -63,7 +63,7 @@ export class IotDeviceInformation extends BaseTreeItem{
           });
       }      
       //2
-      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
+      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
          "pregetinformation",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({
@@ -73,7 +73,7 @@ export class IotDeviceInformation extends BaseTreeItem{
              });
          }    
       //3
-      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
+      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
          "pregetinformation",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({
@@ -90,7 +90,7 @@ export class IotDeviceInformation extends BaseTreeItem{
          console:"Run: getinformation.sh",
          obj:undefined
        });
-      result = await this.Client.RunScript(sshconfig,undefined, config.Folder.Extension,
+      result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
           "getinformation",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({

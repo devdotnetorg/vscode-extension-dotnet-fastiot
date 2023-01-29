@@ -70,9 +70,8 @@ export class IotDevice extends BaseTreeItem {
     }
   
   public async Create(
-    host: string, port: string,userName: string, password: string, accountNameDebug:string,
-    config:IotConfiguration            
-  ): Promise<IotResult>{    
+    host: string, port: string,userName: string, password: string,
+      accountNameDebug:string): Promise<IotResult>{    
     //--------------------------------------
     //get Information
     this.Client.FireChangedState({
@@ -100,7 +99,7 @@ export class IotDevice extends BaseTreeItem {
 			readyTimeout: 7000
       };          
     //
-    let result=await this.Information.Get(sshconfig,config);
+    let result=await this.Information.Get(sshconfig);
     //event unsubscription    
     this.Information.Client.OnChangedStateUnsubscribe(handler);
     //    
@@ -127,7 +126,7 @@ export class IotDevice extends BaseTreeItem {
         });
       }
     });    
-    result=await this.Account.Create(sshconfig,accountNameDebug,config,this.IdDevice);
+    result=await this.Account.Create(sshconfig,accountNameDebug);
     //event unsubscription    
     this.Account.Client.OnChangedStateUnsubscribe(handler);
     //

@@ -9,6 +9,8 @@ import {IotTemplateCollection} from '../Templates/IotTemplateCollection';
 export class IotConfiguration {  
   public UsernameAccountDevice:string="";
   public GroupsAccountDevice:string="";
+  public TypeKeySshDevice:string="";
+  public BitsKeySshDevice:number=256;
   public TemplateTitleLaunch:string="";
   public Folder: IotConfigurationFolder;
   public Templates: IotTemplateCollection;
@@ -41,9 +43,43 @@ export class IotConfiguration {
 
   private Init(logCallback:(value:string) =>void)
   {
+    //Device----------------------------------
     this.UsernameAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
 	  this.GroupsAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.groups');
-	  this.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
+	  //check type and bits of key
+    let typeKeySshDevice=<string>vscode.workspace.getConfiguration().get('fastiot.device.ssh.key.type');	
+    let bitsKeySshDevice=<number>vscode.workspace.getConfiguration().get('fastiot.device.ssh.key.bits');	
+    const oldTypeKeySshDevice=typeKeySshDevice;
+    const oldBitsKeySshDevice=bitsKeySshDevice;
+    //making catalog
+    let keySshDictionary=new Map<string,Array<number>>(); 
+    keySshDictionary.set("ed25519",[256]);
+    keySshDictionary.set("ecdsa",[256, 384, 521]);
+    keySshDictionary.set("dsa",[1024]);
+    keySshDictionary.set("rsa",[1024, 2048, 3072, 4096]);
+    const arrayBits=keySshDictionary.get(typeKeySshDevice);
+    if(arrayBits){
+      //find
+      if(!arrayBits.includes(bitsKeySshDevice))
+        bitsKeySshDevice=arrayBits[arrayBits.length-1];
+    } else{
+      typeKeySshDevice="ed25519";
+      bitsKeySshDevice=256;
+    }
+    let msg="";
+    if(oldTypeKeySshDevice!=typeKeySshDevice){
+      msg=`Invalid ssh key type: ${oldTypeKeySshDevice}. The ssh key type parameter has been changed to: ${typeKeySshDevice}.\n`;
+      vscode.workspace.getConfiguration().update('fastiot.device.ssh.key.type',typeKeySshDevice,true);
+    }
+    if(oldBitsKeySshDevice!=bitsKeySshDevice){
+      msg=msg+`Invalid bits value for key: ${oldTypeKeySshDevice}. The bits parameter has been changed to: ${bitsKeySshDevice}`;
+      vscode.workspace.getConfiguration().update('fastiot.device.ssh.key.bits',<number>bitsKeySshDevice,true);
+    }
+    this.TypeKeySshDevice=typeKeySshDevice;
+    this.BitsKeySshDevice=bitsKeySshDevice;
+    if(msg!="") vscode.window.showErrorMessage(msg);
+    //Launch----------------------------------
+    this.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
 	  //replace old format
     const oldFormatTitleLaunch="Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)";
     if(this.TemplateTitleLaunch==oldFormatTitleLaunch)
@@ -51,6 +87,7 @@ export class IotConfiguration {
       this.TemplateTitleLaunch="Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})";
       vscode.workspace.getConfiguration().update('fastiot.launch.templatetitle',this.TemplateTitleLaunch,true);
     }
+    //Keys of devices-------------------------
     //Migrating key files from a previous version of the extension
 	  const PreviousKeysFolder:string= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfolderkeys');
     if(PreviousKeysFolder != "")
@@ -91,5 +128,9 @@ export class IotConfiguration {
 	  LoadTemplates();
 	//
   }
+}
 
+type P = {
+  x: number;
+  y: number;
 }

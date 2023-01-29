@@ -21,14 +21,8 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
   private _isStopStatusBar:boolean=false;
   private _statusBarText:string="";
   public OutputChannel:vscode.OutputChannel;
-
-  private _config:IotConfiguration
-  public get Config(): IotConfiguration {
-    return this._config;}
-  public set Config(newConfig:IotConfiguration){
-    this._config=newConfig;
-  }
-  
+  public Config: IotConfiguration;
+    
   private _onDidChangeTreeData: vscode.EventEmitter<BaseTreeItem| undefined | null | void> = 
     new vscode.EventEmitter<BaseTreeItem| undefined | null | void>();
   public readonly onDidChangeTreeData: vscode.Event<BaseTreeItem| undefined | null | void> = 
@@ -48,7 +42,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       this._statusBarItem=statusBarItem;
       this.OutputChannel=outputChannel;     
       //Set config
-      this._config=config;
+      this.Config=config;
       this._devices=devices;
       this._workspaceDirectory=workspaceDirectory ?? "non";
       //Recovery devices
