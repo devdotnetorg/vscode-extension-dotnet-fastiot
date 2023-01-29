@@ -16,12 +16,14 @@ export class IotConfiguration {
   public Templates: IotTemplateCollection;
 
   private _context:vscode.ExtensionContext;
+  private _logCallback:(value:string) =>void;
 
   constructor(
     context: vscode.ExtensionContext,
+    versionExt:string,
     logCallback:(value:string) =>void,
-    versionExt:string
     ){
+      this._logCallback=logCallback;
       let applicationDataPath: string=<string>vscode.workspace.getConfiguration().get('fastiot.device.applicationdatafolder');
       //Application folder definition
       if(applicationDataPath == null||applicationDataPath == undefined||applicationDataPath == "") 
@@ -38,10 +40,10 @@ export class IotConfiguration {
       this.Templates= new IotTemplateCollection(this.Folder.Templates,this.Folder.Extension+"\\templates\\system",logCallback,versionExt);
       this._context=context;
       //Init
-      this.Init(logCallback);
+      this.Init();
     }
 
-  private Init(logCallback:(value:string) =>void)
+  private Init()
   {
     //Device----------------------------------
     this.UsernameAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
@@ -105,10 +107,15 @@ export class IotConfiguration {
       vscode.workspace.getConfiguration().update('fastiot.device.pathfolderkeys',"",true);
       vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
     }
-	  //Clear
+    //Templates-------------------------------
+    this.LoadTemplates();
+    //Clear
 	  this.Folder.ClearTmp();
-	  //Templates
-	  let url:string="";
+  }
+
+  public LoadTemplates()
+  {
+    let url:string="";
 	  if(this._context.extensionMode==vscode.ExtensionMode.Production)
 	  {
 		  url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
@@ -118,15 +125,16 @@ export class IotConfiguration {
 	  //for test
 	  url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono/templates/system/templatelist.fastiot.yaml";
 	  //
-    const LoadTemplates = async () => {
+
+    const loadTemplates = async () => {
+      this._logCallback("-------- Loading templates -------");
+      this.Templates.Clear();
       await this.Templates.LoadTemplatesSystem();
       //await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
       //await this.Templates.LoadTemplatesUser();
-      //Logs
-      logCallback("----------------------------------");
+      this._logCallback("----------------------------------");
       };
-	  LoadTemplates();
-	//
+	  loadTemplates();
   }
 }
 

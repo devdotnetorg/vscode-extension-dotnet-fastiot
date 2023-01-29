@@ -61,7 +61,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     this.Childs.push(element);
     //
     let label=<string>(this._launch.Device?.label)+" "+this._launch.Device?.Information.Architecture;
-    element = new IotItemTree("Device",label,this._launch.Device?.IdDevice,
+    element = new IotItemTree("Device",label,`label: ${label}. Id device: ${this._launch.Device?.IdDevice}`,
       vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
     if(!this._launch.Device)
     {

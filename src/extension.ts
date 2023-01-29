@@ -24,6 +24,7 @@ import {shutdownDevice } from './actionsDevice/shutdownDevice';
 import { renameDevice } from './actionsDevice/renameDevice';
 import { detectGpiochips } from './actionsDevice/detectGpiochips';
 import { copyTexttoClipboard } from './actionsDevice/copyTexttoClipboard';
+import { openFolderKeys } from './actionsDevice/openFolderKeys';
 import { checkAllPackages } from './actionsDevice/checkAllPackages';
 import { installPackage } from './actionsDevice/installPackage';
 import { upgradePackage } from './actionsDevice/upgradePackage';
@@ -53,6 +54,8 @@ import { rebuildLaunch } from './actionsLaunch/rebuildLaunch';
 
 //Project.actions
 import { createProject } from './actionsProject/createProject';
+import { reloadTemplates } from './actionsProject/reloadTemplates';
+import { openTemplateFolder } from './actionsProject/openTemplateFolder';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -82,7 +85,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		outputChannel.appendLine(value);
 	  };
 	//Get config
-	let config=new IotConfiguration(context,logCallback,versionExt);
+	let config=new IotConfiguration(context,versionExt,logCallback);
 	//read JSON devices
 	const jsonDevices=vscode.workspace.getConfiguration().get('fastiot.device.all.JSON');	 
     let treeDataDevicesProvider = new TreeDataDevicesProvider(outputChannel,statusBarItemDevice,
@@ -167,6 +170,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Delete Device
 	let commandDeleteDevice = vscode.commands.registerCommand("viewDevices.DeleteDevice", (item:IotDevice) => {
 		deleteDevice(treeDataDevicesProvider,item);
+	});
+	//Open folder with ssh keys
+	let commandOpenFolderKeys = vscode.commands.registerCommand("viewDevices.OpenFolderSshKeys", () => {
+		openFolderKeys(treeDataDevicesProvider);
 	});
 	//Copy To Clipboard
 	let commandCopyToClipboard = vscode.commands.registerCommand("viewDevices.CopyToClipboard", (item:IotItemTree) => {
@@ -264,7 +271,14 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandCreateProject = vscode.commands.registerCommand('viewProjects.CreateProject', () => {	
 			createProject(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,context);	
 	});
-
+	//Reload templates
+	let commandReloadTemplates = vscode.commands.registerCommand('viewTemplates.ReloadTemplates', () => {	
+			reloadTemplates(treeDataLaunchsProvider);	
+	});
+	//Open template folder
+	let commandOpenTemplateFolder = vscode.commands.registerCommand('viewTemplates.OpenTemplateFolder', () => {	
+			openTemplateFolder(treeDataLaunchsProvider);	
+	});
 	//Events
 	//Extension configuration change event 
 	let eventChangeConfiguration=vscode.workspace.onDidChangeConfiguration((e) => {		
@@ -299,6 +313,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandRebootDevice);
 	context.subscriptions.push(commandShutdownDevice);
 	context.subscriptions.push(commandDeleteDevice);
+	context.subscriptions.push(commandOpenFolderKeys);
 	context.subscriptions.push(commandCopyToClipboard);
 	context.subscriptions.push(commandCheckAllPackages);
 	context.subscriptions.push(commandInstallationPackage);
@@ -323,6 +338,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandEditEnviroment);
 	context.subscriptions.push(commandDeleteEnviroment);
 	context.subscriptions.push(commandCreateProject);
+	context.subscriptions.push(commandReloadTemplates);
+	context.subscriptions.push(commandOpenTemplateFolder);
 	//events
 	context.subscriptions.push(eventChangeConfiguration);
 }

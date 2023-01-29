@@ -147,7 +147,7 @@ export class IotDevice extends BaseTreeItem {
   private AddidDeviceInChildsInformation():void
   {
     //Add child: Id device
-    let elementIdDevice = new IotItemTree("Id device",this.IdDevice,this.IdDevice,vscode.TreeItemCollapsibleState.None,this.Information,this);
+    let elementIdDevice = new IotItemTree("Id device",this.IdDevice,`Id device: ${this.IdDevice}`,vscode.TreeItemCollapsibleState.None,this.Information,this);
     this.Information.Childs.unshift(elementIdDevice);
   }
 

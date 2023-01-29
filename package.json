@@ -236,6 +236,10 @@
 				}
 			},
 			{
+				"command": "viewDevices.OpenFolderSshKeys",
+				"title": "Open folder with ssh keys"
+			},
+			{
 				"command": "viewLaunchs.Add",
 				"title": "Add Launch",
 				"icon": {
@@ -282,6 +286,14 @@
 			{
 				"command": "viewLaunchs.DeleteEnviroment",
 				"title": "Delete"
+			},
+			{
+				"command": "viewTemplates.ReloadTemplates",
+				"title": "Reload templates"
+			},
+			{
+				"command": "viewTemplates.OpenTemplateFolder",
+				"title": "Open template folder"
 			}
 		],
 		"viewsContainers": {
@@ -333,6 +345,10 @@
 					"when": "view == viewDevices"
 				},
 				{
+					"command": "viewDevices.OpenFolderSshKeys",
+					"when": "view == viewDevices"
+				},
+				{
 					"command": "viewLaunchs.Add",
 					"when": "view == viewLaunchs",
 					"group": "navigation"
@@ -340,6 +356,14 @@
 				{
 					"command": "viewLaunchs.Refresh",
 					"when": "view == viewLaunchs"
+				},
+				{
+					"command": "viewTemplates.ReloadTemplates",
+					"when": "view == viewProjects"
+				},
+				{
+					"command": "viewTemplates.OpenTemplateFolder",
+					"when": "view == viewProjects"
 				}
 			],
 			"view/item/context": [
