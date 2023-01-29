@@ -1,6 +1,7 @@
 #YAML
 id: dotnet-console-test # unique
 #dependsOn: none # dependencies/inheritance in templates. Coming in one of the next version
+#isVisible: yes # yes,no. Related to the dependsOn parameter. Coming in one of the next version
 platform: # win32, linux. Only Windows is currently supported
   - win32
 version: 0.1
@@ -15,7 +16,7 @@ endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l
   - aarch64
   - x86_64
-dependOnPackages: # none
+dependOnPackages: # Coming in one of the next version
   - dotnetruntime-%{dotnetTarget}
   - vsdbg
 typeProj: dotnet # template type is related to processing logic
@@ -25,6 +26,7 @@ mainFileProjLabel: Visual Studio C# Project
 tags:
   - console
   - dotnet
+  - test
 filesToProcess:
   - dotnetapp.csproj
   - Program.cs

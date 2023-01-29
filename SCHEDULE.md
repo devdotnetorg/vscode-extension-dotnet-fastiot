@@ -1,11 +1,13 @@
 ## Schedule
 
 - Custom Launch configurations (Mono project).
-- Custom BASH scripts to run on the device.
+- Compliance with UX Guidelines.
+- Adding a WebView to select a project template.
 - Custom installation packages.
-- Running on linux.
+- Custom BASH scripts to run on the device.
 - GPIO: read chips, view line gpio, managment I/O.
 - Support for Python projects.
+- Ensuring work in Linux.
 - Display available devices: `/dev/*` and sysfs.
 - I2C device scanner.
 - Adding a Nuget Package Manager.

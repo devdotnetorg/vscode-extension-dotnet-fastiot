@@ -1,6 +1,6 @@
 #YAML
 templates:
-  - id: dotnet-console
+  - id: dotnet-console-test
     version: 0.1
     forVersionExt: 0.3.0
     platform: # win32, linux. Only Windows is currently supported
