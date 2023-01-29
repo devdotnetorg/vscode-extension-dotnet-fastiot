@@ -7,6 +7,7 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { IotLaunch } from '../IotLaunch';
 import { IotLaunchEnvironment } from '../IotLaunchEnvironment';
+import { IoTHelper } from '../Helper/IoTHelper';
 
 export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
@@ -14,19 +15,21 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLa
         if(configuration)
         {
             //name
-            const nameEnviroment = await vscode.window.showInputBox({				
+            let nameEnviroment = await vscode.window.showInputBox({				
                 prompt: 'prompt',
                 title: 'Enter enviroment name',
                 value:'FASTIOT'
             });
             if(nameEnviroment==undefined) return;
+            nameEnviroment=IoTHelper.StringTrim(nameEnviroment);
             //value
-            const valueEnviroment = await vscode.window.showInputBox({				
+            let valueEnviroment = await vscode.window.showInputBox({				
                 prompt: 'prompt',
                 title: `Enter the value of the enviroment: ${nameEnviroment}`,
                 value:'easy'
             });
             if(valueEnviroment==undefined) return;
+            valueEnviroment=IoTHelper.StringTrim(valueEnviroment);
             //
             configuration.Environments.Add(nameEnviroment,valueEnviroment);
             configuration.Environments.Write();
@@ -38,12 +41,13 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLa
 export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
         //name
-        const newName = await vscode.window.showInputBox({				
+        let newName = await vscode.window.showInputBox({				
             prompt: 'prompt',
             title: 'Enter enviroment name',
             value:`${item.label}`
         });
         if(newName==undefined) return;
+        newName=IoTHelper.StringTrim(newName);
         //
         const configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
         if(configuration){
@@ -57,12 +61,13 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:Io
 export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
         //value
-        const newValue = await vscode.window.showInputBox({				
+        let newValue = await vscode.window.showInputBox({				
             prompt: 'prompt',
             title: `Enter the value of the enviroment: ${item.label}`,
             value:`${item.description}`
         });
         if(newValue==undefined) return;
+        newValue=IoTHelper.StringTrim(newValue);
         //
         let configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
         if(configuration){

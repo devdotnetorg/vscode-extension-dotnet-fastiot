@@ -8,30 +8,34 @@ import { pingDevice } from './pingDevice';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
+import { IoTHelper } from '../Helper/IoTHelper';
 
 export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>): Promise<void> {                
         
-        const host = await vscode.window.showInputBox({            
+        let host = await vscode.window.showInputBox({            
             prompt: 'prompt',
             title: 'Add Device (1/5). Enter the host of the developer board',
             value:'192.168.43.208',            
         });
         
         if(host==undefined) return;
+        host=IoTHelper.StringTrim(host);
 
-        const port = await vscode.window.showInputBox({				
+        let port = await vscode.window.showInputBox({				
             prompt: 'prompt',
             title: 'Add Device (2/5). Enter a number port ssh',
             value:'22'
         });
         if(port==undefined) return;
+        port=IoTHelper.StringTrim(port);
 
-        const userName = await vscode.window.showInputBox({				
+        let userName = await vscode.window.showInputBox({				
             prompt: 'prompt',
             title: 'Add Device (3/5). Enter username with sudo rights (usually root)',
             value:'root'
         });
         if(userName==undefined) return;
+        userName=IoTHelper.StringTrim(userName);
 
         const password = await vscode.window.showInputBox({
             placeHolder: `Add Device (4/5). Enter user password ${userName}`,
