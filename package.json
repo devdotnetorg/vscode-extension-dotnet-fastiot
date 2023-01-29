@@ -17,17 +17,22 @@
 		".NET",
 		".NET Core",
 		"dotnet",
+		"C#",
+		"csharp",
 		"Debugging",
+		"debuggers",
+		"template",
+		"constructor",
+		"Remote",
 		"Embedded",
 		"IoT",
 		"Linux",
 		"SBC",
 		"Board",
-		"Raspberry",
-		"Remote"
+		"Raspberry"
 	],
 	"engines": {
-		"vscode": "^1.63.0"
+		"vscode": "^1.70.3"
 	},
 	"repository": {
 		"type": "git",
