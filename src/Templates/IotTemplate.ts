@@ -14,8 +14,8 @@ import { IotDevice } from '../IotDevice';
 import { IotConfiguration } from '../Configuration/IotConfiguration';
 
 export class IotTemplate extends EntityBase<IotTemplateAttribute> {
-  public get AppsPath(): string {
-    return this.ParentDir+"\\apps";}
+  public get StoragePath(): string {
+    return this.ParentDir+"\\storage";}
   public get TemplatePath(): string {
     return this.ParentDir+"\\template";}
   public get ImagePath(): string {
@@ -39,9 +39,9 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
 
   protected Validation(){
     this._validationErrors=[];
-    //проверка структуры папок
-    if (!fs.existsSync(this.AppsPath)) 
-      this._validationErrors.push(`${this.AppsPath} folder does not exist`);
+    //checking folder structure
+    if (!fs.existsSync(this.StoragePath)) 
+      this._validationErrors.push(`${this.StoragePath} folder does not exist`);
     if (!fs.existsSync(this.TemplatePath)) 
       this._validationErrors.push(`${this.TemplatePath} folder does not exist`);
     if (!fs.existsSync(this.ImagePath)) 
@@ -381,8 +381,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     this._mergeDictionary.set("%{launch.id}", IoTHelper.CreateGuid());
     this._mergeDictionary.set("%{template.id}", this.Attributes.Id);
     //template app folder
-    const appsPath=IoTHelper.ReverseSeparatorReplacement(this.AppsPath);
-    this._mergeDictionary.set("%{template.apps.path.aswindows}",<string>appsPath);
+    const storagePath=IoTHelper.ReverseSeparatorReplacement(this.StoragePath);
+    this._mergeDictionary.set("%{template.storage.path.aswindows}",<string>storagePath);
   }
 
   private PostCreatingMergeDictionary(device:IotDevice, config:IotConfiguration,
