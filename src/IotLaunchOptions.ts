@@ -40,6 +40,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     //create child elements
     this.Childs=[];      
     let element:IotItemTree;
+    const contextValue="iotenviromentoption";
     const iconPathError = {
       light: path.join(__filename, '..', '..', 'resources', 'light', 'error.svg'),
       dark: path.join(__filename, '..', '..', 'resources', 'dark', 'error.svg')
@@ -48,11 +49,13 @@ export class IotLaunchOptions extends BaseTreeItem{
     element = new IotItemTree("ID Launch",this._launch.IdLaunch,
     this._launch.IdLaunch,
       vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
+    element.contextValue=contextValue;
     this.Childs.push(element);
     //
     element = new IotItemTree("Project",this._launch.PathProject,
       this._launch.PathProject,
       vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
+    element.contextValue=contextValue;
     if(!this._launch.PathProject||this._launch.PathProject=="")
     {
       element.description=element.tooltip="not found";
@@ -63,6 +66,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     let label=<string>(this._launch.Device?.label)+" "+this._launch.Device?.Information.Architecture;
     element = new IotItemTree("Device",label,`label: ${label}. Id device: ${this._launch.Device?.IdDevice}`,
       vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
+    element.contextValue=contextValue;
     if(!this._launch.Device)
     {
       element.description=element.tooltip="not found";
@@ -72,6 +76,7 @@ export class IotLaunchOptions extends BaseTreeItem{
     //
     element = new IotItemTree("Username",this._launch.Device?.Account.UserName,this._launch.Device?.Account.UserName,
       vscode.TreeItemCollapsibleState.None,this,<IotDevice>this.Device);
+    element.contextValue=contextValue;
     if(!this._launch.Device)
     {
       element.description=element.tooltip="not found";

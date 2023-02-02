@@ -29,7 +29,13 @@
 		"Linux",
 		"SBC",
 		"Board",
-		"Raspberry"
+		"Raspberry",
+		"arm",
+		"arm64",
+		"aarch64",
+		"armv7l",
+		"armhf",
+		"processor"
 	],
 	"engines": {
 		"vscode": "^1.70.3"
@@ -478,6 +484,14 @@
 				{
 					"command": "viewLaunchs.DeleteEnviroment",
 					"when": "view == viewLaunchs && viewItem == iotenviroment"
+				},
+				{
+					"command": "viewDevices.CopyToClipboard",
+					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
+				},
+				{
+					"command": "viewDevices.CopyToClipboard",
+					"when": "view == viewLaunchs && viewItem == iotenviromentoption"
 				}
 			]
 		},

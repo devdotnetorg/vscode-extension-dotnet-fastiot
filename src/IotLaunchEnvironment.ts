@@ -83,6 +83,7 @@ export class IotLaunchEnvironment extends BaseTreeItem{
       element = new IotLaunchEnvironment(key,value,value,vscode.TreeItemCollapsibleState.None,
         this,this.Launch);
         element.iconPath = undefined;
+        element.contextValue="iotenviromentitem";
       this.Childs.push(element);      
     });        
   }

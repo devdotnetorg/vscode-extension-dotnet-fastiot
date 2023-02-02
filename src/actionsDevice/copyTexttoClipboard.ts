@@ -15,5 +15,4 @@ export async function copyTexttoClipboard(item:IotItemTree): Promise<void> {
             text=`${item.label}: ${item.tooltip}`;
         }
         vscode.env.clipboard.writeText(text);
-    
 }
