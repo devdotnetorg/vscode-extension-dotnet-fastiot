@@ -6,6 +6,7 @@ import {IotDevice} from './IotDevice';
 import {IotItemTree} from './IotItemTree';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
+import SSHConfig from 'ssh2-promise/lib/sshConfig';
 //
 
 export class IotDeviceAccount extends BaseTreeItem{  
@@ -22,10 +23,12 @@ export class IotDeviceAccount extends BaseTreeItem{
   public get PathKey(): string| undefined {
     return this.Device?.Config.Folder.DeviceKeys +"\\"+this.Identity;}
     
-  public get SshConfig(): any {
-    var sshconfig  = {
+  public get SshConfig(): SSHConfig {
+    let port:number=0;
+    if(this.Port) port=+this.Port;
+    var sshconfig:SSHConfig  = {
       host: this.Host,
-      port: this.Port,
+      port: port,
       username: this.UserName,
       identity: this.PathKey,
       readyTimeout: 7000
@@ -74,9 +77,11 @@ export class IotDeviceAccount extends BaseTreeItem{
     super(label,description,tooltip,collapsibleState);
     this.Parent=parent;
     this.Device=device;
-  }     
+  }
 
-  public async Create(sshconfig:any,accountNameDebug:string): Promise<IotResult>{
+  
+
+  public async Create(sshconfig:SSHConfig,accountNameDebug:string): Promise<IotResult>{
       //-------------------------------
       //create account
       let nameScript:string;
@@ -132,8 +137,8 @@ export class IotDeviceAccount extends BaseTreeItem{
         pathFile=`${this.Device.Config.Folder.DeviceKeys}\\${fileName}`;
         fs.writeFileSync(pathFile,data,undefined);
         //Attribute writing
-        this.Host=sshconfig.host.toString();
-        this.Port=sshconfig.port.toString();
+        this.Host=sshconfig.host?.toString();
+        this.Port=sshconfig.port?.toString();
         this.UserName=accountNameDebug;
         this.Identity=fileName;
         this.Groups.push(this.Device.Config.GroupsAccountDevice);	        

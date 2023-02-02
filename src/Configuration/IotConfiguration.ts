@@ -107,8 +107,6 @@ export class IotConfiguration {
       vscode.workspace.getConfiguration().update('fastiot.device.pathfolderkeys',"",true);
       vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
     }
-    //Templates-------------------------------
-    this.LoadTemplates();
     //Clear
 	  this.Folder.ClearTmp();
   }
@@ -120,11 +118,9 @@ export class IotConfiguration {
 	  {
 		  url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
 	  }else{
+      //for test
 		  url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono/templates/system/templatelist.fastiot.yaml";
 	  }
-	  //for test
-	  url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono/templates/system/templatelist.fastiot.yaml";
-	  //
 
     const loadTemplates = async () => {
       this._logCallback("-------- Loading templates -------");

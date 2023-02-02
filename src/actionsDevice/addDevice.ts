@@ -21,14 +21,14 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
         if(host==undefined) return;
         host=IoTHelper.StringTrim(host);
 
-        let port = await vscode.window.showInputBox({				
+        let portAnswer = await vscode.window.showInputBox({				
             prompt: 'prompt',
             title: 'Add Device (2/5). Enter a number port ssh',
             value:'22'
         });
-        if(port==undefined) return;
-        port=IoTHelper.StringTrim(port);
-
+        if(portAnswer==undefined) return;
+        portAnswer=IoTHelper.StringTrim(portAnswer);
+        const port=+portAnswer;
         let userName = await vscode.window.showInputBox({				
             prompt: 'prompt',
             title: 'Add Device (3/5). Enter username with sudo rights (usually root)',

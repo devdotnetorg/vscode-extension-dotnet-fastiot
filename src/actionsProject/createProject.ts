@@ -58,7 +58,7 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         if ((folders === undefined) || (folders[0] === undefined)) return;
         folder=folders[0].fsPath;
     }else{
-        //TEST
+        //test
         folder ="D:\\Anton\\Projects\\Tests";
     }
     //Select name project

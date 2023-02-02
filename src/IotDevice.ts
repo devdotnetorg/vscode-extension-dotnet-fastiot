@@ -70,7 +70,7 @@ export class IotDevice extends BaseTreeItem {
     }
   
   public async Create(
-    host: string, port: string,userName: string, password: string,
+    host: string, port: number,userName: string, password: string,
       accountNameDebug:string): Promise<IotResult>{    
     //--------------------------------------
     //get Information
@@ -89,8 +89,8 @@ export class IotDevice extends BaseTreeItem {
         });
       }       
     });
-    //create connection info    
-    var sshconfig  = {
+    //create connection info
+    var sshconfig:SSHConfig  = {
       host: host,
       port: port,
       username: userName,
@@ -299,35 +299,24 @@ export class IotDevice extends BaseTreeItem {
     this.GpioChips.FromJSON(obj.IotGpiochips)
   }
 
-  public async Ping(): Promise<IotResult>{ 
+  public async Ping(): Promise<IotResult>{
+    let result:IotResult;
     //Ping ipAddress
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      result=await this.Client.PingHost(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }
-    // TODO: need ping port
-    //   
-    let ssh = new SSH2Promise(this.Account.SshConfig,undefined);
-    try
-      {
-        await ssh.connect();
-        console.log("Connection established SSH");
-      }
-    catch (err: any)
-      {
-        console.log("Not Connected SSH");
-        return Promise.resolve(new IotResult(StatusResult.Error,"Not Connected SSH!",err));
-      }
-    ssh.close();
-    return Promise.resolve(new IotResult(StatusResult.Ok,"Connected SSH!",undefined));          
+    //CheckingSshConnection
+    result=await this.Client.CheckingSshConnection(this.Account.SshConfig);
+    return Promise.resolve(result);
   }
 
   public async Reboot(): Promise<IotResult>{
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      const result=await this.Client.PingHost(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -342,7 +331,7 @@ export class IotDevice extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      const result=await this.Client.PingHost(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //

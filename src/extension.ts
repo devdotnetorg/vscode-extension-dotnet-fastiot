@@ -86,6 +86,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	  };
 	//Get config
 	let config=new IotConfiguration(context,versionExt,logCallback);
+	config.LoadTemplates();
 	//read JSON devices
 	const jsonDevices=vscode.workspace.getConfiguration().get('fastiot.device.all.JSON');	 
     let treeDataDevicesProvider = new TreeDataDevicesProvider(outputChannel,statusBarItemDevice,

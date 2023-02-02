@@ -89,7 +89,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      const result=await this.Client.PingHost(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -111,7 +111,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      let result=await this.Client.Ping(this.Device.Account.Host);
+      let result=await this.Client.PingHost(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }
     //
@@ -130,7 +130,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      const result=await this.Client.PingHost(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -149,7 +149,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      const result=await this.Client.PingHost(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -168,7 +168,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      const result=await this.Client.PingHost(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //

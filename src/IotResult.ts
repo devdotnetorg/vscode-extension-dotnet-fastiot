@@ -20,7 +20,7 @@ export class IotResult {
   public get SystemMessage(): string|undefined {
     return this._systemMessage;}
   //  
-  public returnObject:any;
+  public returnObject:any|undefined;
   public tag: string|undefined;
 
   constructor(

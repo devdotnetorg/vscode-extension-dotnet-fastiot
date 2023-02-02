@@ -214,10 +214,10 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   }
 
   //------------ Devices ------------
-  public async AddDevice(toHost: string,toPort: string,toUserName: string,toPassword: string,accountNameDebug:string): Promise<IotResult> {         
+  public async AddDevice(toHost: string,toPort: number,toUserName: string,toPassword: string,accountNameDebug:string): Promise<IotResult> {         
       let device = new IotDevice(this.Config);
       //Ping
-      let result=await device.Client.Ping(toHost);
+      let result=await device.Client.PingHost(toHost);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
       //
       this.ShowStatusBar("Create a device");
@@ -309,7 +309,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       //Ping
       if(device.Account.Host)
         {
-          const result=await device.Client.Ping(device.Account.Host);
+          const result=await device.Client.PingHost(device.Account.Host);
           if(result.Status==StatusResult.Error) return Promise.resolve(result);  
         }
     this.ShowStatusBar("Checking for packages");    
@@ -473,7 +473,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       //Ping
       if(device.Account.Host)
       {
-        const result=await device.Client.Ping(device.Account.Host);
+        const result=await device.Client.PingHost(device.Account.Host);
         if(result.Status==StatusResult.Error) return Promise.resolve(result);  
       }    
       //
