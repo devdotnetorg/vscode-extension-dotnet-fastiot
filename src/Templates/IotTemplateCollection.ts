@@ -88,7 +88,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       //main
       if(template.IsValid)
       {
-        this.LogCallback(`Template isValid: ${filePath}`);
+        //this.LogCallback(`Template isValid: ${filePath}`);
         if(this.IsCompatible1(template))
         {
           const isContains=this.Contains1(template);

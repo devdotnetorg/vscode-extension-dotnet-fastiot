@@ -75,7 +75,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	outputChannel.appendLine("Welcome to .NET FastIoT!");	
 	outputChannel.appendLine("----------------------------------");
 	outputChannel.appendLine(`Version: ${versionExt}`);	
-	outputChannel.appendLine("Feedback: fastiot@devdotnet.org, https://t.me/antonserdyukov");
+	outputChannel.appendLine("Feedback: fastiot@devdotnet.org");
+	outputChannel.appendLine("Site: https://devdotnet.org/tag/fastiot/");
+	outputChannel.appendLine("GitHub: https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot");
 	outputChannel.appendLine("----------------------------------");
 	//TreeView Devices
 	let statusBarItemDevice = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);

@@ -128,6 +128,7 @@ export class IotConfiguration {
       await this.Templates.LoadTemplatesSystem();
       //await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
       //await this.Templates.LoadTemplatesUser();
+      this._logCallback(`${this.Templates.Count} template(s) available.`);
       this._logCallback("----------------------------------");
       };
 	  loadTemplates();
