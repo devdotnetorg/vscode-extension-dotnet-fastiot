@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import {IoTHelper} from './Helper/IoTHelper';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import { IotItemTree } from './IotItemTree';
+import {IotResult,StatusResult } from './IotResult';
 
 //Devices
 import { TreeDataDevicesProvider } from './TreeDataDevicesProvider';
@@ -100,11 +101,23 @@ export async function activate(context: vscode.ExtensionContext) {
 	statusBarItemConfiguration.hide();
 	const workspaceFolder=IoTHelper.GetWorkspaceFolder();
     let treeDataLaunchsProvider = new TreeDataLaunchsProvider(statusBarItemConfiguration,
-		outputChannel,config,treeDataDevicesProvider.RootItems,workspaceFolder);	
+		outputChannel,config,treeDataDevicesProvider.RootItems,workspaceFolder);
+	const loadLaunchs = async () => {
+		const result= await treeDataLaunchsProvider.RecoveryLaunchsAsync();
+		if(result.Status==StatusResult.Error&&result.tag!="404") {
+			outputChannel.appendLine("-------- Loading launchs -------");
+			outputChannel.appendLine(`Status: ${result.Status.toString()}`);
+			outputChannel.appendLine(`Message: ${result.Message}`);
+			outputChannel.appendLine(`System message: ${result.SystemMessage}`);
+			outputChannel.appendLine("----------------------------------");
+			vscode.window.showErrorMessage(`Error. Loaded Launchs! \n${result.Message}. ${result.SystemMessage}`);
+		}
+		treeDataLaunchsProvider.Refresh();
+		};
+	loadLaunchs();
     let vscodeTreeViewLaunchs=vscode.window.createTreeView('viewLaunchs', {
 		treeDataProvider: treeDataLaunchsProvider
 	  });
-
 	//TreeView Projects	
     let treeDataProjectsProvider = new TreeDataProjectsProvider();	
     let vscodeTreeViewProjects=vscode.window.createTreeView('viewProjects', {

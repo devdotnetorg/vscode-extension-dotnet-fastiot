@@ -44,9 +44,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       //Set config
       this.Config=config;
       this._devices=devices;
-      this._workspaceDirectory=workspaceDirectory ?? "non";
-      //Recovery devices
-      if(this._workspaceDirectory!="non") this.RecoveryLaunchs();  
+      this._workspaceDirectory=workspaceDirectory ?? "non"; 
   }
 
   public getTreeItem(element: BaseTreeItem): vscode.TreeItem | Thenable<BaseTreeItem> {
@@ -73,14 +71,15 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     this._onDidChangeTreeData.fire();    
   }
 
-  public RefreshsFull(): void {
-    //Clear
-    this.RootItems = [];
-    if(this._workspaceDirectory!="non") this.RecoveryLaunchs();  
-    //
-    this._onDidChangeTreeData.fire();    
+  public RefreshsFull(): IotResult {
+    let result:IotResult;
+    result= new IotResult(StatusResult.Ok,undefined,undefined);
+    if(this._workspaceDirectory!="non") result = this.RecoveryLaunchs();  
+    this.Refresh();
+    return result;  
   }
   
+  /*
   private async ShowStatusBar(textStatusBar:string): Promise<void>{      
     this._isStopStatusBar=false;
     //  
@@ -113,7 +112,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       this._statusBarText=textStatusBar;      
     }    
   }
-
+ 
   private async HideStatusBar(): Promise<void>{
     if(this._statusBarItem)
     {
@@ -121,26 +120,27 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       this._statusBarItem.hide();						
     }    
   }
+   */
 
-  private async RecoveryLaunchs(): Promise<void>{    
-    //Clear
-    this.RootItems = [];
-    //Recovery launchs from config in JSON format
-    //fromJSON(jsonObj:any,devices: Array<IotDevice>,workspaceDirectory:string):any{
-    this.ShowStatusBar("Reading extension settings");
-    //check folder .vscode with launch.json
-    //launch.json
-    const launchBase= new IotLaunch(this._workspaceDirectory);  
-    if (!launchBase.existsLaunchTasks)
-    {
-      //end processing
-      this.HideStatusBar();
-      return;
-    }     
-    //fromJSON
+  public async RecoveryLaunchsAsync(): Promise<IotResult>{
+    return Promise.resolve(this.RecoveryLaunchs());  
+  }
+
+  public RecoveryLaunchs():IotResult {
+    let result:IotResult;
     try
     {
-      var obj = launchBase.GetJsonLaunch();
+      //Clear
+      this.RootItems = [];
+      //Recovery launchs from config in JSON format
+      //fromJSON(jsonObj:any,devices: Array<IotDevice>,workspaceDirectory:string):any{
+      //check folder .vscode with launch.json
+      //launch.json
+      const launchBase= new IotLaunch(this._workspaceDirectory);
+      //fromJSON
+      result = launchBase.GetJsonLaunch();
+      if(result.Status==StatusResult.Error) return result;  
+      let obj=result.returnObject;
       //Recovery of every Launch    
       let index=0;    
       do { 				
@@ -151,60 +151,83 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
               {
                 //parse
                 let launch = new IotLaunch(this._workspaceDirectory);
-                const resultBool=launch.FromJSON(jsonLaunch,this._devices);
-                if(resultBool){
+                result=launch.FromJSON(jsonLaunch,this._devices);
+                if(result.Status==StatusResult.Ok){
                   launch.collapsibleState=vscode.TreeItemCollapsibleState.Collapsed;
                   this.RootItems.push(launch);
-                }              
+                }
               }            
               //next position
               index=index+1;
             }else break;      
-    } 
-    while(true)
-    //Refresh treeView
-    this.Refresh();
-    //end processing
-    this.HideStatusBar();
+      } 
+      while(true)
     }
     catch (err:any)
     {
-      console.log(`Error. Exec.Output: ${err}`);
-      //end processing
-      this.HideStatusBar();
-      return;
+      result= new IotResult(StatusResult.Error,`RecoveryLaunchs. Path: ${this._workspaceDirectory}`,err);
     }
+    //Refresh treeView
+    this.Refresh();
+    return result;
   }  
 
-  public async RenameLaunch(item:IotLaunch,newLabel:string): Promise<boolean> {
-    if(this.RootItems.find(x=>x.label==newLabel)) return Promise.resolve(false);     
-    let launch = this.FindbyIdLaunch(<string>item.IdLaunch);
+  public async RenameLaunch(item:IotLaunch,newLabel:string): Promise<IotResult> {
+    let result:IotResult;
+    result=this.GetLaunchbyIdLaunch(item.IdLaunch);
+    if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
+    let launch=<IotLaunch>result.returnObject;
     if(launch){
-      launch.Rename(newLabel);      
-      //
-      return Promise.resolve(true);   
-    }
-    return Promise.resolve(false);   
-  }  
+      result=launch.Rename(newLabel);
+    }else result = new IotResult(StatusResult.Error,`Launch not found IdLaunch:${item.IdLaunch}`,undefined);
+    //result
+    return Promise.resolve(result);
+  }
 
-  public FindbyIdLaunch(idLaunch:string): IotLaunch|undefined {
+  public FindbyIdLaunchInTree(idLaunch:string): IotLaunch|undefined {
     let launch = this.RootItems.find(x=>x.IdLaunch==idLaunch);
     return launch;    
   }
 
-  public async DeleteLaunch(idLaunch:string): Promise<boolean> {
-    let launch=this.FindbyIdLaunch(idLaunch);
-    if(launch){
-      launch.Remove();
-      const index=this.RootItems.indexOf(launch);
-      this.RootItems.splice(index,1);      
-      return Promise.resolve(true);   
+  public GetLaunchbyIdLaunch(idLaunch:string): IotResult {
+    let result:IotResult;
+    let launch = new IotLaunch(this._workspaceDirectory);
+    try {
+      result=launch.GetJsonLaunch();
+      if(result.Status==StatusResult.Error) return result;
+      const jsonLaunch=result.returnObject;
+      result= new IotResult(StatusResult.No,undefined,undefined);
+      jsonLaunch.configurations.forEach((element:any) => {
+        const fastiotIdLaunch = element.fastiotIdLaunch;
+        if(idLaunch==fastiotIdLaunch)
+        {
+          result=launch.FromJSON(element,this._devices);
+          if(result.Status==StatusResult.Error) return result;
+          result.returnObject=launch;
+          return;
+        }
+      });
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`GetLaunchbyIdLaunch ${idLaunch}`,err);
     }
-    return Promise.resolve(false);   
+    return result;
+  }
+
+  public async DeleteLaunch(idLaunch:string): Promise<IotResult> {
+    let result:IotResult;
+    result=this.GetLaunchbyIdLaunch(idLaunch);
+    if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
+    let launch=<IotLaunch>result.returnObject;
+    if(launch){
+      result=launch.Remove();  
+    }else result = new IotResult(StatusResult.Error,`Launch not found IdLaunch:${idLaunch}`,undefined);
+    //result
+    return Promise.resolve(result);
   }  
 
   public async RebuildLaunch(idLaunch:string): Promise<void>
   {
+    /*
     let launch=this.FindbyIdLaunch(idLaunch);
     if(launch){
       //get linked Launchs
@@ -238,10 +261,12 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
         return;
       }
       //remove linked launchs
-      let launchs= this.RootItems.filter((e:IotLaunch) => e.IdLaunch.includes(sourceIdLaunch.substring(0,8)));
-      launchs.forEach((item) => {
-        item.Remove();  
-      });
+       
+      //let launchs= this.RootItems.filter((e:IotLaunch) => e.IdLaunch.includes(sourceIdLaunch.substring(0,8)));
+      //launchs.forEach((item) => {
+      //  item.Remove();  
+      //});
+       
       //Add Configuration Vscode
       let values:Map<string,string>= new Map<string,string>();
       //Preparing values
@@ -288,25 +313,25 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
         } 
         while(true)
         launch.SaveLaunch(jsonNewLaunch);
-        this.RefreshsFull();
       }
     }
+  */
   }
   // Create project from a template
   public async CreateProject(device:IotDevice,template:IotTemplate, dstPath:string,values:Map<string,string>):Promise<IotResult> {
     const nameProject= values.get("%{project.name}") ?? "";
-    this.ShowStatusBar(`Create a project ${nameProject} ...`);
+    //this.ShowStatusBar(`Create a project ${nameProject} ...`);
     const result=template.CreateProject(device,this.Config,dstPath,values);
-    this.HideStatusBar();
+    //this.HideStatusBar();
     //result
     return Promise.resolve(result);  
   }
   //Add Launch
   public async AddLaunch(device:IotDevice,template:IotTemplate,values:Map<string,string>):Promise<IotResult> {
     const nameProject= values.get("%{project.name}") ?? "";
-    this.ShowStatusBar(`Create a project ${nameProject} ...`);
+    //this.ShowStatusBar(`Create a project ${nameProject} ...`);
     const result=template.AddConfigurationVscode(device,this.Config,this._workspaceDirectory,values);
-    this.HideStatusBar();
+    //this.HideStatusBar();
     //result
     return Promise.resolve(result);  
   }

@@ -114,11 +114,11 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     //Message
     if(result.Status==StatusResult.Ok)
     {
-        //Refresh
-        treeData.RefreshsFull();
         vscode.window.showInformationMessage('Launch and tasks added successfully');
     }else {
         vscode.window.showErrorMessage(`Error. Launch and tasks not added! \n${result.Message}. ${result.SystemMessage}`);            
     }
+    //Refresh
+    treeData.RefreshsFull();
 }
 

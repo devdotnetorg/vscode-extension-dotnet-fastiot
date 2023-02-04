@@ -15,10 +15,26 @@ export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLau
     });
     if((newLabel==undefined)||(newLabel==item.label)) return;
     newLabel=IoTHelper.StringTrim(newLabel);
-    //Rename
-    if(await treeData.RenameLaunch(item,newLabel))
-    {        
-        treeData.Refresh();    
-    }    
+    if(newLabel==""){
+        vscode.window.showErrorMessage(`Error. Empty name specified`);
+        return;
+    } 
+    //Main process
+    treeData.OutputChannel.appendLine(`Action: launch rename. Old name: ${item.label}. New name: ${newLabel}`);
+    const result = await treeData.RenameLaunch(item,newLabel);
+    //Output
+    treeData.OutputChannel.appendLine("------------- Result -------------");
+    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
+    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
+    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+    //Message
+    if(result.Status==StatusResult.Ok)
+    {
+        vscode.window.showInformationMessage('Launch rename succeeded');
+    }else {
+        vscode.window.showErrorMessage(`Error. Launch has not been renamed! \n${result.Message}. ${result.SystemMessage}`);
+    }
+    //Refresh
+    treeData.RefreshsFull();
 }
 

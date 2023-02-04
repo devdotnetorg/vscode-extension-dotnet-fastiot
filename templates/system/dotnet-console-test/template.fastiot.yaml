@@ -5,12 +5,14 @@ id: dotnet-console-test # unique
 platform: # win32, linux. Only Windows is currently supported
   - win32
 version: 0.1
-releaseDate: 2023-01-27 # YYYY-MM-DD
+releaseDate: 2023-02-04 # YYYY-MM-DD
 forVersionExt: 0.3.0
 author: DevDotNet.ORG
 label: .NET Console Test Application
 detail: Creates a console application with output test information
-description: The application displays information about the OS, .NET version, environment variables
+description: >
+             The application displays information about the OS, .NET version, environment variables.
+             The application is compiled on the PC.
 language: csharp
 endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l
@@ -20,16 +22,16 @@ dependOnPackages: # Coming in one of the next version
   - dotnetruntime-%{dotnetTarget}
   - vsdbg
 typeProj: dotnet # template type is related to processing logic
-projName: DotnetConsoleTestApp
-mainFileProj: dotnetapp.csproj
+projName: DotnetConsoleTestApp # default value shown to the user
+mainFileProj: dotnetapp.csproj # relative path to the project file as in Linux i.e. folder1/dotnetapp.csproj or dotnetapp.csproj
 mainFileProjLabel: Visual Studio C# Project
 tags:
   - console
   - dotnet
   - test
 filesToProcess:
-  - dotnetapp.csproj
+  - dotnetapp.csproj # relative path to the file as in Linux
   - Program.cs
 fileNameReplacement:
-  - dotnetapp.csproj=%{project.name}.csproj
+  - dotnetapp.csproj=%{project.name}.csproj # relative path to the file as in Linux
   - .gitignore_=.gitignore

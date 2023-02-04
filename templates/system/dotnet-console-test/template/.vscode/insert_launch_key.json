@@ -3,7 +3,7 @@
 		{
 			"fastiotIdLaunch": "%{launch.id}",
 			"fastiotIdDevice": "%{device.id}",
-			"fastiotProject":"%{project.mainfile.path.relative.aswindows}",
+			"fastiotProject":"%{project.mainfile.path.relative.aslinux}",
 			"fastiotIdTemplate": "%{template.id}",
 			"name": "%{launch.label}",
 			"type": "coreclr",
@@ -37,7 +37,7 @@
 		{
 			"fastiotIdLaunch": "%{launch.id}-without-logs",
 			"fastiotIdDevice": "%{device.id}",
-			"fastiotProject":"%{project.mainfile.path.relative.aswindows}",
+			"fastiotProject":"%{project.mainfile.path.relative.aslinux}",
 			"fastiotIdTemplate": "%{template.id}",
 			"name": "%{launch.label} without logs",
 			"type": "coreclr",

@@ -26,7 +26,6 @@ export class launchHelper {
       let index=1;
       do {
         let item=arrayLabels[index];
-        
         if(item) {
           let remainderArrayLabels: Array<string>=[];
           remainderArrayLabels=arrayLabels.slice(0,index);

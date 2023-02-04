@@ -11,8 +11,8 @@ import { IoTHelper } from '../Helper/IoTHelper';
 
 export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
-        let configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
-        if(configuration)
+        let launch=treeData.FindbyIdLaunchInTree(item.Launch.IdLaunch);
+        if(launch)
         {
             //name
             let nameEnviroment = await vscode.window.showInputBox({				
@@ -22,6 +22,10 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLa
             });
             if(nameEnviroment==undefined) return;
             nameEnviroment=IoTHelper.StringTrim(nameEnviroment);
+            if(nameEnviroment==""){
+                vscode.window.showErrorMessage(`Error. Empty name specified`);
+                return;
+            }
             //value
             let valueEnviroment = await vscode.window.showInputBox({				
                 prompt: 'prompt',
@@ -30,9 +34,13 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLa
             });
             if(valueEnviroment==undefined) return;
             valueEnviroment=IoTHelper.StringTrim(valueEnviroment);
+            if(valueEnviroment==""){
+                vscode.window.showErrorMessage(`Error. Empty name specified`);
+                return;
+            }
             //
-            configuration.Environments.Add(nameEnviroment,valueEnviroment);
-            configuration.Environments.Write();
+            launch.Environments.Add(nameEnviroment,valueEnviroment);
+            launch.Environments.Write();
             treeData.Refresh();
             vscode.window.showInformationMessage('Enviroment added successfully');
         } 
@@ -48,12 +56,16 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:Io
         });
         if(newName==undefined) return;
         newName=IoTHelper.StringTrim(newName);
+        if(newName==""){
+            vscode.window.showErrorMessage(`Error. Empty name specified`);
+            return;
+        }
         //
-        const configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
-        if(configuration){
-            configuration.Environments.Remove(<string>item.label);
-            configuration.Environments.Add(newName,<string>item.description);
-            configuration.Environments.Write();
+        let launch=treeData.FindbyIdLaunchInTree(item.Launch.IdLaunch);
+        if(launch){
+            launch.Environments.Remove(<string>item.label);
+            launch.Environments.Add(newName,<string>item.description);
+            launch.Environments.Write();
             treeData.Refresh();
         }
 }
@@ -68,21 +80,25 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:IotL
         });
         if(newValue==undefined) return;
         newValue=IoTHelper.StringTrim(newValue);
+        if(newValue==""){
+            vscode.window.showErrorMessage(`Error. Empty name specified`);
+            return;
+        }
         //
-        let configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
-        if(configuration){
-            configuration.Environments.Edit(<string>item.label,newValue);
-            configuration.Environments.Write();           
+        let launch=treeData.FindbyIdLaunchInTree(item.Launch.IdLaunch);
+        if(launch){
+            launch.Environments.Edit(<string>item.label,newValue);
+            launch.Environments.Write();           
             treeData.Refresh();
         }        
 }
 
 export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
     Promise<void> {
-        let configuration=treeData.FindbyIdLaunch(item.Launch.IdLaunch);
-        if(configuration){
-            configuration.Environments.Remove(<string>item.label);
-            configuration.Environments.Write();           
+        let launch=treeData.FindbyIdLaunchInTree(item.Launch.IdLaunch);
+        if(launch){
+            launch.Environments.Remove(<string>item.label);
+            launch.Environments.Write();           
             treeData.Refresh();
         }                
 }

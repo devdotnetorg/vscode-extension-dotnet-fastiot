@@ -39,6 +39,12 @@ export class IoTHelper {
     return result;	
   }
 
+  static ReverseSeparatorLinuxToWin(data:string): string {
+    let regex = /\//g;
+    const result = data.replace(regex, "\\");  	
+    return result;	
+  }
+
   static StringTrim(data:string): string {
     let regex = /\r?\n|\r/g;
     let result = data.replace(regex, " ");
@@ -79,30 +85,25 @@ export class IoTHelper {
 
   static GetAllFilesByExt(dir:string,fileExtension:string):Array<string> {
     //search for files in depth on three levels
-    const depthLevel=3;
+    const depthLevel=4;
     const helper= new IoTHelper();
-    const files = helper.GetAllFilesByExtRecurc(dir,fileExtension, depthLevel,undefined);    
+    const files = helper.GetAllFilesByExtRecurc(dir,fileExtension, depthLevel);    
     return files;
   }
 
-  private GetAllFilesByExtRecurc(pathFolder:string, fileExtension:string, depthLevel:number| undefined,currenDepthLevel:number| undefined): Array<string> {
+  private GetAllFilesByExtRecurc(pathFolder:string, fileExtension:string, depthLevel=1,currenDepthLevel=1): Array<string> {
     let result:Array<string>=[];
-    if(depthLevel){
-      if(currenDepthLevel)
-      {
-        if(currenDepthLevel>depthLevel) return result;
-      }
-    }
+    if(currenDepthLevel>depthLevel) return result;
     //    
     let files=fs.readdirSync(pathFolder);
     files.forEach((name) => {
       const filename=`${pathFolder}\\${name}`;      
       if(fs.lstatSync(filename).isDirectory())
         {          
-          if(!currenDepthLevel) currenDepthLevel=0;
-          currenDepthLevel++
+          //if(!currenDepthLevel) currenDepthLevel=0;
+          //currenDepthLevel++
           const helper= new IoTHelper();
-          const result2=helper.GetAllFilesByExtRecurc(filename, fileExtension, depthLevel,currenDepthLevel);
+          const result2=helper.GetAllFilesByExtRecurc(filename, fileExtension, depthLevel,currenDepthLevel+1);
           result2.forEach((element) => {
             result.push(element);
           });          

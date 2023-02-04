@@ -6,7 +6,7 @@
 			"type": "process",
 			"args": [
 				"build",
-				"${workspaceFolder}/%{project.mainfile.path.relative.aslinux}",
+				"${workspaceFolder}%{project.mainfile.path.relative.aslinux}",
 				"--configuration",
 				"Debug",
 				"/property:GenerateFullPaths=true",

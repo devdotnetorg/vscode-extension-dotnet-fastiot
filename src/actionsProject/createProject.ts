@@ -118,7 +118,11 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
     //Message       
     if(result.Status==StatusResult.Ok)
     {
+        //Open Workspace
+        const folderPathParsed = "/"+selectFolder.split(`\\`).join(`/`);
+        const folderUri = vscode.Uri.parse(folderPathParsed);
         vscode.window.showInformationMessage(`${nameProject} project successfully created`);
+        vscode.commands.executeCommand(`vscode.openFolder`, folderUri);  
     }else
     {            
         vscode.window.showErrorMessage(`Error. Project not created! \n${result.Message}`);            

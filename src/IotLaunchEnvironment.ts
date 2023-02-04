@@ -34,20 +34,25 @@ export class IotLaunchEnvironment extends BaseTreeItem{
     this.contextValue="iotenviroment";
   }
 
-  public Write(): boolean {  
-    let result:boolean=false;
-    if (!this.Launch.existsLaunchTasks) return result;
-    let jsonLaunch = this.Launch.GetJsonLaunch();
-    jsonLaunch.configurations.forEach((element:any) => {
-      const fastiotId = element.fastiotIdLaunch;
-      if(this.Launch.IdLaunch==fastiotId)
-      {
-        element.env=this.ToJSON();        
-        result=true;
-        //write file
-        this.Launch.SaveLaunch(jsonLaunch);
-      }
-    });
+  public Write(): IotResult {  
+    let result:IotResult;
+    try {
+      result = this.Launch.GetJsonLaunch();
+      if(result.Status==StatusResult.Error) return result;  
+      let jsonLaunch = result.returnObject;
+      jsonLaunch.configurations.forEach((element:any) => {
+        const fastiotId = element.fastiotIdLaunch;
+        if(this.Launch.IdLaunch==fastiotId)
+        {
+          element.env=this.ToJSON();
+          //write file
+          result=this.Launch.SaveLaunch(jsonLaunch);
+          return result;
+        }
+      });
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`Write Environment Launch:${this.Launch.label}`,err);
+    }
     return result;
   }
 

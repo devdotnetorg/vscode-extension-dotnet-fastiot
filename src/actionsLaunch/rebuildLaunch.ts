@@ -8,7 +8,8 @@ import { IotLaunch } from '../IotLaunch';
 
 export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch): Promise<void> {                    
     await treeData.RebuildLaunch(item.IdLaunch);
-    treeData.Refresh();
+    //Refresh
+    treeData.RefreshsFull();
     vscode.window.showInformationMessage("Configuration rebuild completed successfully");
 }
 

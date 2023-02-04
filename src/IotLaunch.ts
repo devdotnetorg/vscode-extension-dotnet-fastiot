@@ -56,44 +56,64 @@ export class IotLaunch extends BaseTreeItem {
     this.Childs.push(this.Environments);      
   }
 
-  public GetJsonLaunch():any|undefined{
-    const json=this.GetJsonFile(this.LaunchFilePath);
-    return json;
+  public GetJsonLaunch():IotResult{
+    const result=this.GetJsonFile(this.LaunchFilePath);
+    return result;
   }
 
-  public GetJsonTasks():any|undefined{
-    const json=this.GetJsonFile(this.TasksFilePath);
-    return json;
+  public GetJsonTasks():IotResult{
+    const result=this.GetJsonFile(this.TasksFilePath);
+    return result;
   }
 
-  private GetJsonFile(filePath:string):any|undefined{
-    if(this.existsLaunchTasks){
-      let dataFile:string= fs.readFileSync(filePath, 'utf8');
-      dataFile=IoTHelper.DeleteComments(dataFile);
-      let json = JSON.parse(dataFile);
-      return json;
-    }else return undefined;
+  private GetJsonFile(filePath:string):IotResult{
+    let result:IotResult;
+    try {
+      if(this.existsLaunchTasks){
+        let dataFile:string= fs.readFileSync(filePath, 'utf8');
+        dataFile=IoTHelper.DeleteComments(dataFile);
+        let json = JSON.parse(dataFile);
+        result= new IotResult(StatusResult.Ok,undefined,undefined);
+        result.returnObject=json;
+        return result;
+      }else {
+        result= new IotResult(StatusResult.Error,`Files launch.json and tasks.json not found in folder /.vscode. Project is a ${this.PathProject}`,undefined);
+        result.tag="404";
+      }
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`GetJsonFile ${filePath}`,err);
+    }
+    return result;
   }
 
-  public SaveLaunch(json:any){
-    this.SaveFile(this.LaunchFilePath,json);
+  public SaveLaunch(json:any):IotResult{
+    return this.SaveFile(this.LaunchFilePath,json);
   }
 
-  public SaveTasks(json:any){
-    this.SaveFile(this.TasksFilePath,json);
+  public SaveTasks(json:any):IotResult{
+    return this.SaveFile(this.TasksFilePath,json);
   }
 
-  private SaveFile(filePath:string,json:any){
-    const datafile = JSON.stringify(json,null,2);
-    //write file
-    fs.writeFileSync(filePath,datafile); 
+  private SaveFile(filePath:string,json:any):IotResult{
+    let result:IotResult;
+    try {
+      const datafile = JSON.stringify(json,null,2);
+      //write file
+      fs.writeFileSync(filePath,datafile);
+      result=new IotResult(StatusResult.Ok, undefined,undefined);
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`SaveFile filePath: ${filePath}, json: ${json}`,err); 
+    }
+    return result; 
   }
 
-  public FromJSON(jsonObj:any,devices: Array<IotDevice>):boolean{
+  public FromJSON(jsonObj:any,devices: Array<IotDevice>):IotResult{
+    let result:IotResult;
     try
     {        
       //verification
-      if((!jsonObj.fastiotIdDevice)||(!jsonObj.fastiotProject)) return false;;
+      if((!jsonObj.fastiotIdDevice)||(!jsonObj.fastiotProject))
+        return new IotResult(StatusResult.Error,`Tags fastiotIdDevice and fastiotProject not found in json: ${jsonObj}`,undefined);
       //find device
       const idDevice:string=jsonObj.fastiotIdDevice;
       const device=devices.find(x=>x.IdDevice==idDevice);
@@ -108,13 +128,13 @@ export class IotLaunch extends BaseTreeItem {
       if(jsonObj.env) this.Environments.FromJSON(jsonObj.env);  
       //Label-name
       this.label=this.tooltip=jsonObj.name;
+      result=new IotResult(StatusResult.Ok, undefined,undefined);
     }
-    catch (err)
+    catch (err:any)
     {
-      console.log(`Error. Exec.Output: ${err}`);
-      return false;
+      result=new IotResult(StatusResult.Error,`Launch FromJSON. jsonObj: ${jsonObj}`,err);
     }
-    return true;
+    return result;
   }
 
   public Refresh() {              
@@ -122,52 +142,59 @@ export class IotLaunch extends BaseTreeItem {
     this.Environments.Build();    
   }
 
-  public Rename(newLabel:string): boolean {    
-    let result:boolean=false;
-    newLabel=IoTHelper.StringTrim(newLabel);
-    if(newLabel=="") return false;
-    //check launch.json
-    if (!fs.existsSync(this.LaunchFilePath)) return result;
-    //Change in file
-    let jsonLaunch = this.GetJsonLaunch();
-    //    
-    jsonLaunch.configurations.forEach((element:any) => {
-      const fastiotId = element.fastiotIdLaunch;
-      if(this.IdLaunch==fastiotId)
-      {
-        this.label=this.tooltip=element.name=newLabel;
-        result=true;
-        //write file
-        this.SaveLaunch(jsonLaunch);
-      }
-    });        
+  public Rename(newLabel:string): IotResult {
+    let result:IotResult;
+    try {
+      //Change in file
+      result = this.GetJsonLaunch();
+      if(result.Status==StatusResult.Error) return result;
+      let jsonLaunch = result.returnObject;
+      result= new IotResult(StatusResult.Error,`Launch not found. Name: ${this.IdLaunch}`,undefined);
+      //change
+      jsonLaunch.configurations.forEach((element:any) => {
+        const fastiotId = element.fastiotIdLaunch;
+        if(this.IdLaunch==fastiotId)
+        {
+          element.name=newLabel;
+          //write file
+          result=this.SaveLaunch(jsonLaunch);
+          return;
+        }
+      });
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`Rename launch. Name: ${this.IdLaunch}`,err);
+    }
     return result;
   }
 
-  public Remove()
+  public Remove():IotResult
   {
-    //deleting related configuration
-    //launch.json
-    //check launch.json
-    if (this.existsLaunchTasks){
-      //delete
-      let jsonLaunch = this.GetJsonLaunch();
+    let result:IotResult;
+    try {
+      //deleting related configuration
+      //launch.json
+      result = this.GetJsonLaunch();
+      if(result.Status==StatusResult.Error) return result;
+      let json = result.returnObject;
       //filter
-      jsonLaunch.configurations=jsonLaunch.configurations.filter((e:any) => e.fastiotIdLaunch !=this.IdLaunch);
+      json.configurations=json.configurations.filter((e:any) => e.fastiotIdLaunch !=this.IdLaunch);
       //write file
-      this.SaveLaunch(jsonLaunch);     
-    }    
-    //deleting related tasks
-    //tasks.json
-    if (this.existsLaunchTasks)    
-    {
-      let jsonTasks = this.GetJsonTasks();
+      result = this.SaveLaunch(json);     
+      if(result.Status==StatusResult.Error) return result;
+      //deleting related tasks
+      //tasks.json
+      result = this.GetJsonTasks();
+      if(result.Status==StatusResult.Error) return result;
+      json = result.returnObject;
       //filter. fastiot-67c94b5e
       const taskLabel=`fastiot-${this.IdLaunch}`;
-      jsonTasks.tasks=jsonTasks.tasks.filter((e:any) => !e.label.includes(taskLabel));
+      json.tasks=json.tasks.filter((e:any) => !e.label.includes(taskLabel));
       //write file
-      this.SaveTasks(jsonTasks);
-   }    
+      result = this.SaveTasks(json);  
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`Launch removal. IdLaunch: ${this.IdLaunch}`,err);
+    }
+    return result; 
   }
 
   iconPath = {
