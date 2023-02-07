@@ -171,32 +171,161 @@ export class IotLaunch extends BaseTreeItem {
   {
     let result:IotResult;
     try {
-      //deleting related configuration
+      //get launch.json and tasks.json
       //launch.json
       result = this.GetJsonLaunch();
       if(result.Status==StatusResult.Error) return result;
-      let json = result.returnObject;
-      //filter
-      json.configurations=json.configurations.filter((e:any) => e.fastiotIdLaunch !=this.IdLaunch);
-      //write file
-      result = this.SaveLaunch(json);     
-      if(result.Status==StatusResult.Error) return result;
-      //deleting related tasks
+      let jsonLaunch = result.returnObject;
       //tasks.json
       result = this.GetJsonTasks();
       if(result.Status==StatusResult.Error) return result;
-      json = result.returnObject;
-      //filter. fastiot-67c94b5e
-      const taskLabel=`fastiot-${this.IdLaunch}`;
-      json.tasks=json.tasks.filter((e:any) => !e.label.includes(taskLabel));
-      //write file
-      result = this.SaveTasks(json);  
+      let jsonTasks = result.returnObject;
+      //get preLaunchTask
+      const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.IdLaunch);
+      if(!launch){
+        result= new IotResult(StatusResult.Error,`Launch not found. IdLaunch: ${this.IdLaunch}`,undefined);
+      }else{
+        //Task
+        const preLaunchTask=launch.preLaunchTask;
+        if(preLaunchTask){
+          //delete a task chain
+          result= this.DeleteTaskChaine(this.IdLaunch,jsonLaunch,jsonTasks);
+          if(result.Status==StatusResult.Error) return result;
+          jsonTasks=result.returnObject;
+        }
+        //Launch
+        //filter
+        jsonLaunch.configurations=jsonLaunch.configurations.filter((e:any) => e.fastiotIdLaunch !=this.IdLaunch);
+        //save
+        /*
+        result = this.SaveLaunch(jsonLaunch);     
+        if(result.Status==StatusResult.Error) return result;
+        result = this.SaveTasks(jsonTasks); 
+        if(result.Status==StatusResult.Error) return result;
+        */
+      }
     } catch (err: any){
       result= new IotResult(StatusResult.Error,`Launch removal. IdLaunch: ${this.IdLaunch}`,err);
     }
     return result; 
   }
 
+  private DeleteTaskChaine(fastiotIdLaunch:string,jsonLaunch:any,jsonTasks:any):IotResult
+  {
+    let result:IotResult;
+    try {
+      result=this.BuildingChainsTasks(jsonLaunch,jsonTasks);
+      if(result.Status==StatusResult.Error) return result;
+      // key - fastiotIdLaunch, value - labels tasks
+      let taskChains:Map<string,string[]>= new Map<string,string[]>();
+      taskChains=result.returnObject;
+      const tasksChainDelete=taskChains.get(fastiotIdLaunch);
+      if(!tasksChainDelete){
+        //no tasks to delete
+        result= new IotResult(StatusResult.Ok,`No tasks to delete. IdLaunch: ${this.IdLaunch}`,undefined);
+        result.returnObject=jsonTasks;
+        return result;
+      }
+      taskChains.delete(fastiotIdLaunch);
+      let tasks:string[]=[];
+      //get all tasks
+      taskChains.forEach((values,key) => {      
+        values.forEach((value) => {      
+          tasks.push(value);
+        });
+      });
+      //получаем разность массивов
+      //для исключения зависимых задач от других Launch
+      //tasksChainDelete - массив с задачами для удаления
+      //tasks - массив используемых задач другими Launch
+      const differenceTasks = tasksChainDelete.filter(x => !tasks.includes(x));
+      if(differenceTasks.length==0)
+      {
+        //no tasks to delete
+        result= new IotResult(StatusResult.Ok,`No tasks to delete. IdLaunch: ${this.IdLaunch}`,undefined);
+        result.returnObject=jsonTasks;
+        return result;
+      }
+      //task delete function
+      const removeById = (json:any, label:any) => {
+        const requiredIndex = json.findIndex((el:any) => {
+          return el.label === String(label);
+        });
+        if(requiredIndex === -1){
+          return false;
+        };
+        return !!json.splice(requiredIndex, 1);
+      };
+      //deleting tasks
+      differenceTasks.forEach((value) => {
+        removeById(jsonTasks.tasks,value);
+      });
+      //result
+      result= new IotResult(StatusResult.Ok,undefined,undefined);
+      result.returnObject=jsonTasks;
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`DeleteTaskChaine. IdLaunch: ${this.IdLaunch}`,err);
+    }
+    return result;
+  }
+
+  private BuildingChainsTasks(jsonLaunch:any,jsonTasks:any):IotResult
+  {
+    let result:IotResult;
+    try {
+      // key - fastiotIdLaunch, value - labels tasks
+      let taskChains:Map<string,string[]>= new Map<string,string[]>();
+      //Launch
+      jsonLaunch.configurations.forEach((element:any) => {
+        const fastiotIdLaunch=element.fastiotIdLaunch;
+        const preLaunchTask=element.preLaunchTask;
+        if(fastiotIdLaunch&&preLaunchTask)
+        {
+          //get task chain
+          result=this.GetTaskChain(preLaunchTask,jsonTasks);
+          if(result.Status==StatusResult.Error) return result;
+          if(result.Status==StatusResult.Ok) {
+            const taskChain=<string[]>result.returnObject;
+            taskChains.set(fastiotIdLaunch,taskChain);
+          }
+        }
+      });
+      //
+      result=new IotResult(StatusResult.Ok, undefined,undefined);
+      result.returnObject=taskChains;
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`DeleteTaskChaine. IdLaunch: ${this.IdLaunch}`,err);
+    }
+    return result;
+  }
+  private GetTaskChain(preLaunchTask:string,jsonTasks:any):IotResult
+  {
+    let result:IotResult;
+    try {
+      let taskChain:string[]=[];
+      let findLabel=preLaunchTask;
+      do {
+        const task=jsonTasks.tasks.find((x:any) => x.label ==findLabel);
+        if(task)
+        {
+          taskChain.push(task.label);
+          const dependsOn=task.dependsOn;
+          if (dependsOn) findLabel=dependsOn;else break;
+        }else break; 
+      } 
+      while(true)
+      if(taskChain.length>0){
+        result=new IotResult(StatusResult.Ok, undefined,undefined);
+      }else{
+        result=new IotResult(StatusResult.No, undefined,undefined);
+      }
+      result.returnObject=taskChain;
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`GetTaskChain. IdLaunch: ${this.IdLaunch}`,err);
+    }
+    return result;
+  }
+  
   iconPath = {
     light: path.join(__filename, '..', '..', 'resources', 'light', 'lanch.svg'),
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'lanch.svg')
