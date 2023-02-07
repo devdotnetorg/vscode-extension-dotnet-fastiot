@@ -197,12 +197,10 @@ export class IotLaunch extends BaseTreeItem {
         //filter
         jsonLaunch.configurations=jsonLaunch.configurations.filter((e:any) => e.fastiotIdLaunch !=this.IdLaunch);
         //save
-        /*
         result = this.SaveLaunch(jsonLaunch);     
         if(result.Status==StatusResult.Error) return result;
         result = this.SaveTasks(jsonTasks); 
         if(result.Status==StatusResult.Error) return result;
-        */
       }
     } catch (err: any){
       result= new IotResult(StatusResult.Error,`Launch removal. IdLaunch: ${this.IdLaunch}`,err);
