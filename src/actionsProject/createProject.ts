@@ -115,6 +115,7 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
     treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
     treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
     treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+    treeData.OutputChannel.appendLine("----------------------------------");
     //Message       
     if(result.Status==StatusResult.Ok)
     {

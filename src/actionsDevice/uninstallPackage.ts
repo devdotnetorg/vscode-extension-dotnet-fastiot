@@ -52,8 +52,7 @@ export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:Io
             default: { 
                 break; 
             } 
-        }
-        treeData.OutputChannel.appendLine("----------------------------------");        
+        }     
         treeData.OutputChannel.appendLine(`Action: package uninstallation ${item.NamePackage}`);
         //main process
         const result = await treeData.UnInstallPackage(<string>item.Device.IdDevice,item.NamePackage,jsonObj);
@@ -62,13 +61,12 @@ export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:Io
         treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
         treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
         treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+        treeData.OutputChannel.appendLine("----------------------------------");
         //Message
-        if(result.Status==StatusResult.Ok)
-        {
+        if(result.Status==StatusResult.Ok) {
             vscode.window.showInformationMessage(`${item.NamePackage} package uninstallation completed successfully.`);
-        }else
-        {            
+        } else {            
             vscode.window.showErrorMessage(`Error. ${item.NamePackage} package failed to uninstall! \n${result.Message}. ${result.SystemMessage}`);            
-        }	
-    }    
+        }
+    }
 }

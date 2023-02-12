@@ -27,6 +27,7 @@ export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLau
     treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
     treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
     treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+    treeData.OutputChannel.appendLine("----------------------------------");
     //Message
     if(result.Status==StatusResult.Ok)
     {

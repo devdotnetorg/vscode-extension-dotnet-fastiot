@@ -10,10 +10,8 @@ import { rebootDevice } from './rebootDevice';
 
 export async function deleteDTO(treeData: TreeDataDevicesProvider,item:IotDeviceDTO): Promise<void> { 
     const answer = await vscode.window.showInformationMessage(`Do you really want to remove the DTO: 
-    ${item.label}?`, ...["Yes", "No"]);
-    if(answer=="Yes")
-    {  
-        treeData.OutputChannel.appendLine("----------------------------------");
+        ${item.label}?`, ...["Yes", "No"]);
+    if(answer=="Yes") {
         treeData.OutputChannel.appendLine("Action: DTO removal");                
         const result=await treeData.DeleteDTO(item);
         //Output 
@@ -21,15 +19,14 @@ export async function deleteDTO(treeData: TreeDataDevicesProvider,item:IotDevice
         treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
         treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
         treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+        treeData.OutputChannel.appendLine("----------------------------------");
         //Message
-        if(result.Status==StatusResult.Ok)
-        {        
+        if(result.Status==StatusResult.Ok) {        
             treeData.Refresh(); 
             vscode.window.showInformationMessage(`DTO deleted successfully.`);
             //reboot
             //rebootDevice(treeData,item.Device,"You need to reboot the device to accept the changes");
-        }else    
-        {        
+        } else {
             vscode.window.showErrorMessage(`Error. Error enabling DTO.`);            
         }        
     } 

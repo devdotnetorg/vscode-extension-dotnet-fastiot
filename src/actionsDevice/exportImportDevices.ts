@@ -45,7 +45,6 @@ export async function importDevices(treeData: TreeDataDevicesProvider): Promise<
     let result = new IotResult(StatusResult.None,undefined,undefined);
     if(file)
     {        
-        treeData.OutputChannel.appendLine("----------------------------------");
         treeData.OutputChannel.appendLine(`Action: Import devices from file ${file[0].fsPath}`);        
         try
         {
@@ -59,15 +58,14 @@ export async function importDevices(treeData: TreeDataDevicesProvider): Promise<
         treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
         treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
         treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+        treeData.OutputChannel.appendLine("----------------------------------");
         //Message       
-        if(result.Status==StatusResult.Ok)
-        {
+        if(result.Status==StatusResult.Ok) {
             vscode.window.showInformationMessage(`Devices imported successfully. ${result.Message}`);
             treeData.RefreshsFull();
             treeData.SaveDevices();
-        }else
-        {
+        } else {
             vscode.window.showErrorMessage(`Error. Device import failed! \n${result.Message}`);            
-       }       
+        }
     }
 }

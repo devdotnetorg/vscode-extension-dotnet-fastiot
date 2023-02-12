@@ -54,7 +54,6 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
        if(!SELECTED_ITEM) return;       
        //Info
        vscode.window.showInformationMessage('It may take 2 to 7 minutes to initialize and configure the device.');
-       treeData.OutputChannel.appendLine("----------------------------------");
        treeData.OutputChannel.appendLine("Action: adding a device");
        //Adding a device is the main process
        const result = await treeData.AddDevice(host,port,userName,password,SELECTED_ITEM.value);
@@ -63,6 +62,7 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
        treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
        treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
        treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+       treeData.OutputChannel.appendLine("----------------------------------");
        //Message       
        if(result.Status==StatusResult.Ok)
        {

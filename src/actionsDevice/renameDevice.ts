@@ -16,8 +16,7 @@ export async function renameDevice(treeData: TreeDataDevicesProvider,item:IotDev
     if((newLabel==undefined)||(newLabel==item.label)) return;
     newLabel=IoTHelper.StringTrim(newLabel);
     //Rename
-    if(await treeData.RenameDevice(item,newLabel))
-    {
+    if(await treeData.RenameDevice(item,newLabel)) {
         treeData.SaveDevices();
         treeData.Refresh();    
     }    

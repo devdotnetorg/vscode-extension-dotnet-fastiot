@@ -123,7 +123,6 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
     }    
     //Info
     vscode.window.showInformationMessage('Package installation/upgrade may take 2 to 7 minutes.');
-    treeData.OutputChannel.appendLine("----------------------------------");
     treeData.OutputChannel.appendLine(`Action: package installation ${item.NamePackage}`);
     //main process
     const result = await treeData.InstallPackage(<string>item.Device.IdDevice,item.NamePackage,jsonObj);
@@ -132,12 +131,11 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
     treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
     treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
     treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+    treeData.OutputChannel.appendLine("----------------------------------");
     //Message        
-    if(result.Status==StatusResult.Ok)
-    {
+    if(result.Status==StatusResult.Ok) {
         vscode.window.showInformationMessage(`${item.NamePackage} package installation/upgrade completed successfully.`);
-    }else
-    {            
+    } else {      
         vscode.window.showErrorMessage(`Error. ${item.NamePackage} package failed to install/upgrade! \n${result.Message}. ${result.SystemMessage}`);
-    }	
+    }
 }
