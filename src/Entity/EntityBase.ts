@@ -6,7 +6,6 @@ import {EntityType} from './EntityType';
 import {EntityBaseAttribute} from './EntityBaseAttribute';
 import {IoTHelper} from '../Helper/IoTHelper';
 import {IotResult,StatusResult } from '../IotResult';
-import { V1Options } from 'uuid';
 
 export abstract class EntityBase<T extends EntityBaseAttribute> {
   protected _entityIntLabel:string; //for understandable log
@@ -43,7 +42,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
     this.Type= type;
     this._recoverySourcePath=recoverySourcePath;
     this._descFilePath=filePath;
-    this.Validation();
+    this.ValidateEntityBase();
     if(!this.IsValid) return;
     //if(this.IsValid) this.Parse(path);
     let attributes = this.Attributes as any; 
@@ -61,10 +60,8 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       this._validationErrors = attributes.ValidationErrors.slice();
     }
   }
-
-  //abstract Parse(path:string):void;
   
-  protected Validation(){
+  private ValidateEntityBase(){
     this._validationErrors=[];
     if (!fs.existsSync(this._descFilePath)) 
       this._validationErrors.push(`${this._descFilePath} file does not exist`);

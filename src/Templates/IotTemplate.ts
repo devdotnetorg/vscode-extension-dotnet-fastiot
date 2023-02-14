@@ -33,11 +33,11 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     super.Init(type,filePath,recoverySourcePath);
     if(!this.IsValid) return;
     //next
-    this.Validation();
+    this.Validate();
     //if(this.IsValid) this.Parse(filePath);
   }
 
-  protected Validation(){
+  protected Validate(){
     this._validationErrors=[];
     //checking folder structure
     if (!fs.existsSync(this.StoragePath)) 

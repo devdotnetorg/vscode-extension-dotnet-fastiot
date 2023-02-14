@@ -39,16 +39,15 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
   public Init(filePath:string)
   {
     //Base Init 
-    super.Validation();
-    if(super.IsValid) super.Parse(filePath);
+    super.Parse(filePath);
     //
     if(!this.IsValid) return;
     //next
-    this.Validation();
+    this.Validate();
     if(this.IsValid) this.Parse(filePath);
   }
 
-  protected Validation(){
+  protected Validate(){
     this._validationErrors=[];
   }
 

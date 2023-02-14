@@ -55,6 +55,10 @@ export class EntityBaseAttribute {
 
   protected Parse(filePath:string){
     try {
+      //validate
+      this.ValidateBaseAttribute();
+      if(!this.IsValid) return;
+      //
       const file = fs.readFileSync(filePath, 'utf8');
       const obj=YAML.parse(file);
       //one value
@@ -106,9 +110,13 @@ export class EntityBaseAttribute {
       this._validationErrors.push(`File: ${filePath} Error parsing attributes: ${err}`);
     }
   }
-  
-  protected Validation(){
+
+  private ValidateBaseAttribute()
+  {
     this._validationErrors=[];
+    //next
+
+
   }
 
   public ForceGetID(filePath:string):string|undefined

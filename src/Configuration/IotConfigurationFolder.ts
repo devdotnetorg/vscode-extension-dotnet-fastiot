@@ -27,6 +27,8 @@ export class IotConfigurationFolder {
     return this.Extension+"\\windows\\apps";}
   public get Temp(): string {
     return this.ApplicationData+"\\tmp";}
+  public get Schemas(): string {
+    return this.Extension+"\\schemas";}
 
   constructor(
     applicationDataPath: string,
