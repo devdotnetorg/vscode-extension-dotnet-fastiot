@@ -12,6 +12,8 @@ import {launchHelper} from '../Helper/launchHelper';
 import {dotnetHelper} from '../Helper/dotnetHelper';
 import { IotDevice } from '../IotDevice';
 import { IotConfiguration } from '../Configuration/IotConfiguration';
+import {FilesValidator} from '../Validator/FilesValidator';
+import {YamlSchemaValidator} from '../Validator/YamlSchemaValidator';
 
 export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   public get StoragePath(): string {
@@ -23,9 +25,9 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
 
   private _mergeDictionary:Map<string,string>= new Map<string,string>();
 
-  constructor(
+  constructor(pathFolderSchemas: string
     ){
-      super("Template",new IotTemplateAttribute());
+      super("Template",new IotTemplateAttribute(pathFolderSchemas),pathFolderSchemas);
   }
 
   public Init(type:EntityType,filePath:string,recoverySourcePath:string|undefined)
@@ -40,22 +42,13 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   protected Validate(){
     this._validationErrors=[];
     //checking folder structure
-    if (!fs.existsSync(this.StoragePath)) 
-      this._validationErrors.push(`${this.StoragePath} folder does not exist`);
-    if (!fs.existsSync(this.TemplatePath)) 
-      this._validationErrors.push(`${this.TemplatePath} folder does not exist`);
-    if (!fs.existsSync(this.ImagePath)) 
-      this._validationErrors.push(`${this.ImagePath} file does not exist`);
-    // TODO: проверка наличия файлов ???
-    /*
-    extensions.json
-    insert_launch.json
-    insert_tasks.json
-    launch.json
-    tasks.json
+    //FilesValidator
+    let filesValidator=new FilesValidator(this._pathFolderSchemas);
+    let result = filesValidator.ValidateFiles(this.ParentDir,"template.files.schema.json");
+    const validationErrors=<Array<string>>result.returnObject;
+    this._validationErrors = validationErrors.slice();
 
-    dotnetapp.csproj
-    */
+    // TODO: проверка наличия файлов для dotnetapp.csproj которые внутри
   }
 
   //------------ Project ------------

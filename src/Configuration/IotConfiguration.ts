@@ -37,7 +37,8 @@ export class IotConfiguration {
       }
       //
       this.Folder = new IotConfigurationFolder(applicationDataPath,context);
-      this.Templates= new IotTemplateCollection(this.Folder.Templates,this.Folder.Extension+"\\templates\\system",logCallback,versionExt);
+      this.Templates= new IotTemplateCollection(this.Folder.Templates,this.Folder.Extension+"\\templates\\system",
+        logCallback,versionExt,this.Folder.Schemas);
       this._context=context;
       //Init
       this.Init();
@@ -53,7 +54,7 @@ export class IotConfiguration {
     let bitsKeySshDevice=<number>vscode.workspace.getConfiguration().get('fastiot.device.ssh.key.bits');	
     const oldTypeKeySshDevice=typeKeySshDevice;
     const oldBitsKeySshDevice=bitsKeySshDevice;
-    //making catalog
+    //making dictionary
     let keySshDictionary=new Map<string,Array<number>>(); 
     keySshDictionary.set("ed25519",[256]);
     keySshDictionary.set("ecdsa",[256, 384, 521]);
@@ -83,8 +84,9 @@ export class IotConfiguration {
     //Launch----------------------------------
     this.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
 	  //replace old format
-    const oldFormatTitleLaunch="Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)";
-    if(this.TemplateTitleLaunch==oldFormatTitleLaunch)
+    //const oldFormatTitleLaunch="Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)";
+    const oldFormatTitleLaunch="%DEVICE_LABEL%";
+    if(this.TemplateTitleLaunch.includes(oldFormatTitleLaunch))
     {
       this.TemplateTitleLaunch="Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})";
       vscode.workspace.getConfiguration().update('fastiot.launch.templatetitle',this.TemplateTitleLaunch,true);

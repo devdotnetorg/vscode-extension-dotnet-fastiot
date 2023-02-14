@@ -7,6 +7,8 @@ import {EntityType} from '../Entity/EntityType';
 import {EntityBase} from '../Entity/EntityBase';
 import {EntityBaseAttribute} from '../Entity/EntityBaseAttribute';
 import { IoTHelper } from '../Helper/IoTHelper';
+import {FilesValidator} from '../Validator/FilesValidator';
+import {YamlSchemaValidator} from '../Validator/YamlSchemaValidator';
 
 export class IotTemplateAttribute extends EntityBaseAttribute {
   private _typeProj:string="";  
@@ -31,9 +33,9 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
     //dotnetapp.csproj => .csproj
     return IoTHelper.GetFileExtensions(this.MainFileProj);}
   
-  constructor(
+  constructor(pathFolderSchemas: string|undefined = undefined
     ){
-      super();
+      super(pathFolderSchemas);
   }
 
   public Init(filePath:string)
@@ -43,12 +45,17 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
     //
     if(!this.IsValid) return;
     //next
-    this.Validate();
+    this.Validate(filePath);
     if(this.IsValid) this.Parse(filePath);
   }
 
-  protected Validate(){
+  protected Validate(pathFileYml:string){
     this._validationErrors=[];
+    //YamlSchemaValidator
+    let yamlSchemaValidator=new YamlSchemaValidator(this._pathFolderSchemas);
+    let result = yamlSchemaValidator.ValidateSchema(pathFileYml,"template.schema.yaml");
+    const validationErrors=<Array<string>>result.returnObject;
+    this._validationErrors = validationErrors.slice();
   }
 
   protected Parse(filePath:string){

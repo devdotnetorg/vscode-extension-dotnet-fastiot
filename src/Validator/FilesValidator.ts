@@ -27,7 +27,7 @@ export class FilesValidator {
         const path=element.path;
         const description=element.description;
         //check
-        let fullCheckPath=`${pathFolder}/${path}`;
+        let fullCheckPath=`${pathFolder}${path}`;
         fullCheckPath=IoTHelper.ReverseSeparatorLinuxToWin(fullCheckPath);
         if (!fs.existsSync(fullCheckPath))
         {
@@ -37,11 +37,12 @@ export class FilesValidator {
         }
       });
       result= new IotResult(StatusResult.Ok,undefined,undefined);
-      result.returnObject=validationErrors;
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,`VaidateFiles: pathFolder = ${pathFolder}, schemaFileName = ${schemaFileName}`,err);
+      validationErrors.push(result.toString());
     }
+    result.returnObject=validationErrors;
     return result;
   }
  }

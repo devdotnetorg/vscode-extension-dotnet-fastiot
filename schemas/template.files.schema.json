@@ -1,0 +1,39 @@
+{
+    "files": [
+        {
+            "type":"file",
+            "path":"/template.fastiot.yaml",
+            "description":"Description of template attributes"
+        },
+        {
+            "type":"file",
+            "path":"/template.fastiot.png",
+            "description":"Icon to display a list of templates"
+        },
+        {
+            "type":"folder",
+            "path":"/storage",
+            "description":"Folder for storing entities (scripts, utilities, programs) for the template"
+        },
+        {
+            "type":"file",
+            "path":"/template/.vscode/launch.json",
+            "description":"Debugger configuration file"
+        },
+        {
+            "type":"file",
+            "path":"/template/.vscode/tasks.json",
+            "description":"Used to execute anything else you may want, be that source code formatters, bundlers or a SASS compiler"
+        },
+        {
+            "type":"file",
+            "path":"/template/.vscode/insert_launch_key.json",
+            "description":"Inserted launchs values for launch.json"
+        },
+        {
+            "type":"file",
+            "path":"/template/.vscode/insert_tasks_key.json",
+            "description":"Inserted Tasks values for tasks.json"
+        }
+    ]
+}

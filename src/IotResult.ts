@@ -32,11 +32,20 @@ export class IotResult {
       this._message=message;
       this._systemMessage=systemMessage;
     }       
-  public async AppendResult(iotResult: IotResult): Promise<void>{    
-      this._status=iotResult.Status;
-      this._message=iotResult.Message;
-      if(!this._systemMessage) this._systemMessage=iotResult.SystemMessage;
-      this._systemMessage=this.SystemMessage+ '\n '+ iotResult.SystemMessage;      
-    }
+  public async AppendResult(iotResult: IotResult): Promise<void>{
+    this._status=iotResult.Status;
+    this._message=iotResult.Message;
+    if(!this._systemMessage) this._systemMessage=iotResult.SystemMessage;
+    this._systemMessage=this.SystemMessage+ '\n '+ iotResult.SystemMessage;
+    this._systemMessage.toString()   
+  }
+
+  public toString():string{
+    let msg="";
+    msg=msg+this.Status.toString();
+    if(this.Message) msg=msg+" "+this.Message;
+    if(this.SystemMessage) msg=msg+" "+this.SystemMessage;
+    return msg;
+  }
  }
   

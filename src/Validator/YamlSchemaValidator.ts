@@ -13,23 +13,36 @@ export class YamlSchemaValidator {
   public ValidateSchema (pathFileYml:string, schemaFileName:string):IotResult
   {
     let result:IotResult;
+    let validationErrors:Array<string>=[];
+    let msg="";
     try {
-      const validateSchema = require('yaml-schema-validator');
+      //source - https://www.npmjs.com/package/yaml-schema-validator-fork
+      const validateSchema = require('yaml-schema-validator-fork');
       // validate a yml file
       const schemaPath=`${this._pathFolderSchemas}\\${schemaFileName}`;
-      // schemaErrors = [{path: 'person.id', message: 'person.id must be a String'}]
       var schemaErrors = validateSchema(pathFileYml,
         {
           schemaPath: schemaPath,
-          logLevel: 'error'
+          logLevel: 'verbose'
         }
       );
+      //convert
+      //schemaErrors = [{path: 'person.id', message: 'person.id must be a String'}]
+      if(schemaErrors) {
+        schemaErrors.forEach((element:any) => {
+          const path=element.path;
+          const message=element.message;
+          msg=`path: ${path}, message: ${message}`;
+          validationErrors.push(msg);
+        });
+      } 
       result = new IotResult(StatusResult.Ok,undefined,undefined);
-      result.returnObject=schemaErrors;
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,`VaidateSchema: pathFileYml = ${pathFileYml}, schemaFileName = ${schemaFileName}`,err);
+      validationErrors.push(result.toString());
     }
+    result.returnObject=validationErrors;
     return result;
   }
  }

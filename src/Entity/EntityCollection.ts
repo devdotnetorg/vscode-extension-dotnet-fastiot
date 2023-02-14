@@ -9,6 +9,7 @@ import {IotResult,StatusResult } from '../IotResult';
 
 export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> {
   private _data:Map<string,T>;
+  protected _pathFolderSchemas: string;
 
   private _versionExt:string;  
   public get VersionExt(): string {
@@ -26,9 +27,11 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
   protected LogCallback:(value:string) =>void;
 
-  constructor(basePath: string, recoverySourcePath:string,logCallback:(value:string) =>void,versionExt:string
+  constructor(basePath: string, recoverySourcePath:string,logCallback:(value:string) =>void,
+    versionExt:string,pathFolderSchemas: string
     ){
       this.LogCallback=logCallback;
+      this._pathFolderSchemas=pathFolderSchemas;
       this._data = new Map<string,T>(); 
       this._basePath=basePath;
       this._recoverySourcePath=recoverySourcePath;
@@ -64,6 +67,15 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public Clear()
   {
     this._data.clear();
+  }
+
+  protected LogValidationErrors(validationErrors:Array<string>) {
+    this.LogCallback(`Validation messages:`);
+    let index=1;
+    validationErrors.forEach((item) => {
+      this.LogCallback(`${index}. ${item}`);
+      index++;
+    });
   }
 
   public IsCompatible1(value:T):boolean

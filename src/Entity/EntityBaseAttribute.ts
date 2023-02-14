@@ -3,6 +3,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import YAML from 'yaml';
 
+import {FilesValidator} from '../Validator/FilesValidator';
+import {YamlSchemaValidator} from '../Validator/YamlSchemaValidator';
+
 export class EntityBaseAttribute {
   private _id:string="";  
   public get Id(): string {
@@ -28,6 +31,9 @@ export class EntityBaseAttribute {
   private _detail:string="";  
   public get Detail(): string {
     return this._detail;}
+  private _description:string="";  
+  public get Description(): string {
+    return this._description;}
   private _language:string="";  
   public get Language(): string {
     return this._language;}
@@ -48,15 +54,18 @@ export class EntityBaseAttribute {
   public get ValidationErrors(): Array<string> {
       return this._validationErrors;}
 
-  constructor(
+  protected _pathFolderSchemas: string;
+
+  constructor(pathFolderSchemas: string|undefined
     ){
       this._validationErrors.push("non");
+      this._pathFolderSchemas=pathFolderSchemas ?? "non";
     }
 
   protected Parse(filePath:string){
     try {
       //validate
-      this.ValidateBaseAttribute();
+      this.ValidateBaseAttribute(filePath);
       if(!this.IsValid) return;
       //
       const file = fs.readFileSync(filePath, 'utf8');
@@ -69,6 +78,7 @@ export class EntityBaseAttribute {
       this._author=obj.author;
       this._label=obj.label;
       this._detail=obj.detail;
+      this._description=obj.description;
       this._language=obj.language;
       //arrays
       let index=0; 
@@ -111,12 +121,14 @@ export class EntityBaseAttribute {
     }
   }
 
-  private ValidateBaseAttribute()
+  private ValidateBaseAttribute(pathFileYml:string)
   {
     this._validationErrors=[];
-    //next
-
-
+    //YamlSchemaValidator
+    let yamlSchemaValidator=new YamlSchemaValidator(this._pathFolderSchemas);
+    let result = yamlSchemaValidator.ValidateSchema(pathFileYml,"entitybase.schema.yaml");
+    const validationErrors=<Array<string>>result.returnObject;
+    this._validationErrors = validationErrors.slice();
   }
 
   public ForceGetID(filePath:string):string|undefined

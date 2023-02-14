@@ -29,11 +29,14 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   public Attributes: T;
   public Type:EntityType=EntityType.none;
 
-  constructor(entityIntLabel:string, attribute:T
+  protected _pathFolderSchemas: string;
+
+  constructor(entityIntLabel:string, attribute:T,pathFolderSchemas: string
     ){
       this._entityIntLabel=entityIntLabel;
       this.Attributes=attribute;
       //
+      this._pathFolderSchemas=pathFolderSchemas;
       this._validationErrors.push("non");
   }
 

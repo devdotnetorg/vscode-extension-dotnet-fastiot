@@ -14,9 +14,10 @@ import {EntityDownload} from '../Entity/EntityDownloader';
 
 export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute,IotTemplate> {
   
-  constructor(basePath: string, recoverySourcePath:string, logCallback:(value:string) =>void,versionExt:string
+  constructor(basePath: string, recoverySourcePath:string, logCallback:(value:string) =>void,
+    versionExt:string,pathFolderSchemas: string
     ){
-      super(basePath,recoverySourcePath,logCallback,versionExt);  
+      super(basePath,recoverySourcePath,logCallback,versionExt,pathFolderSchemas);  
   }
 
   public async LoadTemplatesSystem():Promise<void>
@@ -71,7 +72,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     listFolders.forEach(dir => {
       const filePath=`${dir}\\template.fastiot.yaml`;
       this.LogCallback(`Template initialization: ${filePath}`);
-      let template = new IotTemplate();
+      let template = new IotTemplate(this._pathFolderSchemas);
       template.Init(type,filePath,recoverySourcePath);
       if(!template.IsValid&&type==EntityType.system)
       {
@@ -115,8 +116,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
         }
       }else{
         this.LogCallback(`Error. The template ${template.DescriptionFilePath} has not been validated`);
-        this.LogCallback(`Validation messages:`);
-        this.LogCallback(`${template.ValidationErrors}`);
+        this.LogValidationErrors(template.ValidationErrors);
       }
     });
     //result
@@ -163,12 +163,15 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
             if(result.Status==StatusResult.Ok)
             {
               const unpackPath= <string> result.returnObject;
-              let template=new  IotTemplate();
+              let template=new  IotTemplate(this._pathFolderSchemas);
               template.Init(EntityType.system,unpackPath,undefined);
               if(template.IsValid)
               {
                 template.Move(destPath);
                 this.Add(template.Attributes.Id,template);
+              } else {
+                this.LogCallback(`Error. The template ${template.DescriptionFilePath} has not been validated`);
+                this.LogValidationErrors(template.ValidationErrors);
               }
             }
             break; 
@@ -178,7 +181,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
             if(result.Status==StatusResult.Ok)
             {
               const unpackPath= <string> result.returnObject;
-              let template=new  IotTemplate();
+              let template=new  IotTemplate(this._pathFolderSchemas);
               template.Init(EntityType.system,unpackPath,undefined);
               if(template.IsValid)
               {
