@@ -125,7 +125,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       this.Attributes.FilesToProcess.forEach((name) => {
         const filePath=dstPath+"\\"+ IoTHelper.ReverseSeparatorLinuxToWin(name);
         let text =fs.readFileSync(filePath, 'utf-8');
-        text=this.MergeWithDictionary(this._mergeDictionary,text);
+        text=IoTHelper.MergeWithDictionary(this._mergeDictionary,text);
         //write file
         fs.writeFileSync(filePath, text,undefined);
       });
@@ -144,7 +144,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //Files
       this.Attributes.FileNameReplacement.forEach((value,key) => {
         const oldPath=dstPath+"\\"+IoTHelper.ReverseSeparatorLinuxToWin(key);
-        value=this.MergeWithDictionary(this._mergeDictionary,value);
+        value=IoTHelper.MergeWithDictionary(this._mergeDictionary,value);
         //replace in FilesToProcess
         let indexItem=this.Attributes.FilesToProcess.indexOf(key);
         if(indexItem>-1) this.Attributes.FilesToProcess[indexItem]=value;
@@ -175,7 +175,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
           this._mergeDictionary.set("%{project.path.relative.aswindows}",<string>projectPathRelativeWin);
           //
           const dirProjectWin = path.dirname(projectMainfilePathFullWin);
-          this._mergeDictionary.set("%{project.path.full.ascygdrive}",<string>this.GetPathAsCygdrive(dirProjectWin));
+          this._mergeDictionary.set("%{project.path.full.ascygdrive}",<string>IoTHelper.GetPathAsCygdrive(dirProjectWin));
         }
       });
       //result
@@ -237,7 +237,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //toTXT
       let data=JSON.stringify(jsonDataEntity,null,2);
       //Merge
-      data=this.MergeWithDictionary(this._mergeDictionary,data);
+      data=IoTHelper.MergeWithDictionary(this._mergeDictionary,data);
       //save in file
       fs.writeFileSync(fileEntityPath, data,undefined);
       //result
@@ -303,31 +303,6 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     return result;
   }
 
-  private GetPathAsCygdrive(dirPath:string):string
-  {
-    //first lowcase
-    dirPath=dirPath.substring(0,1).toLowerCase()+dirPath.substring(1);
-    //folderPath    
-    //const folderPath=path.dirname(dirPath);
-    //Rsync
-    let objArray=(<string>dirPath).split("\\"); 
-    objArray[0]=objArray[0].replace(":","");
-    let cyPath="/cygdrive";
-    objArray.forEach(element =>{
-      cyPath=cyPath+`/${element}`;
-    });
-    return cyPath;
-  }
-
-  private MergeWithDictionary(dictionary:Map<string,string>,data:string):string{
-    let result:string=data;
-    dictionary.forEach((value,key) => {      
-      const re = new RegExp(key, 'g');
-      result=result.replace(re,value);      
-    });
-    return result;
-  }
-
   private CreatingMergeDictionary (device:IotDevice, config:IotConfiguration,
     dstPath:string, values:Map<string,string>) {
     this._mergeDictionary.clear();
@@ -387,7 +362,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
           dirProjectWin = path.dirname(dirProjectWin);
           //------------------END_NEW------------------
         }
-    this._mergeDictionary.set("%{project.path.full.ascygdrive}",<string>this.GetPathAsCygdrive(dirProjectWin));
+    this._mergeDictionary.set("%{project.path.full.ascygdrive}",<string>IoTHelper.GetPathAsCygdrive(dirProjectWin));
     //
     this._mergeDictionary.set("%{project.type}",<string>this.Attributes.TypeProj);
     //device
@@ -430,7 +405,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       }
     }
     //launch. Always last
-    const label=this.MergeWithDictionary(this._mergeDictionary,config.TemplateTitleLaunch);
+    const label=IoTHelper.MergeWithDictionary(this._mergeDictionary,config.TemplateTitleLaunch);
     this._mergeDictionary.set("%{launch.label}",<string>label); 
   }
 

@@ -70,39 +70,6 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       this._validationErrors.push(`${this._descFilePath} file does not exist`);
   }
 
-  protected UnpackFromZip(fileZipPath:string, unpackDir:string):IotResult {
-    let result:IotResult;
-    try {
-      let filename = path.basename(fileZipPath);
-      filename=filename.substring(0,filename.length-4);
-      unpackDir=unpackDir+"\\"+filename;
-      //clear
-      if (fs.existsSync(unpackDir)) fs.emptyDirSync(unpackDir);
-      //mkdir
-      IoTHelper.MakeDirSync(unpackDir);
-      //unpack
-      var AdmZip = require("adm-zip");
-      var zip = new AdmZip(fileZipPath);
-      // extracts everything
-      zip.extractAllTo(/*target path*/ unpackDir, /*overwrite*/ true);
-      /*
-      const zip = new StreamZip.async({ file: fileZipPath });
-      const entriesCount = await zip.entriesCount;
-      console.log(`Entries read: ${entriesCount}`);
-
-      const count = await zip.extract(null, unpackDir);
-      console.log(`Extracted ${count} entries`);
-      await zip.close();
-      */
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
-      result.returnObject=unpackDir;
-    } catch (err: any){
-      result = new IotResult(StatusResult.Error,`Error while unpacking file ${fileZipPath}`,err);
-    }
-    //result
-    return result;
-  }
-
   public Move(destDir:string):IotResult {
     let result:IotResult;
     try {
@@ -139,7 +106,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   {
     let result:IotResult;
     const fileZipPath=`${this.RecoverySourcePath}\\${this.ParentNameDir}.zip`;
-    result= this.UnpackFromZip(fileZipPath,path.dirname(this.ParentDir));
+    result= IoTHelper.UnpackFromZip(fileZipPath,path.dirname(this.ParentDir));
     //result
     return result;
   }

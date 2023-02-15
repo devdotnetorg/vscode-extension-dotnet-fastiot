@@ -4,8 +4,11 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
 import {v4 as uuidv4} from 'uuid';
-
+import * as stream from 'stream';
+import {promisify} from 'util';
+import axios from 'axios';
 import {IotDevice} from '../IotDevice';
+import {IotResult,StatusResult } from '../IotResult';
 
 export class IoTHelper {
 
@@ -53,7 +56,6 @@ export class IoTHelper {
     return result;	
   }
 
-  // TODO: Move to template class
   static MergeWithDictionary(dictionary:Map<string,string>,data:string):string{
     let result:string=data;
     dictionary.forEach((value,key) => {      
@@ -126,12 +128,85 @@ export class IoTHelper {
     const guid = uuidv4();
     return guid.substr(0,8);
   }
+
+  static UnpackFromZip(fileZipPath:string, unpackDir:string):IotResult {
+    let result:IotResult;
+    try {
+      let filename = path.basename(fileZipPath);
+      filename=filename.substring(0,filename.length-4);
+      unpackDir=unpackDir+"\\"+filename;
+      //clear
+      if (fs.existsSync(unpackDir)) fs.emptyDirSync(unpackDir);
+      //mkdir
+      IoTHelper.MakeDirSync(unpackDir);
+      //unpack
+      var AdmZip = require("adm-zip");
+      var zip = new AdmZip(fileZipPath);
+      // extracts everything
+      zip.extractAllTo(/*target path*/ unpackDir, /*overwrite*/ true);
+      /*
+      const zip = new StreamZip.async({ file: fileZipPath });
+      const entriesCount = await zip.entriesCount;
+      console.log(`Entries read: ${entriesCount}`);
+
+      const count = await zip.extract(null, unpackDir);
+      console.log(`Extracted ${count} entries`);
+      await zip.close();
+      */
+      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result.returnObject=unpackDir;
+    } catch (err: any){
+      result = new IotResult(StatusResult.Error,`Error while unpacking file ${fileZipPath}`,err);
+    }
+    //result
+    return result;
+  }
+
+  static GetListDir(path:string):string[]
+  {
+    let listFolders:Array<string>=[];
+    //getting a list of entity directories
+    const files = fs.readdirSync(path);
+    //getting a list of folders
+    files.forEach(name => {
+      //directory
+      const dir=`${path}\\${name}`;
+      if(fs.lstatSync(dir).isDirectory())
+        {
+          listFolders.push(dir);
+        }
+      });
+    return listFolders;
+  }
+
+  static  finished = promisify(stream.finished);
+
+  static async DownloadFile(fileUrl: string, outputLocationPath: string): Promise<any> {
+    const writer = fs.createWriteStream(outputLocationPath);
+    return axios({
+      method: 'get',
+      url: fileUrl,
+      responseType: 'stream',
+    }).then(response => {
+      response.data.pipe(writer);
+      return IoTHelper.finished(writer); //this is a Promise
+    });
+  }
+
+  static GetPathAsCygdrive(dirPath:string):string
+  {
+    //first lowcase
+    dirPath=dirPath.substring(0,1).toLowerCase()+dirPath.substring(1);
+    //folderPath    
+    //const folderPath=path.dirname(dirPath);
+    //Rsync
+    let objArray=(<string>dirPath).split("\\"); 
+    objArray[0]=objArray[0].replace(":","");
+    let cyPath="/cygdrive";
+    objArray.forEach(element =>{
+      cyPath=cyPath+`/${element}`;
+    });
+    return cyPath;
+  }
   
 }
- 
-
- 
-
- 
- 
- 

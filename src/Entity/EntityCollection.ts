@@ -116,23 +116,6 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return ContainsType.yesMoreVersion;
   }
 
-  protected GetListDirWithEntity(path:string):string[]
-  {
-    let listFolders:Array<string>=[];
-    //getting a list of entity directories
-    const files = fs.readdirSync(path);
-    //getting a list of folders
-    files.forEach(name => {
-      //directory
-      const dir=`${path}\\${name}`;
-      if(fs.lstatSync(dir).isDirectory())
-        {
-          listFolders.push(dir);
-        }
-      });
-    return listFolders;
-  }
-
   protected abstract LoadFromFolder(path:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
 
   public Select(endDeviceArchitecture:string|undefined):Array<T>
@@ -148,8 +131,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
   public FindbyId(idEntity:string):T|undefined
   {
-    const entity = this._data.get(idEntity);
-    return entity;
+    return this._data.get(idEntity);
   }
 
 }

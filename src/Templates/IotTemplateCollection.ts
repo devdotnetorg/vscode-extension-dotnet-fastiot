@@ -8,6 +8,7 @@ import {EntityBaseAttribute} from '../Entity/EntityBaseAttribute';
 import {IotTemplate} from './IotTemplate';
 import {IotTemplateAttribute} from './IotTemplateAttribute';
 import {IotResult,StatusResult } from '../IotResult';
+import {IoTHelper} from '../Helper/IoTHelper';
 import {IotTemplateRecovery} from './IotTemplateRecovery';
 import {IotTemplateDownloader} from './IotTemplateDownloader';
 import {EntityDownload} from '../Entity/EntityDownloader';
@@ -61,7 +62,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
     } 
     //
-    const listFolders=this.GetListDirWithEntity(path);
+    const listFolders=IoTHelper.GetListDir(path);
     //ckeck
     if (listFolders.length==0)
     {

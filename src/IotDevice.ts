@@ -354,5 +354,3 @@ export class IotDevice extends BaseTreeItem {
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'device.svg')
   };
 }
-
-

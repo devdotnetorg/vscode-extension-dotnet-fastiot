@@ -1,14 +1,10 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-
-import * as stream from 'stream';
-import {promisify} from 'util';
-
-import axios from 'axios';
 import YAML from 'yaml';
-
+import axios from 'axios';
 import {IotResult,StatusResult} from '../IotResult';
+import { IoTHelper } from '../Helper/IoTHelper';
 
 export abstract class EntityDownloader {
   constructor(
@@ -21,7 +17,7 @@ export abstract class EntityDownloader {
       //download *.zip
       const fileZipPath=`destPath\\${item.Id}.zip`;
       if (fs.existsSync(fileZipPath)) fs.removeSync(fileZipPath);
-      await downloadFile(item.Url,fileZipPath);
+      await IoTHelper.DownloadFile(item.Url,fileZipPath);
       //unpack
       let unpackPath=`destPath\\${item.Id}`;
       var AdmZip = require("adm-zip");
@@ -135,17 +131,3 @@ export class EntityDownload {
       this._platform=platform;
     }
  }
-
-const finished = promisify(stream.finished);
-
-export async function downloadFile(fileUrl: string, outputLocationPath: string): Promise<any> {
-  const writer = fs.createWriteStream(outputLocationPath);
-  return axios({
-    method: 'get',
-    url: fileUrl,
-    responseType: 'stream',
-  }).then(response => {
-    response.data.pipe(writer);
-    return finished(writer); //this is a Promise
-  });
-}

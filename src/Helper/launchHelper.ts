@@ -88,5 +88,4 @@ export class launchHelper {
     return checklabel;   
   }
 
-  
 }
