@@ -1,5 +1,5 @@
 #YAML
-id: dotnet-console-test # unique
+id: dotnet-console-test-nested # unique
 #dependsOn: none # dependencies/inheritance in templates. Coming in one of the next version
 #isVisible: yes # yes,no. Related to the dependsOn parameter. Coming in one of the next version
 platform: # win32, linux. Only Windows is currently supported
@@ -10,7 +10,7 @@ forVersionExt: 0.3.0
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT
-label: .NET Console Test Application
+label: .NET Console Test Application Nested
 detail: Creates a console application with output test information
 description: >
              The application displays information about the OS, .NET version, environment variables.
@@ -25,15 +25,15 @@ dependOnPackages: # Coming in one of the next version
   - vsdbg
 typeProj: dotnet # template type is related to processing logic
 projName: DotnetConsoleTestApp # default value shown to the user
-mainFileProj: dotnetapp.csproj # relative path to the project file as in Linux i.e. folder1/dotnetapp.csproj or dotnetapp.csproj
+mainFileProj: nested/dotnetapp.csproj # relative path to the project file as in Linux i.e. folder1/dotnetapp.csproj or dotnetapp.csproj
 mainFileProjLabel: Visual Studio C# Project
 tags:
   - console
   - dotnet
   - test
 filesToProcess:
-  - dotnetapp.csproj # relative path to the file as in Linux
-  - Program.cs
+  - nested/dotnetapp.csproj # relative path to the file as in Linux
+  - nested/Program.cs
 fileNameReplacement:
-  - dotnetapp.csproj=%{project.name}.csproj # relative path to the file as in Linux
-  - .gitignore_=.gitignore
+  - nested/dotnetapp.csproj=nested/%{project.name}.csproj # relative path to the file as in Linux
+  - nested/.gitignore_=nested/.gitignore

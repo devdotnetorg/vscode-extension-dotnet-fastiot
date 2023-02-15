@@ -167,8 +167,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
           this._mergeDictionary.set("%{project.mainfile.path.full.aswindows}",<string>projectMainfilePathFullWin4);
           // => /new5/dotnetapp.csproj
           const lastIndex=projectMainfilePathRelativeLinux.lastIndexOf('/');
-          let projectPathRelativeLinux=projectMainfilePathRelativeLinux.substring(0,lastIndex+1);
-          if(projectPathRelativeLinux=="/") projectPathRelativeLinux="";
+          let projectPathRelativeLinux=projectMainfilePathRelativeLinux.substring(0,lastIndex);
           this._mergeDictionary.set("%{project.path.relative.aslinux}",<string>projectPathRelativeLinux);
           let projectPathRelativeWin=IoTHelper.ReverseSeparatorLinuxToWin(projectPathRelativeLinux);
           projectPathRelativeWin=IoTHelper.ReverseSeparatorReplacement(projectPathRelativeWin);
@@ -351,8 +350,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
           this._mergeDictionary.set("%{project.mainfile.path.full.aswindows}",<string>projectMainfilePathFullWin);
           // => /new5/dotnetapp.csproj
           const lastIndex=projectMainfilePathRelativeLinux.lastIndexOf('/');
-          let projectPathRelativeLinux=projectMainfilePathRelativeLinux.substring(0,lastIndex+1);
-          if(projectPathRelativeLinux=="/") projectPathRelativeLinux="";
+          let projectPathRelativeLinux=projectMainfilePathRelativeLinux.substring(0,lastIndex);
           this._mergeDictionary.set("%{project.path.relative.aslinux}",<string>projectPathRelativeLinux);
           let projectPathRelativeWin=IoTHelper.ReverseSeparatorLinuxToWin(projectPathRelativeLinux);
           projectPathRelativeWin=IoTHelper.ReverseSeparatorReplacement(projectPathRelativeWin);
