@@ -1,0 +1,51 @@
+{
+    "values": [
+        {
+			"label": "fastiot-%{launch.id}-build",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}%{project.mainfile.path.relative.aslinux}",
+				"--configuration",
+				"Debug",
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary",
+				"-r","%{device.dotnet.rid}"                
+			],
+			"problemMatcher": "$msCompile"
+		},
+        {
+			"label": "fastiot-%{launch.id}-create-folder",
+			"dependsOn":"fastiot-%{launch.id}-build",
+			"command": "%{template.storage.path.aswindows}\\apps\\cwrsync\\ssh.exe",
+			"type": "process",
+			"args": [
+					"-i",
+					"%{device.ssh.key.path.full.aswindows}",
+					"-o",
+					"StrictHostKeyChecking no",
+					"-p",
+					"%{device.ssh.port}",
+					"%{device.user.debug}@%{device.host}",
+					"mkdir -p ~/fastiot/debugapps/%{project.name}"
+			],
+			"problemMatcher": "$msCompile"
+		},
+        {
+			"label": "fastiot-%{launch.id}-copy-app-to-device",
+			"dependsOn":"fastiot-%{launch.id}-create-folder",
+			"command": "%{template.storage.path.aswindows}\\apps\\cwrsync\\rsync.exe",
+			"type": "process",
+			"args": [
+				"--progress",
+				"-avz" ,
+				"-e",
+				"%{template.storage.path.aswindows}\\apps\\cwrsync\\ssh.exe -i %{device.ssh.key.path.full.aswindows} -o 'StrictHostKeyChecking no' -p %{device.ssh.port}",
+				"%{project.path.full.ascygdrive}/bin/Debug/%{project.dotnet.targetframework}/%{device.dotnet.rid}/",
+				"%{device.user.debug}@%{device.host}:~/fastiot/debugapps/%{project.name}"
+			],
+			 "problemMatcher": "$msCompile"
+		}
+    ]
+}

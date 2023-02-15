@@ -7,8 +7,8 @@ namespace %{project.dotnet.namespace}
     {
         static void Main(string[] args)
         {            
-            //FastIot Test
-            Console.WriteLine("Test .NET console application!");
+            //Runtime Info
+            Console.WriteLine(".NET console application!");
             var framework = RuntimeInformation.FrameworkDescription;
             var osArch = RuntimeInformation.OSArchitecture;            
             var osDesc = RuntimeInformation.OSDescription;  

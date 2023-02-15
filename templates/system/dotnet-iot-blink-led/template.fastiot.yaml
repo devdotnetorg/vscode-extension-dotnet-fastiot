@@ -1,5 +1,5 @@
 #YAML
-id: dotnet-console-test # unique
+id: dotnet-iot-blink-led # unique
 #dependsOn: none # dependencies/inheritance in templates. Coming in one of the next version
 #isVisible: yes # yes,no. Related to the dependsOn parameter. Coming in one of the next version
 platform: # win32, linux. Only Windows is currently supported
@@ -10,12 +10,15 @@ forVersionExt: 0.3.0
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT
-label: .NET Console Test Application
-detail: Creates a console application with output test information
+label: .NET IoT C# Blink an LED Application
+detail: Console application for managing General-purpose I/O (GPIO)
 description: >
-             The application displays information about the OS, .NET version, environment variables.
+             General-purpose I/O (GPIO) pins can be controlled individually.
+             This is useful for controlling LEDs, relays, and other stateful devices.
+             In this sample, you used .NET and your developer board's GPIO pins
+             to power an LED and blink it repeatedly.
              The application is compiled on the PC.
-language: csharp
+language: C#
 endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l
   - aarch64
@@ -24,13 +27,16 @@ dependOnPackages: # Coming in one of the next version
   - dotnetruntime-%{dotnetTarget}
   - vsdbg
 typeProj: dotnet # template type is related to processing logic
-projName: DotnetConsoleTestApp # default value shown to the user
+projName: DotnetConsoleBlinkLEDApplication # default value shown to the user
 mainFileProj: dotnetapp.csproj # relative path to the project file as in Linux i.e. folder1/dotnetapp.csproj or dotnetapp.csproj
 mainFileProjLabel: Visual Studio C# Project
 tags:
   - console
   - dotnet
-  - test
+  - iot
+  - gpio
+  - led
+  - blink
 filesToProcess:
   - dotnetapp.csproj # relative path to the file as in Linux
   - Program.cs

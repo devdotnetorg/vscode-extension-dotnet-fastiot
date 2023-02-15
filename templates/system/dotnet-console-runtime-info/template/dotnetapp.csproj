@@ -1,14 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>%{project.dotnet.targetframework}</TargetFramework>
 	<RootNamespace>%{project.dotnet.namespace}</RootNamespace>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Iot.Device.Bindings" Version="2.2.0" />
-    <PackageReference Include="System.Device.Gpio" Version="2.2.0" />
-  </ItemGroup>
-
 </Project>
