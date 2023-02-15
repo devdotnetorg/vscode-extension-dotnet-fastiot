@@ -10,7 +10,7 @@ forVersionExt: 0.3.0
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT
-label: .NET C# Console Application
+label: .NET Console Application
 detail: Creates a minimal console application sample
 description: >
              Minimal console application sample.

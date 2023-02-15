@@ -10,14 +10,14 @@ forVersionExt: 0.3.0
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT
-label: .NET IoT C# Blink an LED Application
+label: .NET IoT Blink an LED Application
 detail: Console application for managing General-purpose I/O (GPIO)
 description: >
              General-purpose I/O (GPIO) pins can be controlled individually.
              This is useful for controlling LEDs, relays, and other stateful devices.
              In this sample, you used .NET and your developer board's GPIO pins
-             to power an LED and blink it repeatedly.
-             The application is compiled on the PC.
+             to power an LED and blink it repeatedly. The application uses the
+             Libgpiod library and compiled on the PC.
 language: C#
 endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l
@@ -27,7 +27,7 @@ dependOnPackages: # Coming in one of the next version
   - dotnetruntime-%{dotnetTarget}
   - vsdbg
 typeProj: dotnet # template type is related to processing logic
-projName: DotnetConsoleBlinkLEDApplication # default value shown to the user
+projName: DotnetBlinkLEDApp # default value shown to the user
 mainFileProj: dotnetapp.csproj # relative path to the project file as in Linux i.e. folder1/dotnetapp.csproj or dotnetapp.csproj
 mainFileProjLabel: Visual Studio C# Project
 tags:

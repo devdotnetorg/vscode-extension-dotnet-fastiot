@@ -15,7 +15,7 @@ detail: Creates a console application with output test information
 description: >
              The application displays information about the OS, .NET version, environment variables.
              The application is compiled on the PC.
-language: csharp
+language: C#
 endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l
   - aarch64

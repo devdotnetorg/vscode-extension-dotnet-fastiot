@@ -10,7 +10,7 @@ forVersionExt: 0.3.0
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT
-label: .NET C# Console Application Runtime Info
+label: .NET Console Application Runtime Info
 detail: Creates a console application with output runtime information
 description: >
              The application displays information about the OS, .NET version, environment variables.
