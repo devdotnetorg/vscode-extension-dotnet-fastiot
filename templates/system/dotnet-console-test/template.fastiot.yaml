@@ -8,6 +8,8 @@ version: "0.1"
 releaseDate: "2023-02-04" # YYYY-MM-DD
 forVersionExt: 0.3.0
 author: DevDotNet.ORG
+emailAuthor: fastiot@devdotnet.org
+license: MIT
 label: .NET Console Test Application
 detail: Creates a console application with output test information
 description: >

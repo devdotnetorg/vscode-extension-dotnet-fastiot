@@ -13,7 +13,7 @@ import { IotResult,StatusResult } from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IotTemplate} from './Templates/IotTemplate';
 
-export class TreeDataProjectsProvider implements vscode.TreeDataProvider<BaseTreeItem> {
+export class TreeDataTemplatesProvider implements vscode.TreeDataProvider<BaseTreeItem> {
 
   constructor() {}
 

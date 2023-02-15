@@ -40,7 +40,7 @@ import { disableDTO } from './actionsDevice/disableDTO';
 
 //Configurations
 import { TreeDataLaunchsProvider } from './TreeDataLaunchsProvider';
-import { TreeDataProjectsProvider } from './TreeDataProjectsProvider';
+import { TreeDataTemplatesProvider } from './TreeDataTemplatesProvider';
 import { IotLaunch } from './IotLaunch';
 import { IotLaunchEnvironment } from './IotLaunchEnvironment';
 
@@ -53,10 +53,10 @@ import { refreshLaunch } from './actionsLaunch/refreshLaunch';
 import { deleteLaunch } from './actionsLaunch/deleteLaunch';
 import { rebuildLaunch } from './actionsLaunch/rebuildLaunch';
 
-//Project.actions
-import { createProject } from './actionsProject/createProject';
-import { reloadTemplates } from './actionsProject/reloadTemplates';
-import { openTemplateFolder } from './actionsProject/openTemplateFolder';
+//Template.actions
+import { createProject } from './actionsTemplates/createProject';
+import { reloadTemplates } from './actionsTemplates/reloadTemplates';
+import { openTemplateFolder } from './actionsTemplates/openTemplateFolder';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -120,12 +120,12 @@ export async function activate(context: vscode.ExtensionContext) {
     let vscodeTreeViewLaunchs=vscode.window.createTreeView('viewLaunchs', {
 		treeDataProvider: treeDataLaunchsProvider
 	  });
-	//TreeView Projects	
-    let treeDataProjectsProvider = new TreeDataProjectsProvider();	
-    let vscodeTreeViewProjects=vscode.window.createTreeView('viewProjects', {
-		treeDataProvider: treeDataProjectsProvider
+	//TreeView Templates
+    let treeDataTemplatesProvider = new TreeDataTemplatesProvider();	
+    let vscodeTreeViewTemplates=vscode.window.createTreeView('viewTemplates', {
+		treeDataProvider: treeDataTemplatesProvider
 	  });
-	vscodeTreeViewProjects.description="Create a project from a template";
+	vscodeTreeViewTemplates.description="Create a project from a template";
 	//Commands
 	/*
 	let commandHelloWorld = vscode.commands.registerCommand('vscode-extension-dotnet-fastiot.helloWorld', () => {
@@ -284,7 +284,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			deleteEnviroment(treeDataLaunchsProvider,item);		
 	});
 	//Create project
-	let commandCreateProject = vscode.commands.registerCommand('viewProjects.CreateProject', () => {	
+	let commandCreateProject = vscode.commands.registerCommand('viewTemplates.CreateProject', () => {	
 			createProject(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,context);	
 	});
 	//Reload templates
@@ -315,7 +315,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscodeTreeViewDevices);
 	context.subscriptions.push(statusBarItemConfiguration);	
 	context.subscriptions.push(vscodeTreeViewLaunchs);
-	context.subscriptions.push(vscodeTreeViewProjects);
+	context.subscriptions.push(vscodeTreeViewTemplates);
 
 	//Commands
 	//devices

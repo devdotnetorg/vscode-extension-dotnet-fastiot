@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {TreeDataProjectsProvider} from '../TreeDataProjectsProvider';
+import {TreeDataTemplatesProvider} from '../TreeDataTemplatesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';

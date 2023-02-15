@@ -16,6 +16,12 @@ forVersionExt:
 author:
   type: string
   required: true
+emailAuthor:
+  type: string
+  required: true
+license:
+  type: string
+  required: true
 label:
   type: string
   required: true
