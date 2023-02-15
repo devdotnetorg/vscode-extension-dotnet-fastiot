@@ -15,11 +15,11 @@ export abstract class EntityDownloader {
     let result:IotResult;
     try {
       //download *.zip
-      const fileZipPath=`destPath\\${item.Id}.zip`;
+      const fileZipPath=`${destPath}\\${item.Id}.zip`;
       if (fs.existsSync(fileZipPath)) fs.removeSync(fileZipPath);
       await IoTHelper.DownloadFile(item.Url,fileZipPath);
       //unpack
-      let unpackPath=`destPath\\${item.Id}`;
+      let unpackPath=`${destPath}\\${item.Id}`;
       var AdmZip = require("adm-zip");
       var zip = new AdmZip(fileZipPath);
       // extracts everything
@@ -51,7 +51,7 @@ export abstract class EntityDownloader {
       //template download
       let index=0; 
       do { 				
-            let item=obj.templates[index];
+            let item=obj.entitys[index];
             if(item) {
               const downloadTemplate=this.ParseEntityDownload(item,url);
               listDownload.push(downloadTemplate);

@@ -1,5 +1,5 @@
 #YAML
-templates:
+entitys:
   - id: dotnet-console-test
     version: 0.1
     forVersionExt: 0.3.0

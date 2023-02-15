@@ -128,8 +128,8 @@ export class IotConfiguration {
       this._logCallback("-------- Loading templates -------");
       this.Templates.Clear();
       await this.Templates.LoadTemplatesSystem();
-      //await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
-      //await this.Templates.LoadTemplatesUser();
+      await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
+      await this.Templates.LoadTemplatesUser();
       this._logCallback(`${this.Templates.Count} template(s) available.`);
       this._logCallback("----------------------------------");
       };
