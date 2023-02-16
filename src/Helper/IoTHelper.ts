@@ -208,5 +208,24 @@ export class IoTHelper {
     });
     return cyPath;
   }
+
+  static GetInstOnSshErrorConnection():string {
+    const msg=
+      `Check your ssh-server settings. The /etc/ssh/sshd_config file should contain the following options:\n`+
+      `--------------------------------------\n`+
+      `PermitRootLogin yes\n`+
+      `PasswordAuthentication yes\n`+
+      `ChallengeResponseAuthentication yes\n`+
+      `AuthenticationMethods publickey keyboard-interactive password\n`+
+      `PubkeyAcceptedAlgorithms=+ssh-rsa\n`+
+      `--------------------------------------\n`+
+      `After making the settings, restart ssh-server with the command:\n`+
+      `sudo systemctl reload ssh\n`+
+      `Then remove the device and add it again.\n`+
+      `If you are still unable to connect, then run the following command \n`+
+      `on the device to get information about the connection problem using the ssh protocol:\n`+
+      `sudo systemctl status ssh`;
+    return msg;
+  }
   
 }

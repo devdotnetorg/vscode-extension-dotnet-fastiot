@@ -4,7 +4,7 @@
 
 Расширение [.NET FastIoT](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot ".NET FastIoT Extension") в Visual Studio Code Marketplace.
 
-[README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README.md "README") in English | [README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README_ru.md "README") на русском языке | Habr.com (Russian) - [Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux").
+[README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README.md "README") in English | [README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README_ru.md "README") на русском языке | DevDotNet.ORG (Russian) - [последние новости](https://devdotnet.org/tag/fastiot/ "последние новости") | Habr.com (Russian) - [Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux").
 
 Расширение настраивает встраиваемое устройство на архитектуре ARMv7 или ARMv8, работающее под Linux, для запуска .NET и [Mono](https://www.mono-project.com/ "Cross platform, open source .NET framework") приложений, и конфигурирует проекты `*.csproj` для удаленной отладки по ssh-туннелю. Работает только на Windows (64 бит).
 
@@ -26,7 +26,7 @@
 ## Системные требования
 
 - **Версия ОС.** Windows 7-10 (x64). Версия для Linux появится позже;
-- **Visual Studio Code.** версия не ниже [1.63](https://code.visualstudio.com/ "1.63");
+- **Visual Studio Code.** версия не ниже [1.70.3](https://code.visualstudio.com/ "1.70.3");
 - **.NET.** Для компиляции проекта на C# требуется [.NET SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks ".NET SDK") в зависимости от используемой версии вашего проекта (для работы самого расширения не требуется);
 
 Дополнительные расширения необходимые для разработки .NET приложений:
@@ -75,6 +75,7 @@ PermitRootLogin yes
 PasswordAuthentication yes
 ChallengeResponseAuthentication yes
 AuthenticationMethods publickey keyboard-interactive password
+PubkeyAcceptedAlgorithms=+ssh-rsa
 ```
 
 Затем сохраните изменения <kbd>F2</kbd> и выйдите  из редактора <kbd>F10</kbd>.

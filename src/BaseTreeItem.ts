@@ -10,8 +10,6 @@ import {IotConfiguration} from './Configuration/IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 import {SshClient} from './SshClient';
 
-import SSH2Promise from 'ssh2-promise';
-import SFTP from 'ssh2-promise';
 import { stringify } from 'querystring';
 
 import {EventDispatcher,Handler} from './EventDispatcher';

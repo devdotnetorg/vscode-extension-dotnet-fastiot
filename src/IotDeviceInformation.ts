@@ -55,7 +55,7 @@ export class IotDeviceInformation extends BaseTreeItem{
       //1
       let result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
           "pregetinformation",undefined, false,false);
-      if(result.SystemMessage){
+      if(result.Status==StatusResult.Ok&&result.SystemMessage){
          this.Client.FireChangedState({
             status:undefined,
             console:result.SystemMessage,
@@ -63,25 +63,29 @@ export class IotDeviceInformation extends BaseTreeItem{
           });
       }      
       //2
-      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
-         "pregetinformation",undefined, false,false);
-      if(result.SystemMessage){
+      if(result.Status==StatusResult.Error) {
+         result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
+            "pregetinformation",undefined, false,false);
+         if(result.Status==StatusResult.Ok&&result.SystemMessage){
             this.Client.FireChangedState({
                status:undefined,
                console:result.SystemMessage,
                obj:undefined
-             });
-         }    
+               });
+         }
+      }
       //3
-      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
-         "pregetinformation",undefined, false,false);
-      if(result.SystemMessage){
+      if(result.Status==StatusResult.Error) {
+         result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
+            "pregetinformation",undefined, false,false);
+         if(result.SystemMessage){
             this.Client.FireChangedState({
                status:undefined,
                console:result.SystemMessage,
                obj:undefined
-             });
-         }    
+               });
+         }
+      }
       //Result
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
       //get information

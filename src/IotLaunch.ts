@@ -10,7 +10,6 @@ import {IotResult,StatusResult } from './IotResult';
 import {v4 as uuidv4} from 'uuid';
 import {IotItemTree } from './IotItemTree';
 import { config } from 'process';
-import SSH2Promise from 'ssh2-promise';
 import {IotDevice} from './IotDevice';
 import {IotLaunchOptions} from './IotLaunchOptions';
 import {IotLaunchEnvironment} from './IotLaunchEnvironment';

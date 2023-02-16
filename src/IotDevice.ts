@@ -9,7 +9,6 @@ import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IotResult,StatusResult } from './IotResult';
 import {IotItemTree } from './IotItemTree';
 import { config } from 'process';
-import SSH2Promise from 'ssh2-promise';
 import {IotDeviceDTO } from './IotDeviceDTO';
 import {IotDeviceGpiochip } from './IotDeviceGpiochip';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';

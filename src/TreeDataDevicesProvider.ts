@@ -121,36 +121,31 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     }    
   }
 
-  private async ShowStatusBar(textStatusBar:string): Promise<void>{    
-    if(this._statusBarItem)
-      {
-        if(!this._isStopStatusBar)
-        {
-          this.SetTextStatusBar(textStatusBar);
-          return;
-        }
-        //
-        this._isStopStatusBar=false;
-        this.SetTextStatusBar(textStatusBar);
-        //        
-        this._statusBarItem.text=this._statusBarText;      
-        this._statusBarItem.tooltip=this._statusBarText;
-        this._statusBarItem.show();
-        let progressChars: string = '|/-\\';
-        let lengthProgressChars = progressChars.length;
-        let posProgressChars:number=0;
-        
-          do { 				
-            let chars = progressChars.charAt(posProgressChars);
-            this._statusBarItem.text = chars + " " + this._statusBarText;
-            this._statusBarItem.tooltip=this._statusBarText;
-            posProgressChars=posProgressChars+1;
-            if(posProgressChars>lengthProgressChars) posProgressChars=0; 
-            await IoTHelper.Sleep(150);
-           } 
-           while(!this._isStopStatusBar)
-      }    
+  private async ShowStatusBar(textStatusBar:string): Promise<void>{
+    if(!this._statusBarItem) return;
+    if(!this._isStopStatusBar) {
+      this.SetTextStatusBar(textStatusBar);
+      return;
     }
+    this._isStopStatusBar=false;
+    this.SetTextStatusBar(textStatusBar);
+    //        
+    this._statusBarItem.text=this._statusBarText;      
+    this._statusBarItem.tooltip=this._statusBarText;
+    this._statusBarItem.show();
+    let progressChars: string = '|/-\\';
+    let lengthProgressChars = progressChars.length;
+    let posProgressChars:number=0;
+    do {
+      let chars = progressChars.charAt(posProgressChars);
+      this._statusBarItem.text = chars + " " + this._statusBarText;
+      this._statusBarItem.tooltip=this._statusBarText;
+      posProgressChars=posProgressChars+1;
+      if(posProgressChars>lengthProgressChars) posProgressChars=0; 
+      await IoTHelper.Sleep(150);
+    } 
+    while(!this._isStopStatusBar)
+  }
 
   private async HideStatusBar(): Promise<void>{
     if(this._statusBarItem)
@@ -302,35 +297,34 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   } 
 
   //------------ Packages ------------
-  public async CheckAllPackages(idDevice:string):  Promise<IotResult> {    
+  public async CheckAllPackages(idDevice:string):  Promise<IotResult> {
     let device = this.FindbyIdDevice(idDevice);
-    let result = new IotResult(StatusResult.None,undefined,undefined);    
-    if(device){      
+    let result = new IotResult(StatusResult.None,undefined,undefined); 
+    if(device){
       //Ping
-      if(device.Account.Host)
-        {
-          const result=await device.Client.PingHost(device.Account.Host);
-          if(result.Status==StatusResult.Error) return Promise.resolve(result);  
-        }
-    this.ShowStatusBar("Checking for packages");    
-      //event subscription
-      let handler=device.PackagesLinux.Client.OnChangedStateSubscribe(event => {
-        //output
-        if(event.status) this.OutputChannel.appendLine(event.status);
-        if(event.console) this.OutputChannel.appendLine(event.console);
-        //IotResult
-        if(event.obj) result=<IotResult>event.obj;                
-      });
-      //CheckAll
-      await device.PackagesLinux.CheckAll(); 
-      //event unsubscription    
-      //device.Client.OnChangedStateUnsubscribe(handler);  
-      device.PackagesLinux.Client.OnChangedStateUnsubscribe(handler);
-      //Expanded node
-      //device.PackagesLinux.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
-      this.Refresh();    
-      this.HideStatusBar();
-      this.SaveDevices();
+      if(device.Account.Host) {
+        const result=await device.Client.PingHost(device.Account.Host);
+        if(result.Status==StatusResult.Error) return Promise.resolve(result);
+      }
+    this.ShowStatusBar("Checking for packages");
+    //event subscription
+    let handler=device.PackagesLinux.Client.OnChangedStateSubscribe(event => {
+      //output
+      if(event.status) this.OutputChannel.appendLine(event.status);
+      if(event.console) this.OutputChannel.appendLine(event.console);
+      //IotResult
+      if(event.obj) result=<IotResult>event.obj;                
+    });
+    //CheckAll
+    await device.PackagesLinux.CheckAll(); 
+    //event unsubscription    
+    //device.Client.OnChangedStateUnsubscribe(handler);  
+    device.PackagesLinux.Client.OnChangedStateUnsubscribe(handler);
+    //Expanded node
+    //device.PackagesLinux.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
+    this.Refresh();    
+    this.HideStatusBar();
+    this.SaveDevices();
     }    
     //    
     return Promise.resolve(result); 
