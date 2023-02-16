@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import {IotConfigurationFolder} from './IotConfigurationFolder';
 import {IotTemplateCollection} from '../Templates/IotTemplateCollection';
+import { IoTHelper } from '../Helper/IoTHelper';
 
 export class IotConfiguration {  
   public UsernameAccountDevice:string="";
@@ -112,19 +113,61 @@ export class IotConfiguration {
     //Clear
 	  this.Folder.ClearTmp();
   }
-
-  public LoadTemplates()
+  
+  public async LoadTemplatesAsync()
   {
-    let url:string="";
-	  if(this._context.extensionMode==vscode.ExtensionMode.Production)
-	  {
-		  url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
-	  }else{
-      //for test
-		  url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono/templates/system/templatelist.fastiot.yaml";
-	  }
+    await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: "Starting ... ",
+      cancellable: false
+    }, (progress, token) => {
+      //token.onCancellationRequested(() => {
+      //  console.log("User canceled the long running operation");
+      //});
+      return new Promise(async (resolve, reject) => {
+        //main code
+        progress.report({ message: "Preparing to load",increment: 20 }); //20
+        //Preparing
+        this.Templates.Clear();
+        let url:string="";
+        if(this._context.extensionMode==vscode.ExtensionMode.Production)
+        {
+          url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
+        }else{
+          //for test
+          url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono/templates/system/templatelist.fastiot.yaml";
+        }
+        this._logCallback("-------- Loading templates -------");
+        //Loading system templates
+        progress.report({ message: "Loading system templates",increment: 20 }); //40
+        await this.Templates.LoadTemplatesSystem();
+        //Updating system templates
+        progress.report({ message: "Updating system templates",increment: 20 }); //60
+        await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
+        //Loading custom templates
+        progress.report({ message: "Loading custom templates",increment: 20 }); //80
+        await this.Templates.LoadTemplatesUser();
+        const endMsg=`${this.Templates.Count} template(s) available.`;
+        this._logCallback(endMsg);
+        this._logCallback("----------------------------------");
+        progress.report({ message: "Templates loaded" , increment: 20 }); //100
+        await IoTHelper.Sleep(2000);
+        resolve(endMsg);
+        //end
+      });
+    });
 
+    //old variant
+    /*
     const loadTemplates = async () => {
+      let url:string="";
+      if(this._context.extensionMode==vscode.ExtensionMode.Production)
+      {
+        url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
+      }else{
+        //for test
+        url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono/templates/system/templatelist.fastiot.yaml";
+      }
       this._logCallback("-------- Loading templates -------");
       this.Templates.Clear();
       await this.Templates.LoadTemplatesSystem();
@@ -134,6 +177,7 @@ export class IotConfiguration {
       this._logCallback("----------------------------------");
       };
 	  loadTemplates();
+    */
   }
 }
 

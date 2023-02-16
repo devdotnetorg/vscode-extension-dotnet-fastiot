@@ -10,5 +10,5 @@ import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import * as cp from "child_process";
 
 export async function reloadTemplates(treeData: TreeDataLaunchsProvider): Promise<void> {        
-    treeData.Config.LoadTemplates();
+    treeData.Config.LoadTemplatesAsync();
 }
