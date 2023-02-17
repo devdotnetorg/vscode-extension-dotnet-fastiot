@@ -102,7 +102,7 @@ sudo apt-get update
 #------------
 sudo apt-get install -y mono-complete
 
-#Check Mono--
+#Check Mono
 #------------
 mono --version
 

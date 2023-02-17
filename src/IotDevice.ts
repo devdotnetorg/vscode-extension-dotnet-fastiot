@@ -333,7 +333,7 @@ export class IotDevice extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.ConnectionTest(this.Device.Account.Host);
+      const result=await this.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -348,7 +348,7 @@ export class IotDevice extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.ConnectionTest(this.Device.Account.Host);
+      const result=await this.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
