@@ -2,14 +2,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {TreeDataTemplatesProvider} from '../TreeDataTemplatesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
-import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { dotnetHelper } from '../Helper/dotnetHelper';
-import { config } from 'process';
 import {IotTemplate} from '../Templates/IotTemplate';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 
@@ -97,10 +94,10 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         let itemTarget:Array<ItemQuickPick>=[];
         //select target
         dotnetHelper.GetDotNetTargets().forEach((value, key) => {
-            const item = new ItemQuickPick(value,"",key);
+            const item = new ItemQuickPick(value[1],"",value[0]);
             itemTarget.push(item);
         });
-        SELECTED_ITEM = await vscode.window.showQuickPick(itemTarget,{title: 'Choose a .NET Target framework:',});
+        SELECTED_ITEM = await vscode.window.showQuickPick(itemTarget,{title: 'Choose a .NET framework:',});
         if(!SELECTED_ITEM) return;
         //
         values.set("%{project.dotnet.targetframework}",<string>SELECTED_ITEM.value);

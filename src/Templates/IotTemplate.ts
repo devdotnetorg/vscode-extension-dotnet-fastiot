@@ -4,14 +4,13 @@ import * as path from 'path';
 
 import {EntityType} from '../Entity/EntityType';
 import {EntityBase} from '../Entity/EntityBase';
-import {EntityBaseAttribute} from '../Entity/EntityBaseAttribute';
 import {IotTemplateAttribute} from './IotTemplateAttribute';
 import {IotResult,StatusResult } from '../IotResult';
 import {IoTHelper} from '../Helper/IoTHelper';
 import {launchHelper} from '../Helper/launchHelper';
 import {dotnetHelper} from '../Helper/dotnetHelper';
-import { IotDevice } from '../IotDevice';
-import { IotConfiguration } from '../Configuration/IotConfiguration';
+import {IotDevice} from '../IotDevice';
+import {IotConfiguration} from '../Configuration/IotConfiguration';
 import {FilesValidator} from '../Validator/FilesValidator';
 import {YamlSchemaValidator} from '../Validator/YamlSchemaValidator';
 

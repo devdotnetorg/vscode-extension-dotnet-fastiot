@@ -5,7 +5,6 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
-import { IotDevicePackage } from '../IotDevicePackage';
 
 export async function checkAllPackages(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {   
     treeData.OutputChannel.appendLine("Action: checking all packages");                

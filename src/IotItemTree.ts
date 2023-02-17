@@ -8,7 +8,6 @@ import {IotDeviceInformation} from './IotDeviceInformation';
 import {IotDevicePackage} from './IotDevicePackage';
 import {IotLaunch} from './IotLaunch';
 import {IotLaunchOptions} from './IotLaunchOptions';
-//
 
 export class IotItemTree extends BaseTreeItem { 
   public Parent: IotDevice| IotDeviceAccount| IotDeviceInformation| IotItemTree| 

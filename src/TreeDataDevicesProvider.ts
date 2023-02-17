@@ -2,20 +2,12 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
-import {IChangedStateEvent} from './SshClient';
-
-import { IotDevice } from './IotDevice';
-import { IotDeviceAccount } from './IotDeviceAccount';
-import { IotDeviceInformation } from './IotDeviceInformation';
-import { IotItemTree } from './IotItemTree';
-import { IotDevicePackage,TypePackage } from './IotDevicePackage';
-import { IotDeviceDTO } from './IotDeviceDTO';
-
+import {IotDevice} from './IotDevice';
+import {IotDevicePackage,TypePackage} from './IotDevicePackage';
+import {IotDeviceDTO} from './IotDeviceDTO';
 import {IoTHelper} from './Helper/IoTHelper';
-
-import { IotResult,StatusResult } from './IotResult';
+import {IotResult,StatusResult} from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
-import {EventDispatcher,Handler} from './EventDispatcher';
 
 export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTreeItem> {    
   public RootItems:Array<IotDevice>=[];
@@ -121,7 +113,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     }    
   }
 
-  private async ShowStatusBar(textStatusBar:string): Promise<void>{
+  public async ShowStatusBar(textStatusBar:string): Promise<void>{
     if(!this._statusBarItem) return;
     if(!this._isStopStatusBar) {
       this.SetTextStatusBar(textStatusBar);
@@ -147,7 +139,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     while(!this._isStopStatusBar)
   }
 
-  private async HideStatusBar(): Promise<void>{
+  public async HideStatusBar(): Promise<void>{
     if(this._statusBarItem)
     {
       this._isStopStatusBar=true;						
@@ -209,12 +201,16 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   }
 
   //------------ Devices ------------
-  public async AddDevice(toHost: string,toPort: number,toUserName: string,toPassword: string,accountNameDebug:string): Promise<IotResult> {         
+  public async AddDevice(hostName: string,port: number,userName: string,password: string,accountNameDebug:string): Promise<IotResult> {         
       let device = new IotDevice(this.Config);
-      //Ping
-      let result=await device.Client.PingHost(toHost);
-      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
-      //
+      //Connection test device
+      this.ShowStatusBar("Checking the network connection");
+      let result=await device.ConnectionTest(hostName,port,userName,password);
+      if(result.Status==StatusResult.Error)
+      {
+        this.HideStatusBar();
+        return Promise.resolve(result);
+      }
       this.ShowStatusBar("Create a device");
       this.OutputChannel.appendLine("Create a device");
       //event subscription
@@ -223,7 +219,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
         if(event.status) this.OutputChannel.appendLine(event.status);
         if(event.console) this.OutputChannel.appendLine(event.console); 
       });
-      result = await device.Create(toHost,toPort,toUserName, toPassword,accountNameDebug);
+      result = await device.Create(hostName,port,userName, password,accountNameDebug);
       if(result.Status==StatusResult.Error)
       {
         this.HideStatusBar();
@@ -303,7 +299,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     if(device){
       //Ping
       if(device.Account.Host) {
-        const result=await device.Client.PingHost(device.Account.Host);
+        const result=await device.ConnectionTest();
         if(result.Status==StatusResult.Error) return Promise.resolve(result);
       }
     this.ShowStatusBar("Checking for packages");
@@ -467,7 +463,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       //Ping
       if(device.Account.Host)
       {
-        const result=await device.Client.PingHost(device.Account.Host);
+        const result=await device.ConnectionTest();
         if(result.Status==StatusResult.Error) return Promise.resolve(result);  
       }    
       //

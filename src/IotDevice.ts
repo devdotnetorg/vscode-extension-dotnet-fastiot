@@ -6,15 +6,14 @@ import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation, Existences} from './IotDeviceInformation';
 import {TypePackage,IotDevicePackage} from './IotDevicePackage';
 import {IotConfiguration} from './Configuration/IotConfiguration';
-import {IotResult,StatusResult } from './IotResult';
-import {IotItemTree } from './IotItemTree';
-import { config } from 'process';
-import {IotDeviceDTO } from './IotDeviceDTO';
-import {IotDeviceGpiochip } from './IotDeviceGpiochip';
+import {IotResult,StatusResult} from './IotResult';
+import {IotItemTree} from './IotItemTree';
+import {IotDeviceDTO} from './IotDeviceDTO';
+import {IotDeviceGpiochip} from './IotDeviceGpiochip';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
-import { strictEqual } from 'assert';
-import { IoTHelper } from './Helper/IoTHelper';
-//
+
+import {IoTHelper} from './Helper/IoTHelper';
+import {networkHelper} from './Helper/networkHelper';
 
 export class IotDevice extends BaseTreeItem {    
   public IdDevice:string|undefined;
@@ -69,7 +68,7 @@ export class IotDevice extends BaseTreeItem {
     }
   
   public async Create(
-    host: string, port: number,userName: string, password: string,
+    hostName: string, port: number,userName: string, password: string,
       accountNameDebug:string): Promise<IotResult>{    
     //--------------------------------------
     //get Information
@@ -90,7 +89,7 @@ export class IotDevice extends BaseTreeItem {
     });
     //create connection info
     var sshconfig:SSHConfig  = {
-      host: host,
+      host: hostName,
       port: port,
       username: userName,
       password: password,
@@ -298,16 +297,35 @@ export class IotDevice extends BaseTreeItem {
     this.GpioChips.FromJSON(obj.IotGpiochips)
   }
 
-  public async Ping(): Promise<IotResult>{
+  public async ConnectionTest(hostName:string|undefined=undefined, port:number=22,
+      userName:string|undefined=undefined,password:string|undefined=undefined): Promise<IotResult>{
     let result:IotResult;
-    //Ping ipAddress
-    if(this.Device.Account.Host)
-    {
-      result=await this.Client.PingHost(this.Device.Account.Host);
-      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
+    //Get sshconfig
+    var sshconfig:SSHConfig;
+    if(hostName){
+      sshconfig  = {
+        host: hostName,
+        port: port,
+        username: userName,
+        password: password,
+        tryKeyboard: true,
+        readyTimeout: 7000
+        };
+    }else{
+      sshconfig=this.Account.SshConfig;
     }
-    //CheckingSshConnection
-    result=await this.Client.CheckingSshConnection(this.Account.SshConfig);
+    //GetIp
+    result=await networkHelper.GetIpAddress(sshconfig.host ?? "non");
+    if(result.Status==StatusResult.Error) return Promise.resolve(result);
+    const ipAddress = <string>result.returnObject;
+    //Ping
+    result=await networkHelper.PingHost(ipAddress);
+    if(result.Status==StatusResult.Error) return Promise.resolve(result);
+    //Check port
+    result=await networkHelper.CheckTcpPortUsed(ipAddress,sshconfig.port ?? 22);
+    if(result.Status==StatusResult.Error) return Promise.resolve(result);
+    //Check ssh connection
+    result=await this.Client.GetSshConnection(sshconfig);
     return Promise.resolve(result);
   }
 
@@ -315,7 +333,7 @@ export class IotDevice extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.PingHost(this.Device.Account.Host);
+      const result=await this.ConnectionTest(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -330,7 +348,7 @@ export class IotDevice extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.PingHost(this.Device.Account.Host);
+      const result=await this.ConnectionTest(this.Device.Account.Host);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //

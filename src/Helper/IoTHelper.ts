@@ -4,10 +4,6 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
 import {v4 as uuidv4} from 'uuid';
-import * as stream from 'stream';
-import {promisify} from 'util';
-import axios from 'axios';
-import {IotDevice} from '../IotDevice';
 import {IotResult,StatusResult } from '../IotResult';
 
 export class IoTHelper {
@@ -179,20 +175,6 @@ export class IoTHelper {
     return listFolders;
   }
 
-  static  finished = promisify(stream.finished);
-
-  static async DownloadFile(fileUrl: string, outputLocationPath: string): Promise<any> {
-    const writer = fs.createWriteStream(outputLocationPath);
-    return axios({
-      method: 'get',
-      url: fileUrl,
-      responseType: 'stream',
-    }).then(response => {
-      response.data.pipe(writer);
-      return IoTHelper.finished(writer); //this is a Promise
-    });
-  }
-
   static GetPathAsCygdrive(dirPath:string):string
   {
     //first lowcase
@@ -207,25 +189,6 @@ export class IoTHelper {
       cyPath=cyPath+`/${element}`;
     });
     return cyPath;
-  }
-
-  static GetInstOnSshErrorConnection():string {
-    const msg=
-      `Check your ssh-server settings. The /etc/ssh/sshd_config file should contain the following options:\n`+
-      `--------------------------------------\n`+
-      `PermitRootLogin yes\n`+
-      `PasswordAuthentication yes\n`+
-      `ChallengeResponseAuthentication yes\n`+
-      `AuthenticationMethods publickey keyboard-interactive password\n`+
-      `PubkeyAcceptedAlgorithms=+ssh-rsa\n`+
-      `--------------------------------------\n`+
-      `After making the settings, restart ssh-server with the command:\n`+
-      `sudo systemctl reload ssh\n`+
-      `Then remove the device and add it again.\n`+
-      `If you are still unable to connect, then run the following command \n`+
-      `on the device to get information about the connection problem using the ssh protocol:\n`+
-      `sudo systemctl status ssh`;
-    return msg;
   }
   
 }

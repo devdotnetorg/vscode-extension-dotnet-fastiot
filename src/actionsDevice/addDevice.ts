@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { pingDevice } from './pingDevice';
+import { connectionTestDevice } from './connectionTestDevice';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
@@ -12,14 +12,14 @@ import { IoTHelper } from '../Helper/IoTHelper';
 
 export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>): Promise<void> {                
         
-        let host = await vscode.window.showInputBox({            
+        let hostName = await vscode.window.showInputBox({            
             prompt: 'prompt',
             title: 'Add Device (1/5). Enter the host of the developer board',
             value:'192.168.43.208',            
         });
         
-        if(host==undefined) return;
-        host=IoTHelper.StringTrim(host);
+        if(hostName==undefined) return;
+        hostName=IoTHelper.StringTrim(hostName);
 
         let portAnswer = await vscode.window.showInputBox({				
             prompt: 'prompt',
@@ -56,7 +56,7 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
        vscode.window.showInformationMessage('It may take 2 to 7 minutes to initialize and configure the device.');
        treeData.OutputChannel.appendLine("Action: adding a device");
        //Adding a device is the main process
-       const result = await treeData.AddDevice(host,port,userName,password,SELECTED_ITEM.value);
+       const result = await treeData.AddDevice(hostName,port,userName,password,SELECTED_ITEM.value);
        //Output       
        treeData.OutputChannel.appendLine("------------- Result -------------");
        treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
@@ -72,7 +72,7 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
             treeView.reveal(device, {focus: true});
             //Ping
             const newDevice=treeData.RootItems[treeData.RootItems.length-1];
-            pingDevice(treeData,newDevice);
+            connectionTestDevice(treeData,newDevice);
             
        }else
        {            

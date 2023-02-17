@@ -4,8 +4,6 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotDevice } from '../IotDevice';
-import { IotLaunch } from '../IotLaunch';
 import { IotLaunchEnvironment } from '../IotLaunchEnvironment';
 import { IoTHelper } from '../Helper/IoTHelper';
 

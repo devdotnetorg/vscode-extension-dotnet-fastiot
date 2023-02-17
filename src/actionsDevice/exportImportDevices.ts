@@ -4,9 +4,6 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { pingDevice } from './pingDevice';
-import { IotDevice } from '../IotDevice';
-import { BaseTreeItem } from '../BaseTreeItem';
 
 export async function exportDevices(treeData: TreeDataDevicesProvider): Promise<void> {        
     const options: vscode.SaveDialogOptions = {

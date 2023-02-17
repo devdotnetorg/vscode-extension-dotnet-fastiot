@@ -4,7 +4,8 @@ import * as path from 'path';
 import YAML from 'yaml';
 import axios from 'axios';
 import {IotResult,StatusResult} from '../IotResult';
-import { IoTHelper } from '../Helper/IoTHelper';
+import {IoTHelper} from '../Helper/IoTHelper';
+import {networkHelper} from '../Helper/networkHelper';
 
 export abstract class EntityDownloader {
   constructor(
@@ -17,7 +18,7 @@ export abstract class EntityDownloader {
       //download *.zip
       const fileZipPath=`${destPath}\\${item.Id}.zip`;
       if (fs.existsSync(fileZipPath)) fs.removeSync(fileZipPath);
-      await IoTHelper.DownloadFile(item.Url,fileZipPath);
+      await networkHelper.DownloadFileHttp(item.Url,fileZipPath);
       //unpack
       let unpackPath=`${destPath}\\${item.Id}`;
       var AdmZip = require("adm-zip");

@@ -38,4 +38,3 @@ export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLau
     //Refresh
     treeData.RefreshsFull();
 }
-

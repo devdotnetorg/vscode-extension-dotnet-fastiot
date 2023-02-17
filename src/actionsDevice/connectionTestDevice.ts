@@ -6,11 +6,13 @@ import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 
-export async function pingDevice(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {   
+export async function connectionTestDevice(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {   
     const device= treeData.FindbyIdDevice(<string>item.IdDevice);
     if(device) {
-        treeData.OutputChannel.appendLine("Action: ping device");
-        const result = await device.Ping(); 
+        treeData.OutputChannel.appendLine("Action: connection test device");
+        treeData.ShowStatusBar("Checking the network connection");
+        const result = await device.ConnectionTest();
+        treeData.HideStatusBar();
         //Output       
         treeData.OutputChannel.appendLine("------------- Result -------------");
         treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
@@ -24,7 +26,7 @@ export async function pingDevice(treeData: TreeDataDevicesProvider,item:IotDevic
         } else {         
             vscode.window.showErrorMessage(`Unable to connect to host ${device.Account.Host} via ssh 
             with ${device.Account.Identity} key.`);            
-        }  
+        }
     } else {
         vscode.window.showErrorMessage(`Device ${item.IdDevice} not found`);
     }

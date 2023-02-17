@@ -4,59 +4,59 @@ import * as vscode from 'vscode';
 //shared
 import {IoTHelper} from './Helper/IoTHelper';
 import {IotConfiguration} from './Configuration/IotConfiguration';
-import { IotItemTree } from './IotItemTree';
-import {IotResult,StatusResult } from './IotResult';
+import {IotItemTree} from './IotItemTree';
+import {IotResult,StatusResult} from './IotResult';
 
 //Devices
-import { TreeDataDevicesProvider } from './TreeDataDevicesProvider';
-import { IotDevice } from './IotDevice';
-import { IotDevicePackage } from './IotDevicePackage';
-import { IotDeviceDTO } from './IotDeviceDTO';
-import { IotDeviceGpiochip } from './IotDeviceGpiochip';
+import {TreeDataDevicesProvider} from './TreeDataDevicesProvider';
+import {IotDevice} from './IotDevice';
+import {IotDevicePackage} from './IotDevicePackage';
+import {IotDeviceDTO} from './IotDeviceDTO';
+import {IotDeviceGpiochip} from './IotDeviceGpiochip';
 
 //Devices.actions
-import { addDevice } from './actionsDevice/addDevice';
-import { refreshDevices } from './actionsDevice/refreshDevices';
-import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
-import { deleteDevice } from './actionsDevice/deleteDevice';
-import { pingDevice } from './actionsDevice/pingDevice';
-import { rebootDevice } from './actionsDevice/rebootDevice';
-import {shutdownDevice } from './actionsDevice/shutdownDevice';
-import { renameDevice } from './actionsDevice/renameDevice';
-import { detectGpiochips } from './actionsDevice/detectGpiochips';
-import { copyTexttoClipboard } from './actionsDevice/copyTexttoClipboard';
-import { openFolderKeys } from './actionsDevice/openFolderKeys';
-import { checkAllPackages } from './actionsDevice/checkAllPackages';
-import { installPackage } from './actionsDevice/installPackage';
-import { upgradePackage } from './actionsDevice/upgradePackage';
-import { uninstallPackage } from './actionsDevice/uninstallPackage';
-import { testPackage } from './actionsDevice/testPackage';
+import {addDevice} from './actionsDevice/addDevice';
+import {refreshDevices} from './actionsDevice/refreshDevices';
+import {exportDevices,importDevices} from './actionsDevice/exportImportDevices';
+import {deleteDevice} from './actionsDevice/deleteDevice';
+import {connectionTestDevice} from './actionsDevice/connectionTestDevice';
+import {rebootDevice} from './actionsDevice/rebootDevice';
+import {shutdownDevice} from './actionsDevice/shutdownDevice';
+import {renameDevice} from './actionsDevice/renameDevice';
+import {detectGpiochips} from './actionsDevice/detectGpiochips';
+import {copyTexttoClipboard} from './actionsDevice/copyTexttoClipboard';
+import {openFolderKeys} from './actionsDevice/openFolderKeys';
+import {checkAllPackages} from './actionsDevice/checkAllPackages';
+import {installPackage} from './actionsDevice/installPackage';
+import {upgradePackage} from './actionsDevice/upgradePackage';
+import {uninstallPackage} from './actionsDevice/uninstallPackage';
+import {testPackage} from './actionsDevice/testPackage';
 
-import { refreshDTO } from './actionsDevice/refreshDTO';
-import { addDTO } from './actionsDevice/addDTO';
-import { deleteDTO } from './actionsDevice/deleteDTO';
-import { enableDTO } from './actionsDevice/enableDTO';
-import { disableDTO } from './actionsDevice/disableDTO';
+import {refreshDTO} from './actionsDevice/refreshDTO';
+import {addDTO} from './actionsDevice/addDTO';
+import {deleteDTO} from './actionsDevice/deleteDTO';
+import {enableDTO} from './actionsDevice/enableDTO';
+import {disableDTO} from './actionsDevice/disableDTO';
 
 //Configurations
-import { TreeDataLaunchsProvider } from './TreeDataLaunchsProvider';
-import { TreeDataTemplatesProvider } from './TreeDataTemplatesProvider';
-import { IotLaunch } from './IotLaunch';
-import { IotLaunchEnvironment } from './IotLaunchEnvironment';
+import {TreeDataLaunchsProvider} from './TreeDataLaunchsProvider';
+import {TreeDataTemplatesProvider} from './TreeDataTemplatesProvider';
+import {IotLaunch} from './IotLaunch';
+import {IotLaunchEnvironment} from './IotLaunchEnvironment';
 
 //actionsLaunch.actions
 import {addLaunch} from './actionsLaunch/addLaunch';
-import { addEnviroment,renameEnviroment,editEnviroment,deleteEnviroment } from './actionsLaunch/managementEnviroment';
-import { gotoDevice } from './actionsLaunch/gotoDevice';
-import { renameLaunch} from './actionsLaunch/renameLaunch';
-import { refreshLaunch } from './actionsLaunch/refreshLaunch';
-import { deleteLaunch } from './actionsLaunch/deleteLaunch';
-import { rebuildLaunch } from './actionsLaunch/rebuildLaunch';
+import {addEnviroment,renameEnviroment,editEnviroment,deleteEnviroment} from './actionsLaunch/managementEnviroment';
+import {gotoDevice} from './actionsLaunch/gotoDevice';
+import {renameLaunch} from './actionsLaunch/renameLaunch';
+import {refreshLaunch} from './actionsLaunch/refreshLaunch';
+import {deleteLaunch} from './actionsLaunch/deleteLaunch';
+import {rebuildLaunch} from './actionsLaunch/rebuildLaunch';
 
 //Template.actions
-import { createProject } from './actionsTemplates/createProject';
-import { reloadTemplates } from './actionsTemplates/reloadTemplates';
-import { openTemplateFolder } from './actionsTemplates/openTemplateFolder';
+import {createProject} from './actionsTemplates/createProject';
+import {reloadTemplates} from './actionsTemplates/reloadTemplates';
+import {openTemplateFolder} from './actionsTemplates/openTemplateFolder';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -172,8 +172,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		renameDevice(treeDataDevicesProvider,item);
 	});
 	//Ping Device
-	let commandPingDevice = vscode.commands.registerCommand("viewDevices.PingDevice", (item:IotDevice) => {
-		pingDevice(treeDataDevicesProvider,item);
+	let commandPingDevice = vscode.commands.registerCommand("viewDevices.ConnectionTestDevice", (item:IotDevice) => {
+		connectionTestDevice(treeDataDevicesProvider,item);
 	});
 	//Reboot Device
 	let commandRebootDevice = vscode.commands.registerCommand("viewDevices.RebootDevice", (item:IotDevice) => {

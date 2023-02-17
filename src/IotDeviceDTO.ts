@@ -3,10 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
-import {IoTGpiochip} from './GPIO/IoTGpiochip';
 import { IotResult,StatusResult } from './IotResult';
-import { TypePackage } from './IotDevicePackage';
-
 import { IoTDTO } from './Dto/IoTDTO';
 
 export class IotDeviceDTO extends BaseTreeItem {
@@ -89,7 +86,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.PingHost(this.Device.Account.Host);
+      const result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -111,7 +108,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      let result=await this.Client.PingHost(this.Device.Account.Host);
+      let result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }
     //
@@ -130,7 +127,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.PingHost(this.Device.Account.Host);
+      const result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -149,7 +146,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.PingHost(this.Device.Account.Host);
+      const result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -168,7 +165,7 @@ export class IotDeviceDTO extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.PingHost(this.Device.Account.Host);
+      const result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //

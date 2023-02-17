@@ -4,7 +4,6 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotItemTree} from './IotItemTree';
-import {IotConfiguration} from './Configuration/IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 //

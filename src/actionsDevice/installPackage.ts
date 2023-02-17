@@ -2,11 +2,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { pingDevice } from './pingDevice';
 import { dotnetHelper } from '../Helper/dotnetHelper';
-import { IotDevice } from '../IotDevice';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { ItemQuickPick } from '../Helper/actionHelper';
@@ -15,8 +12,8 @@ import { ItemQuickPick } from '../Helper/actionHelper';
 
 export async function installPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage): Promise<void> {
     //catalogs
-    const catalogNetSDKChannel: Array<string>=["3.1","5.0","6.0","7.0"];
-    const catalogNetRuntimeChannel: Array<string>=["3.1","5.0","6.0","7.0"];
+    //const catalogNetSDKChannel: Array<string>=["3.1","5.0","6.0","7.0"];
+    //const catalogNetRuntimeChannel: Array<string>=["3.1","5.0","6.0","7.0"];
     const catalogNetRuntimeName: Array<string>=["dotnet","aspnetcore"];
     const catalogLibgpiodVersion: Array<string>=["1.6.3"];
     //objJSON: preparation of input parameters    
@@ -33,8 +30,8 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
             //Shows a selection list allowing multiple selections.
             let itemNetSDK:Array<ItemQuickPick>=[];
             //Select SDK
-            catalogNetSDKChannel.forEach((nameItem) => {
-                const item = new ItemQuickPick(nameItem,".NET SDK",nameItem);
+            dotnetHelper.GetDotNetTargets().forEach((value, key) => {
+                const item = new ItemQuickPick(value[1] +" SDK","",key);
                 itemNetSDK.push(item);
             });
             let SELECTED_ITEM = await vscode.window.showQuickPick(itemNetSDK,{title: 'Choose a .NET SDK version:',});
@@ -59,8 +56,8 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
             //Shows a selection list allowing multiple selections.
             let itemNetRuntimeVersion:Array<ItemQuickPick>=[];
             //Select Runtime version
-            catalogNetRuntimeChannel.forEach((nameItem) => {
-                const item = new ItemQuickPick(nameItem,".NET Runtime",nameItem);
+            dotnetHelper.GetDotNetTargets().forEach((value, key) => {
+                const item = new ItemQuickPick(value[1] +" Runtime","",key);
                 itemNetRuntimeVersion.push(item);
             });
             SELECTED_ITEM = await vscode.window.showQuickPick(itemNetRuntimeVersion,{title: 'Choose a .NET Runtime version:',});

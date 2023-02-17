@@ -4,9 +4,7 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotResult,StatusResult } from './IotResult';
-
 import {IoTHelper} from './Helper/IoTHelper';
-import { exit } from 'process';
 
 export class IotDevicePackage extends BaseTreeItem {
   public Parent: IotDevice| IotDevicePackage;
@@ -106,7 +104,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.PingHost(this.Device.Account.Host);
+      const result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -126,7 +124,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.PingHost(this.Device.Account.Host);
+      const result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //get namepackage 
@@ -185,7 +183,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.PingHost(this.Device.Account.Host);
+      const result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }
     //get namepackage 

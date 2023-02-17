@@ -3,8 +3,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
-import {IotDevice} from '../IotDevice';
-import {StatOptions} from 'fs';
 import {IoTHelper} from './IoTHelper';
 
 export class dotnetHelper {
@@ -57,13 +55,13 @@ export class dotnetHelper {
   return r.test(value);
   }
 
-  static GetDotNetTargets(): Map<string,string> {
+  static GetDotNetTargets(): Map<string,string[]> {
     //from https://learn.microsoft.com/en-us/dotnet/standard/frameworks
-    let dictionary = new Map<string,string>();
-    dictionary.set("net7.0",".NET 7");
-    dictionary.set("net6.0",".NET 6");
-    dictionary.set("net5.0",".NET 5");
-    dictionary.set("netcoreapp3.1",".NET Core 3.1");
+    let dictionary = new Map<string,string[]>();
+    dictionary.set("7.0",["net7.0",".NET 7"]);
+    dictionary.set("6.0",["net6.0",".NET 6"]);
+    dictionary.set("5.0",["net5.0",".NET 5"]);
+    dictionary.set("3.1",["netcoreapp3.1",".NET Core 3.1"]);
     return dictionary;
   }
 

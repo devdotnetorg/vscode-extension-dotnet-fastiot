@@ -4,9 +4,7 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotDevice } from '../IotDevice';
 import { IotDeviceDTO } from '../IotDeviceDTO';
-import { rebootDevice } from './rebootDevice';
 
 export async function deleteDTO(treeData: TreeDataDevicesProvider,item:IotDeviceDTO): Promise<void> { 
     const answer = await vscode.window.showInformationMessage(`Do you really want to remove the DTO: 

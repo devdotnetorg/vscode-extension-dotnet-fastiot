@@ -6,7 +6,6 @@ import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotLaunch } from '../IotLaunch';
 import { BaseTreeItem } from '../BaseTreeItem';
-import { IotDevice } from '../IotDevice';
 
 export async function gotoDevice(treeData: TreeDataLaunchsProvider,item:IotLaunch,treeViewDevices:vscode.TreeView<BaseTreeItem>): Promise<void> {                    
     const device = item.Device;

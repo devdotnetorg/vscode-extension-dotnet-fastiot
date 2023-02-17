@@ -9,4 +9,3 @@ export async function refreshLaunch(treeData: TreeDataLaunchsProvider): Promise<
     treeData.RefreshsFull();
     vscode.window.showInformationMessage("Refresh launchs");
 }
-

@@ -1,9 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './BaseTreeItem';
-import {IotDeviceAccount} from './IotDeviceAccount';
-import {IotDeviceInformation} from './IotDeviceInformation';
    
 export enum StatusResult { None="None", Ok="Ok", No ="No", Error="Error"};
 
@@ -19,14 +16,14 @@ export class IotResult {
   private _systemMessage: string|undefined;  
   public get SystemMessage(): string|undefined {
     return this._systemMessage;}
-  //  
+
   public returnObject:any|undefined;
   public tag: string|undefined;
 
   constructor(
     status:StatusResult,
-    message:string|undefined,
-    systemMessage:string|undefined,
+    message:string|undefined=undefined,
+    systemMessage:string|undefined=undefined,
     ){
       this._status=status;
       this._message=message;
@@ -41,8 +38,7 @@ export class IotResult {
   }
 
   public toString():string{
-    let msg="";
-    msg=msg+this.Status.toString();
+    let msg=this.Status.toString();
     if(this.Message) msg=msg+" "+this.Message;
     if(this.SystemMessage) msg=msg+" "+this.SystemMessage;
     return msg;

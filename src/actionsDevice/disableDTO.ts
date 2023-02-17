@@ -4,7 +4,6 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotDevice } from '../IotDevice';
 import { IotDeviceDTO } from '../IotDeviceDTO';
 import { rebootDevice } from './rebootDevice';
 
@@ -25,6 +24,5 @@ export async function disableDTO(treeData: TreeDataDevicesProvider,item:IotDevic
         rebootDevice(treeData,item.Device,"You need to reboot the device to accept the changes");
     } else {        
         vscode.window.showErrorMessage(`Error. Error disabling DTO.`);      
-    }         
-
+    }
 }

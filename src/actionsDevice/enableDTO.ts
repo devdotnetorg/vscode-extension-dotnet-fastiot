@@ -4,7 +4,6 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotDevice } from '../IotDevice';
 import { IotDeviceDTO } from '../IotDeviceDTO';
 import { rebootDevice } from './rebootDevice';
 

@@ -4,12 +4,8 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotItemTree} from './IotItemTree';
-import {IotConfiguration} from './Configuration/IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 import {IotLaunch} from './IotLaunch';
-import {IoTHelper} from './Helper/IoTHelper';
-import {dotnetHelper} from './Helper/dotnetHelper';
-//
 
 export class IotLaunchOptions extends BaseTreeItem{  
   public Parent: BaseTreeItem| any| undefined;

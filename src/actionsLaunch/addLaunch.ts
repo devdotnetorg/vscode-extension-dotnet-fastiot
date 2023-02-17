@@ -122,4 +122,3 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     //Refresh
     treeData.RefreshsFull();
 }
-

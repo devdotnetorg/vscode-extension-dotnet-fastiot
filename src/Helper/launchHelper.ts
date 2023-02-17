@@ -3,8 +3,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
-import {IotDevice} from '../IotDevice';
-import {StatOptions} from 'fs';
 import {IoTHelper} from './IoTHelper';
 import {IotResult,StatusResult } from '../IotResult';
 

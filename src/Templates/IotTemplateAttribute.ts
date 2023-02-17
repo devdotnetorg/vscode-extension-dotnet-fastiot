@@ -3,10 +3,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import YAML from 'yaml';
 
-import {EntityType} from '../Entity/EntityType';
-import {EntityBase} from '../Entity/EntityBase';
 import {EntityBaseAttribute} from '../Entity/EntityBaseAttribute';
-import { IoTHelper } from '../Helper/IoTHelper';
+import {IoTHelper} from '../Helper/IoTHelper';
 import {FilesValidator} from '../Validator/FilesValidator';
 import {YamlSchemaValidator} from '../Validator/YamlSchemaValidator';
 

@@ -26,4 +26,3 @@ export async function deleteLaunch(treeData: TreeDataLaunchsProvider,item:IotLau
     //Refresh
     treeData.RefreshsFull();
 }
-

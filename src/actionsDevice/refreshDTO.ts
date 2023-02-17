@@ -5,7 +5,6 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
-import { IotDeviceDTO } from '../IotDeviceDTO';
 
 export async function refreshDTO(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {   
     treeData.OutputChannel.appendLine("Action: retrieving all DTOs");                

@@ -1,30 +1,20 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IotDevice} from './IotDevice';
-import {IotDeviceAccount} from './IotDeviceAccount';
-import {IotDeviceInformation} from './IotDeviceInformation';
-import {IotItemTree} from './IotItemTree';
-import {IotDevicePackage} from './IotDevicePackage';
-import {StatusResult,IotResult} from './IotResult';
 
-import {IoTHelper} from './Helper/IoTHelper';
 import SSH2Promise from 'ssh2-promise';
-import SFTP from 'ssh2-promise';
-import { stringify } from 'querystring';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
-
+import SFTP from 'ssh2-promise';
 import {EventDispatcher,Handler} from './EventDispatcher';
-import { spawn } from 'child_process';
-import { lookup } from 'dns';
+import {StatusResult,IotResult} from './IotResult';
+import {IoTHelper} from './Helper/IoTHelper';
 
-export class SshClient {  
-  public OutputChannel:vscode.OutputChannel| undefined;   
-
+export class SshClient {
   constructor(){}
 
-  //Event
+  //Event--------------------------------------
   protected ChangedStateDispatcher = new EventDispatcher<IChangedStateEvent>();
+
   public OnChangedStateSubscribe(handler: Handler<IChangedStateEvent>):Handler<IChangedStateEvent> {
         this.ChangedStateDispatcher.Register(handler);
         return handler;
@@ -38,7 +28,8 @@ export class SshClient {
       console.log("onChangedState");
       this.ChangedStateDispatcher.Fire(event);
   }
-
+  //-------------------------------------------
+  //Main---------------------------------------
   public async RunScript(sshConfig:SSHConfig| undefined, ssh:SSH2Promise| undefined,
     pathFolderExtension:string, nameScript:string, paramsScript:string| undefined,
     isStreamOut: boolean, returnSSH2Promise:boolean): Promise<IotResult>{            
@@ -50,16 +41,16 @@ export class SshClient {
       if (!fs.existsSync(pathFile)) 
       {        
         console.log(`Bash script file not found! ${nameScript}`);
-        return Promise.resolve(new IotResult(StatusResult.Error,"Bash script file not found!",undefined));   
+        return Promise.resolve(new IotResult(StatusResult.Error,"Bash script file not found!"));   
       }
       let dataFile:string= fs.readFileSync(pathFile, 'utf8');
       //connect
       if(!ssh&&sshConfig)
       {
-        result=await this.CheckingSshConnection(sshConfig,true);
+        result=await this.GetSshConnection(sshConfig,true);
         if(result.Status==StatusResult.Error) return Promise.resolve(result);
         ssh=<SSH2Promise>result.returnObject;
-      }else return Promise.resolve(new IotResult(StatusResult.Error,"Missing ssh config options or SSH2Promise",undefined));
+      }else return Promise.resolve(new IotResult(StatusResult.Error,"Missing ssh config options or SSH2Promise"));
       //put script
 	    var sftp = ssh.sftp();		
       try
@@ -91,15 +82,14 @@ export class SshClient {
         {
           //if(!returnSSH2Promise) await ssh.close();
           console.log(`Error. Exec.Output: ${err}`);
-          return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${nameScript}.sh script ended with an error`,err.toString()));
+          return Promise.resolve(new IotResult(StatusResult.Error,`111 The execution of the ${nameScript}.sh script ended with an error`,err.toString()));
         }
       }else
       {
         //exec stream
         let lastConsoleLine:string="";
         try
-        {  
-
+        {
           let socket = await ssh.spawn(command);
           socket.on('data', (data:any) => {
             this.FireChangedState({
@@ -117,15 +107,15 @@ export class SshClient {
           do{await IoTHelper.Sleep(300);}while(!flagExit);
           //Check "Successfully"
           lastConsoleLine=IoTHelper.StringTrim(lastConsoleLine);
-          if (lastConsoleLine!="Successfully"){            
-            return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${nameScript}.sh script ended with an error`,lastConsoleLine));
+          if (!lastConsoleLine.includes("Successfully")){            
+            return Promise.resolve(new IotResult(StatusResult.Error,`222 The execution of the ${nameScript}.sh script ended with an error`,lastConsoleLine));
           }
         }
         catch (err:any)
         {
           if(!returnSSH2Promise) await ssh.close();
           console.log(`Error. Exec.Output: ${err}`);
-          return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${nameScript}.sh script ended with an error`,err));
+          return Promise.resolve(new IotResult(StatusResult.Error,`333 The execution of the ${nameScript}.sh script ended with an error`,err));
         }
       }      
       //delete script      
@@ -159,7 +149,7 @@ export class SshClient {
       //connect
       if(!ssh&&sshConfig)
       {
-        result=await this.CheckingSshConnection(sshConfig,true);
+        result=await this.GetSshConnection(sshConfig,true);
         if(result.Status==StatusResult.Error) return Promise.resolve(result);
         ssh=<SSH2Promise>result.returnObject;
       }else return Promise.resolve(new IotResult(StatusResult.Error,"Missing ssh config options or SSH2Promise",undefined));
@@ -192,7 +182,7 @@ export class SshClient {
       //connect
       if(!ssh)
       {
-        result=await this.CheckingSshConnection(sshConfig,true);
+        result=await this.GetSshConnection(sshConfig,true);
         if(result.Status==StatusResult.Error) return Promise.resolve(result);
         ssh=<SSH2Promise>result.returnObject;
       }
@@ -215,7 +205,7 @@ export class SshClient {
           return Promise.resolve(new IotResult(StatusResult.Error,`Unable to write file ${pathFile}`,err));
         }            
       //end processing
-      result = new IotResult(StatusResult.Ok,"Successfully",undefined);
+      result = new IotResult(StatusResult.Ok,"Successfully");
       if(returnSSH2Promise){
         if(!result.returnObject) result.returnObject=ssh;
       } else await ssh.close();    
@@ -231,7 +221,7 @@ export class SshClient {
         //connect
         if(!ssh)
         {
-          result=await this.CheckingSshConnection(sshConfig,true);
+          result=await this.GetSshConnection(sshConfig,true);
           if(result.Status==StatusResult.Error) return Promise.resolve(result);
           ssh=<SSH2Promise>result.returnObject;
         }    
@@ -253,7 +243,8 @@ export class SshClient {
       //
       return Promise.resolve(result);   
   }
-
+  //-------------------------------------------
+  //Additionally-------------------------------
   private CheckSshConfig(sshConfig:SSHConfig):IotResult
   {
     let result:IotResult;
@@ -262,65 +253,69 @@ export class SshClient {
     const identity=sshConfig.identity;
     if(identity){
       //checking for the existence of a key
-      if (!fs.existsSync(identity)) result=new IotResult(StatusResult.Error, `Error. SSH key not found: ${identity}`,undefined);
+      if (!fs.existsSync(identity)) result=new IotResult(StatusResult.Error, `Error. SSH key not found: ${identity}`);
     }
     return result;
   }
-  
-  public async PingHost(ipAddress:string, numberOfEchos = 3, timeout = 1): Promise<IotResult>{
-    //checking host availability by IPAddress
-    const ping = require('pingman');
-    try
-    {
-      const response = await ping(ipAddress,{logToFile:false, numberOfEchos: numberOfEchos, timeout: timeout, IPV4: true});
-      const packetLoss=<number>response.packetLoss;
-      if(packetLoss>50)
-        return Promise.resolve(new IotResult(StatusResult.Error,`The host with IP-Address ${ipAddress} is unavailable.
-             Check your network connection`,undefined));        
-    } catch (err:any) {
-      return Promise.resolve(new IotResult(StatusResult.Error,`The host with IP-Address ${ipAddress} is unavailable.
-           Check your network connection`,err));   
-    }
-    // TODO: need ping port
 
-    //end processing
-    return Promise.resolve(new IotResult(StatusResult.Ok,undefined,undefined));
-  }
-
-  public async CheckingSshConnection(sshConfig:SSHConfig,returnSSH2Promise=false): Promise<IotResult>{
+  public async GetSshConnection(sshConfig:SSHConfig,returnSSH2Promise=false): Promise<IotResult>{
+    //networkHelper
     let result:IotResult;
     result=this.CheckSshConfig(sshConfig);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
-    let ssh = new SSH2Promise(sshConfig,undefined);
-    let msg="";
-    try
-      {
-        //keyboard-interactive
-        if(sshConfig.tryKeyboard)
-        {                
-          ssh = ssh.addListener(
+    let ssh = new SSH2Promise(sshConfig);
+    try {
+      //keyboard-interactive
+      if(sshConfig.tryKeyboard) {
+        ssh = ssh.addListener(
           'keyboard-interactive',
           (name, instructions, instructionsLang, prompts, finish) => {
             console.log("Connection :: keyboard-interactive");
             finish([sshConfig.password]);
           });
-        }
-        //      
-        await ssh.connect();
-        msg=`Connection established SSH:${sshConfig.host}`;
-        console.log(msg);
-        result=new IotResult(StatusResult.Ok,msg,undefined);
-        if(returnSSH2Promise) result.returnObject=ssh; else await ssh.close();
       }
-    catch (err: any)
-      {
-        msg=`Not Connected SSH:${sshConfig.host}!`;
-        console.log(msg);
-        result=new IotResult(StatusResult.Error,msg,err);
-      }
+      //main 
+      await ssh.connect();
+      result=new IotResult(StatusResult.Ok,`Connection established via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}`);
+      if(returnSSH2Promise) result.returnObject=ssh; else await ssh.close();
+    }
+    catch (err: any) {
+      const msg = `Unable to connect via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}\n`+
+      `Follow the steps to solve the problem:\n`+
+      `${this.GetInstOnSshErrorConnection()}`;
+      result=new IotResult(StatusResult.Error,msg,err);
+    }
     //end processing
     return Promise.resolve(result);
   }
+
+  private GetInstOnSshErrorConnection():string {
+    const msg=
+      `1. Check if the OpenSSH server is running.\n`+
+      `Command: "sudo systemctl status ssh".\n`+
+      `2. Check the port number, it should be 22.\n`+
+      `Command: "lsof -i :22".\n`+
+      `The response should contain a line containing: sshd *:ssh (LISTEN).\n`+
+      `3. Check if the login and password are correct.\n`+
+      `4. Check your ssh-server settings.\n`+
+      `The "/etc/ssh/sshd_config" file should contain the following options:\n`+
+      `--------------------------------------\n`+
+      `Port 22\n`+
+      `PermitRootLogin yes\n`+
+      `PasswordAuthentication yes\n`+
+      `ChallengeResponseAuthentication yes\n`+
+      `AuthenticationMethods publickey keyboard-interactive password\n`+
+      `PubkeyAcceptedAlgorithms=+ssh-rsa\n`+
+      `--------------------------------------\n`+
+      `After making the settings, restart ssh-server with the command:\n`+
+      `"sudo systemctl reload ssh"\n`+
+      `Then remove the device and add it again.\n`+
+      `If you are still unable to connect, then run the following command \n`+
+      `on the device to get information about the connection problem using the ssh protocol:\n`+
+      `"sudo systemctl status ssh"`;
+    return msg;
+  }
+  //-------------------------------------------
 }
 
 export interface IChangedStateEvent {

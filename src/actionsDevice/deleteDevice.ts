@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
-import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 
 export async function deleteDevice(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {
