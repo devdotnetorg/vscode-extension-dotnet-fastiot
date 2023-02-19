@@ -1,10 +1,9 @@
 ## Schedule
 
-- Custom Launch configurations (Mono project).
 - Compliance with UX Guidelines.
 - Adding a WebView to select a project template.
 - Custom installation packages.
-- Custom BASH scripts to run on the device.
+- Custom BASH scripts to run on device and PC.
 - GPIO: read chips, view line gpio, managment I/O.
 - Support for Python projects.
 - Ensuring work in Linux.

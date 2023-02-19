@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.3.0 (xx-02-2023)
+
+- Added support for using different templates for projects, including custom ones.
+- Added loading/updating templates for projects from external resources. So far, only system templates have been updated.
+- Added support for multiple Launches with overlapping tasks for project templates, i.e. if one of the Launches is deleted, the tasks used in the other Launches will not be deleted.
+- Added project templates.
+- The `sshd_config` configuration file of the OpenSSH server is automatically configured, now you need to set only two parameters "PermitRootLogin yes" and "PasswordAuthentication yes" to start.
+- Extension resources, such as device keys, templates, are now stored by default in the home folder, for example `C:\Users\Anton\fastiot`.
+- Added key algorithm settings for ssh authorization. You can specify the algorithm type (default ed25519) and key length (default 256).
+- Added a detailed description of the solution to the problem in case of impossibility to connect to the device. Availability is checked separately by: ip-address, port, ssh-protocol.
+- Added package Mono (experimental).
+- Fixed bugs: loading DTO binary file, saving Gpiochips and DTO configuration, importing device configuration.
+- Some visual changes.
+
 ## v0.2.2 (24-01-2023)
 
 - Bugs fixed.
