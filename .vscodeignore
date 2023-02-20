@@ -11,19 +11,30 @@ src/**
 **/*.ts
 
 #add
-
-.gitattributes
+#folders
 assets/source/**
-vscodetemplates/**
-docs/**
+bashscript/_old_*.sh
+bashscript/_test*.sh
+packages/**
 samples/**
-installation.md
+vscodetemplates/**
+windows/**
+
+#files
+.gitattributes
 CHANGELOG_ru.md
+Create-extension.md
+installation.md
+ISSUES_ru.md
 README.md
 README_ru.md
+SCHEDULE_ru.md
+
+#docs
+docs/*.pdn
+
 
 #templates
-
 templates/system/*.yaml
 templates/system/dotnet-console/**
 templates/system/dotnet-console-runtime-info/**

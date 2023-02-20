@@ -7,14 +7,14 @@ namespace dotnet_iot_fastiot_test
     {
         static void Main(string[] args)
         {            
-            //FastIot Test
-            Console.WriteLine("Test .NET console application!");
-            var framework=RuntimeInformation.FrameworkDescription;
-            var osArch=RuntimeInformation.OSArchitecture;            
-            var osDesc= RuntimeInformation.OSDescription;  
-            var osIdent=RuntimeInformation.RuntimeIdentifier;
+            //Runtime Info
+            Console.WriteLine(".NET console application!");
+            var framework = RuntimeInformation.FrameworkDescription;
+            var osArch = RuntimeInformation.OSArchitecture;            
+            var osDesc = RuntimeInformation.OSDescription;  
+            var osIdent = RuntimeInformation.RuntimeIdentifier;
             var userName = Environment.UserName;            
-            var enFastiot=Environment.GetEnvironmentVariable("FASTIOT");
+            var enFastiot = Environment.GetEnvironmentVariable("FASTIOT");
             //output
             Console.WriteLine($".NET version: {framework}");
             Console.WriteLine($"OS architecture: {osArch}");

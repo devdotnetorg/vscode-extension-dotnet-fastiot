@@ -1,10 +1,10 @@
-[![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
+[![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Github Issues](https://img.shields.io/github/issues/devdotnetorg/vscode-extension-dotnet-fastiot.svg)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
 
 # .NET FastIoT VS Code Extension
 
 Расширение [.NET FastIoT](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot ".NET FastIoT Extension") в Visual Studio Code Marketplace.
 
-[README](README.md "README") in English | [README](README_ru.md "README") на русском языке | DevDotNet.ORG (Russian) - [последние новости](https://devdotnet.org/tag/fastiot/ "последние новости") | Habr.com (Russian) - [Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux").
+[README](README.md "README") in English | [README](README_ru.md "README") на русском языке | DevDotNet.ORG (Russian) - [последние новости](https://devdotnet.org/tag/fastiot/ "devdotnet.org/tag/fastiot") | Habr.com (Russian) - [Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux").
 
 Расширение настраивает встраиваемое устройство на архитектуре ARMv7 или ARMv8, работающее под Linux, для запуска .NET приложений, и конфигурирует проекты `*.csproj` для удаленной отладки по ssh-туннелю. Работает только на Windows (64 бит).
 
@@ -27,25 +27,29 @@
 ## Системные требования
 
 - **Версия ОС.** Windows 7-10 (x64). Версия для Linux появится позже. Примечание: следующая версия расширения выше v0.3 не будет поддерживать Windows 7;
-- **Visual Studio Code.** версия не ниже [1.70.3](https://code.visualstudio.com/ "1.70.3"). Это последняя версия VSCode с поддержкой Windows 7, подробнее об этом на [странице поддержки](https://code.visualstudio.com/docs/supporting/faq#_can-i-run-vs-code-on-windows-7 "странице поддержки");
+- **Visual Studio Code.** версия не ниже [1.70.3](https://code.visualstudio.com/ "1.70.3"). Это последняя версия VSCode с поддержкой Windows 7, подробнее об этом на [странице поддержки](https://code.visualstudio.com/docs/supporting/faq#_can-i-run-vs-code-on-windows-7 "Can I run VS Code on Windows 7?");
 - **.NET.** Для компиляции проекта на C# требуется [.NET SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks ".NET SDK") в зависимости от используемой версии вашего проекта (для работы самого расширения не требуется);
 
 Дополнительные расширения необходимые для разработки .NET приложений:
 
-- [C# for Visual Studio Code (powered by OmniSharp)](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp "C# for Visual Studio Code (powered by OmniSharp)") — поддержка разработки на C#;
+- [C# for Visual Studio Code (powered by OmniSharp)](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp "C# for Visual Studio Code (powered by OmniSharp)") — поддержка разработки на C#.
+
+Рекомендуемые дополнительные расширения улучшающие процесс разработки и взаимодействия с удаленным устройством:
+
 - [NuGet Package Manager](https://marketplace.visualstudio.com/items?itemName=jmrog.vscode-nuget-package-manager "NuGet Package Manager") — добавление Nuget-пакетов (позже менеджер Nuget-пакетов будет встроен в расширение);
-- [DeviceTree](https://marketplace.visualstudio.com/items?itemName=plorefice.devicetree "DeviceTree") (опционально) — поддержка синтаксиса для файлов дерева устройств (Device Tree, DT). Используется для редактирования файлов `*.dts`. Например, потребуется если возникнет необходимость адаптации [дисплея SPI LCD ILI9341](https://devdotnet.org/post/rabota-s-gpio-v-linux-na-primere-banana-pi-bpi-m64-chast-4-device-tree-overlays-podkluchenie-displey-spi-lcd-ili9341/ "дисплея SPI LCD ILI9341") для вашего одноплатного компьютера.
+- [DeviceTree](https://marketplace.visualstudio.com/items?itemName=plorefice.devicetree "DeviceTree") — поддержка синтаксиса для файлов дерева устройств (Device Tree, DT). Используется для редактирования файлов `*.dts`. Например, потребуется если возникнет необходимость адаптации [дисплея SPI LCD ILI9341](https://devdotnet.org/post/rabota-s-gpio-v-linux-na-primere-banana-pi-bpi-m64-chast-4-device-tree-overlays-podkluchenie-displey-spi-lcd-ili9341/ "дисплея SPI LCD ILI9341") для вашего одноплатного компьютера;
+- [Output Colorizer](https://marketplace.visualstudio.com/items?itemName=IBM.output-colorizer "Output Colorizer") — добавляет цвет к тестовым сообщениям в окне OUTPUT, облегчает восприятие информации выдаваемой расширением.
 
 ## Системные требования для устройства
 
 - **Процессор.** ARMv7 или ARMv8;
-- **Версия ОС.** Linux дистрибутив построенный на основе Ubuntu версии не ниже 20.04 LTS (Focal Fossa), или на основе Debian версии не ниже 10.11 (Buster);
+- **Версия ОС.** Linux дистрибутив построенный на основе Ubuntu версии не ниже 20.04 LTS (Focal Fossa), или на основе Debian версии не ниже 10.11 (Buster). Рекомендуется использовать дистрибутив [Armbian](https://www.armbian.com/ "Armbian – Linux for ARM development boards").
 
 ## Быстрый старт
 
 ### Шаг 1 — Подготовка устройства
 
-Одноплатный компьютер должен работать под управлением дистрибутива Debian или Ubuntu, Linux. Для удаленного доступа необходимо установить [OpenSSH](https://ubuntu.com/server/docs/service-openssh "OpenSSH") сервер и задать определенные настройки. В качестве терминала для удаленного доступа можно использовать [MobaXterm](https://mobaxterm.mobatek.net/download.html "MobaXterm") (существенно удобнее по сравнению с PuTTY терминалом). Если пакет `sudo` не установлен, то установите данный пакет от имени пользователя `root`, с помощью команд:
+Одноплатный компьютер должен работать под управлением дистрибутива Debian или Ubuntu, Linux. Для удаленного доступа необходимо установить [OpenSSH](https://ubuntu.com/server/docs/service-openssh "Service - OpenSSH Ubuntu") сервер и задать определенные настройки. В качестве терминала для удаленного доступа можно использовать [MobaXterm](https://mobaxterm.mobatek.net/download.html "MobaXterm Xserver with SSH, telnet, RDP, VNC and X11") (существенно удобнее по сравнению с PuTTY терминалом). Если пакет `sudo` не установлен, то установите данный пакет от имени пользователя `root`, с помощью команд:
 
 ```bash
 apt-get update
@@ -87,7 +91,7 @@ sudo systemctl status ssh
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-add-device.png)
 
-Все настроки включая приватные ключи, шаблоны, по умолчанию располагаются в папке профиля пользователя по пути `%userprofile%\fastiot` (расположение можно изменить в настройках). При первом подключении к устройству создается пара ключей, приватный и публичный. Приватный ключ копируется в папку `%userprofile%\fastiot\settings\keys` и используется для конфигурирования устройства и запуска удаленной отладки, публичный ключ хранится на самом удаленном устройстве.
+Все настройки включая приватные ключи, шаблоны, по умолчанию располагаются в папке профиля пользователя по пути `%userprofile%\fastiot` (расположение можно изменить в настройках). При первом подключении к устройству создается пара ключей, приватный и публичный. Приватный ключ копируется в папку `%userprofile%\fastiot\settings\keys` и используется для конфигурирования устройства и запуска удаленной отладки, публичный ключ хранится на самом удаленном устройстве.
 
 Важный момент заключается в выборе учетной записи для создания на устройстве, которая будет использоваться для управления устройством и удаленной отладки. Первый вариант это учетная запись **debugvscode** (название можно изменить в настройках), второй вариант это **root**:
 
@@ -95,7 +99,7 @@ sudo systemctl status ssh
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-select-account.png)
 
-При выборе варианта **debugvscode** создаетcя файл настройки прав доступа [20-gpio-fastiot.rules](/linux/config/20-gpio-fastiot.rules "20-gpio-fastiot.rules") к устройствам используя подсистему [udev](https://ru.wikipedia.org/wiki/Udev "udev"). Создается группа с названием **iot**, и выдаются права на устройства, такие как: gpiochip, I2C, SPI, PWM, и т. д. Затем в эту группу добавляется пользователь **debugvscode**. В связи с тем, что тестирование выполнялось только на Armbian, возможно не все права доступа были добавлены. Поэтому, если возникнут проблемы с правами доступа к gpiochip, PWM и т.д., то выбирайте — **root**.
+При выборе варианта **debugvscode** создаетcя файл настройки прав доступа [20-gpio-fastiot.rules](/linux/config/20-gpio-fastiot.rules "20-gpio-fastiot.rules") к устройствам используя подсистему [udev](https://ru.wikipedia.org/wiki/Udev "udev"). Создается группа с названием **iot**, и выдаются права на устройства, такие как: gpiochip, I2C, SPI, PWM, и т. д. Затем в эту группу добавляется пользователь **debugvscode**. В связи с тем, что тестирование выполнялось только на [Armbian](https://www.armbian.com/ "Armbian – Linux for ARM development boards"), возможно не все права доступа были добавлены. Поэтому, если возникнут проблемы с правами доступа к gpiochip, PWM и т.д., то выбирайте — **root**.
 
 ### Шаг 3 — Установка пакетов
 
@@ -103,6 +107,10 @@ sudo systemctl status ssh
 
 - Среду исполнения - .NET Runtime;
 - Удаленный отладчик - .NET Debugger (vsdbg).
+
+*Минимальны набор пакетов для запуска .NET приложений*
+
+![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-package.png)
 
 ### Шаг 4 — Создание проекта
 
@@ -113,7 +121,6 @@ sudo systemctl status ssh
 Выбрать устройство для удаленной отладки:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-2.png)
- 
 
 Выбрать шаблон для проекта:
 
@@ -151,6 +158,14 @@ sudo systemctl status ssh
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-11.png)
 
+## Перестройка (Rebuild) Launch
+
+Конфигурации Launch (`/.vscode/launch.json`) и Tasks (`/.vscode/tasks.json`) содержат абсолютные пути к бинарным файлам которые загружаются на устройство, например `/cygdrive/d/Anton/Projects/Tests/DotnetConsoleAppRuntimeInfo/bin/Debug/net5.0/linux-arm/`. В связи с этим, если вы изменяете путь к папке `Applicationdatafolder` в настроках или переименоваете/перемещаете папку с проектом, то пути становятся несуществующими. В этом случае необходимо перестроить (Rebuild) Launch. Выбрать необходимый Launch и затем вызвать контекстное меню, нажать на пункт меню `Rebuild`.
+
+*Вызов команды Rebuild*
+
+![.NET FastIoT Launch Rebuild"](docs/vscode-dotnet-fastiot-rebuild.png "Launch Rebuild")
+
 ## Настройки расширения
 
 Для изменения настроек расширения необходимо открыть пункт меню `File > Preferences > Settings`. Затем перейти на закладку `User` и выбрать `Extensions`.
@@ -165,20 +180,23 @@ sudo systemctl status ssh
 - **Fastiot › Device: Applicationdatafolder** - общая папка для хранения ключей доступа к устройствам (например, Raspberry Pi), шаблонов, настроек расширения. Значение по умолчанию: `%userprofile%\fastiot`.
 - **Fastiot › Device > ssh > Key: Bits** - длина ключа в битах. Значение по умолчанию: `256`.
 - **Fastiot › Device > ssh > Key: Type** - Название используемого алгоритма для генерации ключа. Более подробно об алгоритмах для ключей в публикации [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). Значение по умолчанию: `ed25519`. Если выберете алгоритм `rsa`, то вам потребуется в файл `/etc/ssh/sshd_config` внести строку `PubkeyAcceptedAlgorithms=+ssh-rsa`.
-- **Fastiot › Launch: Templatetitle** - шаблон для формирования названия Launch. Значения переменных можно посмотреть по [ссылке](docs/Launch-title-template.md "ссылке"). Значение по умолчанию: `Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})`.
+- **Fastiot › Launch: Templatetitle** - шаблон для формирования названия Launch. Значения переменных можно посмотреть по [ссылке](docs/Launch-title-template_ru.md "Launch title template"). Значение по умолчанию: `Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})`.
 
 ## Устранение неполадок
 
-- Устранение неполадок при добавлении устройства
-- Проблемы с запуском/работой расширения
+Для устранения неполадок ознакомтесь с инструкцией [Troubleshooting](docs/Troubleshooting_ru.md "Troubleshooting").
+
+## Шаблоны проектов
+
+Как создавать шаблоны посетите страницу [Template](doc/Templates_ru.md "Template").
 
 ## Дополнительные материалы
 
-TODO
+Для ознакомления с дополнительной документацией к проекту посетите страницу [Additional materials](doc/Additional-materials_ru.md "Additional materials").
 
 ## Список изменений
 
-Смотрите [CHANGELOG.md](CHANGELOG_ru.md "CHANGELOG.md").
+Смотрите [CHANGELOG](CHANGELOG_ru.md "CHANGELOG").
 
 ## Лицензия
 
@@ -192,11 +210,11 @@ TODO
 
 ## Дальнейший план
 
-Смотрите [SCHEDULE.md](SCHEDULE_ru.md "SCHEDULE.md").
+Смотрите [SCHEDULE](SCHEDULE_ru.md "SCHEDULE").
 
 ## Известные проблемы
 
-Смотрите [ISSUES.md](ISSUES_ru.md "ISSUES.md") и [Issues](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "Issues").
+Смотрите [ISSUES](ISSUES_ru.md "ISSUES") и [Issues on GitHub](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "Issues on GitHub").
 
 ## Тестирование
 
