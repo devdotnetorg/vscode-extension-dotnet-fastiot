@@ -1,10 +1,10 @@
-[![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
+[![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
 
 # .NET FastIoT VS Code Extension
 
 Расширение [.NET FastIoT](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot ".NET FastIoT Extension") в Visual Studio Code Marketplace.
 
-[README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README.md "README") in English | [README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README_ru.md "README") на русском языке | DevDotNet.ORG (Russian) - [последние новости](https://devdotnet.org/tag/fastiot/ "последние новости") | Habr.com (Russian) - [Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux").
+[README](README.md "README") in English | [README](README_ru.md "README") на русском языке | DevDotNet.ORG (Russian) - [последние новости](https://devdotnet.org/tag/fastiot/ "последние новости") | Habr.com (Russian) - [Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux").
 
 Расширение настраивает встраиваемое устройство на архитектуре ARMv7 или ARMv8, работающее под Linux, для запуска .NET приложений, и конфигурирует проекты `*.csproj` для удаленной отладки по ssh-туннелю. Работает только на Windows (64 бит).
 
@@ -165,7 +165,7 @@ sudo systemctl status ssh
 - **Fastiot › Device: Applicationdatafolder** - общая папка для хранения ключей доступа к устройствам (например, Raspberry Pi), шаблонов, настроек расширения. Значение по умолчанию: `%userprofile%\fastiot`.
 - **Fastiot › Device > ssh > Key: Bits** - длина ключа в битах. Значение по умолчанию: `256`.
 - **Fastiot › Device > ssh > Key: Type** - Название используемого алгоритма для генерации ключа. Более подробно об алгоритмах для ключей в публикации [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). Значение по умолчанию: `ed25519`. Если выберете алгоритм `rsa`, то вам потребуется в файл `/etc/ssh/sshd_config` внести строку `PubkeyAcceptedAlgorithms=+ssh-rsa`.
-- **Fastiot › Launch: Templatetitle** - шаблон для формирования названия Launch. Значения переменных можно посмотреть по [ссылке](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md "ссылке"). Значение по умолчанию: `Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})`.
+- **Fastiot › Launch: Templatetitle** - шаблон для формирования названия Launch. Значения переменных можно посмотреть по [ссылке](docs/Launch-title-template.md "ссылке"). Значение по умолчанию: `Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})`.
 
 ## Устранение неполадок
 
@@ -178,13 +178,13 @@ TODO
 
 ## Список изменений
 
-Смотрите [CHANGELOG.md](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/CHANGELOG_ru.md "CHANGELOG.md").
+Смотрите [CHANGELOG.md](CHANGELOG_ru.md "CHANGELOG.md").
 
 ## Лицензия
 
 Это программное обеспечение находится под лицензией LGPL-3.0.
 
-Смотрите [LICENSE](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/LICENSE "LICENSE") для получения более подробной информации.
+Смотрите [LICENSE](LICENSE "LICENSE") для получения более подробной информации.
 
 ## Обратная связь
 
@@ -192,11 +192,11 @@ TODO
 
 ## Дальнейший план
 
-Смотрите [SCHEDULE.md](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/SCHEDULE_ru.md "SCHEDULE.md").
+Смотрите [SCHEDULE.md](SCHEDULE_ru.md "SCHEDULE.md").
 
 ## Известные проблемы
 
-Смотрите [ISSUES.md](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/ISSUES_ru.md "ISSUES.md") и [Issues](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "Issues").
+Смотрите [ISSUES.md](ISSUES_ru.md "ISSUES.md") и [Issues](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "Issues").
 
 ## Тестирование
 
