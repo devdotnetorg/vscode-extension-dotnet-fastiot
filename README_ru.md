@@ -114,47 +114,47 @@ sudo systemctl status ssh
 
 ### Шаг 4 — Создание проекта
 
-Теперь необходимо создать проект. Для создания проекта необходимо нажать на кнопку *Create project*:
+1. Теперь необходимо создать проект. Для создания проекта необходимо нажать на кнопку *Create project*:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-1.png)
 
-Выбрать устройство для удаленной отладки:
+2. Выбрать устройство для удаленной отладки:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-2.png)
 
-Выбрать шаблон для проекта:
+3. Выбрать шаблон для проекта:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-3.png)
 
-Задать название проекта:
+4. Задать название проекта:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-4.png)
 
-Указать папку сохранения проекта:
+5. Указать папку сохранения проекта:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-5.png)
 
-Выбрать версию .NET framework:
+6. Выбрать версию .NET framework:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-6.png)
 
-Доступные Launchs для запуска удаленной отладки:
+7. Доступные Launchs для запуска удаленной отладки:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-7.png)
 
-Теперь переходим в `Run and Debug`:
+8. Теперь переходим в `Run and Debug`:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-8.png)
 
-Выбираем конфигурацию Launch для запуска:
+9. Выбираем конфигурацию Launch для запуска:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-9.png)
 
-Запускаем проект на отладку меню `Run > Start Debugging`:
+10. Запускаем проект на отладку меню `Run > Start Debugging`:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-10.png)
 
-Пример вывода сообщений при удаленной отладки:
+11. Пример вывода сообщений при удаленной отладки:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-11.png)
 
@@ -188,11 +188,11 @@ sudo systemctl status ssh
 
 ## Шаблоны проектов
 
-Как создавать шаблоны посетите страницу [Template](doc/Templates_ru.md "Template").
+Как создавать шаблоны посетите страницу [Template](docs/Templates_ru.md "Template").
 
 ## Дополнительные материалы
 
-Для ознакомления с дополнительной документацией к проекту посетите страницу [Additional materials](doc/Additional-materials_ru.md "Additional materials").
+Для ознакомления с дополнительной документацией к проекту посетите страницу [Additional materials](docs/Additional-materials_ru.md "Additional materials").
 
 ## Список изменений
 

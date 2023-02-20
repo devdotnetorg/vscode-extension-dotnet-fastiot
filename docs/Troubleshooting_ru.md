@@ -1,24 +1,38 @@
-## Устранение неполадок
+# Устранение неполадок
 
-Содержание:
+**Содержание:**
 
 1. Устранение неполадок при добавлении устройства;
 2. Проблемы с запуском/работой расширения;
 
-Добавить траблшутинг
-удаление всех настроек, папка профайлер,
-C:\Users\User\AppData\Roaming\Code\User\settings.json
-C:\Users\Anton\fastiot\settings\keys\
-окно вывод сообщений
-отладка шаблона
-настройка ключей ssh, или целиком строка инициализации ключа
-траблешутинг подключение по ssh пример как сейчас и где смотреть логи
-удаление всех конфигов и очистка
-последний скрипт на устройве
-Exec command: chmod +x vscode-dotnetfastiot.sh && ./vscode-dotnetfastiot.sh
-файл отладки json в каталоге проекта
+## Устранение неполадок при добавлении устройства
 
-В открывшемся редакторе задайте следующие параметры. Если данные параметры отсутствуют, то просто вставьте строку (обычно отсутствует параметр `AuthenticationMethods`):
+### При первом подключении не создается профиль устройства
+
+Выполните ряд проверок для выяснения проблемы:
+
+1. Проверьте доступность устройства по сети командой `ping`, например `ping 192.168.43.208`;
+2. Проверьте правильности логин/пароль, сетевого порта (22), подключитесь к устройству по ssh-протоколу. Если подключиться не удается, зайдите на устроство локально и выполните команду `sudo systemctl status ssh`. В терминале скоре всего будет отображена причина отказа удаленного соединения. Доступность сетевого порта 22 проверяется командой: `lsof -i :22`;
+3. Убедись что фаервол (может быть не установлен) в системе отключен, по умолчанию - это ufw. Команда отключения: `sudo ufw disable`;
+4. Проверьте возможность повышение привелегий до root-уровня на устройстве командой `sudo`, например `sudo su`;
+5. Обновите OpenSSH сервер:
+
+```bash
+sudo apt-get update
+sudo dpkg --configure -a
+sudo apt-get install -y openssh-server
+sudo systemctl reload ssh
+```
+
+6. Обновите систему устройства:
+
+```bash
+sudo apt-get update
+sudo apt-get upgrade
+sudo reboot now
+```
+
+7. Откройте конфигурационный файл `/etc/ssh/sshd_config` OpenSSH сервера и проверьте настроки:
 
 ```bash
 PermitRootLogin yes
@@ -27,41 +41,38 @@ ChallengeResponseAuthentication yes
 AuthenticationMethods publickey keyboard-interactive password
 PubkeyAcceptedAlgorithms=+ssh-rsa
 ```
-SSH-Server
-apt-get remove openssh-server
-cat /etc/ssh/sshd_config
-rm /etc/ssh/sshd_config
-cat /etc/ssh/sshd_config
-sudo apt-get update
-sudo apt-get upgrade
-sudo dpkg --configure -a
-mcedit /etc/ssh/sshd_config
-sudo apt-get install -y openssh-server mc
----
-!!!
-!! ssh server key type ssh-rsa not in PubkeyAcceptedAlgorithms preauth
-now rsa-sha2-256 заменить на Ed25519
-Решение:
-sudo mcedit /etc/ssh/sshd_config
-Добавить строку
-PubkeyAcceptedAlgorithms=+ssh-rsa
-сохранить изменения и выполнить команду перезапуска ssh сервера
-sudo systemctl reload ssh
-sudo systemctl status ssh
-В расширение необходимо удалить устройство и заново его добавить
 
-Проверьте настройки ssh-server. В файле  /etc/ssh/sshd_config должны быть следующие параметры:
-Check your ssh-server settings. The /etc/ssh/sshd_config file should contain the following options:
+Если настройки были изменены то перезапустите OpenSSH сервер командой: `sudo systemctl reload ssh`.
+
+### Профиль устройства создается, но выполнение задач завершается с ошибкой
+
+1. Проверьте правильность настроек конфигурационного файла `/etc/ssh/sshd_config` OpenSSH сервера.
+
+```bash
 PermitRootLogin yes
 PasswordAuthentication yes
 ChallengeResponseAuthentication yes
 AuthenticationMethods publickey keyboard-interactive password
 PubkeyAcceptedAlgorithms=+ssh-rsa
-После внесения настроек перезапустите ssh-server командой:
-After making changes, restart ssh-server:
-sudo systemctl reload ssh
-Затем удалите устройство и снова его добавьте.
-Then remove the device and add it again.
-Если по прежнему не удалось подключиться, то выполните на устройстве команду для получения сведений о проблеме подключения по ssh-протоколу:
-If you are still unable to connect, then run the following command on the device to get information about the connection problem using the ssh protocol:
-sudo systemctl status ssh
+```
+
+2. Возможно проблемы с алгоритмом ключа, можете изменить используемый алгоритм для генерации ключа и его длину в настроках расширения.
+
+### Профиль устройства создается, но выполнение некоторых задач завершается с ошибкой
+
+Если выполняемая задача завершается с ошибкой, то скрипт вызвавший ошибку остается на самом устройстве. Вы можете попробовать выполнить скрипт на устройстве вручную. Путь к скрипту на устройстве для пользователя `debugvscode`: `/home/debugvscode/vscode-dotnetfastiot.sh`, для пользователя `root`: `/root/vscode-dotnetfastiot.sh`. Входные параметры для скрипта описаны в комментариях самого скрипта.
+
+## Проблемы с запуском/работой расширения
+
+Если по каким то причинам не работает расширение или работает с ошибками, то одним из путей решения проблемы является полное удаление текущих настроек расширения.
+
+Настройки расширения хранятся в файле формата json по пути `%userprofile%\AppData\Roaming\Code\User\settings.json`, например `C:\Users\Anton\AppData\Roaming\Code\User\settings.json`.
+
+В файле `settings.json` все параметры относящиеся к расширению начинаются с "fastiot.". Для решения проблемы закройте VSCode, удалите в файле `settings.json` все параметры начинающиеся с "fastiot.", запустите VSCode.
+
+Если проблемы не исчезли, то следует удалить/переименовать папку расширения в которой хранятся ключи, шаблоны, и т.д. Папки для удаления/переименовывания:
+
+- `C:\RemoteCode\`;
+- `%userprofile%\fastiot`, например `C:\Users\Anton\fastiot`.
+
+Если после перезапуска расширения проблемы остались, то возможно проблемы связаны с предоставлением прав доступа к выше указаным папкам.
