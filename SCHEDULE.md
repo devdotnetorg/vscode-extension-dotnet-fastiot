@@ -1,4 +1,4 @@
-## Schedule
+# Schedule
 
 - Compliance with UX Guidelines.
 - Adding a WebView to select a project template.

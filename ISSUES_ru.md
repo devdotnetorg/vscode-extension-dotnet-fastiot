@@ -1,4 +1,4 @@
-## Известные проблемы
+# Известные проблемы
 
 1. Пользовательский интерфейс расширения не соответствует UX Guidelines - https://code.visualstudio.com/api/ux-guidelines/overview
 

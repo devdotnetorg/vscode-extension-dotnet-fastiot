@@ -1,4 +1,4 @@
-## Create extension
+# Create extension
 
 1. npm install -g yo
 

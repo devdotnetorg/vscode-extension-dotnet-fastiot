@@ -49,34 +49,37 @@
 
 ### Шаг 1 — Подготовка устройства
 
-Одноплатный компьютер должен работать под управлением дистрибутива Debian или Ubuntu, Linux. Для удаленного доступа необходимо установить [OpenSSH](https://ubuntu.com/server/docs/service-openssh "Service - OpenSSH Ubuntu") сервер и задать определенные настройки. В качестве терминала для удаленного доступа можно использовать [MobaXterm](https://mobaxterm.mobatek.net/download.html "MobaXterm Xserver with SSH, telnet, RDP, VNC and X11") (существенно удобнее по сравнению с PuTTY терминалом). Если пакет `sudo` не установлен, то установите данный пакет от имени пользователя `root`, с помощью команд:
+Одноплатный компьютер должен работать под управлением дистрибутива Debian или Ubuntu, Linux. Для удаленного доступа необходимо установить [OpenSSH](https://ubuntu.com/server/docs/service-openssh "Service - OpenSSH Ubuntu") сервер и задать определенные настройки. В качестве терминала для удаленного доступа можно использовать [MobaXterm](https://mobaxterm.mobatek.net/download.html "MobaXterm Xserver with SSH, telnet, RDP, VNC and X11"). Все последующие действия выполняются на одноплатном компьютере.
+
+1. Если пакет `sudo` не установлен, то установите данный пакет от имени пользователя `root`, с помощью команд:
 
 ```bash
 apt-get update
 apt-get install -y sudo
 ```
 
-Для установки OpenSSH сервера и настройки доступа выполните следующие команды на одноплатном компьютере:
+2. Для установки OpenSSH сервера и настройки доступа выполните следующие команды:
 
 ```bash
 sudo apt-get update
 sudo apt-get install -y openssh-server mc
 sudo systemctl reload ssh
+sudo systemctl status ssh
 sudo mcedit /etc/ssh/sshd_config
 ```
 
-В открывшемся редакторе задайте следующие параметры:
+3. В открывшемся редакторе задайте следующие параметры:
 
 ```bash
 PermitRootLogin yes
 PasswordAuthentication yes
 ```
 
-Остальные необходимые параметры будут добавлены автоматически при подключении к устройству используя расширение.
+Остальные необходимые параметры будут добавлены автоматически при первом подключении к устройству используя расширение.
 
-Затем сохраните изменения <kbd>F2</kbd> и выйдите  из редактора <kbd>F10</kbd>.
+4. Затем сохраните изменения <kbd>F2</kbd> и выйдите  из редактора <kbd>F10</kbd>.
 
-Перезапустите OpenSSH сервер для применения новых настроек:
+5. Перезапустите OpenSSH сервер для применения новых настроек:
 
 ```bash
 sudo systemctl reload ssh
@@ -99,7 +102,9 @@ sudo systemctl status ssh
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-select-account.png)
 
-При выборе варианта **debugvscode** создаетcя файл настройки прав доступа [20-gpio-fastiot.rules](/linux/config/20-gpio-fastiot.rules "20-gpio-fastiot.rules") к устройствам используя подсистему [udev](https://ru.wikipedia.org/wiki/Udev "udev"). Создается группа с названием **iot**, и выдаются права на устройства, такие как: gpiochip, I2C, SPI, PWM, и т. д. Затем в эту группу добавляется пользователь **debugvscode**. В связи с тем, что тестирование выполнялось только на [Armbian](https://www.armbian.com/ "Armbian – Linux for ARM development boards"), возможно не все права доступа были добавлены. Поэтому, если возникнут проблемы с правами доступа к gpiochip, PWM и т.д., то выбирайте — **root**.
+При выборе варианта **debugvscode** создаетcя файл настройки прав доступа [20-gpio-fastiot.rules](/linux/config/20-gpio-fastiot.rules "20-gpio-fastiot.rules") к устройствам используя подсистему [udev](https://ru.wikipedia.org/wiki/Udev "udev"). Создается группа с названием **iot**, и в нее добавляется пользователь **debugvscode**. Затем группе **iot** выдаются права доступа к gpiochip, led и pwm. Далее для доступа к другим аппаратным интерфесам пользователь **debugvscode** добавляется в соответствующие группы с доступом такие как: video, i2c, spi, spidev, kmem, tty, dialout, input, audio, для доступа к I2C, SPI, и т.д. 
+
+В связи с тем, что тестирование выполнялось только на [Armbian](https://www.armbian.com/ "Armbian – Linux for ARM development boards"), возможно не все права доступа были добавлены. Поэтому, если возникнут проблемы с правами доступа к gpiochip, PWM и т.д., то выбирайте — **root**.
 
 ### Шаг 3 — Установка пакетов
 
@@ -188,7 +193,7 @@ sudo systemctl status ssh
 
 ## Шаблоны проектов
 
-Как создавать шаблоны посетите страницу [Template](docs/Templates_ru.md "Template").
+Как создавать шаблоны посетите страницу [Template](docs/Template_ru.md "Template").
 
 ## Дополнительные материалы
 
