@@ -1,6 +1,6 @@
 # Известные проблемы
 
-1. Пользовательский интерфейс расширения не соответствует UX Guidelines - https://code.visualstudio.com/api/ux-guidelines/overview
+1. Пользовательский интерфейс расширения не соответствует [UX Guidelines](https://code.visualstudio.com/api/ux-guidelines/overview).
 
 2. Низкая скорость выполнения bash скриптов.
 
