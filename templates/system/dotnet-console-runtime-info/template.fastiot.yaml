@@ -5,7 +5,7 @@ id: dotnet-console-runtime-info # unique
 platform: # win32, linux. Only Windows is currently supported
   - win32
 version: "0.1"
-releaseDate: "2023-02-15" # YYYY-MM-DD
+releaseDate: "2023-02-22" # YYYY-MM-DD
 forVersionExt: 0.3.0
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
