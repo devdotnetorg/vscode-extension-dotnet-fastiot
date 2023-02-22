@@ -34,7 +34,7 @@
 
 - [C# for Visual Studio Code (powered by OmniSharp)](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp "C# for Visual Studio Code (powered by OmniSharp)") — поддержка разработки на C#.
 
-Рекомендуемые дополнительные расширения улучшающие процесс разработки и взаимодействия с удаленным устройством:
+Рекомендуемые дополнительные расширения, улучшающие процесс разработки и взаимодействия с удаленным устройством:
 
 - [NuGet Package Manager](https://marketplace.visualstudio.com/items?itemName=jmrog.vscode-nuget-package-manager "NuGet Package Manager") — добавление Nuget-пакетов (позже менеджер Nuget-пакетов будет встроен в расширение);
 - [DeviceTree](https://marketplace.visualstudio.com/items?itemName=plorefice.devicetree "DeviceTree") — поддержка синтаксиса для файлов дерева устройств (Device Tree, DT). Используется для редактирования файлов `*.dts`. Например, потребуется если возникнет необходимость адаптации [дисплея SPI LCD ILI9341](https://devdotnet.org/post/rabota-s-gpio-v-linux-na-primere-banana-pi-bpi-m64-chast-4-device-tree-overlays-podkluchenie-displey-spi-lcd-ili9341/ "дисплея SPI LCD ILI9341") для вашего одноплатного компьютера;
@@ -75,7 +75,7 @@ PermitRootLogin yes
 PasswordAuthentication yes
 ```
 
-Остальные необходимые параметры будут добавлены автоматически при первом подключении к устройству используя расширение.
+Остальные необходимые параметры добавятся автоматически при первом подключении к устройству, используя расширение.
 
 4. Затем сохраните изменения <kbd>F2</kbd> и выйдите  из редактора <kbd>F10</kbd>.
 
@@ -94,7 +94,7 @@ sudo systemctl status ssh
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-add-device.png)
 
-Все настройки включая приватные ключи, шаблоны, по умолчанию располагаются в папке профиля пользователя по пути `%userprofile%\fastiot` (расположение можно изменить в настройках). При первом подключении к устройству создается пара ключей, приватный и публичный. Приватный ключ копируется в папку `%userprofile%\fastiot\settings\keys` и используется для конфигурирования устройства и запуска удаленной отладки, публичный ключ хранится на самом удаленном устройстве.
+Все настройки, включая приватные ключи, шаблоны, по умолчанию располагаются в папке профиля пользователя по пути `%userprofile%\fastiot` (расположение можно изменить в настройках). При первом подключении к устройству создается пара ключей: приватный и публичный. Приватный ключ копируется в папку `%userprofile%\fastiot\settings\keys` и используется для конфигурирования устройства и запуска удаленной отладки, публичный ключ хранится на самом удаленном устройстве.
 
 Важный момент заключается в выборе учетной записи для создания на устройстве, которая будет использоваться для управления устройством и удаленной отладки. Первый вариант это учетная запись **debugvscode** (название можно изменить в настройках), второй вариант это **root**:
 
@@ -113,7 +113,7 @@ sudo systemctl status ssh
 - Среду исполнения - .NET Runtime;
 - Удаленный отладчик - .NET Debugger (vsdbg).
 
-*Минимальны набор пакетов для запуска .NET приложений*
+*Минимальный набор пакетов для запуска .NET приложений*
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-package.png)
 
@@ -143,7 +143,7 @@ sudo systemctl status ssh
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-6.png)
 
-7. Доступные Launchs для запуска удаленной отладки:
+7. Доступные Launch для запуска удаленной отладки:
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-7.png)
 
@@ -163,11 +163,11 @@ sudo systemctl status ssh
 
 ![VSCode dotnet FastIoT](docs/vscode-dotnet-fastiot-create-project-11.png)
 
-Примеры проектов с добавленной конифгурацией Launch (`/.vscode/launch.json`) и Tasks (`/.vscode/tasks.json`) располагаются в папке [samples](/samples/).
+Примеры проектов с добавленной конфигурацией Launch (`/.vscode/launch.json`) и Tasks (`/.vscode/tasks.json`) располагаются в папке [samples](/samples/).
 
 ## Перестройка (Rebuild) Launch
 
-Конфигурации Launch (`/.vscode/launch.json`) и Tasks (`/.vscode/tasks.json`) содержат абсолютные пути к бинарным файлам которые загружаются на устройство, например `/cygdrive/d/Anton/Projects/Tests/DotnetConsoleAppRuntimeInfo/bin/Debug/net5.0/linux-arm/`. В связи с этим, если вы изменяете путь к папке `Applicationdatafolder` в настроках или переименоваете/перемещаете папку с проектом, то пути становятся несуществующими. В этом случае необходимо перестроить (Rebuild) Launch. Выбрать необходимый Launch и затем вызвать контекстное меню, нажать на пункт меню `Rebuild`.
+Конфигурации Launch (`/.vscode/launch.json`) и Tasks (`/.vscode/tasks.json`) содержат абсолютные пути к бинарным файлам, которые загружаются на устройство, например `/cygdrive/d/Anton/Projects/Tests/DotnetConsoleAppRuntimeInfo/bin/Debug/net5.0/linux-arm/`. В связи с этим, если вы изменяете путь к папке `Applicationdatafolder` в настройках или переименовываете/перемещаете папку с проектом, то пути становятся несуществующими. В этом случае необходимо перестроить (Rebuild) Launch. Выбрать необходимый Launch и затем вызвать контекстное меню, нажать на пункт меню `Rebuild`.
 
 *Вызов команды Rebuild*
 
@@ -191,7 +191,7 @@ sudo systemctl status ssh
 
 ## Устранение неполадок
 
-Для устранения неполадок ознакомтесь с инструкцией [Troubleshooting](docs/Troubleshooting_ru.md "Troubleshooting").
+Для устранения неполадок ознакомьтесь с инструкцией [Troubleshooting](docs/Troubleshooting_ru.md "Troubleshooting").
 
 ## Шаблоны проектов
 

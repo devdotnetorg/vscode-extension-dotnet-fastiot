@@ -20,7 +20,7 @@
 
 ![.NET FastIoT Create launch](vscode-dotnet-fastiot-create-launch-2.png)
 
-3. Выбрать шаблон проекта из которго будут взяты Launch и Tasks:
+3. Выбрать шаблон проекта из которого будут взяты Launch и Tasks:
 
 ![.NET FastIoT Create launch](vscode-dotnet-fastiot-create-launch-3.png)
 
@@ -32,13 +32,13 @@
 
 ![.NET FastIoT Create launch](vscode-dotnet-fastiot-create-launch-5.png)
 
-6. Далее переходим в Activity Bar `Run and Debug`, выбираем созданный Launch и запускаем приложение:
+6. Далее переходим в Activity Bar `Run and Debug`, выбираем добавленный Launch и запускаем приложение:
 
 ![.NET FastIoT Create launch](vscode-dotnet-fastiot-create-launch-6.png)
 
 ## Видео-инструкции для настройки расширения и удаленного устройства
 
-Для упрощения настроки расширения и удаленного устройства был создан ряд видео-роликов (YouTube):
+Для упрощения настройки расширения и удаленного устройства были созданы видео-ролики (YouTube):
 
 1. [Step 1. Configuring SSH access](https://www.youtube.com/watch?v=-xgAP1qsVsw "Step 1. Configuring SSH access");
 2. [Step 2. Adding a device](https://www.youtube.com/watch?v=pusO7PV4NL4 "Step 2. Adding a device");
@@ -60,7 +60,7 @@ GPIO (general-purpose input/output) — интерфейс ввода/вывод
 - Через прямое обращение к регистрам чипа;
 - Используя уже готовые библиотеки (libgpiod).
 
-Расширение предусматривает работу с GPIO используя библиотеку Libgpiod. Что такое GPIO и как управлять контактами используя библиотеку Libgpiod в публикациях:
+Расширение предусматривает работу с GPIO, используя библиотеку Libgpiod. Что такое GPIO и как управлять контактами, используя библиотеку Libgpiod, в публикациях:
 
 - [Работа с GPIO на примере Banana Pi BPI-M64. Часть 1. Интерфейс sysfs LED и DS18B20](https://devdotnet.org/post/rabota-s-gpio-na-primere-banana-pi-bpi-m64-chast-1-interfejs-sysfs-led-i-ds18b20/);
 - [Работа с GPIO в Linux. Часть 6. Библиотека Libgpiod](https://devdotnet.org/post/rabota-s-gpio-v-linux-chast-6-biblioteka-libgpiod/);
