@@ -498,15 +498,15 @@
 		"viewsWelcome": [
 			{
 				"view": "viewDevices",
-				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).  \n[Add Device](command:viewDevices.AddDevice)"
+				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master#step-2---adding-a-device/). \n[Add Device](command:viewDevices.AddDevice)"
 			},
 			{
 				"view": "viewLaunchs",
-				"contents": "No launchs [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).  \n[Add Launch](command:viewLaunchs.Add)"
+				"contents": "No launchs [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Additional-materials.md#setting-up-an-existing-project-for-remote-debugging).  \n[Add Launch](command:viewLaunchs.Add)"
 			},
 			{
 				"view": "viewTemplates",
-				"contents": "[Create project](command:viewTemplates.CreateProject)  \n [About templates](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/)."
+				"contents": "[Create project](command:viewTemplates.CreateProject)  \n [About Project Templates](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Project-templates.md)."
 			}
 		]
 	},
