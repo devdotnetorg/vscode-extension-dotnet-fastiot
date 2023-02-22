@@ -211,6 +211,8 @@ sudo systemctl status ssh
 
 Смотрите [LICENSE](LICENSE "LICENSE") для получения более подробной информации.
 
+[Шаблоны](/templates/ "Templates") к проектам распространяются под лицензией [MIT](LICENSE_MIT.md "MIT LICENSE").
+
 ## Обратная связь
 
 Свои замечания отправляйте по email `fastiot@devdotnet.org`. И отмечайте в [Issues](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "Issues").
