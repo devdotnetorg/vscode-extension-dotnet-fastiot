@@ -1,0 +1,90 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "publish",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "watch",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "watch",
+        "run",
+        "${workspaceFolder}",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "fastiot-dac42773-build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/dotnet-iot-blink.csproj",
+        "--configuration",
+        "Debug",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary",
+        "-r",
+        "linux-arm"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "fastiot-dac42773-create-folder",
+      "dependsOn": "fastiot-dac42773-build",
+      "command": "C:\\Users\\Anton\\fastiot\\templates\\system\\dotnet-iot-blink-led\\storage\\apps\\cwrsync\\ssh.exe",
+      "type": "process",
+      "args": [
+        "-i",
+        "C:\\Users\\Anton\\fastiot\\settings\\keys\\id-rsa-cubieboard-5e835aae-debugvscode",
+        "-o",
+        "StrictHostKeyChecking no",
+        "-p",
+        "22",
+        "debugvscode@192.168.43.14",
+        "mkdir -p ~/fastiot/debugapps/dotnet-iot-blink"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "fastiot-dac42773-copy-app-to-device",
+      "dependsOn": "fastiot-dac42773-create-folder",
+      "command": "C:\\Users\\Anton\\fastiot\\templates\\system\\dotnet-iot-blink-led\\storage\\apps\\cwrsync\\rsync.exe",
+      "type": "process",
+      "args": [
+        "--progress",
+        "-avz",
+        "-e",
+        "C:\\Users\\Anton\\fastiot\\templates\\system\\dotnet-iot-blink-led\\storage\\apps\\cwrsync\\ssh.exe -i C:\\Users\\Anton\\fastiot\\settings\\keys\\id-rsa-cubieboard-5e835aae-debugvscode -o 'StrictHostKeyChecking no' -p 22",
+        "/cygdrive/d/Anton/GitHub/_/return/samples/dotnet-iot-blink/bin/Debug/net5.0/linux-arm/",
+        "debugvscode@192.168.43.14:~/fastiot/debugapps/dotnet-iot-blink"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

@@ -124,11 +124,66 @@
 
 Алгоритм располагается в классе [IotTemplate](/src/Templates/IotTemplate.ts) функция `CreateProject`. Выполняется следующая последовательность:
 
-TODO
+1. Целиком копируется папка `/template` из шаблона в каталог проекта.
+2. Создается словарь для замены переменных, таких как `%{variable}`.
+3. Выполняется переименнование файлов из секции `FileNameReplacement`, файл `template.fastiot.yaml`.
+4. Переопределение название проекта исходя из предыдущего этапа, если таковое имеется.
+5. Выполняется подстановка переменных для файлов из секции `FilesToProcess`.
+6. Вставляются Launch из файла `/template/.vscode/insert_launch_key.json`.
+7. Переименовываются Launch в случае совпадения названий в проекте.
+8. Вставляются Tasks из файла `/template/.vscode/insert_tasks_key.json`.
+9. Открывается в VSCode папка с проектов.
 
 ## Переменные слияния данных с файлами шаблона
 
-TODO
+Переменные будут рассмотрены для шаблона [dotnet-console-runtime-info](/templates/system/dotnet-console-runtime-info). Входные данные:
+
+- устройство - [cubieboard](https://github.com/devdotnetorg/Cubieboard);
+- шаблон - `dotnet-console-runtime-info`;
+- путь к шаблону - `C:\Users\Anton\fastiot\templates\system\dotnet-console-runtime-info`;
+- название проекта - `DotnetConsoleAppRuntimeInfo`;
+- папка сохранения проекта `D:\Anton\Projects\Tests\DotnetConsoleAppRuntimeInfo`;
+- .NET framework - `.NET 5`.
+
+Переменные:
+
+1. "%{project.dotnet.targetframework}" => "net5.0".
+2. "%{project.name}" => "DotnetConsoleAppRuntimeInfo".
+3. "%{project.mainfile.path.relative.aslinux}" => "/DotnetConsoleAppRuntimeInfo.csproj".
+4. "%{project.mainfile.path.relative.aswindows}" => "\\DotnetConsoleAppRuntimeInfo.csproj".
+5. "%{project.mainfile.path.full.aslinux}" => "D:/Anton/Projects/Tests/DotnetConsoleAppRuntimeInfo/DotnetConsoleAppRuntimeInfo.csproj".
+6. "%{project.mainfile.path.full.aswindows}" => "D:\\Anton\\Projects\\Tests\\DotnetConsoleAppRuntimeInfo\\DotnetConsoleAppRuntimeInfo.csproj".
+7. "%{project.path.relative.aslinux}" => "".
+8. "%{project.path.relative.aswindows}" => "".
+9. "%{project.path.full.ascygdrive}" => "/cygdrive/d/Anton/Projects/Tests/DotnetConsoleAppRuntimeInfo".
+10. "%{project.type}" => "dotnet".
+11. "%{device.id}" => "cubieboard-5e835aae".
+12. "%{device.ssh.key.path.full.aswindows}" => "C:\\Users\\Anton\\fastiot\\settings\\keys\\id-rsa-cubieboard-5e835aae-debugvscode".
+13. "%{device.ssh.port}" => "22".
+14. "%{device.user.debug}" => "debugvscode".
+15. "%{device.host}" => "192.168.43.14".
+16. "%{device.label}" => "cubieboard".
+17. "%{device.board.name}" => "Cubieboard".
+18. "%{launch.id}" => "2cecf322".
+19. "%{template.id}" => "dotnet-console-runtime-info".
+20. "%{template.storage.path.aswindows}" => "C:\\Users\\Anton\\fastiot\\templates\\system\\dotnet-console-runtime-info\\storage".
+21. "%{project.dotnet.namespace}" => "DotnetConsoleAppRuntimeInfo".
+22. "%{device.dotnet.rid}" => "linux-arm".
+23. "%{launch.label}" => "Launch on cubieboard (DotnetConsoleAppRuntimeInfo, Cubieboard, debugvscode)".
+
+**Значения при наличие каталогов в пути**
+
+Значения переменных при вложенном каталоге, например когда проект располагается не в корне каталога `/template`, а во вложенной папке `/template/nested`. Шаблон [dotnet-console-test-nested](/templates/system/dotnet-console-test-nested). Список переменных только тех, которые были изменены из-за вложенной папки.
+
+Переменные:
+
+1. "%{project.mainfile.path.relative.aslinux}" => "/nested/DotnetConsoleAppTestNested.csproj".
+2. "%{project.mainfile.path.relative.aswindows}" => "\\nested\\DotnetConsoleAppTestNested.csproj".
+3. "%{project.mainfile.path.full.aslinux}" => "D:/Anton/Projects/Tests/DotnetConsoleAppTestNested/nested/DotnetConsoleAppTestNested.csproj".
+4. "%{project.mainfile.path.full.aswindows}" => "D:\\Anton\\Projects\\Tests\\DotnetConsoleAppTestNested\\nested\\DotnetConsoleAppTestNested.csproj"}.
+5. "%{project.path.relative.aslinux}" => "/nested".
+6. "%{project.path.relative.aswindows}" => "\\nested".
+7. "%{project.path.full.ascygdrive}" => "/cygdrive/d/Anton/Projects/Tests/DotnetConsoleAppTestNested/nested".
 
 ## Отладка шаблона
 
