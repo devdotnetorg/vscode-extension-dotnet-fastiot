@@ -1,7 +1,9 @@
-## Known Issues
+# Known Issues
 
-1. Extension UI does not follow UX Guidelines - https://code.visualstudio.com/api/ux-guidelines/overview.
+1. The user interface of the extension does not follow the [UX Guidelines](https://code.visualstudio.com/api/ux-guidelines/overview).
 
-2. Slow execution speed of bash scripts.
+2. It takes a long time to create a device profile.
 
-3. Long waiting time when adding a device. Slow execution of commands.
+3. Commands are executed slowly.
+
+4. Low speed of execution of bash scripts.

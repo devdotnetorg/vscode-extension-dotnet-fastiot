@@ -4,6 +4,6 @@
 
 Пример слияния: `Launch on cubieboard (DotnetConsoleBlinkLEDApplication, Cubieboard, debugvscode)`.
 
-Переменные для создания названия конфигурации Launch и их значения можете посмотреть на странице [Template](Template_ru.md "Template").
+Переменные для создания названия конфигурации Launch и их значения можете посмотреть на странице [Project Templates](Project-templates_ru.md "Project Templates").
 
 Если вам нужны дополнительные переменные, создайте [ISSUE](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "ISSUE").

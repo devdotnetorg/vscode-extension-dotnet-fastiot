@@ -187,7 +187,7 @@ sudo systemctl status ssh
 - **Fastiot › Device: Applicationdatafolder** - общая папка для хранения ключей доступа к устройствам (например, Raspberry Pi), шаблонов, настроек расширения. Значение по умолчанию: `%userprofile%\fastiot`. Пример: `C:\Users\Anton\fastiot`.
 - **Fastiot › Device > ssh > Key: Bits** - длина ключа в битах. Значение по умолчанию: `256`.
 - **Fastiot › Device > ssh > Key: Type** - Название используемого алгоритма для генерации ключа. Более подробно об алгоритмах для ключей в публикации [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). Значение по умолчанию: `ed25519`. Если выберете алгоритм `rsa`, то вам потребуется в файл `/etc/ssh/sshd_config` внести строку `PubkeyAcceptedAlgorithms=+ssh-rsa`.
-- **Fastiot › Launch: Templatetitle** - шаблон для формирования названия Launch. Значения переменных можно посмотреть по [ссылке](docs/Launch-title-template_ru.md "Launch title template"). Значение по умолчанию: `Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})`.
+- **Fastiot › Launch: Templatetitle** - шаблон для формирования названия Launch. Значения переменных можно посмотреть по [ссылке](docs/Launch-title-template_ru.md "Template for forming the name Launch"). Значение по умолчанию: `Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})`.
 
 ## Устранение неполадок
 
@@ -195,7 +195,7 @@ sudo systemctl status ssh
 
 ## Шаблоны проектов
 
-Как создавать шаблоны посетите страницу [Template](docs/Template_ru.md "Template").
+Как создавать шаблоны посетите страницу [Project Templates](docs/Project-templates_ru.md "Project Templates").
 
 ## Дополнительные материалы
 
