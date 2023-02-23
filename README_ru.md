@@ -47,11 +47,11 @@
 
 ## Быстрый старт
 
-Смотрите [Getting started](/doc/Getting-started_ru.md "Getting started").
+Смотрите [Getting started](/docs/Getting-started_ru.md "Getting started").
 
 ## Настройки расширения
 
-Смотрите [Extension settings](/doc/Extension-settings_ru.md "Extension settings").
+Смотрите [Extension settings](/docs/Extension-settings_ru.md "Extension settings").
 
 ## Устранение неполадок
 

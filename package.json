@@ -13,29 +13,22 @@
 	"identity": {
 		"internalName": "vscode-extension-dotnet-fastiot"
 	},
+	"assetFiles": [
+		{
+			"pathOnDisk": "assets/marketplace/vscode-dotnet-fastiot-interface.png",
+			"targetPath": "docs/vscode-dotnet-fastiot-interface.png"
+		},
+		{
+			"pathOnDisk": "assets/marketplace/vscode-dotnet-fastiot.png",
+			"targetPath": "docs/vscode-dotnet-fastiot.png"
+		}
+	  ],
 	"keywords": [
-		".NET",
-		".NET Core",
 		"dotnet",
 		"C#",
-		"csharp",
-		"Debugging",
-		"debuggers",
-		"template",
-		"constructor",
-		"Remote",
-		"Embedded",
 		"IoT",
-		"Linux",
-		"SBC",
 		"Board",
-		"Raspberry",
-		"arm",
-		"arm64",
-		"aarch64",
-		"armv7l",
-		"armhf",
-		"processor"
+		"Raspberry"
 	],
 	"engines": {
 		"vscode": "^1.70.3"
@@ -60,6 +53,7 @@
 	"os": [
 		"win32"
 	],
+	"recommendations": ["ms-dotnettools.csharp", "jmrog.vscode-nuget-package-manager","plorefice.devicetree","IBM.output-colorizer"],
 	"main": "./out/extension.js",
 	"contributes": {
 		"configuration": [

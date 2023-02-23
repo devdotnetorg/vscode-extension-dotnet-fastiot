@@ -249,9 +249,14 @@ export class IotDeviceAccount extends BaseTreeItem{
     element = new IotItemTree("Port",this.Port,this.Port,vscode.TreeItemCollapsibleState.None,this,this.Device);
     this.Childs.push(element);
   }
+  
+  /*
   iconPath = {
     light: path.join(__filename, '..', '..', 'resources', 'light', 'account.svg'),
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'account.svg')
   };
+  */
+
+  iconPath = new vscode.ThemeIcon("account");
   
 }
