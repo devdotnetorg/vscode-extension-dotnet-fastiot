@@ -2,7 +2,7 @@
 
 **Content:**
 
-1. [Troubleshoot adding device](#troubleshooting-when-adding-a-device)
+1. [Troubleshoot adding device](#troubleshoot-adding-device)
 2. [Problems with launching/operation of the extension](#problems-with-launchingoperation-of-the-extension)
 
 ## Troubleshoot adding device
