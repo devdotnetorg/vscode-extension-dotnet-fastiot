@@ -33,7 +33,7 @@
 - Added board model detection for Raspberry Pi.
 - Added support for .NET Runtime & SDK 7.0.
 - Implemented the function of testing/verifying the installed package.
-- Test project added [dotnet-iot-fastiot-test](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/dotnet-iot-fastiot-test "dotnet-iot-fastiot-test").
+- Test project added [dotnet-iot-fastiot-test](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/samples/dotnet-iot-fastiot-test "dotnet-iot-fastiot-test").
 - Added device shutdown command.
 - Added ignoring comments ('//') to launch.json and tasks.json.
 - Some visual changes.

@@ -15,6 +15,7 @@ src/**
 assets/source/**
 bashscript/_old_*.sh
 bashscript/_test*.sh
+docs/**
 packages/**
 samples/**
 vscodetemplates/**

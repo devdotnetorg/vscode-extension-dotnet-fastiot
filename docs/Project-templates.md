@@ -5,14 +5,14 @@
 1. [Template concept](#template-concept)
 2. [Template structure](#template-structure)
 3. [File structure insert_launch_key.json and insert_tasks_key.json](#file-structure-insertlaunchkeyjson-and-inserttaskskeyjson)
-4. [Template.fastiot.yaml file structure](#file-structure-insertlaunchkeyjson-and-inserttaskskeyjson)
+4. [The structure of the template.fastiot.yaml file](#the-structure-of-the-templatefastiotyaml-file)
 5. [Algorithm for creating a project](#algorithm-for-creating-a-project)
 6. [Data Merge Variables with Template Files](#data-merge-variables-with-template-files)
 7. [Debug template](#debugging-the-template)
 
 ## Template concept
 
-Templates are used to create projects and add `launch.json` and `tasks.json` files to an existing project. They are located along the path `%userprofile%\fastiot\templates`, for example `C:\Users\Anton\fastiot\templates\`. Templates are divided into two types, these are system - `system` and user - `user`. If the system template does not pass the check, it will be automatically deleted and replaced with a valid one. If the system template is deleted, it will also be automatically restored. System templates are automatically updated when you run an extension from [Github devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/ master/templates/system). Further, everything will be discussed using the example of the template [dotnet-console-runtime-info](/templates/system/dotnet-console-runtime-info).
+Templates are used to create projects and add `launch.json` and `tasks.json` files to an existing project. They are located along the path `%userprofile%\fastiot\templates`, for example `C:\Users\Anton\fastiot\templates\`. Templates are divided into two types, these are system - `system` and user - `user`. If the system template does not pass the check, it will be automatically deleted and replaced with a valid one. If the system template is deleted, it will also be automatically restored. System templates are automatically updated when you run an extension from [Github devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system). Further, everything will be discussed using the example of the template [dotnet-console-runtime-info](/templates/system/dotnet-console-runtime-info).
 
 ## Template structure
 

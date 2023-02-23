@@ -27,7 +27,7 @@ Devices supported: Raspberry Pi, Banana Pi, Orange Pi, Radxa, Tinkerboard, Odroi
 ## System requirements
 
 - **OS version.** Windows 7-10 (x64). A Linux version will come later. Note: The next version of the extension above v0.3 will not support Windows 7;
-- **Visual Studio Code.** version not lower than [1.70.3](https://code.visualstudio.com/ "1.70.3"). This is the latest version of VSCode with Windows 7 support, more details on this on [support page](https://code.visualstudio.com/docs/supporting/faq#_can-i-run-vs-code-on-windows-7" Can I run VS Code on Windows 7?");
+- **Visual Studio Code.** version not lower than [1.70.3](https://code.visualstudio.com/ "1.70.3"). This is the latest version of VSCode with Windows 7 support, more details on this on [support page](https://code.visualstudio.com/docs/supporting/faq#_can-i-run-vs-code-on-windows-7 "Can I run VS Code on Windows 7?");
 - **.NET.** Compiling a C# project requires [.NET SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks ".NET SDK") depending on the version of your project you are using (the extension itself is not required to work);
 
 Additional extensions required for developing .NET applications:
@@ -37,7 +37,7 @@ Additional extensions required for developing .NET applications:
 Recommended additional extensions that improve the development process and interaction with the remote device:
 
 - [NuGet Package Manager](https://marketplace.visualstudio.com/items?itemName=jmrog.vscode-nuget-package-manager "NuGet Package Manager") - adding Nuget packages (later the Nuget package manager will be built into extension);
-- [DeviceTree](https://marketplace.visualstudio.com/items?itemName=plorefice.devicetree "DeviceTree") - Syntax support for Device Tree (DT) files. Used to edit `*.dts` files. For example, it will be necessary if it becomes necessary to adapt the [SPI LCD ILI9341 display] (https://devdotnet.org/post/rabota-s-gpio-v-linux-na-primere-banana-pi-bpi-m64-chast-4- device-tree-overlays-podkluchenie-display-spi-lcd-ili9341/ "SPI LCD ILI9341 display") for your SBC;
+- [DeviceTree](https://marketplace.visualstudio.com/items?itemName=plorefice.devicetree "DeviceTree") - Syntax support for Device Tree (DT) files. Used to edit `*.dts` files. For example, it will be necessary if it becomes necessary to adapt the [SPI LCD ILI9341 display](https://devdotnet.org/post/rabota-s-gpio-v-linux-na-primere-banana-pi-bpi-m64-chast-4-device-tree-overlays-podkluchenie-displey-spi-lcd-ili9341/ "SPI LCD ILI9341 display") for your SBC;
 - [Output Colorizer](https://marketplace.visualstudio.com/items?itemName=IBM.output-colorizer "Output Colorizer") - adds color to the test messages in the OUTPUT window, makes it easier to perceive the information provided by the extension.
 
 ## System requirements for the device
@@ -211,7 +211,7 @@ This software is licensed under the LGPL-3.0.
 
 See [LICENSE](LICENSE "LICENSE") for details.
 
-[Templates](/templates/ "Templates") for projects are distributed under the license [MIT](LICENSE_MIT.md "MIT LICENSE").
+[Project Templates](/templates/ "Project Templates") for projects are distributed under the license [MIT](LICENSE_MIT.md "MIT LICENSE").
 
 ## Feedback
 

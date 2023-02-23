@@ -2,10 +2,10 @@
 
 **Content:**
 
-1. [Troubleshoot adding device](#troubleshoot adding device)
-2. [Problems with launching/operation of the extension](#problems-with-launching-extension-operation)
+1. [Troubleshoot adding device](#troubleshooting-when-adding-a-device)
+2. [Problems with launching/operation of the extension](#problems-with-launchingoperation-of-the-extension)
 
-## Troubleshooting when adding a device
+## Troubleshoot adding device
 
 ### Device profile not created on first connection
 
@@ -64,7 +64,7 @@ PubkeyAcceptedAlgorithms=+ssh-rsa
 
 If the running task ends with an error, then the script that caused the error remains on the device itself. You can try running the script on the device manually. Path to script on device for `debugvscode` user: `/home/debugvscode/vscode-dotnetfastiot.sh`, for `root` user: `/root/vscode-dotnetfastiot.sh`. The input parameters for the script are described in the comments of the script itself.
 
-## Trouble launching/running the extension
+## Problems with launching/operation of the extension
 
 If for some reason the extension does not work or works with errors, then one of the ways to solve the problem is to completely delete the current extension settings.
 
