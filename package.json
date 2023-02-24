@@ -13,22 +13,15 @@
 	"identity": {
 		"internalName": "vscode-extension-dotnet-fastiot"
 	},
-	"assetFiles": [
-		{
-			"pathOnDisk": "assets/marketplace/vscode-dotnet-fastiot-interface.png",
-			"targetPath": "docs/vscode-dotnet-fastiot-interface.png"
-		},
-		{
-			"pathOnDisk": "assets/marketplace/vscode-dotnet-fastiot.png",
-			"targetPath": "docs/vscode-dotnet-fastiot.png"
-		}
-	  ],
 	"keywords": [
 		"dotnet",
 		"C#",
 		"IoT",
 		"Board",
-		"Raspberry"
+		"Raspberry",
+		"Remote",
+		"Debugging",
+		"SBC"
 	],
 	"engines": {
 		"vscode": "^1.70.3"
