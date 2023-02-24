@@ -1,18 +1,9 @@
-## Launch title template
+# Template for forming the name Launch
 
-Default Template: Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)
+Default value: `Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})`.
 
-Merge result example: Launch on cubieboard (dotnet-iot-fastiot-test, Cubieboard, debugvscode)
+Merging example: `Launch on cubieboard (DotnetConsoleBlinkLEDApplication, Cubieboard, debugvscode)`.
 
-Variables for creating the launch configuration name:
+Variables for creating the name of the Launch configuration and their values can be viewed on the [Project Templates](Project-templates.md "Project Templates") page.
 
-- %TARGET_FRAMEWORK% => "net5.0"
-- %NAME_PROJECT% => "dotnet-iot-fastiot-test"
-- %PATH_PROJECT% => "dotnet-iot-fastiot-test.csproj"
-- %PATH_PROJECT_REVERSE% => "dotnet-iot-fastiot-test.csproj"
-- %USER_DEBUG% => "debugvscode"
-- %REMOTE_HOST% => "192.168.43.14"
-- %DEVICE_LABEL% => "cubieboard"
-- %BOARD_NAME% => "Cubieboard"
-
-If additional variables are needed, then create [ISSUE](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "issues")
+If you need additional variables, please create an [ISSUE](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "ISSUE").

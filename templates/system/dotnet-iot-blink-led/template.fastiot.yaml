@@ -1,0 +1,45 @@
+#YAML
+id: dotnet-iot-blink-led # unique
+#dependsOn: none # dependencies/inheritance in templates. Coming in one of the next version
+#isVisible: yes # yes,no. Related to the dependsOn parameter. Coming in one of the next version
+platform: # win32, linux. Only Windows is currently supported
+  - win32
+version: "0.1"
+releaseDate: "2023-02-22" # YYYY-MM-DD
+forVersionExt: 0.3.0
+author: DevDotNet.ORG
+emailAuthor: fastiot@devdotnet.org
+license: MIT
+label: .NET IoT Blink an LED Application
+detail: Console application for managing General-purpose I/O (GPIO)
+description: >
+             General-purpose I/O (GPIO) pins can be controlled individually.
+             This is useful for controlling LEDs, relays, and other stateful devices.
+             In this sample, you used .NET and your developer board's GPIO pins
+             to power an LED and blink it repeatedly. The application uses the
+             Libgpiod library and compiled on the PC.
+language: C#
+endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
+  - armv7l
+  - aarch64
+  - x86_64
+dependOnPackages: # Coming in one of the next version
+  - dotnetruntime-%{dotnetTarget}
+  - vsdbg
+typeProj: dotnet # template type is related to processing logic
+projName: DotnetBlinkLEDApp # default value shown to the user
+mainFileProj: dotnetapp.csproj # relative path to the project file as in Linux i.e. folder1/dotnetapp.csproj or dotnetapp.csproj
+mainFileProjLabel: Visual Studio C# Project
+tags:
+  - console
+  - dotnet
+  - iot
+  - gpio
+  - led
+  - blink
+filesToProcess:
+  - dotnetapp.csproj # relative path to the file as in Linux
+  - Program.cs
+fileNameReplacement:
+  - dotnetapp.csproj=%{project.name}.csproj # relative path to the file as in Linux
+  - .gitignore_=.gitignore

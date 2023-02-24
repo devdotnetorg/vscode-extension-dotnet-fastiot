@@ -1,0 +1,57 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET Core Launch (console)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/bin/Debug/net5.0/dotnet-iot-blink.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    },
+    {
+      "name": ".NET Core Attach",
+      "type": "coreclr",
+      "request": "attach"
+    },
+    {
+      "fastiotIdLaunch": "dac42773",
+      "fastiotIdDevice": "cubieboard-5e835aae",
+      "fastiotProject": "/dotnet-iot-blink.csproj",
+      "fastiotIdTemplate": "dotnet-iot-blink-led",
+      "name": "Launch on cubieboard (dotnet-iot-blink, Cubieboard, debugvscode)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "dotnet",
+      "args": [
+        "./dotnet-iot-blink.dll"
+      ],
+      "cwd": "~/fastiot/debugapps/dotnet-iot-blink",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "FASTIOT": "easy"
+      },
+      "pipeTransport": {
+        "pipeCwd": "${workspaceFolder}",
+        "pipeProgram": "C:\\Users\\Anton\\fastiot\\templates\\system\\dotnet-iot-blink-led\\storage\\apps\\cwrsync\\ssh.exe",
+        "pipeArgs": [
+          "-i",
+          "C:\\Users\\Anton\\fastiot\\settings\\keys\\id-rsa-cubieboard-5e835aae-debugvscode",
+          "-o",
+          "StrictHostKeyChecking no",
+          "-o",
+          "UserKnownHostsFile /dev/null",
+          "-p",
+          "22",
+          "debugvscode@192.168.43.14"
+        ],
+        "debuggerPath": "/usr/share/vsdbg/vsdbg"
+      },
+      "preLaunchTask": "fastiot-dac42773-copy-app-to-device"
+    }
+  ]
+}

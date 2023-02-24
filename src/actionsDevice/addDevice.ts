@@ -4,34 +4,38 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { pingDevice } from './pingDevice';
+import { connectionTestDevice } from './connectionTestDevice';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
+import { IoTHelper } from '../Helper/IoTHelper';
 
 export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>): Promise<void> {                
         
-        const host = await vscode.window.showInputBox({            
+        let hostName = await vscode.window.showInputBox({            
             prompt: 'prompt',
             title: 'Add Device (1/5). Enter the host of the developer board',
             value:'192.168.43.208',            
         });
         
-        if(host==undefined) return;
+        if(hostName==undefined) return;
+        hostName=IoTHelper.StringTrim(hostName);
 
-        const port = await vscode.window.showInputBox({				
+        let portAnswer = await vscode.window.showInputBox({				
             prompt: 'prompt',
             title: 'Add Device (2/5). Enter a number port ssh',
             value:'22'
         });
-        if(port==undefined) return;
-
-        const userName = await vscode.window.showInputBox({				
+        if(portAnswer==undefined) return;
+        portAnswer=IoTHelper.StringTrim(portAnswer);
+        const port=+portAnswer;
+        let userName = await vscode.window.showInputBox({				
             prompt: 'prompt',
             title: 'Add Device (3/5). Enter username with sudo rights (usually root)',
             value:'root'
         });
         if(userName==undefined) return;
+        userName=IoTHelper.StringTrim(userName);
 
         const password = await vscode.window.showInputBox({
             placeHolder: `Add Device (4/5). Enter user password ${userName}`,
@@ -41,7 +45,7 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
 
        //select account: debugvscode or root 
        let itemAccounts:Array<ItemQuickPick>=[];     
-       let item = new ItemQuickPick(treeData.Config.AccountName,"(default)",treeData.Config.AccountName);
+       let item = new ItemQuickPick(treeData.Config.UsernameAccountDevice,"(default)",treeData.Config.UsernameAccountDevice);
        itemAccounts.push(item);
        item = new ItemQuickPick("root","Select if you have problems accessing /dev/* and /sys/* devices","root");
        itemAccounts.push(item);
@@ -50,15 +54,15 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
        if(!SELECTED_ITEM) return;       
        //Info
        vscode.window.showInformationMessage('It may take 2 to 7 minutes to initialize and configure the device.');
-       treeData.OutputChannel.appendLine("----------------------------------");
        treeData.OutputChannel.appendLine("Action: adding a device");
        //Adding a device is the main process
-       const result = await treeData.AddDevice(host,port,userName,password,SELECTED_ITEM.value);
+       const result = await treeData.AddDevice(hostName,port,userName,password,SELECTED_ITEM.value);
        //Output       
        treeData.OutputChannel.appendLine("------------- Result -------------");
        treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
        treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
        treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+       treeData.OutputChannel.appendLine("----------------------------------");
        //Message       
        if(result.Status==StatusResult.Ok)
        {
@@ -68,10 +72,10 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
             treeView.reveal(device, {focus: true});
             //Ping
             const newDevice=treeData.RootItems[treeData.RootItems.length-1];
-            pingDevice(treeData,newDevice);
+            connectionTestDevice(treeData,newDevice);
             
        }else
        {            
-            vscode.window.showErrorMessage(`Error. Device not added! \n${result.Message}`);            
+            vscode.window.showErrorMessage(`Error. Device not added! \n${result.Message}`);
        }       
 }

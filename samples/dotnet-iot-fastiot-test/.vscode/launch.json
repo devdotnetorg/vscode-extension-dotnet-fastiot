@@ -1,0 +1,93 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET Core Launch (console)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/bin/Debug/net5.0/dotnet-iot-fastiot-test.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    },
+    {
+      "name": ".NET Core Attach",
+      "type": "coreclr",
+      "request": "attach"
+    },
+    {
+      "fastiotIdLaunch": "96469ff2",
+      "fastiotIdDevice": "cubieboard-5e835aae",
+      "fastiotProject": "/dotnet-iot-fastiot-test.csproj",
+      "fastiotIdTemplate": "dotnet-console-runtime-info",
+      "name": "Launch on cubieboard (dotnet-iot-fastiot-test, Cubieboard, debugvscode)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "dotnet",
+      "args": [
+        "./dotnet-iot-fastiot-test.dll"
+      ],
+      "cwd": "~/fastiot/debugapps/dotnet-iot-fastiot-test",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "FASTIOT": "easy"
+      },
+      "pipeTransport": {
+        "pipeCwd": "${workspaceFolder}",
+        "pipeProgram": "C:\\Users\\Anton\\fastiot\\templates\\system\\dotnet-console-runtime-info\\storage\\apps\\cwrsync\\ssh.exe",
+        "pipeArgs": [
+          "-i",
+          "C:\\Users\\Anton\\fastiot\\settings\\keys\\id-rsa-cubieboard-5e835aae-debugvscode",
+          "-o",
+          "StrictHostKeyChecking no",
+          "-o",
+          "UserKnownHostsFile /dev/null",
+          "-p",
+          "22",
+          "debugvscode@192.168.43.14"
+        ],
+        "debuggerPath": "/usr/share/vsdbg/vsdbg --engineLogging=/var/log/vsdbg.log"
+      },
+      "preLaunchTask": "fastiot-96469ff2-copy-app-to-device"
+    },
+    {
+      "fastiotIdLaunch": "96469ff2-without-logs",
+      "fastiotIdDevice": "cubieboard-5e835aae",
+      "fastiotProject": "/dotnet-iot-fastiot-test.csproj",
+      "fastiotIdTemplate": "dotnet-console-runtime-info",
+      "name": "Launch on cubieboard (dotnet-iot-fastiot-test, Cubieboard, debugvscode) without logs",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "dotnet",
+      "args": [
+        "./dotnet-iot-fastiot-test.dll"
+      ],
+      "cwd": "~/fastiot/debugapps/dotnet-iot-fastiot-test",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "FASTIOT": "easy"
+      },
+      "pipeTransport": {
+        "pipeCwd": "${workspaceFolder}",
+        "pipeProgram": "C:\\Users\\Anton\\fastiot\\templates\\system\\dotnet-console-runtime-info\\storage\\apps\\cwrsync\\ssh.exe",
+        "pipeArgs": [
+          "-i",
+          "C:\\Users\\Anton\\fastiot\\settings\\keys\\id-rsa-cubieboard-5e835aae-debugvscode",
+          "-o",
+          "StrictHostKeyChecking no",
+          "-o",
+          "UserKnownHostsFile /dev/null",
+          "-p",
+          "22",
+          "debugvscode@192.168.43.14"
+        ],
+        "debuggerPath": "/usr/share/vsdbg/vsdbg"
+      },
+      "preLaunchTask": "fastiot-96469ff2-copy-app-to-device-without-logs"
+    }
+  ]
+}

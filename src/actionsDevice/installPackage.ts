@@ -2,12 +2,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataConfigurationsProvider } from '../TreeDataConfigurationsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { pingDevice } from './pingDevice';
-import { GetWorkspaceFolder,GetDotnetRID } from '../Helper/IoTHelper';
-import { IotDevice } from '../IotDevice';
-import { IotLaunchProject } from '../IotLaunchProject';
+import { dotnetHelper } from '../Helper/dotnetHelper';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { ItemQuickPick } from '../Helper/actionHelper';
@@ -16,8 +12,8 @@ import { ItemQuickPick } from '../Helper/actionHelper';
 
 export async function installPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage): Promise<void> {
     //catalogs
-    const catalogNetSDKChannel: Array<string>=["3.1","5.0","6.0","7.0"];
-    const catalogNetRuntimeChannel: Array<string>=["3.1","5.0","6.0","7.0"];
+    //const catalogNetSDKChannel: Array<string>=["3.1","5.0","6.0","7.0"];
+    //const catalogNetRuntimeChannel: Array<string>=["3.1","5.0","6.0","7.0"];
     const catalogNetRuntimeName: Array<string>=["dotnet","aspnetcore"];
     const catalogLibgpiodVersion: Array<string>=["1.6.3"];
     //objJSON: preparation of input parameters    
@@ -34,8 +30,8 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
             //Shows a selection list allowing multiple selections.
             let itemNetSDK:Array<ItemQuickPick>=[];
             //Select SDK
-            catalogNetSDKChannel.forEach((nameItem) => {
-                const item = new ItemQuickPick(nameItem,".NET SDK",nameItem);
+            dotnetHelper.GetDotNetTargets().forEach((value, key) => {
+                const item = new ItemQuickPick(value[1] +" SDK","",key);
                 itemNetSDK.push(item);
             });
             let SELECTED_ITEM = await vscode.window.showQuickPick(itemNetSDK,{title: 'Choose a .NET SDK version:',});
@@ -60,8 +56,8 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
             //Shows a selection list allowing multiple selections.
             let itemNetRuntimeVersion:Array<ItemQuickPick>=[];
             //Select Runtime version
-            catalogNetRuntimeChannel.forEach((nameItem) => {
-                const item = new ItemQuickPick(nameItem,".NET Runtime",nameItem);
+            dotnetHelper.GetDotNetTargets().forEach((value, key) => {
+                const item = new ItemQuickPick(value[1] +" Runtime","",key);
                 itemNetRuntimeVersion.push(item);
             });
             SELECTED_ITEM = await vscode.window.showQuickPick(itemNetRuntimeVersion,{title: 'Choose a .NET Runtime version:',});
@@ -72,7 +68,7 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
             break; 
         }
         case TypePackage.debugger: { 
-            const dotnetRID=GetDotnetRID(
+            const dotnetRID=dotnetHelper.GetDotNetRID(
                     <string>item.Device.Information.OsName,<string>item.Device.Information.Architecture);
             //formation jsonObj
             jsonObj.dotnetrid=dotnetRID;
@@ -124,7 +120,6 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
     }    
     //Info
     vscode.window.showInformationMessage('Package installation/upgrade may take 2 to 7 minutes.');
-    treeData.OutputChannel.appendLine("----------------------------------");
     treeData.OutputChannel.appendLine(`Action: package installation ${item.NamePackage}`);
     //main process
     const result = await treeData.InstallPackage(<string>item.Device.IdDevice,item.NamePackage,jsonObj);
@@ -133,12 +128,11 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
     treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
     treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
     treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+    treeData.OutputChannel.appendLine("----------------------------------");
     //Message        
-    if(result.Status==StatusResult.Ok)
-    {
+    if(result.Status==StatusResult.Ok) {
         vscode.window.showInformationMessage(`${item.NamePackage} package installation/upgrade completed successfully.`);
-    }else
-    {            
+    } else {      
         vscode.window.showErrorMessage(`Error. ${item.NamePackage} package failed to install/upgrade! \n${result.Message}. ${result.SystemMessage}`);
-    }	
+    }
 }

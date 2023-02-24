@@ -4,8 +4,8 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IoTGpiochip} from './GPIO/IoTGpiochip';
-import { IotResult,StatusResult } from './IotResult';
-import { TypePackage } from './IotDevicePackage';
+import {IotResult,StatusResult} from './IotResult';
+import {TypePackage} from './IotDevicePackage';
 
 export class IotDeviceGpiochip extends BaseTreeItem {
   public Items: Array<IoTGpiochip>=[];
@@ -68,7 +68,7 @@ export class IotDeviceGpiochip extends BaseTreeItem {
     if(!packageLibgpiod?.isInstalled)      
       return Promise.resolve(new IotResult(StatusResult.Error,"Libgpiod library not installed.",undefined));   
     //
-    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.PathFolderExtension,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
         "gpiodetecttojson",undefined, false,false);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     //parse result

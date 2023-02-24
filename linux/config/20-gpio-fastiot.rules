@@ -1,0 +1,18 @@
+#/dev/gpiochip*
+SUBSYSTEM=="gpio*", ACTION=="add|change", KERNEL=="gpiochip[0-50]", GROUP="gpio", MODE="0660"
+#gpio sysfs
+SUBSYSTEM=="gpio*", ACTION=="add|change", PROGRAM="/bin/sh -c '\
+        chown -R :gpio /sys/class/gpio && chmod -R 770 /sys/class/gpio;\
+        chown -R :gpio /sys/devices/platform/soc/*.pinctrl/gpio && chmod -R 770 /sys/devices/platform/soc/*.pinctrl/gpio;\
+        chown -R :gpio /sys/devices/platform/soc/*.pinctrl/gpiochip* && chmod -R 770 /sys/devices/platform/soc/*.pinctrl/gpiochip*\
+'"
+#leds
+SUBSYSTEM=="led*", ACTION=="add|change", PROGRAM="/bin/sh -c '\
+        chown -R :gpio /sys/devices/platform/leds && chmod -R 770 /sys/devices/platform/leds;\
+        chown -R :gpio /sys/class/leds && chmod -R 770 /sys/class/leds\
+'"
+#pwm
+SUBSYSTEM=="pwm*", ACTION=="add|change", PROGRAM="/bin/sh -c '\
+        chown -R :gpio /sys/class/pwm && chmod -R 770 /sys/class/pwm;\
+        chown -R :gpio /sys/devices/platform/soc/*.pwm/pwm/pwmchip* && chmod -R 770 /sys/devices/platform/soc/*.pwm/pwm/pwmchip*\
+'"

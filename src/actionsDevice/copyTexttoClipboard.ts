@@ -2,8 +2,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
-import { IotResult,StatusResult } from '../IotResult';
 import { IotItemTree } from '../IotItemTree';
 
 export async function copyTexttoClipboard(item:IotItemTree): Promise<void> {                    
@@ -15,5 +13,4 @@ export async function copyTexttoClipboard(item:IotItemTree): Promise<void> {
             text=`${item.label}: ${item.tooltip}`;
         }
         vscode.env.clipboard.writeText(text);
-    
 }

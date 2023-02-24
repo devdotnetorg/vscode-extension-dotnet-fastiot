@@ -13,7 +13,6 @@ export DEBIAN_FRONTEND="noninteractive"
 
 apt-get update
 apt-get install -y lsb-release rsync jq sudo curl wget
-#apt-get install -y openssh-server
 
 echo "Successfully"
 

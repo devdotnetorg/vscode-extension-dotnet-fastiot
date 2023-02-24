@@ -2,10 +2,10 @@
 	"name": "vscode-extension-dotnet-fastiot",
 	"displayName": ".NET FastIoT",
 	"description": "Configuring Remote Debugging of a .NET application for embedded Linux devices",
-	"icon": "assets/fastiot-logo-128.png",
+	"icon": "assets/fastiot-logo-256.png",
 	"license": "LGPL-3.0-only",
 	"preview": true,
-	"version": "0.2.2",
+	"version": "0.3.0",
 	"overview": "assets/marketplace/vscode-marketplace-overview.md",
 	"priceCategory": "free",
 	"publisher": "devdotnetorg",
@@ -14,17 +14,17 @@
 		"internalName": "vscode-extension-dotnet-fastiot"
 	},
 	"keywords": [
-		"Debugging",
-		"Embedded",
+		"dotnet",
+		"C#",
 		"IoT",
-		"Linux",
-		"SBC",
+		"Board",
 		"Raspberry",
 		"Remote",
-		"csproj"
+		"Debugging",
+		"SBC"
 	],
 	"engines": {
-		"vscode": "^1.63.0"
+		"vscode": "^1.70.3"
 	},
 	"repository": {
 		"type": "git",
@@ -46,6 +46,12 @@
 	"os": [
 		"win32"
 	],
+	"recommendations": [
+		"ms-dotnettools.csharp",
+		"jmrog.vscode-nuget-package-manager",
+		"plorefice.devicetree",
+		"IBM.output-colorizer"
+	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"configuration": [
@@ -62,19 +68,34 @@
 						"default": "sudo",
 						"description": "Linux group for a new user (debugvscode) of a development device."
 					},
+					"fastiot.device.applicationdatafolder": {
+						"type": "string",
+						"default": "",
+						"description": "Shared folder for storing keys, templates"
+					},
+					"fastiot.device.ssh.key.type": {
+						"type": "string",
+						"default": "ed25519",
+						"markdownDescription": "Type of key generation algorithm for ssh. Can take values: ed25519 (default), ecdsa, dsa, rsa. Used to authenticate with a device after it has been added to the device list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the PubkeyAcceptedAlgorithms=+ssh-rsa line to the /etc/ssh/sshd_config file."
+					},
+					"fastiot.device.ssh.key.bits": {
+						"type": "number",
+						"default": 256,
+						"markdownDescription": "Key length in bits. Can take values: 256, 384, 521, 512, 1024, 2048, 3072, 4096. ED25519 only 256. ECDSA key length: valid lengths are 256, 384, 521, recommended 521. DSA only 1024. RSA key length: valid lengths are 1024, 2048, 3072, 4096, recommended 4096."
+					},
 					"fastiot.device.pathfolderkeys": {
 						"type": "string",
 						"default": "C:\\RemoteCode\\keys",
-						"description": "Path to ssh key storage folder"
+						"description": "![Not used] Path to ssh key storage folder"
 					},
 					"fastiot.device.pathfoldercwrsync": {
 						"type": "string",
 						"default": "C:\\RemoteCode\\cwrsync",
-						"markdownDescription": "The folder with the [cwRsync](https://itefix.net/cwrsync) package to copy the application to a remote device and provide a transport for the debugger."
+						"markdownDescription": "![Not used] The folder with the [cwRsync](https://itefix.net/cwrsync) package to copy the application to a remote device and provide a transport for the debugger."
 					},
 					"fastiot.launch.templatetitle": {
 						"type": "string",
-						"default": "Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)",
+						"default": "Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})",
 						"markdownDescription": "Template for creating a launch title. Variable names see [link](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md)."
 					},
 					"fastiot.device.all.JSON": {
@@ -125,8 +146,8 @@
 				"title": "Delete"
 			},
 			{
-				"command": "viewDevices.PingDevice",
-				"title": "Ping"
+				"command": "viewDevices.ConnectionTestDevice",
+				"title": "Connection test"
 			},
 			{
 				"command": "viewDevices.RebootDevice",
@@ -213,35 +234,39 @@
 				}
 			},
 			{
-				"command": "viewConfigurations.AddConfiguration",
-				"title": "Add Configuration",
+				"command": "viewDevices.OpenFolderSshKeys",
+				"title": "Open folder with ssh keys"
+			},
+			{
+				"command": "viewLaunchs.Add",
+				"title": "Add Launch",
 				"icon": {
 					"light": "resources/light/add.svg",
 					"dark": "resources/dark/add.svg"
 				}
 			},
 			{
-				"command": "viewConfigurations.RefreshConfigurations",
+				"command": "viewLaunchs.Refresh",
 				"title": "Refresh"
 			},
 			{
-				"command": "viewConfigurations.RenameConfiguration",
+				"command": "viewLaunchs.Rename",
 				"title": "Rename"
 			},
 			{
-				"command": "viewConfigurations.DeleteConfiguration",
+				"command": "viewLaunchs.Delete",
 				"title": "Delete"
 			},
 			{
-				"command": "viewConfigurations.RebuildConfiguration",
+				"command": "viewLaunchs.Rebuild",
 				"title": "Rebuild"
 			},
 			{
-				"command": "viewConfigurations.GoToDevice",
+				"command": "viewLaunchs.GoToDevice",
 				"title": "Go to device"
 			},
 			{
-				"command": "viewConfigurations.AddEnviroment",
+				"command": "viewLaunchs.AddEnviroment",
 				"title": "Add Enviroment",
 				"icon": {
 					"light": "resources/light/add.svg",
@@ -249,16 +274,24 @@
 				}
 			},
 			{
-				"command": "viewConfigurations.RenameEnviroment",
+				"command": "viewLaunchs.RenameEnviroment",
 				"title": "Rename"
 			},
 			{
-				"command": "viewConfigurations.EditEnviroment",
+				"command": "viewLaunchs.EditEnviroment",
 				"title": "Edit"
 			},
 			{
-				"command": "viewConfigurations.DeleteEnviroment",
+				"command": "viewLaunchs.DeleteEnviroment",
 				"title": "Delete"
+			},
+			{
+				"command": "viewTemplates.ReloadTemplates",
+				"title": "Reload templates"
+			},
+			{
+				"command": "viewTemplates.OpenTemplateFolder",
+				"title": "Open template folder"
 			}
 		],
 		"viewsContainers": {
@@ -278,15 +311,15 @@
 					"contextualTitle": "Devices"
 				},
 				{
-					"id": "viewConfigurations",
-					"name": "Configurations",
-					"contextualTitle": "Configurations"
+					"id": "viewLaunchs",
+					"name": "Launchs",
+					"contextualTitle": "Launchs"
 				},
 				{
-					"id": "viewProjects",
-					"name": "Projects",
-					"contextualTitle": "Projects",
-					"visibility": "hidden"
+					"id": "viewTemplates",
+					"name": "Templates",
+					"contextualTitle": "Templates",
+					"visibility": "collapsed"
 				}
 			]
 		},
@@ -310,13 +343,25 @@
 					"when": "view == viewDevices"
 				},
 				{
-					"command": "viewConfigurations.AddConfiguration",
-					"when": "view == viewConfigurations",
+					"command": "viewDevices.OpenFolderSshKeys",
+					"when": "view == viewDevices"
+				},
+				{
+					"command": "viewLaunchs.Add",
+					"when": "view == viewLaunchs",
 					"group": "navigation"
 				},
 				{
-					"command": "viewConfigurations.RefreshConfigurations",
-					"when": "view == viewConfigurations"
+					"command": "viewLaunchs.Refresh",
+					"when": "view == viewLaunchs"
+				},
+				{
+					"command": "viewTemplates.ReloadTemplates",
+					"when": "view == viewTemplates"
+				},
+				{
+					"command": "viewTemplates.OpenTemplateFolder",
+					"when": "view == viewTemplates"
 				}
 			],
 			"view/item/context": [
@@ -329,7 +374,7 @@
 					"when": "view == viewDevices && viewItem == iotdevice"
 				},
 				{
-					"command": "viewDevices.PingDevice",
+					"command": "viewDevices.ConnectionTestDevice",
 					"when": "view == viewDevices && viewItem == iotdevice"
 				},
 				{
@@ -400,52 +445,60 @@
 					"group": "inline"
 				},
 				{
-					"command": "viewConfigurations.RenameConfiguration",
-					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+					"command": "viewLaunchs.Rename",
+					"when": "view == viewLaunchs && viewItem == iotlaunch"
 				},
 				{
-					"command": "viewConfigurations.DeleteConfiguration",
-					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+					"command": "viewLaunchs.Delete",
+					"when": "view == viewLaunchs && viewItem == iotlaunch"
 				},
 				{
-					"command": "viewConfigurations.RebuildConfiguration",
-					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+					"command": "viewLaunchs.Rebuild",
+					"when": "view == viewLaunchs && viewItem == iotlaunch"
 				},
 				{
-					"command": "viewConfigurations.GoToDevice",
-					"when": "view == viewConfigurations && viewItem == iotconfiguration"
+					"command": "viewLaunchs.GoToDevice",
+					"when": "view == viewLaunchs && viewItem == iotlaunch"
 				},
 				{
-					"command": "viewConfigurations.AddEnviroment",
-					"when": "view == viewConfigurations && viewItem == iotenviroments",
+					"command": "viewLaunchs.AddEnviroment",
+					"when": "view == viewLaunchs && viewItem == iotenviroments",
 					"group": "inline"
 				},
 				{
-					"command": "viewConfigurations.RenameEnviroment",
-					"when": "view == viewConfigurations && viewItem == iotenviroment"
+					"command": "viewLaunchs.RenameEnviroment",
+					"when": "view == viewLaunchs && viewItem == iotenviroment"
 				},
 				{
-					"command": "viewConfigurations.EditEnviroment",
-					"when": "view == viewConfigurations && viewItem == iotenviroment"
+					"command": "viewLaunchs.EditEnviroment",
+					"when": "view == viewLaunchs && viewItem == iotenviroment"
 				},
 				{
-					"command": "viewConfigurations.DeleteEnviroment",
-					"when": "view == viewConfigurations && viewItem == iotenviroment"
+					"command": "viewLaunchs.DeleteEnviroment",
+					"when": "view == viewLaunchs && viewItem == iotenviroment"
+				},
+				{
+					"command": "viewDevices.CopyToClipboard",
+					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
+				},
+				{
+					"command": "viewDevices.CopyToClipboard",
+					"when": "view == viewLaunchs && viewItem == iotenviromentoption"
 				}
 			]
 		},
 		"viewsWelcome": [
 			{
 				"view": "viewDevices",
-				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Device](command:viewDevices.AddDevice)"
+				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device). \n[Add Device](command:viewDevices.AddDevice)"
 			},
 			{
-				"view": "viewConfigurations",
-				"contents": "No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)"
+				"view": "viewLaunchs",
+				"contents": "No launchs [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Additional-materials.md#setting-up-an-existing-project-for-remote-debugging).  \n[Add Launch](command:viewLaunchs.Add)"
 			},
 			{
-				"view": "viewProjects",
-				"contents": "No configurations [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/).\n[Add Configuration](command:viewConfigurations.AddConfiguration)"
+				"view": "viewTemplates",
+				"contents": "[Create project](command:viewTemplates.CreateProject)  \n [About Project Templates](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Project-templates.md)."
 			}
 		]
 	},
@@ -458,28 +511,39 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
+		"@types/adm-zip": "^0.5.0",
+		"@types/fs-extra": "^9.0.13",
 		"@types/glob": "^7.1.3",
+		"@types/ip": "^1.1.0",
 		"@types/mocha": "^8.2.2",
 		"@types/node": "14.x",
 		"@types/ssh2": "^0.5.49",
+		"@types/tcp-port-used": "^1.0.1",
 		"@types/uuid": "^8.3.1",
 		"@types/vscode": "^1.59.0",
 		"@typescript-eslint/eslint-plugin": "^4.26.0",
 		"@typescript-eslint/parser": "^4.26.0",
 		"eslint": "^7.27.0",
 		"glob": "^7.1.7",
-		"mocha": "^8.4.0",
+		"mocha": "^10.0.0",
 		"typescript": "^4.3.2",
 		"vscode-test": "^1.5.2"
 	},
 	"dependencies": {
 		"@lolpants/pingman": "^1.0.6",
-		"node-stream-zip": "^1.15.0",
+		"adm-zip": "^0.5.10",
+		"axios": "^1.2.2",
+		"compare-versions": "^6.0.0-rc.1",
+		"fs-extra": "^11.1.0",
+		"ip": "^1.1.8",
 		"pingman": "^1.1.5",
 		"ssh2": "^1.9.0",
-		"ssh2-promise": "^1.0.2",
+		"ssh2-promise": "^1.0.3",
+		"tcp-port-used": "^1.0.2",
 		"uuid": "^8.3.2",
 		"xmldom": "^0.6.0",
-		"xpath": "0.0.32"
+		"xpath": "0.0.32",
+		"yaml": "^2.2.0",
+		"yaml-schema-validator-fork": "^0.2.0"
 	}
 }

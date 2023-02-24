@@ -5,7 +5,6 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
-import { IotDeviceDTO } from '../IotDeviceDTO';
 import { refreshDTO } from './refreshDTO';
 
 export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {       
@@ -25,7 +24,6 @@ export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice): 
     const file = await vscode.window.showOpenDialog(options);    
     if(file)
     {
-        treeData.OutputChannel.appendLine("----------------------------------");
         treeData.OutputChannel.appendLine(`Action: Adding a DTO file ${file[0].fsPath}`);
         //dts or dtbo
         const dtoExt = path.extname(file[0].fsPath); // returns '.dts' or '.dtbo'
@@ -48,6 +46,7 @@ export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice): 
         treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
         treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
         treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
+        treeData.OutputChannel.appendLine("----------------------------------");
         //Message
         if(result.Status==StatusResult.Ok)
         {

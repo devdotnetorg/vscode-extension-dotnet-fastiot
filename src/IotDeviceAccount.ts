@@ -4,8 +4,8 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotItemTree} from './IotItemTree';
-import {IotConfiguration} from './IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
+import SSHConfig from 'ssh2-promise/lib/sshConfig';
 //
 
 export class IotDeviceAccount extends BaseTreeItem{  
@@ -20,12 +20,14 @@ export class IotDeviceAccount extends BaseTreeItem{
   public Groups: Array<string>=[]; // $ groups debugvscode = debugvscode : debugvscode sudo docker
 
   public get PathKey(): string| undefined {
-    return this.Device?.Config.AccountPathFolderKeys +"\\"+this.Identity;}
+    return this.Device?.Config.Folder.DeviceKeys +"\\"+this.Identity;}
     
-  public get SshConfig(): any {
-    var sshconfig  = {
+  public get SshConfig(): SSHConfig {
+    let port:number=0;
+    if(this.Port) port=+this.Port;
+    var sshconfig:SSHConfig  = {
       host: this.Host,
-      port: this.Port,
+      port: port,
       username: this.UserName,
       identity: this.PathKey,
       readyTimeout: 7000
@@ -74,36 +76,34 @@ export class IotDeviceAccount extends BaseTreeItem{
     super(label,description,tooltip,collapsibleState);
     this.Parent=parent;
     this.Device=device;
-  }     
+  }
 
-  public async Create(sshconfig:any,accountNameDebug:string,config:IotConfiguration,
-    idDevice:string): Promise<IotResult>{      
+  
+
+  public async Create(sshconfig:SSHConfig,accountNameDebug:string): Promise<IotResult>{
       //-------------------------------
       //create account
-      let paramsScript:string;      
+      let nameScript:string;
+      let paramsScript:string;
       let result:IotResult;
-      //
-      if(accountNameDebug=="root"){
-        this.Client.FireChangedState({
-          status:undefined,
-          console:`Run: createaccountroot.sh`,
-          obj:undefined
-        });
-        //
-        result = await this.Client.RunScript(sshconfig,undefined, config.PathFolderExtension,
-          "createaccountroot",undefined, false,false);
-      }else
-      {
-        paramsScript=accountNameDebug+" "+config.AccountGroups;
-        this.Client.FireChangedState({
-          status:undefined,
-          console:`Run: createaccount.sh ${paramsScript}"`,
-          obj:undefined
-        });
-        //
-        result = await this.Client.RunScript(sshconfig,undefined, config.PathFolderExtension,
-          "createaccount",paramsScript, false,false);
+      //base root
+      nameScript="createaccountroot";
+      paramsScript=`${this.Device.Config.TypeKeySshDevice} ${this.Device.Config.BitsKeySshDevice}`;
+      //if debugvscode
+      if(accountNameDebug!="root"){
+        nameScript="createaccount";
+        paramsScript=`${accountNameDebug} ${this.Device.Config.GroupsAccountDevice} ${paramsScript}`;
       }
+      //event
+      this.Client.FireChangedState({
+        status:undefined,
+        console:`Run: ${nameScript}.sh ${paramsScript}`,
+        obj:undefined
+      });
+      //run
+      result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
+        nameScript,paramsScript, false,false);
+      //out
       if(result.SystemMessage){
             this.Client.FireChangedState({
                status:undefined,
@@ -116,10 +116,10 @@ export class IotDeviceAccount extends BaseTreeItem{
       //get private file key
       let pathFile:string;
       if(accountNameDebug=="root"){
-        pathFile=`/root/.ssh/id_rsa`;
+        pathFile=`/root/.ssh/id_${this.Device.Config.TypeKeySshDevice}`;
       }else
       {
-        pathFile=`/home/${accountNameDebug}/.ssh/id_rsa`;
+        pathFile=`/home/${accountNameDebug}/.ssh/id_${this.Device.Config.TypeKeySshDevice}`;
       }      
       this.Client.FireChangedState({
         status:undefined,
@@ -132,15 +132,15 @@ export class IotDeviceAccount extends BaseTreeItem{
       let data=result.SystemMessage;
       if(data)
       {
-        const fileName=`id-rsa-${idDevice}-${accountNameDebug}`;
-        pathFile=`${config.AccountPathFolderKeys}\\${fileName}`;
+        const fileName=`id-${this.Device.Config.TypeKeySshDevice}-${this.Device.IdDevice}-${accountNameDebug}`;
+        pathFile=`${this.Device.Config.Folder.DeviceKeys}\\${fileName}`;
         fs.writeFileSync(pathFile,data,undefined);
         //Attribute writing
-        this.Host=sshconfig.host.toString();
-        this.Port=sshconfig.port.toString();
+        this.Host=sshconfig.host?.toString();
+        this.Port=sshconfig.port?.toString();
         this.UserName=accountNameDebug;
         this.Identity=fileName;
-        this.Groups.push(config.AccountGroups);	        
+        this.Groups.push(this.Device.Config.GroupsAccountDevice);	        
       }
       //-------------------------------
       //udev rules
@@ -154,7 +154,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         //put file 20-gpio-fastiot.rules in folder /etc/udev/rules.d
         //read file 20-gpio-fastiot.rules
         const nameFile = "20-gpio-fastiot.rules";
-        const pathFileLocalRules= `${config.PathFolderExtension}\\vscodetemplates\\${nameFile}`;
+        const pathFileLocalRules= `${this.Device.Config.Folder.Extension}\\linux\\config\\${nameFile}`;
         if (!fs.existsSync(pathFileLocalRules))
         {
           return Promise.resolve(new IotResult(StatusResult.Error,`File not found! ${pathFileLocalRules}`,undefined));   
@@ -170,7 +170,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         result = await this.Client.PutFile(sshconfig,undefined,pathFile,dataFile,"utf8",false);
         if(result.Status==StatusResult.Error) return Promise.resolve(result);            
         //add udev rules
-        result = await this.Client.RunScript(sshconfig,undefined, config.PathFolderExtension,
+        result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
             "addudevrules",paramsScript, false,false);
         if(result.SystemMessage){
               this.Client.FireChangedState({
@@ -188,7 +188,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         ChallengeResponseAuthentication yes
         AuthenticationMethods publickey password
       */
-      result = await this.Client.RunScript(sshconfig,undefined, config.PathFolderExtension,
+      result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
           "changeconfigssh",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({
@@ -222,31 +222,41 @@ export class IotDeviceAccount extends BaseTreeItem{
     this.Childs.push(element);
     element = new IotItemTree("SSH Key",this.Identity,`File ${this.PathKey}`,vscode.TreeItemCollapsibleState.None,this,this.Device);
     //Key availability check
-    if(this.PathKey)
-    {
-      if(!fs.existsSync(this.PathKey))
-        {
-          //Not found
-          const msg=`Error. SSH key not found: ${this.PathKey}`;
-          element.tooltip=msg;          
-          element.iconPath = {
-            light: path.join(__filename, '..', '..', 'resources', 'light', 'error.svg'),
-            dark: path.join(__filename, '..', '..', 'resources', 'dark', 'error.svg')
-          };
-          //
-          vscode.window.showErrorMessage(msg);
-          this.collapsibleState=vscode.TreeItemCollapsibleState.Expanded; 
-        }
+    if(this.PathKey&&!fs.existsSync(this.PathKey)){
+      //Not found
+      const msg=`Error. SSH key not found: ${this.PathKey}`;
+      element.tooltip=msg;          
+      element.iconPath = {
+        light: path.join(__filename, '..', '..', 'resources', 'light', 'error.svg'),
+        dark: path.join(__filename, '..', '..', 'resources', 'dark', 'error.svg')
+      };
+      //
+      vscode.window.showErrorMessage(msg);
+      this.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
     }
     this.Childs.push(element);
+    if(this.PathKey&&fs.existsSync(this.PathKey)){
+     const values=this.Identity?.split("-")??[];
+     if (values.length>=2)
+     {
+      const value=values[1];
+      element = new IotItemTree("SSH Key type",value,value,vscode.TreeItemCollapsibleState.None,this,this.Device);
+      this.Childs.push(element);
+     }
+    }
     element = new IotItemTree("Host",this.Host,this.Host,vscode.TreeItemCollapsibleState.None,this,this.Device);
     this.Childs.push(element);
     element = new IotItemTree("Port",this.Port,this.Port,vscode.TreeItemCollapsibleState.None,this,this.Device);
     this.Childs.push(element);
   }
+  
+  /*
   iconPath = {
     light: path.join(__filename, '..', '..', 'resources', 'light', 'account.svg'),
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'account.svg')
   };
+  */
+
+  iconPath = new vscode.ThemeIcon("account");
   
 }

@@ -5,18 +5,15 @@ import {BaseTreeItem} from './BaseTreeItem';
 import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation, Existences} from './IotDeviceInformation';
 import {TypePackage,IotDevicePackage} from './IotDevicePackage';
-import {IotConfiguration } from './IotConfiguration';
-import {IotResult,StatusResult } from './IotResult';
-import {v4 as uuidv4} from 'uuid';
-import {IotItemTree } from './IotItemTree';
-import { config } from 'process';
-import SSH2Promise from 'ssh2-promise';
-import {IotDeviceDTO } from './IotDeviceDTO';
-import {IotDeviceGpiochip } from './IotDeviceGpiochip';
+import {IotConfiguration} from './Configuration/IotConfiguration';
+import {IotResult,StatusResult} from './IotResult';
+import {IotItemTree} from './IotItemTree';
+import {IotDeviceDTO} from './IotDeviceDTO';
+import {IotDeviceGpiochip} from './IotDeviceGpiochip';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
-import { strictEqual } from 'assert';
-import {Sleep,StringTrim,GetMsgForSshErrorConnection} from './Helper/IoTHelper';
-//
+
+import {IoTHelper} from './Helper/IoTHelper';
+import {networkHelper} from './Helper/networkHelper';
 
 export class IotDevice extends BaseTreeItem {    
   public IdDevice:string|undefined;
@@ -40,8 +37,6 @@ export class IotDevice extends BaseTreeItem {
     ){
       super("device","description", undefined,vscode.TreeItemCollapsibleState.Expanded);
       this.Config=config;
-      //const guid = uuidv4();
-      //this.idDevice=guid.substr(0,8);
       //view
       this.contextValue="iotdevice";
       //
@@ -73,9 +68,8 @@ export class IotDevice extends BaseTreeItem {
     }
   
   public async Create(
-    host: string, port: string,userName: string, password: string, accountNameDebug:string,
-    config:IotConfiguration            
-  ): Promise<IotResult>{    
+    hostName: string, port: number,userName: string, password: string,
+      accountNameDebug:string): Promise<IotResult>{    
     //--------------------------------------
     //get Information
     this.Client.FireChangedState({
@@ -93,9 +87,9 @@ export class IotDevice extends BaseTreeItem {
         });
       }       
     });
-    //create connection info    
-    var sshconfig  = {
-      host: host,
+    //create connection info
+    var sshconfig:SSHConfig  = {
+      host: hostName,
       port: port,
       username: userName,
       password: password,
@@ -103,14 +97,13 @@ export class IotDevice extends BaseTreeItem {
 			readyTimeout: 7000
       };          
     //
-    let result=await this.Information.Get(sshconfig,config);
+    let result=await this.Information.Get(sshconfig);
     //event unsubscription    
     this.Information.Client.OnChangedStateUnsubscribe(handler);
     //    
     if(result.Status==StatusResult.Error) return Promise.resolve(result);    
-    //Generating ID Device
-    const guid = uuidv4();
-		this.IdDevice=this.Information.Hostname+"-"+guid.substr(0,8);
+    //ID Device
+		this.IdDevice=this.Information.Hostname+"-"+IoTHelper.CreateGuid();
     //Add child: Id device
     this.AddidDeviceInChildsInformation();
     //--------------------------------------
@@ -131,7 +124,7 @@ export class IotDevice extends BaseTreeItem {
         });
       }
     });    
-    result=await this.Account.Create(sshconfig,accountNameDebug,config,this.IdDevice);
+    result=await this.Account.Create(sshconfig,accountNameDebug);
     //event unsubscription    
     this.Account.Client.OnChangedStateUnsubscribe(handler);
     //
@@ -152,7 +145,7 @@ export class IotDevice extends BaseTreeItem {
   private AddidDeviceInChildsInformation():void
   {
     //Add child: Id device
-    let elementIdDevice = new IotItemTree("Id device",this.IdDevice,this.IdDevice,vscode.TreeItemCollapsibleState.None,this.Information,this);
+    let elementIdDevice = new IotItemTree("Id device",this.IdDevice,`Id device: ${this.IdDevice}`,vscode.TreeItemCollapsibleState.None,this.Information,this);
     this.Information.Childs.unshift(elementIdDevice);
   }
 
@@ -304,40 +297,47 @@ export class IotDevice extends BaseTreeItem {
     this.GpioChips.FromJSON(obj.IotGpiochips)
   }
 
-  public async Ping(): Promise<IotResult>{ 
+  public async ConnectionTest(hostName:string|undefined=undefined, port:number=22,
+      userName:string|undefined=undefined,password:string|undefined=undefined): Promise<IotResult>{
+    let result:IotResult;
+    //Get sshconfig
+    var sshconfig:SSHConfig;
+    if(hostName){
+      sshconfig  = {
+        host: hostName,
+        port: port,
+        username: userName,
+        password: password,
+        tryKeyboard: true,
+        readyTimeout: 7000
+        };
+    }else{
+      sshconfig=this.Account.SshConfig;
+    }
+    //GetIp
+    result=await networkHelper.GetIpAddress(sshconfig.host ?? "non");
+    if(result.Status==StatusResult.Error) return Promise.resolve(result);
+    const ipAddress = <string>result.returnObject;
     //Ping
-    if(this.Device.Account.Host)
-    {
-      const result=await this.Client.Ping(this.Device.Account.Host);
-      if(result.Status==StatusResult.Error) return Promise.resolve(result);  
-    }    
-    //   
-    let ssh = new SSH2Promise(this.Account.SshConfig,undefined);
-    try
-      {
-        await ssh.connect();
-        console.log("Connection established SSH");
-      }
-    catch (err:any)
-      {
-        console.log("Not Connected SSH");
-        const msg=`${err}\n`+
-          GetMsgForSshErrorConnection();
-        return Promise.resolve(new IotResult(StatusResult.Error,"Not Connected SSH!",msg));
-      }
-    ssh.close();
-    return Promise.resolve(new IotResult(StatusResult.Ok,"Connected SSH!",undefined));          
+    result=await networkHelper.PingHost(ipAddress);
+    if(result.Status==StatusResult.Error) return Promise.resolve(result);
+    //Check port
+    result=await networkHelper.CheckTcpPortUsed(ipAddress,sshconfig.port ?? 22);
+    if(result.Status==StatusResult.Error) return Promise.resolve(result);
+    //Check ssh connection
+    result=await this.Client.GetSshConnection(sshconfig);
+    return Promise.resolve(result);
   }
 
   public async Reboot(): Promise<IotResult>{
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      const result=await this.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
-    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.PathFolderExtension,"reboot",
+    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.Folder.Extension,"reboot",
       undefined,false,false);
     //if(result.status==StatusResult.Error) return Promise.resolve(result);
     
@@ -348,11 +348,11 @@ export class IotDevice extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      const result=await this.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
-    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.PathFolderExtension,"shutdown",
+    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.Folder.Extension,"shutdown",
       undefined,false,false);    
     return Promise.resolve(result);    
   }
@@ -371,5 +371,3 @@ export class IotDevice extends BaseTreeItem {
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'device.svg')
   };
 }
-
-

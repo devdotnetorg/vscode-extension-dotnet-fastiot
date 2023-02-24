@@ -1,0 +1,72 @@
+{
+	"values": [
+		{
+			"fastiotIdLaunch": "%{launch.id}",
+			"fastiotIdDevice": "%{device.id}",
+			"fastiotProject":"%{project.mainfile.path.relative.aslinux}",
+			"fastiotIdTemplate": "%{template.id}",
+			"name": "%{launch.label}",
+			"type": "coreclr",
+			"request": "launch",
+			"program": "dotnet",
+			"args": ["./%{project.name}.dll"],
+			"cwd": "~/fastiot/debugapps/%{project.name}",
+			"stopAtEntry": false,
+			"console": "integratedTerminal",
+			"env": {
+				"FASTIOT": "easy"
+			},
+			"pipeTransport": {
+				"pipeCwd": "${workspaceFolder}",
+				"pipeProgram": "%{template.storage.path.aswindows}\\apps\\cwrsync\\ssh.exe",
+				"pipeArgs": [
+					"-i",
+					"%{device.ssh.key.path.full.aswindows}",
+					"-o",
+					"StrictHostKeyChecking no",
+					"-o",
+					"UserKnownHostsFile /dev/null",
+					"-p",
+					"%{device.ssh.port}",
+					"%{device.user.debug}@%{device.host}"
+				],
+				"debuggerPath": "/usr/share/vsdbg/vsdbg --engineLogging=/var/log/vsdbg.log"
+			},            
+			"preLaunchTask": "fastiot-%{launch.id}-copy-app-to-device"
+		},
+		{
+			"fastiotIdLaunch": "%{launch.id}-without-logs",
+			"fastiotIdDevice": "%{device.id}",
+			"fastiotProject":"%{project.mainfile.path.relative.aslinux}",
+			"fastiotIdTemplate": "%{template.id}",
+			"name": "%{launch.label} without logs",
+			"type": "coreclr",
+			"request": "launch",
+			"program": "dotnet",
+			"args": ["./%{project.name}.dll"],
+			"cwd": "~/fastiot/debugapps/%{project.name}",
+			"stopAtEntry": false,
+			"console": "integratedTerminal",
+			"env": {
+				"FASTIOT": "easy"
+			},
+			"pipeTransport": {
+				"pipeCwd": "${workspaceFolder}",
+				"pipeProgram": "%{template.storage.path.aswindows}\\apps\\cwrsync\\ssh.exe",
+				"pipeArgs": [
+					"-i",
+					"%{device.ssh.key.path.full.aswindows}",
+					"-o",
+					"StrictHostKeyChecking no",
+					"-o",
+					"UserKnownHostsFile /dev/null",
+					"-p",
+					"%{device.ssh.port}",
+					"%{device.user.debug}@%{device.host}"
+				],
+				"debuggerPath": "/usr/share/vsdbg/vsdbg"
+			},            
+			"preLaunchTask": "fastiot-%{launch.id}-copy-app-to-device-without-logs"
+		}
+    ]
+}

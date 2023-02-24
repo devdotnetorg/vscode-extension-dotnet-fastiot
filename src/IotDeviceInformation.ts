@@ -4,7 +4,6 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotItemTree} from './IotItemTree';
-import {IotConfiguration} from './IotConfiguration';
 import {StatusResult,IotResult} from './IotResult';
 
 export class IotDeviceInformation extends BaseTreeItem{  
@@ -44,7 +43,7 @@ export class IotDeviceInformation extends BaseTreeItem{
     this.Device=device;
   }
 
-  public async Get(sshconfig:any, config:IotConfiguration): Promise<IotResult>{      
+  public async Get(sshconfig:any): Promise<IotResult>{      
       this.Client.FireChangedState({
          status:undefined,
          console:"Run: pregetinformation.sh",
@@ -53,9 +52,9 @@ export class IotDeviceInformation extends BaseTreeItem{
       //Иногда с первого раза не устанавливается пакет в Ubuntu после его удаления
       //поэтому три попытки установить
       //1
-      let result = await this.Client.RunScript(sshconfig,undefined, config.PathFolderExtension,
+      let result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
           "pregetinformation",undefined, false,false);
-      if(result.SystemMessage){
+      if(result.Status==StatusResult.Ok&&result.SystemMessage){
          this.Client.FireChangedState({
             status:undefined,
             console:result.SystemMessage,
@@ -63,25 +62,29 @@ export class IotDeviceInformation extends BaseTreeItem{
           });
       }      
       //2
-      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, config.PathFolderExtension,
-         "pregetinformation",undefined, false,false);
-      if(result.SystemMessage){
+      if(result.Status==StatusResult.Error) {
+         result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
+            "pregetinformation",undefined, false,false);
+         if(result.Status==StatusResult.Ok&&result.SystemMessage){
             this.Client.FireChangedState({
                status:undefined,
                console:result.SystemMessage,
                obj:undefined
-             });
-         }    
+               });
+         }
+      }
       //3
-      if(result.Status==StatusResult.Error) result = await this.Client.RunScript(sshconfig,undefined, config.PathFolderExtension,
-         "pregetinformation",undefined, false,false);
-      if(result.SystemMessage){
+      if(result.Status==StatusResult.Error) {
+         result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
+            "pregetinformation",undefined, false,false);
+         if(result.SystemMessage){
             this.Client.FireChangedState({
                status:undefined,
                console:result.SystemMessage,
                obj:undefined
-             });
-         }    
+               });
+         }
+      }
       //Result
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
       //get information
@@ -90,7 +93,7 @@ export class IotDeviceInformation extends BaseTreeItem{
          console:"Run: getinformation.sh",
          obj:undefined
        });
-      result = await this.Client.RunScript(sshconfig,undefined, config.PathFolderExtension,
+      result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
           "getinformation",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({

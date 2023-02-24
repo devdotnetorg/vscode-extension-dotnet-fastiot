@@ -1,10 +1,10 @@
-[![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev-mono)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
+[![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Github Issues](https://img.shields.io/github/issues/devdotnetorg/vscode-extension-dotnet-fastiot.svg)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
 
 # .NET FastIoT VS Code Extension
 
 [.NET FastIoT Extension](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot ".NET FastIoT Extension") in Visual Studio Code Marketplace.
 
-[README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README.md "README") in English | [README](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/README_ru.md "README") на русском языке | DevDotNet.ORG (Russian) - [latest news](https://devdotnet.org/tag/fastiot/ "latest news") | Habr.com (Russian) - [Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux").
+[README](README.md "README") in English | [README](README_ru.md "README") на русском языке | DevDotNet.ORG (Russian) - [latest news](https://devdotnet.org/tag/fastiot/ "devdotnet.org/tag/fastiot") | Habr.com (Russian) - [Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux").
 
 This extension allows you configures an ARMv7 or ARMv8 Linux embedded device to run .NET applications, and configures `*.csproj` projects for remote debugging via an ssh-tunnel. This has been tested on Windows (64 bits).
 
@@ -12,197 +12,86 @@ Devices supported: Raspberry Pi, Banana Pi, Orange Pi, Radxa, Tinkerboard, Odroi
 
 *.NET FastIoT Extension UI*
 
-![.NET FastIoT title](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot.png)
+![.NET FastIoT title](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/docs/vscode-dotnet-fastiot.png)
 
-![.NET FastIoT title](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-interface.png)
+![.NET FastIoT interface](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/docs/vscode-dotnet-fastiot-interface.png)
 
 ## Features
 
-1. Easy installation .NET SDK, .NET Runtimes, .NET Debugger (vsdbg), Libgpiod, Docker for Linux;
-2. Setting up .NET projects for remote debugging, adding environment variables (Method [Environment.GetEnvironmentVariable](https://docs.microsoft.com/en-us/dotnet/api/system.environment.getenvironmentvariable "Environment.GetEnvironmentVariable"));
-3. Device Tree overlays management. Required to turn on/off devices such as I2C, SPI, PWM, etc. Available remote download of files `* .DTS` and enable/disable "layers". See [Working with GPIO. Part 2. Device Tree overlays (RU)](https://devdotnet.org/post/rabota-s-gpio-na-primere-banana-pi-bpi-m64-chast-2-device-tree-overlays/ "Working with GPIO. Part 2. Device Tree overlays"). Only the [Armbian](https://www.armbian.com/ "Armbian") distribution is supported. To support other distributions, the adapter must be implemented using the [IDtoAdapter.ts](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/src/DTO/IDtoAdapter.ts "IDtoAdapter.ts") interface. Armbian implementation example - [IoTDTOArmbianAdapter.ts](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/src/DTO/IoTDTOArmbianAdapter.ts "IoTDTOArmbianAdapter.ts");
-4. GPIO pin control (not fully implemented yet). Detecting available Gpiochip ~~and lines. Applying `0/1` to the contact, reading the state of the contact. Generation of C# code for the selected contact for transferring to the project one-to-one.~~
+1. Easy installation of .NET SDK, .NET Runtimes, .NET Debugger (vsdbg), Libgpiod libraries, Docker for Linux;
+2. Creating a project from a ready-made template with the possibility of remote debugging;
+3. Setting up existing projects on .NET for remote debugging;
+4. Creation of custom project templates and remote debugging configuration;
+5. Managing device overlay files (Device Tree overlays). Required to enable/disable devices such as I2C, SPI, PWM, etc. More details in the publication [Working with GPIO. Part 2. Device Tree overlays](https://devdotnet.org/post/rabota-s-gpio-na-primere-banana-pi-bpi-m64-chast-2-device-tree-overlays/ "Working with GPIO . Part 2. Device Tree overlays").
 
 ## System requirements
 
-- **OS version .** Windows 7-10 (x64). Linux version coming later;
-- **Visual Studio Code.** version not lower than [1.70.3](https://code.visualstudio.com/ "1.70.3");
-- **.NET.** Compiling a C# project requires [.NET SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks ".NET SDK") depending on which version of your project you are using (the extension itself is not required to work);
+- **OS version.** Windows 7-10 (x64). A Linux version will come later. Note: The next version of the extension above v0.3 will not support Windows 7;
+- **Visual Studio Code.** version not lower than [1.70.3](https://code.visualstudio.com/ "1.70.3"). This is the latest version of VSCode with Windows 7 support, more details on this on [support page](https://code.visualstudio.com/docs/supporting/faq#_can-i-run-vs-code-on-windows-7 "Can I run VS Code on Windows 7?");
+- **.NET.** Compiling a C# project requires [.NET SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks ".NET SDK") depending on the version of your project you are using (the extension itself is not required to work);
 
 Additional extensions required for developing .NET applications:
 
-- [C# for Visual Studio Code (powered by OmniSharp)](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp "C# for Visual Studio Code (powered by OmniSharp)") — support for C# development ;
-- [NuGet Package Manager](https://marketplace.visualstudio.com/items?itemName=jmrog.vscode-nuget-package-manager "NuGet Package Manager") — adding Nuget packages (later the Nuget package manager will be built into the extension);
-- [DeviceTree](https://marketplace.visualstudio.com/items?itemName=plorefice.devicetree "DeviceTree") (optional) — Syntax highlighting for DeviceTree (Device Tree, .dts) files in VSCode. For example, it will be required if it becomes necessary to adapt the [SPI LCD ILI9341 (RU)](https://devdotnet.org/post/rabota-s-gpio-v-linux-na-primere-banana-pi-bpi-m64-chast-4-device-tree-overlays-podkluchenie-displey-spi-lcd-ili9341/ "SPI LCD ILI9341") for your SBC.
+- [C# for Visual Studio Code (powered by OmniSharp)](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp "C# for Visual Studio Code (powered by OmniSharp)") - development support for C#.
 
-Third-party applications:
+Recommended additional extensions that improve the development process and interaction with the remote device:
 
-- **cwRsync.** The package uses the rsync and ssh utilities. Included in the extension and copied to the default folder `C:\RemoteCode\cwrsync\ ` (location changes in settings). Optionally, you can replace the package by downloading it from the official website at the [link](https://itefix.net/cwrsync "link"). The [PuTTY](https://www.putty.org/ "PuTTY")  terminal is not used.
-
-Third-party bash scripts to install packages/libraries: 
-
-- [.NET SDK](https://dot.net/v1/dotnet-install.sh ".NET SDK"), [.NET Runtimes](https://dot.net/v1/dotnet-install.sh ".NET Runtimes"), [.NET Debugger (vsdbg)](https://aka.ms/getvsdbgsh ".NET Debugger (vsdbg)"), Libgpiod, [Docker](https://get.docker.com/ "Docker"), are downloaded from the official sites of the package developers, excluding the Libgpiod library. The script for installing this library is downloaded from the GitHub resource — [devdotnetorg/docker-libgpiod](https://raw.githubusercontent.com/devdotnetorg/docker-libgpiod/master/setup-libgpiod.sh "devdotnetorg/docker-libgpiod"). Next, the uploaded script downloads the source code of the library from the official [Libgpiod](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/ "Libgpiod") repository and compiles the library.
+- [NuGet Package Manager](https://marketplace.visualstudio.com/items?itemName=jmrog.vscode-nuget-package-manager "NuGet Package Manager") - adding Nuget packages (later the Nuget package manager will be built into extension);
+- [DeviceTree](https://marketplace.visualstudio.com/items?itemName=plorefice.devicetree "DeviceTree") - Syntax support for Device Tree (DT) files. Used to edit `*.dts` files. For example, it will be necessary if it becomes necessary to adapt the [SPI LCD ILI9341 display](https://devdotnet.org/post/rabota-s-gpio-v-linux-na-primere-banana-pi-bpi-m64-chast-4-device-tree-overlays-podkluchenie-displey-spi-lcd-ili9341/ "SPI LCD ILI9341 display") for your SBC;
+- [Output Colorizer](https://marketplace.visualstudio.com/items?itemName=IBM.output-colorizer "Output Colorizer") - adds color to the test messages in the OUTPUT window, makes it easier to perceive the information provided by the extension.
 
 ## System requirements for the device
 
 - **Processor.** ARMv7 or ARMv8;
-- **OS version.** Linux distribution based on at least Ubuntu 18.04 (Bionic Beaver), or at least Debian 10.11 (Buster);
+- **OS version.** Linux distribution based on Ubuntu 20.04 LTS or later (Focal Fossa), or Debian 10.11 or later (Buster). It is recommended to use the distribution kit [Armbian](https://www.armbian.com/ "Armbian - Linux for ARM development boards").
 
 ## Getting started
 
-### Step 1 — Preparing the device
-
-The single board computer must be running a Debian distribution or Ubuntu, Linux. For remote access, you need to install an ssh server and configure certain settings. As a terminal for remote access, you can use [MobaXterm](https://mobaxterm.mobatek.net/download.html "MobaXterm") (much more convenient compared to the PuTTY terminal). If the `sudo` is not installed, then install this package as `root` using the commands:
-
-```bash
-apt-get update
-apt-get install -y sudo
-```
-
-To install an ssh-server and configure access, run the following commands on a single board computer: 
-
-```bash
-sudo apt-get update
-sudo apt-get install -y openssh-server mc
-sudo systemctl reload ssh
-sudo mcedit /etc/ssh/sshd_config
-```
-
-In the editor that opens, set the following parameters. If these parameters are missing, then just insert the line (usually the `AuthenticationMethods` is missing):
-
-```bash
-PermitRootLogin yes
-PasswordAuthentication yes
-ChallengeResponseAuthentication yes
-AuthenticationMethods publickey keyboard-interactive password
-PubkeyAcceptedAlgorithms=+ssh-rsa
-```
-
-Then save the changes <kbd>F2</kbd> and exit the editor <kbd>F10</kbd>.
-
-Restart the ssh-server to apply the new settings: 
-
-```bash
-sudo systemctl reload ssh
-sudo systemctl status ssh
-```
-
-The last command displays the current status of the service.
-
-Video instruction for setting up an ssh server for connecting an extension:
-
-[![.NET FastIoT. Step 1. Configuring SSH access](https://img.youtube.com/vi/-xgAP1qsVsw/0.jpg)](https://www.youtube.com/watch?v=-xgAP1qsVsw)
-
-### Step 2 — Adding a device
-
-At the first connection, a pair of access keys is created, private and public. The private key is copied to the `C:\RemoteCode\keys\ ` folder (the location is changed in the settings). This key is used to configure the device and start remote debugging.
-
-The important point is choosing an account to create on the device. The first option is the **debugvscode** account (the name can be changed in the settings), the second option is **root**:
-
-*Selecting an account to create on the device*
-![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-select-account.png)
-
-Selecting the **debugvscode** option creates a permissions configuration file [20-gpio-fastiot.rules](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/vscodetemplates/20-gpio-fastiot.rules "20-gpio-fastiot.rules") to devices using the [udev](https://ru.wikipedia.org/wiki/Udev "udev") subsystem. A group named **iot**is created, and permissions for devices such as: gpiochip, I2C, SPI, PWM, etc. Then the user **debugvscode** is added to this group. Due to the fact that testing was performed only on Armbian, it is possible that not all permissions have been added. Therefore, if you have problems with access rights to devices, then choose — **root**.
-
-*Adding a new device ([YouTube](https://youtu.be/pusO7PV4NL4 "YouTube")):*
-
-![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/2_Adding_a_device.gif)
-
-### Step 3 — Installing packages
-
-To run a .NET IoT application and perform remote debugging, you need to install:
-
-- Runtime - .NET Runtime.
-- Remote debugger - .NET Debugger (vsdbg).
-- GPIO line control library - Libgpiod (optional).
-
-Installing the Libgpiod library is possible from the repository and source code. If the repository contains an old version of the library, then install the library from source.
-
-### Step 4 — Launch configuration
-
-Now you need to open the project or create it. Project example [dotnet-iot-fastiot-test](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/dotnet-iot-fastiot-test "dotnet-iot-fastiot-test").
-
-To create a remote debugging configuration on the device, you must click on the *Add Configuration* button:
-
-![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-1.png)
-
-Select project:
-
-![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-2.png)
-
-Select a device for remote debugging:
-
-![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-3.png)
-
-The application launch configuration has been created.
-
-![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-4.png)
-
-Now you need to go to `Run and Debug`:
-
-![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-5.png)
-
-Select configuration to run:
-
-![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-6.png)
-
-Run the project on debugging menu `Run > Start Debugging`.
-
-![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-create-launch-7.png)
-
-## Test projects
-
-The `*.csproj` test projects are located in the folder [samples](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/Samples/ "samples"). The first base project for testing remote debugging is `dotnet-iot-fastiot-test`. Other projects are located in the [devdotnetorg/dotnet-iot-samples](https://github.com/devdotnetorg/dotnet-iot-samples "devdotnetorg/dotnet-iot-samples") repository.
+See [Getting started](/docs/Getting-started.md "Getting started").
 
 ## Extension settings
 
-To change the extension settings, open the menu item `File > Preferences > Settings`. Then go to the `User` tab and select `Extensions`.
+See [Extension settings](/docs/Extension-settings.md "Extension settings").
 
-![VSCode dotnet FastIoT](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/docs/vscode-dotnet-fastiot-settings-1.png)
+## Troubleshooting
 
-Settings:
+For troubleshooting, see the [Troubleshooting](docs/Troubleshooting.md "Troubleshooting") guide.
 
-- **Conf › Resource: Insert Empty Last Line** - device data is stored in the `fastiot.device.all.JSON` node in JSON format, it is not recommended to change it manually. Due to incorrect changes, the device list may not load.
-- **Fastiot › Device › Account: Groups** - Linux user group on a remote device (eg Raspberry Pi) to which the account (`debugvscode`) will be added to control the device. This group must have Administrator rights.
-- **Fastiot › Device › Account: Username** - account name created on the remote device. Used to control the device and perform remote debugging. Default value: `debugvscode`.
-- **Fastiot › Device › All: JSON** - device settings in JSON format, it is not recommended to change them manually. Due to incorrect changes, the device list may not load.
-- **Fastiot › Device: Pathfoldercwrsync** - folder with [cwRsync](https://itefix.net/cwrsync "cwRsync") program. Default value: `C:\RemoteCode\cwrsync`.
-- **Fastiot › Device: Pathfolderkeys** - folder for storing access keys to devices (eg Raspberry Pi).
-- **Fastiot › Launch: Templatetitle** - template for forming the name of the debugging profile. The values of the variables can be viewed at the [link](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md "link"). Default value: `Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)`.
+## Project Templates
 
-## Videos (YouTube):
+How to create templates visit the page [Project Templates](docs/Project-templates.md "Project Templates").
 
-1. [Step 1. Configuring SSH access](https://www.youtube.com/watch?v=-xgAP1qsVsw "Step 1. Configuring SSH access")
-2. [Step 2. Adding a device](https://www.youtube.com/watch?v=pusO7PV4NL4 "Step 2. Adding a device")
-3. [Step 3. Installing packages](https://www.youtube.com/watch?v=Y8U2V0THQh4 "Step 3. Installing packages")
-4. [Step 4. Creating a .NET console application and remote debugging](https://www.youtube.com/watch?v=oghH3oHIZgE "Step 4. Creating a .NET console application and remote debugging")
-5. [Step 5. Using GPIO. Blink](https://www.youtube.com/watch?v=NQTgP4jwZPg "Step 5. Using GPIO. Blink")
+## Additional materials
 
-## Known Issues
-
-See [ISSUES.md](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/ISSUES.md "ISSUES.md") and [Issues](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "Issues").
-
-## Feedback
-
-Send your comments by email `fastiot@devdotnet.org`. And check in [Issues](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "Issues").
-
-## License
-
-This software is licensed under the terms of the LGPL-3.0 license.
-
-See [LICENSE](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/LICENSE "LICENSE") for more details.
+For additional documentation for the project, visit the [Additional materials](docs/Additional-materials.md "Additional materials") page.
 
 ## Changelog
 
-See [CHANGELOG.md](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/CHANGELOG.md "CHANGELOG.md").
+See [CHANGELOG](CHANGELOG.md "CHANGELOG").
+
+## License
+
+This software is licensed under the LGPL-3.0.
+
+See [LICENSE](LICENSE "LICENSE") for details.
+
+[Project Templates](/templates/ "Project Templates") for projects are distributed under the license [MIT](LICENSE_MIT.md "MIT LICENSE").
+
+## Feedback
+
+Send your comments to `fastiot@devdotnet.org`. And check in [Issues](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "Issues").
 
 ## Schedule
 
-See [SCHEDULE.md](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/SCHEDULE.md "SCHEDULE.md").
+See [SCHEDULE](SCHEDULE.md "SCHEDULE").
+
+## Known Issues
+
+See [ISSUES](ISSUES.md "ISSUES") and [Issues on GitHub](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "Issues on GitHub").
 
 ## Testing
 
-Testing performed on single board computers:
+Testing was performed on single-board computers:
 
 - [Cubieboard](https://github.com/devdotnetorg/Cubieboard "Cubieboard")
 - [Cubietruck](https://devdotnet.org/post/otladochnaya-plata-cubietruck/ "Cubietruck")

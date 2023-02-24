@@ -9,4 +9,3 @@ export async function refreshDevices(treeData: TreeDataDevicesProvider): Promise
     treeData.RefreshsFull();
     vscode.window.showInformationMessage("Refresh devices");
 }
-

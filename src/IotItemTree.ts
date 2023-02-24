@@ -6,16 +6,14 @@ import {IotDevice} from './IotDevice';
 import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation} from './IotDeviceInformation';
 import {IotDevicePackage} from './IotDevicePackage';
-import {IotLaunchConfiguration} from './IotLaunchConfiguration';
+import {IotLaunch} from './IotLaunch';
 import {IotLaunchOptions} from './IotLaunchOptions';
-//
 
 export class IotItemTree extends BaseTreeItem { 
   public Parent: IotDevice| IotDeviceAccount| IotDeviceInformation| IotItemTree| 
-  IotDevicePackage| IotLaunchConfiguration| IotLaunchOptions;
+  IotDevicePackage| IotLaunch| IotLaunchOptions;
   public Childs: Array<IotItemTree>=[]; 
   public Device: IotDevice;
-
 
   constructor(
     label: string,  
@@ -23,7 +21,7 @@ export class IotItemTree extends BaseTreeItem {
     tooltip: string | vscode.MarkdownString | undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,
     parent: IotDevice| IotDeviceAccount| IotDeviceInformation| IotItemTree| 
-      IotDevicePackage| IotLaunchConfiguration| IotLaunchOptions,
+      IotDevicePackage| IotLaunch| IotLaunchOptions,
     device: IotDevice
     ){
       super(label,description,tooltip,collapsibleState);

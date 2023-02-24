@@ -4,9 +4,7 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotResult,StatusResult } from './IotResult';
-
-import {StringTrim} from './Helper/IoTHelper';
-import { exit } from 'process';
+import {IoTHelper} from './Helper/IoTHelper';
 
 export class IotDevicePackage extends BaseTreeItem {
   public Parent: IotDevice| IotDevicePackage;
@@ -17,53 +15,49 @@ export class IotDevicePackage extends BaseTreeItem {
   public get NamePackage(): TypePackage {
     return this._namePackage;}   
   public set NamePackage(newName: TypePackage) {
-      this._namePackage=newName;
-      //
-      this.label=this._namePackage.toString();
-      //this.description=this._versionPackage
-      this.tooltip =`${this.label}-${this.description}`;
+    this._namePackage=newName;
+    this.label=this._namePackage.toString();
+    //this.description=this._versionPackage
+    this.tooltip =`${this.label}-${this.description}`;
   }
 
   private _versionPackage:string|undefined;
   public get VersionPackage(): string|undefined {
     return this._versionPackage;}   
   public set VersionPackage(newVersion: string|undefined) {
-      if(newVersion){
-        this._versionPackage=newVersion;
-        this.description=newVersion;
-        this.isInstalled=true;       
-      }else{
-        this._versionPackage="not installed";
-        this.description="not installed";
-        this.isInstalled=false;
-      }
-      //
-      this.tooltip =`${this.label} - ${this.description}`;
+    if(newVersion){
+      this._versionPackage=newVersion;
+      this.description=newVersion;
+      this.isInstalled=true;       
+    }else{
+      this._versionPackage="not installed";
+      this.description="not installed";
+      this.isInstalled=false;
+    }
+    this.tooltip =`${this.label} - ${this.description}`;
   }
 
   private _isInstalled:boolean=false;
   public get isInstalled(): boolean {
     return this._isInstalled;}   
   private set isInstalled(value: boolean) {
-      this._isInstalled=value;
-      //
-      if(value)
-      {
-        this.iconPath = {
-          light: path.join(__filename, '..', '..', 'resources', 'light', 'yes.svg'),
-          dark: path.join(__filename, '..', '..', 'resources', 'dark', 'yes.svg')
-        };
-        //view
-        this.contextValue="iotpackage_installed";
-      }else
-      {
-        this.iconPath = {
-          light: path.join(__filename, '..', '..', 'resources', 'light', 'no.svg'),
-          dark: path.join(__filename, '..', '..', 'resources', 'dark', 'no.svg')
-        };
-        //view
-        this.contextValue="iotpackages_not_installed";
-      }      
+    this._isInstalled=value;
+    if(value)
+    {
+      this.iconPath = {
+        light: path.join(__filename, '..', '..', 'resources', 'light', 'yes.svg'),
+        dark: path.join(__filename, '..', '..', 'resources', 'dark', 'yes.svg')
+      };
+      //view
+      this.contextValue="iotpackage_installed";
+    }else{
+      this.iconPath = {
+        light: path.join(__filename, '..', '..', 'resources', 'light', 'no.svg'),
+        dark: path.join(__filename, '..', '..', 'resources', 'dark', 'no.svg')
+      };
+      //view
+      this.contextValue="iotpackages_not_installed";
+    }      
   }
 
   constructor(            
@@ -106,7 +100,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      const result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
@@ -117,7 +111,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //Params
     let paramsScript=this.GetParamsScript(this.NamePackage,objJSON);    
     //Exec
-    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.PathFolderExtension,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
       nameScript,paramsScript,false,false);    
     return Promise.resolve(result);    
   }
@@ -126,7 +120,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //Ping
     if(this.Device.Account.Host)
     {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+      const result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //get namepackage 
@@ -136,7 +130,7 @@ export class IotDevicePackage extends BaseTreeItem {
     //Params
     let paramsScript=this.GetParamsScript(this.NamePackage,objJSON);    
     //Exec
-    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.PathFolderExtension,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
       nameScript,paramsScript, true,false);    
     return Promise.resolve(result); 
   }  
@@ -147,15 +141,13 @@ export class IotDevicePackage extends BaseTreeItem {
     //checkpackagedotnetsdk.sh
     let nameScript=`checkpackage${namePackage}`;
     //Exec
-    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.PathFolderExtension,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
       nameScript,undefined, false,false); 
-    if(result.Status==StatusResult.Ok)
-    {
-      if(StringTrim(<string>result.SystemMessage)=="notinstalled"){
+    if(result.Status==StatusResult.Ok) {
+      if(IoTHelper.StringTrim(<string>result.SystemMessage)=="notinstalled"){
         this.VersionPackage=undefined;
-      }else
-      {
-        this.VersionPackage=StringTrim(<string>result.SystemMessage);
+      }else{
+        this.VersionPackage=IoTHelper.StringTrim(<string>result.SystemMessage);
       }
     }
     return Promise.resolve(result); 
@@ -183,9 +175,8 @@ export class IotDevicePackage extends BaseTreeItem {
 
   public async Test(): Promise<IotResult>{  
     //Ping
-    if(this.Device.Account.Host)
-    {
-      const result=await this.Client.Ping(this.Device.Account.Host);
+    if(this.Device.Account.Host) {
+      const result=await this.Device.ConnectionTest();
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }
     //get namepackage 
@@ -193,31 +184,32 @@ export class IotDevicePackage extends BaseTreeItem {
     //testpackagedotnetsdk.sh
     let nameScript=`testpackage${namePackage}`;
     //Exec
-    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.PathFolderExtension,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
       nameScript,undefined, false,false); 
     return Promise.resolve(result);
   }
 
-  private CreateChildElements(    
-    ){      
-      //create child elements
-      this.Childs=[];         
-      let element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
-      element.InitPackage(TypePackage.dotnetsdk,undefined);
-      this.Childs.push(element);      
-      element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
-      element.InitPackage(TypePackage.dotnetruntimes,undefined);
-      this.Childs.push(element);      
-      element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
-      element.InitPackage(TypePackage.debugger,undefined);
-      this.Childs.push(element);      
-      element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
-      element.InitPackage(TypePackage.libgpiod,undefined);
-      this.Childs.push(element);
-      element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
-      element.InitPackage(TypePackage.docker,undefined);
-      this.Childs.push(element);
-      //      
+  private CreateChildElements(){
+    //create child elements
+    this.Childs=[];         
+    let element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
+    element.InitPackage(TypePackage.dotnetsdk,undefined);
+    this.Childs.push(element);      
+    element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
+    element.InitPackage(TypePackage.dotnetruntimes,undefined);
+    this.Childs.push(element);
+    element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
+    element.InitPackage(TypePackage.mono,undefined);
+    this.Childs.push(element);
+    element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
+    element.InitPackage(TypePackage.debugger,undefined);
+    this.Childs.push(element);      
+    element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
+    element.InitPackage(TypePackage.libgpiod,undefined);
+    this.Childs.push(element);
+    element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
+    element.InitPackage(TypePackage.docker,undefined);
+    this.Childs.push(element);    
   }
 
   public Build(){   
@@ -225,48 +217,41 @@ export class IotDevicePackage extends BaseTreeItem {
   }
 
   public ToJSON():any{
-     //Fill
-     const json="{}";
-     let jsonObj = JSON.parse(json); 
-     //
-     let keyItem="name";
-     let valueItem=GetNamePackageByType(this.NamePackage);          
-     jsonObj[keyItem]=valueItem;
-     //
-     keyItem="version";
-     if(this.isInstalled)
-     {
+    //Fill
+    const json="{}";
+    let jsonObj = JSON.parse(json);
+    let keyItem="name";
+    let valueItem=GetNamePackageByType(this.NamePackage);          
+    jsonObj[keyItem]=valueItem;
+    keyItem="version";
+    if(this.isInstalled) {
       valueItem=<string>this.VersionPackage;
      }else{
       valueItem=undefined;
      }
      jsonObj[keyItem]=valueItem;
-     //          
+     //   
      return jsonObj;    
   }
     
-  public FromJSON(obj:any):any{      
+  public FromJSON(obj:any):any{
     //Recovery package from JSON format
     if(obj[0]) this.Build(); else return;
     //
     let index=0;    
-    do { 				
-          let item=obj[index];
-          if(item)
-          {
-            //Create packages            
-            const namePackage=GetPackageByName(<string>item.name);
-            const versionPackage=<string>item.version;
-            let currentPackage=this.Childs.find(x=>x.NamePackage==namePackage);
-            if(currentPackage)
-            {
-              currentPackage.VersionPackage=versionPackage;
-            }
-            //next position
-            index=index+1;
-          }else break;      
-     } 
-     while(true) 
+    do {
+      let item=obj[index];
+        if(item) {
+          //Create packages            
+          const namePackage=GetPackageByName(<string>item.name);
+          const versionPackage=<string>item.version;
+          let currentPackage=this.Childs.find(x=>x.NamePackage==namePackage);
+          if(currentPackage) currentPackage.VersionPackage=versionPackage;
+          //next position
+          index=index+1;
+        }else break;
+    } 
+    while(true) 
   }
 
   public GetParamsScript(value:TypePackage,objJSON:any):string| undefined
@@ -300,7 +285,7 @@ export class IotDevicePackage extends BaseTreeItem {
       } 
     }
     //Trim
-    if(params) params=StringTrim(params);
+    if(params) params=IoTHelper.StringTrim(params);
     return params;
   }
 
@@ -317,7 +302,8 @@ export enum TypePackage {
   dotnetruntimes = ".NET runtimes",
   debugger  = ".NET Debugger (vsdbg)",
   libgpiod = "Libgpiod",
-  docker = "Docker"
+  docker = "Docker",
+  mono = "Mono (experimental)"
 }
 
 export function GetNamePackageByType(value:TypePackage):string| undefined
