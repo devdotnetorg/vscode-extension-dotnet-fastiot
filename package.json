@@ -46,7 +46,12 @@
 	"os": [
 		"win32"
 	],
-	"recommendations": ["ms-dotnettools.csharp", "jmrog.vscode-nuget-package-manager","plorefice.devicetree","IBM.output-colorizer"],
+	"recommendations": [
+		"ms-dotnettools.csharp",
+		"jmrog.vscode-nuget-package-manager",
+		"plorefice.devicetree",
+		"IBM.output-colorizer"
+	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"configuration": [
