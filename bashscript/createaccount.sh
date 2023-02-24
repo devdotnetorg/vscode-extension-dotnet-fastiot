@@ -56,11 +56,9 @@ if [ -f /home/$NEWUSERNAME/.ssh/id_$TYPEKEY.pub ]; then
 fi
 
 NAMEHOST=$(uname -n)
-
 ssh-keygen -t $TYPEKEY -b $BITS -f /home/$NEWUSERNAME/.ssh/id_$TYPEKEY -C $NEWUSERNAME@$NAMEHOST -N ""
 cat /home/$NEWUSERNAME/.ssh/id_$TYPEKEY.pub > /home/$NEWUSERNAME/.ssh/authorized_keys
 sudo systemctl reload ssh
 sudo systemctl status ssh
 
 echo "Successfully"
- 
