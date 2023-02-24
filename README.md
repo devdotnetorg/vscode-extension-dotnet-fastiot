@@ -47,11 +47,11 @@ Recommended additional extensions that improve the development process and inter
 
 ## Getting started
 
-See [Getting started](/doc/Getting-started.md "Getting started").
+See [Getting started](/docs/Getting-started.md "Getting started").
 
 ## Extension settings
 
-See [Extension settings](/doc/Extension-settings.md "Extension settings").
+See [Extension settings](/docs/Extension-settings.md "Extension settings").
 
 ## Troubleshooting
 

@@ -97,18 +97,17 @@ export class IotConfiguration {
 	  const PreviousKeysFolder:string= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfolderkeys');
     if(PreviousKeysFolder != "")
     {
-      const srcDir = PreviousKeysFolder;
-      const destDir = this.Folder.DeviceKeys;
-      // To copy a folder or file, select overwrite accordingly
       try {
-        //??? fs.copySync
-        fs.copyFileSync(srcDir, destDir);
-        } catch (err) {
-        console.error(err)
+        const srcDir = PreviousKeysFolder;
+        const destDir = this.Folder.DeviceKeys;
+        // To copy a folder or file, select overwrite accordingly
+        fs.copySync(srcDir, destDir);
+        vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
+      } catch (err) {
+          console.error(err)
       }
       //Saving settings
       vscode.workspace.getConfiguration().update('fastiot.device.pathfolderkeys',"",true);
-      vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
     }
     //Clear
 	  this.Folder.ClearTmp();

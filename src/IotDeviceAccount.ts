@@ -154,7 +154,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         //put file 20-gpio-fastiot.rules in folder /etc/udev/rules.d
         //read file 20-gpio-fastiot.rules
         const nameFile = "20-gpio-fastiot.rules";
-        const pathFileLocalRules= `${this.Device.Config.Folder.Extension}\\vscodetemplates\\${nameFile}`;
+        const pathFileLocalRules= `${this.Device.Config.Folder.Extension}\\linux\\config\\${nameFile}`;
         if (!fs.existsSync(pathFileLocalRules))
         {
           return Promise.resolve(new IotResult(StatusResult.Error,`File not found! ${pathFileLocalRules}`,undefined));   

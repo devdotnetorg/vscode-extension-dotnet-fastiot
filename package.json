@@ -85,7 +85,7 @@
 					},
 					"fastiot.device.pathfolderkeys": {
 						"type": "string",
-						"default": "",
+						"default": "C:\\RemoteCode\\keys",
 						"description": "![Not used] Path to ssh key storage folder"
 					},
 					"fastiot.device.pathfoldercwrsync": {
@@ -490,7 +490,7 @@
 		"viewsWelcome": [
 			{
 				"view": "viewDevices",
-				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master#step-2---adding-a-device/). \n[Add Device](command:viewDevices.AddDevice)"
+				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device). \n[Add Device](command:viewDevices.AddDevice)"
 			},
 			{
 				"view": "viewLaunchs",
