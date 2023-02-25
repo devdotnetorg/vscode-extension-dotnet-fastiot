@@ -6,22 +6,24 @@
 	"license": "LGPL-3.0-only",
 	"preview": true,
 	"version": "0.3.0",
-	"overview": "assets/marketplace/vscode-marketplace-overview.md",
-	"priceCategory": "free",
 	"publisher": "devdotnetorg",
 	"private": "false",
 	"identity": {
 		"internalName": "vscode-extension-dotnet-fastiot"
 	},
+	"categories": [
+		"Programming Languages",
+		"Other"
+	],
 	"keywords": [
 		"dotnet",
 		"C#",
 		"IoT",
-		"Board",
+		"Linux",
+		"Embedded",
 		"Raspberry",
 		"Remote",
-		"Debugging",
-		"SBC"
+		"Debugging"
 	],
 	"engines": {
 		"vscode": "^1.70.3"
@@ -35,10 +37,6 @@
 		"url": "https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues",
 		"email": "fastiot@devdotnet.org"
 	},
-	"categories": [
-		"Programming Languages",
-		"Other"
-	],
 	"activationEvents": [
 		"onView:viewDevices",
 		"onCommand:vscode-extension-dotnet-fastiot.helloWorld"
