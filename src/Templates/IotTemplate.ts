@@ -46,7 +46,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     let result = filesValidator.ValidateFiles(this.ParentDir,"template.files.schema.json");
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();
-
+    //check id=""
+    if (this.Attributes.Id=="") this._validationErrors.push("id cannot be empty");
     // TODO: проверка наличия файлов для dotnetapp.csproj которые внутри
   }
 

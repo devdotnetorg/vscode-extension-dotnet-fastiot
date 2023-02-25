@@ -21,6 +21,12 @@ export abstract class EntityDownloader {
       await networkHelper.DownloadFileHttp(item.Url,fileZipPath);
       //unpack
       let unpackPath=`${destPath}\\${item.Id}`;
+      //delete
+      if (fs.existsSync(unpackPath))
+      {
+        fs.emptyDirSync(unpackPath);
+        fs.removeSync(unpackPath);
+      }
       var AdmZip = require("adm-zip");
       var zip = new AdmZip(fileZipPath);
       // extracts everything
