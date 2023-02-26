@@ -14,7 +14,7 @@ Devices supported: Raspberry Pi, Banana Pi, Orange Pi, Radxa, Tinkerboard, Odroi
 
 ![.NET FastIoT title](docs/vscode-dotnet-fastiot.png)
 
-![.NET FastIoT interface](docs/vscode-dotnet-fastiot-interface_ru.png)
+![.NET FastIoT interface](docs/vscode-dotnet-fastiot-interface.png)
 
 ## Features
 
