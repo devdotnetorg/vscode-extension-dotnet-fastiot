@@ -198,9 +198,11 @@ export class IotDevicePackage extends BaseTreeItem {
     element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
     element.InitPackage(TypePackage.dotnetruntimes,undefined);
     this.Childs.push(element);
+    /* Mono
     element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
     element.InitPackage(TypePackage.mono,undefined);
     this.Childs.push(element);
+    */
     element = new IotDevicePackage(vscode.TreeItemCollapsibleState.None,this,this.Device);
     element.InitPackage(TypePackage.debugger,undefined);
     this.Childs.push(element);      
