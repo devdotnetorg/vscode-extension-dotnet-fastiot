@@ -5,7 +5,7 @@
 	"icon": "assets/fastiot-logo-256.png",
 	"license": "LGPL-3.0-only",
 	"preview": true,
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"publisher": "devdotnetorg",
 	"private": "false",
 	"identity": {

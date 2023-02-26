@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.1 (27-02-2023)
+
+- Bugs fixed.
+
 ## v0.3.0 (24-02-2023)
 
 - Added support for using templates for projects, including custom ones.
