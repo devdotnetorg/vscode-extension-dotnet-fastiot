@@ -12,7 +12,6 @@
 		"internalName": "vscode-extension-dotnet-fastiot"
 	},
 	"categories": [
-		"Programming Languages",
 		"Other"
 	],
 	"keywords": [
@@ -38,8 +37,7 @@
 		"email": "fastiot@devdotnet.org"
 	},
 	"activationEvents": [
-		"onView:viewDevices",
-		"onCommand:vscode-extension-dotnet-fastiot.helloWorld"
+		"onView:viewDevices"
 	],
 	"os": [
 		"win32"
@@ -126,10 +124,6 @@
 			}
 		],
 		"commands": [
-			{
-				"command": "vscode-extension-dotnet-fastiot.helloWorld",
-				"title": "Hello World"
-			},
 			{
 				"command": "viewDevices.AddDevice",
 				"title": "Add Device",
