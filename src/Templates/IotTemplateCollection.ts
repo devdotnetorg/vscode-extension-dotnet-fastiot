@@ -70,7 +70,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     //checking all folders
     listFolders.forEach(dir => {
       const filePath=`${dir}\\template.fastiot.yaml`;
-      this.LogCallback(`Template initialization: ${filePath}`);
+      //this.LogCallback(`Template initialization: ${filePath}`);
       let template = new IotTemplate(this._pathFolderSchemas);
       template.Init(type,filePath,recoverySourcePath);
       if(!template.IsValid&&type==EntityType.system)
@@ -82,7 +82,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
           {
             template.Init(type,filePath,recoverySourcePath);
           }else{
-            this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
+            this.LogCallback(`Error. Template restore error. ${result.Message}. ${result.SystemMessage}`);
           }
       }
       //main
@@ -96,7 +96,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
           switch(isContains) { 
             case ContainsType.no: {
               this.Add(template.Attributes.Id,template);
-              this.LogCallback(`Template added: ${filePath}`);
+              this.LogCallback(`Template added: [${template.Attributes.Id}] ${filePath}`);
               break; 
             } 
             case ContainsType.yesVersionSmaller: {
@@ -116,6 +116,11 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       }else{
         this.LogCallback(`Error. The template ${template.DescriptionFilePath} has not been validated`);
         this.LogValidationErrors(template.ValidationErrors);
+        //delete system template
+        if(type==EntityType.system) {
+          result= template.Remove();
+          this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
+        }
       }
     });
     //result
@@ -152,54 +157,79 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       return Promise.resolve(result);
     }
     //next
-    listDownload.forEach(async (item) => {
-      if(this.IsCompatible2(item.ForVersionExt,item.platform))
-      {
-        const isContains=this.Contains2(item.Id,EntityType.system,item.Version);
-        switch(isContains) { 
-          case ContainsType.no: {
-            result= await downloader.DownloadTemplate(item,tempPath);
-            if(result.Status==StatusResult.Ok)
-            {
-              const unpackPath= <string> result.returnObject;
-              let template=new  IotTemplate(this._pathFolderSchemas);
-              template.Init(EntityType.system,unpackPath,undefined);
-              if(template.IsValid)
-              {
-                template.Move(destPath);
-                this.Add(template.Attributes.Id,template);
-              } else {
-                this.LogCallback(`Error. The template ${template.DescriptionFilePath} has not been validated`);
-                this.LogValidationErrors(template.ValidationErrors);
+    let index:number=0;
+    do{
+      let item = listDownload[index];
+      if(item)
+        {
+          //parse
+          if(this.IsCompatible2(item.ForVersionExt,item.platform))
+          {
+            const isContains=this.Contains2(item.Id,EntityType.system,item.Version);
+            switch(isContains) { 
+              case ContainsType.no: {
+                result= await downloader.DownloadTemplate(item,tempPath);
+                if(result.Status==StatusResult.Ok)
+                {
+                  const unpackPath= <string> result.returnObject;
+                  const filePath = path.join(unpackPath, "template.fastiot.yaml");
+                  let template=new  IotTemplate(this._pathFolderSchemas);
+                  template.Init(EntityType.system,filePath,undefined);
+                  if(template.IsValid)
+                  {
+                    result=template.Move(path.join(destPath, template.Attributes.Id));
+                    if(result.Status==StatusResult.Error)
+                    {
+                      this.LogCallback(`Error. The template ${template.DescriptionFilePath}. ${result.Message}. ${result.SystemMessage}`);
+                      break;
+                    } 
+                    this.Add(template.Attributes.Id,template);
+                    this.LogCallback(`Template added: [${template.Attributes.Id}] ${template.DescriptionFilePath}`);
+                  } else {
+                    this.LogCallback(`Error. The template ${template.DescriptionFilePath} has not been validated`);
+                    this.LogValidationErrors(template.ValidationErrors);
+                  }
+                }
+                break; 
               }
-            }
-            break; 
-          }
-          case ContainsType.yesVersionSmaller: {
-            result= await downloader.DownloadTemplate(item,tempPath);
-            if(result.Status==StatusResult.Ok)
-            {
-              const unpackPath= <string> result.returnObject;
-              let template=new  IotTemplate(this._pathFolderSchemas);
-              template.Init(EntityType.system,unpackPath,undefined);
-              if(template.IsValid)
-              {
-                template.Move(destPath);
-                this.Update(template.Attributes.Id,template);
+              case ContainsType.yesVersionSmaller: {
+                result= await downloader.DownloadTemplate(item,tempPath);
+                if(result.Status==StatusResult.Ok)
+                {
+                  const unpackPath= <string> result.returnObject;
+                  const filePath = path.join(unpackPath, "template.fastiot.yaml");
+                  let template=new  IotTemplate(this._pathFolderSchemas);
+                  template.Init(EntityType.system,filePath,undefined);
+                  if(template.IsValid)
+                  {
+                    result=template.Move(path.join(destPath, template.Attributes.Id));
+                    if(result.Status==StatusResult.Error)
+                    {
+                      this.LogCallback(`Error. The template ${template.DescriptionFilePath}. ${result.Message}. ${result.SystemMessage}`);
+                      break;
+                    }
+                    this.Update(template.Attributes.Id,template);
+                    this.LogCallback(`Template updated: [${template.Attributes.Id}] ${template.DescriptionFilePath}`);
+                  } else {
+                    this.LogCallback(`Error. The template ${template.DescriptionFilePath} has not been validated`);
+                    this.LogValidationErrors(template.ValidationErrors);
+                  }
+                }
+                break; 
               }
+              default: { 
+                //statements; 
+                break; 
+              } 
             }
-            break; 
-          }
-          default: { 
-            //statements; 
-            break; 
-          } 
+        }else{
+          this.LogCallback(`Error. The template ${item.Url} is for a newer version of the extension.` +
+              `Update the extension.`);
         }
-      }else{
-        this.LogCallback(`Error. The template ${item.Url} is for a newer version of the extension.` +
-            `Update the extension.`);
-      }
-    });
+        //
+      }else break;      
+      index++;
+    }while(true)
     //result
     result= new IotResult(StatusResult.Ok,undefined,undefined);
     return Promise.resolve(result);

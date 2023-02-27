@@ -73,16 +73,37 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   public Move(destDir:string):IotResult {
     let result:IotResult;
     try {
-      //clear
-      if (fs.existsSync(destDir)) fs.emptyDirSync(destDir);
-      //mkdir
-      IoTHelper.MakeDirSync(destDir);
+      //delete
+      if (fs.existsSync(destDir))
+      {
+        fs.emptyDirSync(destDir);
+        fs.removeSync(destDir);
+      } 
+      //destDir - no need to create a folder 
       fs.moveSync(this.ParentDir,destDir);
       //replace fields
-      this._descFilePath=`${destDir}\\${this.ParentNameDir}`;
+      const fileName=this._descFilePath.substring(this.ParentDir.length+1);
+      this._descFilePath= path.join(destDir, fileName);
       result = new IotResult(StatusResult.Ok,undefined,undefined);
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Unable to move ${this._entityIntLabel} from folder ${this.ParentDir} to folder ${destDir}`,err);
+    }
+    //result
+    return result;
+  }
+
+  public Remove ():IotResult {
+    let result:IotResult;
+    try {
+      //delete
+      if (fs.existsSync(this.ParentDir))
+      {
+        fs.emptyDirSync(this.ParentDir);
+        fs.removeSync(this.ParentDir);
+      } 
+      result = new IotResult(StatusResult.Ok,`Folder has been deleted: ${this.ParentDir}`);
+    } catch (err: any){
+      result = new IotResult(StatusResult.Error,`Unable to delete template folder: ${this.ParentDir}`,err);
     }
     //result
     return result;

@@ -46,7 +46,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     let result = filesValidator.ValidateFiles(this.ParentDir,"template.files.schema.json");
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();
-
+    //check id=""
+    if (this.Attributes.Id=="") this._validationErrors.push("id cannot be empty");
     // TODO: проверка наличия файлов для dotnetapp.csproj которые внутри
   }
 
@@ -144,12 +145,11 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       this.Attributes.FileNameReplacement.forEach((value,key) => {
         const oldPath=dstPath+"\\"+IoTHelper.ReverseSeparatorLinuxToWin(key);
         value=IoTHelper.MergeWithDictionary(this._mergeDictionary,value);
+        const newPath=dstPath+"\\"+IoTHelper.ReverseSeparatorLinuxToWin(value);
+        fs.renameSync(oldPath,newPath);
         //replace in FilesToProcess
         let indexItem=this.Attributes.FilesToProcess.indexOf(key);
         if(indexItem>-1) this.Attributes.FilesToProcess[indexItem]=value;
-        //
-        const newPath=dstPath+"\\"+IoTHelper.ReverseSeparatorLinuxToWin(value);
-        fs.renameSync(oldPath,newPath);
         //tracking the renaming of the main project file
         if(IoTHelper.GetFileExtensions(newPath)==this.Attributes.ExtMainFileProj)
         {

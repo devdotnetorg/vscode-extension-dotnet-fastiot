@@ -12,9 +12,9 @@ Devices supported: Raspberry Pi, Banana Pi, Orange Pi, Radxa, Tinkerboard, Odroi
 
 *.NET FastIoT Extension UI*
 
-![.NET FastIoT title](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/docs/vscode-dotnet-fastiot.png)
+![.NET FastIoT title](docs/vscode-dotnet-fastiot.png)
 
-![.NET FastIoT interface](https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/docs/vscode-dotnet-fastiot-interface.png)
+![.NET FastIoT interface](docs/vscode-dotnet-fastiot-interface.png)
 
 ## Features
 

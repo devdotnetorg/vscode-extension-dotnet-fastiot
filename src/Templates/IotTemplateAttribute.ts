@@ -68,6 +68,7 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
       //arrays
       let index=0; 
       //filesToProcess
+      this._filesToProcess=[];
       index=0;
       do { 				
             let item=obj.filesToProcess[index];
@@ -79,6 +80,7 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
       } 
       while(true)
       //fileNameReplacement
+      this._fileNameReplacement= new Map<string,string>();
       index=0;
       do { 				
             let item=obj.fileNameReplacement[index];
