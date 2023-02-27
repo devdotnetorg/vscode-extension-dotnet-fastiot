@@ -32,7 +32,7 @@ export class FilesValidator {
         if (!fs.existsSync(fullCheckPath))
         {
           //not found
-          msg=`The ${type} does not exist. Path: ${fullCheckPath}. This ${type} is required:${description}`;
+          msg=`The ${type} does not exist. Path: ${fullCheckPath}. This ${type} is required: ${description}`;
           validationErrors.push(msg);
         }
       });

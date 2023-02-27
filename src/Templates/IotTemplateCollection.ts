@@ -26,7 +26,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     //
     const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,this.RecoverySourcePath);
-    this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
+    this.LogCallback(result.toString());
   }
 
   public async LoadTemplatesUser():Promise<void>
@@ -36,7 +36,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     //
     const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,undefined);
-    this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
+    this.LogCallback(result.toString());
   }
 
   public async LoadTemplatesCommunity():Promise<void>
@@ -64,7 +64,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     //ckeck
     if (listFolders.length==0)
     {
-      result=new IotResult(StatusResult.Ok,`${path} folder is empty`,undefined);
+      result=new IotResult(StatusResult.Ok,`${path} folder is empty. There are no templates to load.`);
       return Promise.resolve(result);
     }
     //checking all folders
@@ -96,7 +96,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
           switch(isContains) { 
             case ContainsType.no: {
               this.Add(template.Attributes.Id,template);
-              this.LogCallback(`Template added: [${template.Attributes.Id}] ${filePath}`);
+              this.LogCallback(`Template added: [${template.Attributes.Id}] ${template.ParentDir}`);
               break; 
             } 
             case ContainsType.yesVersionSmaller: {
@@ -134,11 +134,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
 
   public async UpdateSystemTemplate(url:string,tempPath:string):Promise<IotResult>
   {
-    this.LogCallback("Updating system templates");
     const result = await this.UpdateTemplate(url,EntityType.system,tempPath);
-    this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
-    //result
-    if(!(result.Status==StatusResult.Error)) this.LogCallback("Update of system templates completed successfully");
     return result;
   }
 
@@ -153,7 +149,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     let listDownload:Array<EntityDownload>=result.returnObject;
     if(listDownload.length==0)
     {
-      result= new IotResult(StatusResult.Ok,`Url: ${url}. No templates to download`,undefined);
+      result= new IotResult(StatusResult.Ok,`Url: ${url}. No templates to download`);
       return Promise.resolve(result);
     }
     //next
@@ -184,7 +180,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
                       break;
                     } 
                     this.Add(template.Attributes.Id,template);
-                    this.LogCallback(`Template added: [${template.Attributes.Id}] ${template.DescriptionFilePath}`);
+                    this.LogCallback(`Template added: [${template.Attributes.Id}] ${template.ParentDir}`);
                   } else {
                     this.LogCallback(`Error. The template ${template.DescriptionFilePath} has not been validated`);
                     this.LogValidationErrors(template.ValidationErrors);
@@ -231,7 +227,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       index++;
     }while(true)
     //result
-    result= new IotResult(StatusResult.Ok,undefined,undefined);
+    result= new IotResult(StatusResult.Ok,`Update of ${type} templates completed successfully`);
     return Promise.resolve(result);
   }
 

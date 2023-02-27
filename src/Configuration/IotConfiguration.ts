@@ -153,8 +153,10 @@ export class IotConfiguration {
         //To get the number of hours since Unix epoch, i.e. Unix timestamp:
         const dateNow=Math.floor(Date.now() / 1000/ 3600);
         const TimeHasPassedHours=dateNow-this.LastUpdateTemplatesHours;
-        if(force||(this.IsUpdateTemplates&&TimeHasPassedHours>=this.UpdateIntervalTemplatesHours)){
+        this._logCallback("Updating system templates");
+        if(force||(this.IsUpdateTemplates&&(TimeHasPassedHours>=this.UpdateIntervalTemplatesHours))){
           result=await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
+          this._logCallback(result.toString());
           //timestamp of last update
           if(result.Status==StatusResult.Ok){
             vscode.workspace.getConfiguration().update('fastiot.template.lastupdate',<number>dateNow,true);

@@ -13,12 +13,16 @@ export async function connectionTestDevice(treeData: TreeDataDevicesProvider,ite
         treeData.ShowStatusBar("Checking the network connection");
         const result = await device.ConnectionTest();
         treeData.HideStatusBar();
-        //Output       
+        //Output
+        result.toMultiLineString("head");
+        treeData.OutputChannel.appendLine(result.toMultiLineString("head"));
+        /*
         treeData.OutputChannel.appendLine("------------- Result -------------");
         treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
         treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
         treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
         treeData.OutputChannel.appendLine("----------------------------------");
+        */
         //Message          
         if(result.Status==StatusResult.Ok) {
             vscode.window.showInformationMessage(`Connection to host ${device.Account.Host} via ssh 

@@ -38,9 +38,37 @@ export class IotResult {
   }
 
   public toString():string{
-    let msg=this.Status.toString();
-    if(this.Message) msg=msg+" "+this.Message;
-    if(this.SystemMessage) msg=msg+" "+this.SystemMessage;
+    //Status
+    let msg=`[${this.Status.toString().toUpperCase()}]`;
+    //Message
+    if(this.Message) {
+      //check dot
+      if((this.Message.toString().substring(this.Message.length-1))==".")
+        msg=`${msg} ${this.Message}`;
+      else msg=`${msg} ${this.Message}.`;
+    }
+    //SystemMessage
+    if(this.SystemMessage) msg=`${msg} ${this.SystemMessage}`;
+    return msg;
+  }
+
+  public toMultiLineString(format:string|undefined=undefined):string{
+    let msg="";
+    //HEAD
+    if(format&&format=="head") msg=msg+"------------- Result -------------\n";
+    //Status
+    msg=`${msg}Status: ${this.Status.toString().toUpperCase()}`;
+    //Message
+    if(this.Message) {
+      //check dot
+      if((this.Message.toString().substring(this.Message.length-1))==".")
+        msg=`${msg}\nMessage: ${this.Message}`;
+      else msg=`${msg}\nMessage: ${this.Message}.`;
+    }
+    //SystemMessage
+    if(this.SystemMessage) msg=`${msg}\nSystem message: ${this.SystemMessage}`;
+    //HEAD
+    if(format&&format=="head") msg=msg+"\n----------------------------------";
     return msg;
   }
  }

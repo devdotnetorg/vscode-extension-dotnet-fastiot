@@ -15,7 +15,7 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
         let hostName = await vscode.window.showInputBox({            
             prompt: 'prompt',
             title: 'Add Device (1/5). Enter the host of the developer board',
-            value:'192.168.43.208',            
+            value:'192.168.50.75',            
         });
         
         if(hostName==undefined) return;

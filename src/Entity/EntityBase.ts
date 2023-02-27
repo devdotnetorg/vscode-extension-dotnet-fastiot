@@ -57,7 +57,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       if(this.ParentNameDir!=attributes.Id)
         this._validationErrors.push(`${this._entityIntLabel} folder name ${this.ParentNameDir} `+
           `does not match id value ${attributes.Id}.`+
-          `You need to rename the folder or change the ${this._entityIntLabel} id`);
+          `You need to rename the folder or change the ${this._entityIntLabel} id.`);
     }else{
       //error
       this._validationErrors = attributes.ValidationErrors.slice();
