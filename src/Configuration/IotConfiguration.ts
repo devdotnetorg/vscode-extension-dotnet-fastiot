@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
+import {IotResult,StatusResult } from '../IotResult';
 import {IotConfigurationFolder} from './IotConfigurationFolder';
 import {IotTemplateCollection} from '../Templates/IotTemplateCollection';
 import { IoTHelper } from '../Helper/IoTHelper';
@@ -15,7 +16,9 @@ export class IotConfiguration {
   public TemplateTitleLaunch:string="";
   public Folder: IotConfigurationFolder;
   public Templates: IotTemplateCollection;
-
+  public IsUpdateTemplates:boolean;
+  public UpdateIntervalTemplatesHours:number;
+  public LastUpdateTemplatesHours:number;
   private _context:vscode.ExtensionContext;
   private _logCallback:(value:string) =>void;
 
@@ -41,6 +44,10 @@ export class IotConfiguration {
       this.Templates= new IotTemplateCollection(this.Folder.Templates,this.Folder.Extension+"\\templates\\system",
         logCallback,versionExt,this.Folder.Schemas);
       this._context=context;
+      //Template update
+      this.IsUpdateTemplates=<boolean>vscode.workspace.getConfiguration().get('fastiot.template.isupdate');
+      this.UpdateIntervalTemplatesHours=<number>vscode.workspace.getConfiguration().get('fastiot.template.updateinterval');
+      this.LastUpdateTemplatesHours=<number>vscode.workspace.getConfiguration().get('fastiot.template.lastupdate');
       //Init
       this.Init();
     }
@@ -113,7 +120,7 @@ export class IotConfiguration {
 	  this.Folder.ClearTmp();
   }
   
-  public async LoadTemplatesAsync()
+  public async LoadTemplatesAsync(force:boolean=false)
   {
     await vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
@@ -127,6 +134,7 @@ export class IotConfiguration {
         //main code
         progress.report({ message: "Preparing to load",increment: 20 }); //20
         //Preparing
+        let result= new IotResult(StatusResult.None,undefined,undefined);
         this.Templates.Clear();
         let url:string="";
         if(this._context.extensionMode==vscode.ExtensionMode.Production)
@@ -142,7 +150,16 @@ export class IotConfiguration {
         await this.Templates.LoadTemplatesSystem();
         //Updating system templates
         progress.report({ message: "Updating system templates",increment: 20 }); //60
-        await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
+        //To get the number of hours since Unix epoch, i.e. Unix timestamp:
+        const dateNow=Math.floor(Date.now() / 1000/ 3600);
+        const TimeHasPassedHours=dateNow-this.LastUpdateTemplatesHours;
+        if(force||(this.IsUpdateTemplates&&TimeHasPassedHours>=this.UpdateIntervalTemplatesHours)){
+          result=await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
+          //timestamp of last update
+          if(result.Status==StatusResult.Ok){
+            vscode.workspace.getConfiguration().update('fastiot.template.lastupdate',<number>dateNow,true);
+          }
+        } else this._logCallback(`Disabled or less than ${this.UpdateIntervalTemplatesHours} hour(s) have passed since the last update.`);
         //Loading custom templates
         progress.report({ message: "Loading custom templates",increment: 20 }); //80
         await this.Templates.LoadTemplatesUser();

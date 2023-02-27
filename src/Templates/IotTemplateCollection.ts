@@ -132,14 +132,14 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     return Promise.resolve(result);
   }
 
-  public async UpdateSystemTemplate(url:string,tempPath:string):Promise<void>
+  public async UpdateSystemTemplate(url:string,tempPath:string):Promise<IotResult>
   {
     this.LogCallback("Updating system templates");
     const result = await this.UpdateTemplate(url,EntityType.system,tempPath);
     this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
     //result
     if(!(result.Status==StatusResult.Error)) this.LogCallback("Update of system templates completed successfully");
-    return;
+    return result;
   }
 
   public async UpdateTemplate(url:string,type:EntityType,tempPath:string):Promise<IotResult>

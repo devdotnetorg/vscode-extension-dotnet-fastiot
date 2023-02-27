@@ -101,6 +101,21 @@
 						"default": {},
 						"description": "Configuration of all devices in JSON format."
 					},
+					"fastiot.template.isupdate": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "Update templates."
+					},
+					"fastiot.template.updateinterval": {
+						"type": "number",
+						"default": 24,
+						"markdownDescription": "Update interval in hours for templates."
+					},
+					"fastiot.template.lastupdate": {
+						"type": "number",
+						"default": 0,
+						"markdownDescription": "Number of hours since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), i.e. Unix timestamp, until the templates were last updated."
+					},
 					"conf.resource.insertEmptyLastLine": {
 						"type": "object",
 						"default": {},
