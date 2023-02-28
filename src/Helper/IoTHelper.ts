@@ -167,10 +167,7 @@ export class IoTHelper {
     files.forEach(name => {
       //directory
       const dir=`${path}\\${name}`;
-      if(fs.lstatSync(dir).isDirectory())
-        {
-          listFolders.push(dir);
-        }
+      if(fs.lstatSync(dir).isDirectory()) listFolders.push(dir);
       });
     return listFolders;
   }

@@ -305,9 +305,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     dstPath:string, values:Map<string,string>) {
     this._mergeDictionary.clear();
     //copy values to _mergeDictionary
-    values.forEach((value,key) => {
-      this._mergeDictionary.set(key,value);
-    });
+    values.forEach((value,key) => this._mergeDictionary.set(key,value));
     //NEW or ADD
     let dirProjectWin;
     let projMainfilePathFullWin=this._mergeDictionary.get("%{project.mainfile.path.full.aswindows}");

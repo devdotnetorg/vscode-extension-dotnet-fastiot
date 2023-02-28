@@ -141,6 +141,13 @@ export class IotLaunch extends BaseTreeItem {
       let jsonLaunch = result.returnObject;
       result= new IotResult(StatusResult.Error,`Launch not found. Name: ${this.IdLaunch}`,undefined);
       //change
+      const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.IdLaunch);
+      if(launch) {
+        launch.name=newLabel;
+        //write file
+        result=this.SaveLaunch(jsonLaunch);
+      }
+      /*
       jsonLaunch.configurations.forEach((element:any) => {
         const fastiotId = element.fastiotIdLaunch;
         if(this.IdLaunch==fastiotId)
@@ -151,6 +158,7 @@ export class IotLaunch extends BaseTreeItem {
           return;
         }
       });
+      */
     } catch (err: any){
       result= new IotResult(StatusResult.Error,`Rename launch. Name: ${this.IdLaunch}`,err);
     }
@@ -218,9 +226,7 @@ export class IotLaunch extends BaseTreeItem {
       let tasks:string[]=[];
       //get all tasks
       taskChains.forEach((values,key) => {      
-        values.forEach((value) => {      
-          tasks.push(value);
-        });
+        values.forEach((value) => tasks.push(value));
       });
       //получаем разность массивов
       //для исключения зависимых задач от других Launch

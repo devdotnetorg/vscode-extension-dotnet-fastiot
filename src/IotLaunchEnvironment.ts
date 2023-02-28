@@ -37,6 +37,13 @@ export class IotLaunchEnvironment extends BaseTreeItem{
       result = this.Launch.GetJsonLaunch();
       if(result.Status==StatusResult.Error) return result;  
       let jsonLaunch = result.returnObject;
+      const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.Launch.IdLaunch);
+      if (launch) {
+        launch.env=this.ToJSON();
+        //write file
+        result=this.Launch.SaveLaunch(jsonLaunch);
+      }
+      /*
       jsonLaunch.configurations.forEach((element:any) => {
         const fastiotId = element.fastiotIdLaunch;
         if(this.Launch.IdLaunch==fastiotId)
@@ -47,6 +54,7 @@ export class IotLaunchEnvironment extends BaseTreeItem{
           return result;
         }
       });
+      */
     } catch (err: any){
       result= new IotResult(StatusResult.Error,`Write Environment Launch:${this.Launch.label}`,err);
     }
