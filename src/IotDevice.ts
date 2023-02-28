@@ -314,18 +314,57 @@ export class IotDevice extends BaseTreeItem {
     }else{
       sshconfig=this.Account.SshConfig;
     }
-    //GetIp
+    //Trubleshooting text
+    const trubleshootingText=
+      `To solve the problem, visit the Trubleshooting page:\n`+
+      `https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Troubleshooting.md\n`+
+      `If you can't resolve the issue, you can create an Issue on GitHub:\n`+
+      `https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues`;
+      //GetIp
     result=await networkHelper.GetIpAddress(sshconfig.host ?? "non");
-    if(result.Status==StatusResult.Error) return Promise.resolve(result);
+    if(result.Status==StatusResult.Error) {
+      result.Message=`${result.Message}\n`+
+        `Checklist:\n`+
+        `❌ IP-Address defined;\n`+
+        `❌ Host availability. Command: "ping";\n`+
+        `❌ Port 22 availability;\n`+
+        `❌ Authorization via ssh protocol.\n`+
+        `${trubleshootingText}`;
+      return Promise.resolve(result);}
     const ipAddress = <string>result.returnObject;
     //Ping
     result=await networkHelper.PingHost(ipAddress);
-    if(result.Status==StatusResult.Error) return Promise.resolve(result);
+    if(result.Status==StatusResult.Error) {
+      result.Message=`${result.Message}\n`+
+        `Checklist:\n`+
+        `✔️ IP-Address defined;\n`+
+        `❌ Host availability. Command: "ping";\n`+
+        `❌ Port 22 availability;\n`+
+        `❌ Authorization via ssh protocol.\n`+
+        `${trubleshootingText}`;
+      return Promise.resolve(result);}
     //Check port
     result=await networkHelper.CheckTcpPortUsed(ipAddress,sshconfig.port ?? 22);
-    if(result.Status==StatusResult.Error) return Promise.resolve(result);
+    if(result.Status==StatusResult.Error) {
+      result.Message=`${result.Message}\n`+
+        `Checklist:\n`+
+        `✔️ IP-Address defined;\n`+
+        `✔️ Host availability. Command: "ping";\n`+
+        `❌ Port 22 availability;\n`+
+        `❌ Authorization via ssh protocol.\n`+
+        `${trubleshootingText}`;
+      return Promise.resolve(result);}
     //Check ssh connection
     result=await this.Client.GetSshConnection(sshconfig);
+    if(result.Status==StatusResult.Error) {
+      result.Message=`${result.Message}\n`+
+        `Checklist:\n`+
+        `✔️ IP-Address defined;\n`+
+        `✔️ Host availability. Command: "ping";\n`+
+        `✔️ Port 22 availability;\n`+
+        `❌ Authorization via ssh protocol.\n`+
+        `${trubleshootingText}`;
+    }
     return Promise.resolve(result);
   }
 

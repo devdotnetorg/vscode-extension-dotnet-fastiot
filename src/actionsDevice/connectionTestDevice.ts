@@ -12,7 +12,7 @@ export async function connectionTestDevice(treeData: TreeDataDevicesProvider,ite
     const device= treeData.FindbyIdDevice(<string>item.IdDevice);
     if(device) {
         contextUI.Output("Action: connection test device");
-        contextUI.StatusBarBackground.showAnimation("hecking the network connection");
+        contextUI.StatusBarBackground.showAnimation("Checking the network connection");
         const result = await device.ConnectionTest();
         contextUI.StatusBarBackground.hide();
         //Output

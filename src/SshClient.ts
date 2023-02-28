@@ -276,21 +276,25 @@ export class SshClient {
       }
       //main 
       await ssh.connect();
-      result=new IotResult(StatusResult.Ok,`Connection established via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}`);
+      result=new IotResult(StatusResult.Ok,`Connection established via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}.`);
       if(returnSSH2Promise) result.returnObject=ssh; else await ssh.close();
     }
     catch (err: any) {
-      const msg = `Unable to connect via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}\n`+
-      `Follow the steps to solve the problem:\n`+
-      `${this.GetInstOnSshErrorConnection()}`;
+      const msg = `Unable to connect via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}.`;
       result=new IotResult(StatusResult.Error,msg,err);
     }
     //end processing
     return Promise.resolve(result);
   }
 
+  //not used
   private GetInstOnSshErrorConnection():string {
     const msg=
+      `To solve the problem, visit the Trubleshooting page:\n`+
+      `https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Troubleshooting.md`;
+    /*
+    const msg=
+      `Follow the steps to solve the problem:\n`+
       `1. Check if the OpenSSH server is running.\n`+
       `Command: "sudo systemctl status ssh".\n`+
       `2. Check the port number, it should be 22.\n`+
@@ -312,6 +316,7 @@ export class SshClient {
       `on the device to get information about the connection problem using the ssh protocol:\n`+
       `"sudo systemctl status ssh".\n`+
       `Visit the Trubleshooting page - https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Troubleshooting.md`;
+    */
     return msg;
   }
   //-------------------------------------------

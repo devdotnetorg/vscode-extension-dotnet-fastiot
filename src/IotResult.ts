@@ -12,6 +12,8 @@ export class IotResult {
   private _message: string|undefined;  
   public get Message(): string|undefined {
     return this._message;}
+  public set Message(value:string|undefined) {
+    this._message=value}
 
   private _systemMessage: string|undefined;  
   public get SystemMessage(): string|undefined {
