@@ -474,15 +474,15 @@
 				},
 				{
 					"command": "viewLaunchs.RenameEnviroment",
-					"when": "view == viewLaunchs && viewItem == iotenviroment"
+					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
 				},
 				{
 					"command": "viewLaunchs.EditEnviroment",
-					"when": "view == viewLaunchs && viewItem == iotenviroment"
+					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
 				},
 				{
 					"command": "viewLaunchs.DeleteEnviroment",
-					"when": "view == viewLaunchs && viewItem == iotenviroment"
+					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
 				},
 				{
 					"command": "viewDevices.CopyToClipboard",

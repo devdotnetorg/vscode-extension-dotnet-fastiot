@@ -28,7 +28,7 @@ export class IotLaunchEnvironment extends BaseTreeItem{
     this.Parent=parent;
     this.Launch=launch;
     //view
-    this.contextValue="iotenviroment";
+    //this.contextValue="iotenviroment";
   }
 
   public Write(): IotResult {  
