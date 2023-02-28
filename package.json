@@ -57,27 +57,27 @@
 					"fastiot.device.account.username": {
 						"type": "string",
 						"default": "debugvscode",
-						"description": "Debug account name"
+						"markdownDescription": "Debug account name. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.account.groups": {
 						"type": "string",
 						"default": "sudo",
-						"description": "Linux group for a new user (debugvscode) of a development device."
+						"markdownDescription": "Linux group for a new user (debugvscode) of a development device. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.applicationdatafolder": {
 						"type": "string",
 						"default": "",
-						"description": "Shared folder for storing keys, templates"
+						"markdownDescription": "Shared folder for storing keys, templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.ssh.key.type": {
 						"type": "string",
 						"default": "ed25519",
-						"markdownDescription": "Type of key generation algorithm for ssh. Can take values: ed25519 (default), ecdsa, dsa, rsa. Used to authenticate with a device after it has been added to the device list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the PubkeyAcceptedAlgorithms=+ssh-rsa line to the /etc/ssh/sshd_config file."
+						"markdownDescription": "Type of key generation algorithm for ssh. Can take values: ed25519 (default), ecdsa, dsa, rsa. Used to authenticate with a device after it has been added to the device list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the `PubkeyAcceptedAlgorithms=+ssh-rsa` line to the `/etc/ssh/sshd_config` file. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.ssh.key.bits": {
 						"type": "number",
 						"default": 256,
-						"markdownDescription": "Key length in bits. Can take values: 256, 384, 521, 512, 1024, 2048, 3072, 4096. ED25519 only 256. ECDSA key length: valid lengths are 256, 384, 521, recommended 521. DSA only 1024. RSA key length: valid lengths are 1024, 2048, 3072, 4096, recommended 4096."
+						"markdownDescription": "Key length in bits. Can take values: 256, 384, 521, 512, 1024, 2048, 3072, 4096. ED25519 only 256. ECDSA key length: valid lengths are 256, 384, 521, recommended 521. DSA only 1024. RSA key length: valid lengths are 1024, 2048, 3072, 4096, recommended 4096. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.pathfolderkeys": {
 						"type": "string",
@@ -102,12 +102,12 @@
 					"fastiot.template.isupdate": {
 						"type": "boolean",
 						"default": true,
-						"markdownDescription": "Update templates."
+						"markdownDescription": "Update templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.template.updateinterval": {
 						"type": "number",
 						"default": 24,
-						"markdownDescription": "Update interval in hours for templates."
+						"markdownDescription": "Update interval in hours for templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.template.lastupdate": {
 						"type": "number",
@@ -117,7 +117,7 @@
 					"conf.resource.insertEmptyLastLine": {
 						"type": "object",
 						"default": {},
-						"description": "Resource configuration: Configure files using glob patterns to have an empty last line always",
+						"markdownDescription": "Resource configuration: Configure files using glob patterns to have an empty last line always",
 						"scope": "resource"
 					}
 				}

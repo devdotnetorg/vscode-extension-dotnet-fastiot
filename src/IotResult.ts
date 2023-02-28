@@ -41,7 +41,7 @@ export class IotResult {
     //Status
     let msg=`[${this.Status.toString().toUpperCase()}]`;
     //Message
-    if(this.Message) {
+    if(this.Message&&this.Message.length>0) {
       //check dot
       if((this.Message.toString().substring(this.Message.length-1))==".")
         msg=`${msg} ${this.Message}`;
@@ -59,7 +59,7 @@ export class IotResult {
     //Status
     msg=`${msg}Status: ${this.Status.toString().toUpperCase()}`;
     //Message
-    if(this.Message) {
+    if(this.Message&&this.Message.length>0) {
       //check dot
       if((this.Message.toString().substring(this.Message.length-1))==".")
         msg=`${msg}\nMessage: ${this.Message}`;
