@@ -57,7 +57,7 @@ export class IoTHelper {
     let result:string=data;
     dictionary.forEach((value,key) => {      
       const re = new RegExp(key, 'g');
-      result=result.replace(re,value);      
+      result=result.replace(re,value);
     });
     return result;
   }
@@ -233,4 +233,16 @@ export class IoTHelper {
     const dateNow=Date.now();
     this.SetTimeFiles(this.GetAllFile(dirPath),dateNow);
   }
+
+  static SetLineEnding(content:string):string
+  {
+    //https://github.com/Neoklosch/crlf-helper/
+    //CRLF: /\r\n/g
+    const re = new RegExp("\r\n", 'g');
+    //LF: '\n',
+    const value='\n';
+    content=content.replace(re,value);    
+    return content;
+  }
+
 }

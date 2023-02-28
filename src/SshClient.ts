@@ -44,6 +44,8 @@ export class SshClient {
         return Promise.resolve(new IotResult(StatusResult.Error,"Bash script file not found!"));   
       }
       let dataFile:string= fs.readFileSync(pathFile, 'utf8');
+      //CRLF => LF / '\r\n' => '\n'
+      dataFile=IoTHelper.SetLineEnding(dataFile);
       //connect
       if(!ssh&&sshConfig)
       {
@@ -82,7 +84,7 @@ export class SshClient {
         {
           //if(!returnSSH2Promise) await ssh.close();
           console.log(`Error. Exec.Output: ${err}`);
-          return Promise.resolve(new IotResult(StatusResult.Error,`111 The execution of the ${nameScript}.sh script ended with an error`,err.toString()));
+          return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${nameScript}.sh script ended with an error`,err.toString()));
         }
       }else
       {
@@ -108,14 +110,14 @@ export class SshClient {
           //Check "Successfully"
           lastConsoleLine=IoTHelper.StringTrim(lastConsoleLine);
           if (!lastConsoleLine.includes("Successfully")){            
-            return Promise.resolve(new IotResult(StatusResult.Error,`222 The execution of the ${nameScript}.sh script ended with an error`,lastConsoleLine));
+            return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${nameScript}.sh script ended with an error`,lastConsoleLine));
           }
         }
         catch (err:any)
         {
           if(!returnSSH2Promise) await ssh.close();
           console.log(`Error. Exec.Output: ${err}`);
-          return Promise.resolve(new IotResult(StatusResult.Error,`333 The execution of the ${nameScript}.sh script ended with an error`,err));
+          return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${nameScript}.sh script ended with an error`,err));
         }
       }      
       //delete script      
