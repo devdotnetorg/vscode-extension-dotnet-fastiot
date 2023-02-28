@@ -31,12 +31,14 @@ export class IotResult {
       this._message=message;
       this._systemMessage=systemMessage;
     }       
-  public async AppendResult(iotResult: IotResult): Promise<void>{
-    this._status=iotResult.Status;
-    this._message=iotResult.Message;
-    if(!this._systemMessage) this._systemMessage=iotResult.SystemMessage;
-    this._systemMessage=this.SystemMessage+ '\n '+ iotResult.SystemMessage;
-    this._systemMessage.toString()   
+  public AppendResult(value: IotResult): void{
+    this._status=value.Status;
+    this._message=value.Message;
+    if(this._systemMessage) {
+      this._systemMessage=`${this._systemMessage}\n${value.SystemMessage}`;
+    } else {
+      this._systemMessage=value.SystemMessage;
+    }
   }
 
   public toString():string{

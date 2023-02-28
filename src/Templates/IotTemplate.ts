@@ -82,6 +82,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //Insert Tasks
       result=this.InsertLaunchOrTask(dstPath,"tasks");
       if(result.Status==StatusResult.Error) return result;
+      //Not necessary. Time setting
+      IoTHelper.SetCurrentTimeToFiles(dstPath);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,"An error occurred while creating the project",err);
@@ -109,6 +111,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //Insert Tasks
       result=this.InsertLaunchOrTask(dstPath,"tasks");
       if(result.Status==StatusResult.Error) return result;
+      //Not necessary. Time setting
+      IoTHelper.SetCurrentTimeToFiles(`${dstPath}\\.vscode`);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,`Error when adding Launch to ${dstPath} project`,err);
