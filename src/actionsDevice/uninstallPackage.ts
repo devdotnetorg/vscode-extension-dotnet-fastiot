@@ -5,8 +5,9 @@ import * as path from 'path';
 import { IotResult,StatusResult } from '../IotResult';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';         
+import {IoTUI} from '../ui/IoTUI';
 
-export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage): Promise<void> {    
+export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage,contextUI:IoTUI): Promise<void> {    
     const answer = await vscode.window.showInformationMessage(`Do you really want to remove the package: 
     ${item.NamePackage}?`, ...["Yes", "No"]);
     if(answer=="Yes")
@@ -49,16 +50,14 @@ export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:Io
             default: { 
                 break; 
             } 
-        }     
-        treeData.OutputChannel.appendLine(`Action: package uninstallation ${item.NamePackage}`);
-        //main process
+        }
+        //main process 
+        contextUI.Output(`Action: package uninstallation ${item.NamePackage}`);
+        contextUI.StatusBarBackground.showAnimation(`Package uninstallation ${item.NamePackage}`);
         const result = await treeData.UnInstallPackage(<string>item.Device.IdDevice,item.NamePackage,jsonObj);
+        contextUI.StatusBarBackground.hide();
         //Output       
-        treeData.OutputChannel.appendLine("------------- Result -------------");
-        treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-        treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-        treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-        treeData.OutputChannel.appendLine("----------------------------------");
+        contextUI.Output(result.toMultiLineString("head"));
         //Message
         if(result.Status==StatusResult.Ok) {
             vscode.window.showInformationMessage(`${item.NamePackage} package uninstallation completed successfully.`);

@@ -6,7 +6,9 @@ import {IoTHelper} from './Helper/IoTHelper';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IotItemTree} from './IotItemTree';
 import {IotResult,StatusResult} from './IotResult';
-
+//UI
+import {IoTUI} from './ui/IoTUI';
+import {StatusBarBackgroundItem} from './ui/StatusBarBackgroundItem';
 //Devices
 import {TreeDataDevicesProvider} from './TreeDataDevicesProvider';
 import {IotDevice} from './IotDevice';
@@ -62,48 +64,38 @@ import {openTemplateFolder} from './actionsTemplates/openTemplateFolder';
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
 	
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "vscode-extension-dotnet-fastiot" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	//OutputChannel
+	//versionExt
 	const versionExt=context.extension.packageJSON.version;
+	//GUI design
+	//OutputChannel
 	const outputChannel = vscode.window.createOutputChannel(".NET FastIoT");
-	outputChannel.appendLine("Welcome to .NET FastIoT!");	
-	outputChannel.appendLine("----------------------------------");
-	outputChannel.appendLine(`Version: ${versionExt}`);	
-	outputChannel.appendLine("Feedback: fastiot@devdotnet.org");
-	outputChannel.appendLine("Site: https://devdotnet.org/tag/fastiot/");
-	outputChannel.appendLine("GitHub: https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot");
-	outputChannel.appendLine("----------------------------------");
-	//TreeView Devices
-	let statusBarItemDevice = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
-	//statusBarItem.color="red";	
-	statusBarItemDevice.hide();
-	//Log function
-	const logCallback = (value:string) => {
-		outputChannel.appendLine(value);
-	  };
+	//StatusBar
+	let statusBarBackground= new StatusBarBackgroundItem(
+		vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000));
+	let contextUI= new IoTUI(outputChannel,statusBarBackground);
+	//Output
+	contextUI.Output("Welcome to .NET FastIoT!");	
+	contextUI.Output("----------------------------------");
+	contextUI.Output(`Version: ${versionExt}`);	
+	contextUI.Output("Feedback: fastiot@devdotnet.org");
+	contextUI.Output("Site: https://devdotnet.org/tag/fastiot/");
+	contextUI.Output("GitHub: https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot");
+	contextUI.Output("----------------------------------");
 	//Get config
-	let config=new IotConfiguration(context,versionExt,logCallback);
+	let config=new IotConfiguration(context,versionExt,contextUI);
 	config.LoadTemplatesAsync();
+	//TreeView Devices
 	//read JSON devices
 	const jsonDevices=vscode.workspace.getConfiguration().get('fastiot.device.all.JSON');	 
-    let treeDataDevicesProvider = new TreeDataDevicesProvider(outputChannel,statusBarItemDevice,
-		SaveDevicesCallback,config,jsonDevices);	
+    let treeDataDevicesProvider = new TreeDataDevicesProvider(SaveDevicesCallback, config,jsonDevices,contextUI);
     let vscodeTreeViewDevices=vscode.window.createTreeView('viewDevices', {
 		treeDataProvider: treeDataDevicesProvider
-	  });
-	
+	});
 	//TreeView Launchs
-	let statusBarItemConfiguration = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);	
-	statusBarItemConfiguration.hide();
 	const workspaceFolder=IoTHelper.GetWorkspaceFolder();
-    let treeDataLaunchsProvider = new TreeDataLaunchsProvider(statusBarItemConfiguration,
-		outputChannel,config,treeDataDevicesProvider.RootItems,workspaceFolder);
+    let treeDataLaunchsProvider = new TreeDataLaunchsProvider(config,treeDataDevicesProvider.RootItems,
+		workspaceFolder);
 	const loadLaunchs = async () => {
 		const result= await treeDataLaunchsProvider.RecoveryLaunchsAsync();
 		if(result.Status==StatusResult.Error&&result.tag!="404") {
@@ -147,7 +139,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	//Add new device		  
 	let commandAddDevice = vscode.commands.registerCommand('viewDevices.AddDevice', () => {	
-		addDevice(treeDataDevicesProvider,vscodeTreeViewDevices);	
+		addDevice(treeDataDevicesProvider,vscodeTreeViewDevices,contextUI);	
 	});
 	//Refresh Devices
 	let commandRefreshDevices = vscode.commands.registerCommand('viewDevices.RefreshDevices', () => {			
@@ -161,31 +153,31 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Export devices
 	let commandExportDevices = vscode.commands.registerCommand('viewDevices.ExportDevices', () => {					
-		exportDevices(treeDataDevicesProvider);
+		exportDevices(treeDataDevicesProvider,contextUI);
 	});
 	//Import devices	
 	let commandImportDevices = vscode.commands.registerCommand('viewDevices.ImportDevices', () => {					
-		importDevices(treeDataDevicesProvider);
+		importDevices(treeDataDevicesProvider,contextUI);
 	});
 	//Rename Device
 	let commandRenameDevice = vscode.commands.registerCommand("viewDevices.RenameDevice", (item:IotDevice) => {
-		renameDevice(treeDataDevicesProvider,item);
+		renameDevice(treeDataDevicesProvider,item,contextUI);
 	});
 	//Ping Device
 	let commandPingDevice = vscode.commands.registerCommand("viewDevices.ConnectionTestDevice", (item:IotDevice) => {
-		connectionTestDevice(treeDataDevicesProvider,item);
+		connectionTestDevice(treeDataDevicesProvider,item,contextUI);
 	});
 	//Reboot Device
 	let commandRebootDevice = vscode.commands.registerCommand("viewDevices.RebootDevice", (item:IotDevice) => {
-		rebootDevice(treeDataDevicesProvider,item,undefined);
+		rebootDevice(treeDataDevicesProvider,item,undefined,contextUI);
 	});
 	//Shutdown Device
 	let commandShutdownDevice = vscode.commands.registerCommand("viewDevices.ShutdownDevice", (item:IotDevice) => {
-		shutdownDevice(treeDataDevicesProvider,item,undefined);
+		shutdownDevice(treeDataDevicesProvider,item,undefined,contextUI);
 	});
 	//Delete Device
 	let commandDeleteDevice = vscode.commands.registerCommand("viewDevices.DeleteDevice", (item:IotDevice) => {
-		deleteDevice(treeDataDevicesProvider,item);
+		deleteDevice(treeDataDevicesProvider,item,contextUI);
 	});
 	//Open folder with ssh keys
 	let commandOpenFolderKeys = vscode.commands.registerCommand("viewDevices.OpenFolderSshKeys", () => {
@@ -197,47 +189,47 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Check all packages
 	let commandCheckAllPackages = vscode.commands.registerCommand("viewDevices.CheckAllPackages", (item:IotDevicePackage) => {
-		checkAllPackages(treeDataDevicesProvider,item.Device);		 
+		checkAllPackages(treeDataDevicesProvider,item.Device,contextUI);		 
 	});
 	//Package installation 
 	let commandInstallationPackage = vscode.commands.registerCommand("viewDevices.InstallationPackage", (item:IotDevicePackage) => {
-		installPackage(treeDataDevicesProvider,item);		 
+		installPackage(treeDataDevicesProvider,item,contextUI);		 
 	});
 	//Package upgrade
 	let commandUpgradePackage = vscode.commands.registerCommand("viewDevices.UpgradePackage", (item:IotDevicePackage) => {
-		upgradePackage(treeDataDevicesProvider,item);
+		upgradePackage(treeDataDevicesProvider,item,contextUI);
 	});
 	//Remove package 
 	let commandRemovePackage = vscode.commands.registerCommand("viewDevices.RemovePackage", (item:IotDevicePackage) => {
-		uninstallPackage(treeDataDevicesProvider,item); 
+		uninstallPackage(treeDataDevicesProvider,item,contextUI); 
 	});
 	//Test package 
 	let commandTestPackage = vscode.commands.registerCommand("viewDevices.TestPackage", (item:IotDevicePackage) => {		
-		testPackage(treeDataDevicesProvider,item); 
+		testPackage(treeDataDevicesProvider,item,contextUI); 
 	});
 	//Update DTO
 	let commandUpdateDTO = vscode.commands.registerCommand("viewDevices.UpdateDTO", (item:IotDeviceDTO) => {
-		refreshDTO(treeDataDevicesProvider,item.Device); 
+		refreshDTO(treeDataDevicesProvider,item.Device,contextUI); 
 	});
 	let commandAddDTO = vscode.commands.registerCommand("viewDevices.AddDTO", (item:IotDeviceDTO) => {
-		addDTO(treeDataDevicesProvider,item.Device);		
+		addDTO(treeDataDevicesProvider,item.Device,contextUI);		
 	});
 	let commandDeleteDTO = vscode.commands.registerCommand("viewDevices.DeleteDTO", (item:IotDeviceDTO) => {
-		deleteDTO(treeDataDevicesProvider,item);
+		deleteDTO(treeDataDevicesProvider,item,contextUI);
 	});
 	let commandEnableDTO = vscode.commands.registerCommand("viewDevices.EnableDTO", (item:IotDeviceDTO) => {
-		enableDTO(treeDataDevicesProvider,item);
+		enableDTO(treeDataDevicesProvider,item,contextUI);
 	});
 	let commandDisableDTO = vscode.commands.registerCommand("viewDevices.DisableDTO", (item:IotDeviceDTO) => {
-		disableDTO(treeDataDevicesProvider,item);
+		disableDTO(treeDataDevicesProvider,item,contextUI);
 	});
 	//GPIO detect
 	let commandDetectGpiochips = vscode.commands.registerCommand("viewDevices.DetectGpiochips", (item:IotDeviceGpiochip) => {
-		detectGpiochips(treeDataDevicesProvider,item.Device);
+		detectGpiochips(treeDataDevicesProvider,item.Device,contextUI);
 	});
 	//Add new launch		  
 	let commandAddLaunch = vscode.commands.registerCommand('viewLaunchs.Add', () => {	
-		addLaunch(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems);	
+		addLaunch(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,contextUI);	
 	});
 	//Refresh Configurations
 	let commandRefreshLaunch = vscode.commands.registerCommand('viewLaunchs.Refresh', () => {
@@ -246,17 +238,17 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Rename Configuration
 	let commandRenameLaunch = vscode.commands.registerCommand('viewLaunchs.Rename', 
 		(item:IotLaunch) => {
-			renameLaunch(treeDataLaunchsProvider,item);
+			renameLaunch(treeDataLaunchsProvider,item,contextUI);
 	});
 	//Delete Configuration
 	let commandDeleteLaunch = vscode.commands.registerCommand('viewLaunchs.Delete', 
 		(item:IotLaunch) => {
-			deleteLaunch(treeDataLaunchsProvider,item);
+			deleteLaunch(treeDataLaunchsProvider,item,contextUI);
 	});
 	//Rebuild Configuration
 	let commandRebuildLaunch = vscode.commands.registerCommand('viewLaunchs.Rebuild', 
 		(item:IotLaunch) => {
-			rebuildLaunch(treeDataLaunchsProvider,item);
+			rebuildLaunch(treeDataLaunchsProvider,item,contextUI);
 	});
 	//Go to device 
 	let commandGoToDevice = vscode.commands.registerCommand('viewLaunchs.GoToDevice', 
@@ -285,7 +277,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Create project
 	let commandCreateProject = vscode.commands.registerCommand('viewTemplates.CreateProject', () => {	
-			createProject(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,context);	
+			createProject(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,context,contextUI);	
 	});
 	//Reload templates
 	let commandReloadTemplates = vscode.commands.registerCommand('viewTemplates.ReloadTemplates', () => {	
@@ -310,10 +302,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
     }, undefined, context.subscriptions);	
 	//Subscriptions
-	context.subscriptions.push(statusBarItemDevice);
 	context.subscriptions.push(outputChannel);
 	context.subscriptions.push(vscodeTreeViewDevices);
-	context.subscriptions.push(statusBarItemConfiguration);	
 	context.subscriptions.push(vscodeTreeViewLaunchs);
 	context.subscriptions.push(vscodeTreeViewTemplates);
 

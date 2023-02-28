@@ -5,17 +5,16 @@ import * as path from 'path';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotLaunch } from '../IotLaunch';
+import {IoTUI} from '../ui/IoTUI';
 
-export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch): Promise<void> {
+export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch,contextUI:IoTUI): Promise<void> {
      //Main process
-     treeData.OutputChannel.appendLine(`Action: rebuild Launch. Launch: ${item.label}`);
+     contextUI.Output(`Action: rebuild Launch. Launch: ${item.label}`);
+     contextUI.StatusBarBackground.showAnimation(`Rebuild Launch. Launch: ${item.label}`);
      const result = await treeData.RebuildLaunch(item.IdLaunch);
+     contextUI.StatusBarBackground.hide();
      //Output
-     treeData.OutputChannel.appendLine("------------- Result -------------");
-     treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-     treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-     treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-     treeData.OutputChannel.appendLine("----------------------------------");
+     contextUI.Output(result.toMultiLineString("head"));
      //Message
      if(result.Status==StatusResult.Ok)
      {

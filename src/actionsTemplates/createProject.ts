@@ -9,8 +9,9 @@ import { IoTHelper } from '../Helper/IoTHelper';
 import { dotnetHelper } from '../Helper/dotnetHelper';
 import {IotTemplate} from '../Templates/IotTemplate';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
+import {IoTUI} from '../ui/IoTUI';
 
-export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>,context: vscode.ExtensionContext): Promise<void> {
+export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>,context: vscode.ExtensionContext,contextUI:IoTUI): Promise<void> {
     let values:Map<string,string>= new Map<string,string>()
     //Devices
     if(devices.length==0) {
@@ -105,14 +106,12 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
     //values
     values.set("%{project.name}",nameProject);
     //Main process
-    treeData.OutputChannel.appendLine(`Action: create an ${nameProject} project, ${selectTemplate.ParentDir} template`);
+    contextUI.Output(`Action: create an ${nameProject} project, ${selectTemplate.ParentDir} template`);
+    contextUI.StatusBarBackground.showAnimation(`Create an ${nameProject} project, ${selectTemplate.ParentDir} template`);
     const result=await treeData.CreateProject(selectDevice,selectTemplate,selectFolder,values);
+    contextUI.StatusBarBackground.hide();
     //Output       
-    treeData.OutputChannel.appendLine("------------- Result -------------");
-    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-    treeData.OutputChannel.appendLine("----------------------------------");
+    contextUI.Output(result.toMultiLineString("head"));
     //Message       
     if(result.Status==StatusResult.Ok)
     {

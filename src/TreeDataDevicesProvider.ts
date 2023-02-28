@@ -8,12 +8,10 @@ import {IotDeviceDTO} from './IotDeviceDTO';
 import {IoTHelper} from './Helper/IoTHelper';
 import {IotResult,StatusResult} from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
+import {IoTUI} from './ui/IoTUI';
 
 export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTreeItem> {    
   public RootItems:Array<IotDevice>=[];
-
-  private _isStopStatusBar:boolean=true;
-  private _statusBarText:string="";
 
   private _config:IotConfiguration
   public get Config(): IotConfiguration {
@@ -35,19 +33,17 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   public readonly onDidChangeTreeData: vscode.Event<BaseTreeItem| undefined | null | void> = 
     this._onDidChangeTreeData.event;
   
-  public OutputChannel:vscode.OutputChannel;
-  private _statusBarItem:vscode.StatusBarItem;
+  private _contextUI:IoTUI;
   public SaveDevicesCallback:(data:any) =>void;
     
   constructor(
-    outputChannel:vscode.OutputChannel,
-    statusBarItem:vscode.StatusBarItem,
     saveDevicesCallback:(data:any) =>void,
     config:IotConfiguration,    
-    jsonDevices:any
-  ) {     
-      this.OutputChannel=outputChannel;
-      this._statusBarItem=statusBarItem;
+    jsonDevices:any,
+    contextUI:IoTUI
+  ) {
+      this._contextUI=contextUI;
+      //
       this.SaveDevicesCallback=saveDevicesCallback;
       //Set config
       this._config=config;
@@ -104,47 +100,6 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       checklabel= this.GetUniqueLabel(newlabel,suffix,increment);
     }
     return checklabel;   
-  }
-
-  private async SetTextStatusBar(textStatusBar:string): Promise<void>{
-    if(this._statusBarItem)
-    {
-      this._statusBarText=textStatusBar;      
-    }    
-  }
-
-  public async ShowStatusBar(textStatusBar:string): Promise<void>{
-    if(!this._statusBarItem) return;
-    if(!this._isStopStatusBar) {
-      this.SetTextStatusBar(textStatusBar);
-      return;
-    }
-    this._isStopStatusBar=false;
-    this.SetTextStatusBar(textStatusBar);
-    //        
-    this._statusBarItem.text=this._statusBarText;      
-    this._statusBarItem.tooltip=this._statusBarText;
-    this._statusBarItem.show();
-    let progressChars: string = '|/-\\';
-    let lengthProgressChars = progressChars.length;
-    let posProgressChars:number=0;
-    do {
-      let chars = progressChars.charAt(posProgressChars);
-      this._statusBarItem.text = chars + " " + this._statusBarText;
-      this._statusBarItem.tooltip=this._statusBarText;
-      posProgressChars=posProgressChars+1;
-      if(posProgressChars>lengthProgressChars) posProgressChars=0; 
-      await IoTHelper.Sleep(150);
-    } 
-    while(!this._isStopStatusBar)
-  }
-
-  public async HideStatusBar(): Promise<void>{
-    if(this._statusBarItem)
-    {
-      this._isStopStatusBar=true;						
-      this._statusBarItem.hide();						
-    }    
   }
 
   public ToJSON():any{
@@ -204,27 +159,19 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   public async AddDevice(hostName: string,port: number,userName: string,password: string,accountNameDebug:string): Promise<IotResult> {         
       let device = new IotDevice(this.Config);
       //Connection test device
-      this.ShowStatusBar("Checking the network connection");
+      this._contextUI.StatusBarBackground.showAnimation("Checking the network connection");
       let result=await device.ConnectionTest(hostName,port,userName,password);
-      if(result.Status==StatusResult.Error)
-      {
-        this.HideStatusBar();
-        return Promise.resolve(result);
-      }
-      this.ShowStatusBar("Create a device");
-      this.OutputChannel.appendLine("Create a device");
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);
+      this._contextUI.StatusBarBackground.showAnimation("Create a device");
+      this._contextUI.Output("Create a device");
       //event subscription
       let handler=device.Client.OnChangedStateSubscribe(event => {        
-        if(event.status) this.SetTextStatusBar(event.status);
-        if(event.status) this.OutputChannel.appendLine(event.status);
-        if(event.console) this.OutputChannel.appendLine(event.console); 
+        if(event.status) this._contextUI.StatusBarBackground.showAnimation(event.status);
+        if(event.status) this._contextUI.Output(event.status);
+        if(event.console) this._contextUI.Output(event.console); 
       });
       result = await device.Create(hostName,port,userName, password,accountNameDebug);
-      if(result.Status==StatusResult.Error)
-      {
-        this.HideStatusBar();
-        return Promise.resolve(result);
-      }
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);
       //Rename. checking for matching names.
       device.label= this.GetUniqueLabel(<string>device.label,'#',undefined);      
       //
@@ -237,7 +184,6 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       result.returnObject=device;
       //event unsubscription    
       device.Client.OnChangedStateUnsubscribe(handler);
-      this.HideStatusBar();
       //
       return Promise.resolve(result);   
   }
@@ -249,13 +195,10 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   
   private async RecoveryDevices(jsonObj:any): Promise<void>{    
     //Recovery devices from config in JSON format
-    this.ShowStatusBar("Reading extension settings");    
     this.RootItems=[];
     await this.FromJSON(jsonObj);
     //Refresh treeView
     this.Refresh();
-    //end processing
-    this.HideStatusBar();
   }
 
   public FindbyIdDevice(idDevice:string): IotDevice|undefined {
@@ -273,23 +216,17 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     return Promise.resolve(false);   
   }  
 
-  public async DeleteDevice(idDevice:string): Promise<boolean> {        
+  public async DeleteDevice(idDevice:string): Promise<IotResult> {
+    let result :IotResult;
     let device = this.FindbyIdDevice(idDevice);    
     if(device){
       const index=this.RootItems.indexOf(device);
       this.RootItems.splice(index,1);
-      /*
-      //delete file key
-      const pathKey=<string>device.Account.PathKey;
-      if (fs.existsSync(pathKey)) {
-        //File exists in path
-        fs.rmSync(pathKey);
-      } 
-      */     
-      //
-      return Promise.resolve(true);   
+      result = new IotResult(StatusResult.Ok,"Device removed");
+      return Promise.resolve(result);   
     }
-    return Promise.resolve(false);   
+    result = new IotResult(StatusResult.Error,"Device not found");
+    return Promise.resolve(result);   
   } 
 
   //------------ Packages ------------
@@ -302,12 +239,11 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
         const result=await device.ConnectionTest();
         if(result.Status==StatusResult.Error) return Promise.resolve(result);
       }
-    this.ShowStatusBar("Checking for packages");
     //event subscription
     let handler=device.PackagesLinux.Client.OnChangedStateSubscribe(event => {
       //output
-      if(event.status) this.OutputChannel.appendLine(event.status);
-      if(event.console) this.OutputChannel.appendLine(event.console);
+      if(event.status) this._contextUI.Output(event.status);
+      if(event.console) this._contextUI.Output(event.console);
       //IotResult
       if(event.obj) result=<IotResult>event.obj;                
     });
@@ -318,35 +254,29 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     device.PackagesLinux.Client.OnChangedStateUnsubscribe(handler);
     //Expanded node
     //device.PackagesLinux.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
-    this.Refresh();    
-    this.HideStatusBar();
+    this.Refresh();
     this.SaveDevices();
     }    
     //    
     return Promise.resolve(result); 
   }
 
-  public async InstallPackage(idDevice:string,itemPackage:TypePackage,objJSON:any): Promise<IotResult> {             
-    this.ShowStatusBar(`Package install/upgrade: ${itemPackage}`);
-    this.OutputChannel.appendLine(`Package install/upgrade:${itemPackage}`);
-    //
+  public async InstallPackage(idDevice:string,itemPackage:TypePackage,objJSON:any): Promise<IotResult> {
     let device= this.FindbyIdDevice(idDevice);
-    let result=new IotResult(StatusResult.None,"message", undefined);
+    let result=new IotResult(StatusResult.None,"message");
     if(!device){
-      result=new IotResult(StatusResult.Error,"Device not found", undefined);
-      this.HideStatusBar();
+      result=new IotResult(StatusResult.Error,"Device not found");
       return Promise.resolve(result);
     }     
     let devicePackage=device.PackagesLinux.Childs.find(x=>x.NamePackage==itemPackage);
     if(!devicePackage)
     {
-      result=new IotResult(StatusResult.Error,"Package not found", undefined);
-      this.HideStatusBar();
+      result=new IotResult(StatusResult.Error,"Package not found");
       return Promise.resolve(result);
     }
     //event subscription    
     let handler=devicePackage.Client.OnChangedStateSubscribe(event => {
-      if(event.console) this.OutputChannel.appendLine(event.console);
+      if(event.console) this._contextUI.Output(event.console);
     });
     //Upgrade
     result = await devicePackage.Install(objJSON);
@@ -369,7 +299,6 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     } 
     //event unsubscription    
     devicePackage.Client.OnChangedStateUnsubscribe(handler);
-    this.HideStatusBar();
     //
     return Promise.resolve(result);
   }
@@ -378,22 +307,17 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     return await this.InstallPackage(idDevice,itemPackage,objJSON);      
   }
 
-  public async UnInstallPackage(idDevice:string,itemPackage:TypePackage,objJSON:any): Promise<IotResult> {             
-    this.ShowStatusBar(`Package uninstall: ${itemPackage}`);
-    this.OutputChannel.appendLine(`Package uninstall:${itemPackage}`);
-    //
+  public async UnInstallPackage(idDevice:string,itemPackage:TypePackage,objJSON:any): Promise<IotResult> {
     let device= this.FindbyIdDevice(idDevice);
-    let result=new IotResult(StatusResult.None,"message", undefined);
+    let result=new IotResult(StatusResult.None,"message");
     if(!device){
-      result=new IotResult(StatusResult.Error,"Device not found", undefined);
-      this.HideStatusBar();
+      result=new IotResult(StatusResult.Error,"Device not found");
       return Promise.resolve(result);
     }     
     let devicePackage=device.PackagesLinux.Childs.find(x=>x.NamePackage==itemPackage);
     if(!devicePackage)
     {
-      result=new IotResult(StatusResult.Error,"Package not found", undefined);
-      this.HideStatusBar();
+      result=new IotResult(StatusResult.Error,"Package not found");
       return Promise.resolve(result);
     }    
     //Uninstall
@@ -423,39 +347,31 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       //save in config
       this.SaveDevices()      
     } 
-    this.HideStatusBar();
     //
     return Promise.resolve(result);
   }
 
   public async TestPackage(idDevice:string,itemPackage:TypePackage): Promise<IotResult> {    
-    this.ShowStatusBar(`Package test: ${itemPackage}`);
-    this.OutputChannel.appendLine(`Package test:${itemPackage}`);
-    //
     let device= this.FindbyIdDevice(idDevice);
-    let result=new IotResult(StatusResult.None,"message", undefined);
+    let result=new IotResult(StatusResult.None,"message");
     if(!device){
-      result=new IotResult(StatusResult.Error,"Device not found", undefined);
-      this.HideStatusBar();
+      result=new IotResult(StatusResult.Error,"Device not found");
       return Promise.resolve(result);
     }     
     let devicePackage=device.PackagesLinux.Childs.find(x=>x.NamePackage==itemPackage);
     if(!devicePackage)
     {
-      result=new IotResult(StatusResult.Error,"Package not found", undefined);
-      this.HideStatusBar();
+      result=new IotResult(StatusResult.Error,"Package not found");
       return Promise.resolve(result);
     }    
     //Test
-    result = await devicePackage.Test();    
-    this.HideStatusBar();
+    result = await devicePackage.Test();
     //
     return Promise.resolve(result);
   }
 
   //------------ Gpiochips ------------
   public async DetectGpiochips(idDevice:string):  Promise<IotResult> {
-    this.ShowStatusBar("Detecting all GPIO chips");
     let device = this.FindbyIdDevice(idDevice);
     let result = new IotResult(StatusResult.None,undefined,undefined);
     if(device)
@@ -475,16 +391,14 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       }
     }else
     {
-      result=new IotResult(StatusResult.Error,"Device not found.",undefined)
+      result=new IotResult(StatusResult.Error,"Device not found.")
     }
     //
-    this.HideStatusBar(); 
     return Promise.resolve(result); 
   }
 
   //------------ DTOs ------------
   public async GetAllDTO(idDevice:string): Promise<IotResult> {
-    this.ShowStatusBar("Retrieving all DTOs");
     let device = this.FindbyIdDevice(idDevice);
     let result = new IotResult(StatusResult.None,undefined,undefined);
     if(device)
@@ -497,25 +411,19 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       }
     }else
     {
-      result=new IotResult(StatusResult.Error,"Device not found.",undefined)
+      result=new IotResult(StatusResult.Error,"Device not found.")
     }
     //
-    this.HideStatusBar(); 
     return Promise.resolve(result); 
   }
 
   public async AddDTO(idDevice:string, fileName:string, fileData:string,fileType:string):  Promise<IotResult> {
-    this.ShowStatusBar("Adding a DTO");
     let device = this.FindbyIdDevice(idDevice);
-    let result = new IotResult(StatusResult.None,undefined,undefined);
+    let result = new IotResult(StatusResult.None);
     if(device)
     {
       result= await device.DtoLinux.Put(fileName,fileData,fileType);
-      if(result.Status==StatusResult.Error)
-      {
-        this.HideStatusBar(); 
-        return Promise.resolve(result);
-      } 
+      if(result.Status==StatusResult.Error) return Promise.resolve(result);
       result= await device.DtoLinux.GetAll();
       if(result.Status==StatusResult.Ok)
       {
@@ -527,16 +435,13 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       result=new IotResult(StatusResult.Error,"Device not found.",undefined)
     }
     //
-    this.HideStatusBar(); 
     return Promise.resolve(result); 
   }
 
   public async DeleteDTO(itemDTO:IotDeviceDTO):  Promise<IotResult> {
-    this.ShowStatusBar("DTO removal");
     let result = await itemDTO.Delete()
     if(result.Status==StatusResult.Error)
     {
-      this.HideStatusBar(); 
       return Promise.resolve(result);
     }
     result= await itemDTO.Device.DtoLinux.GetAll();
@@ -546,16 +451,13 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       this.SaveDevices();
     }
     //
-    this.HideStatusBar(); 
     return Promise.resolve(result); 
   }
 
   public async EnableDTO(itemDTO:IotDeviceDTO):  Promise<IotResult> {
-    this.ShowStatusBar("Enabling DTO");
     let result = await itemDTO.Enable()
     if(result.Status==StatusResult.Error)
     {
-      this.HideStatusBar(); 
       return Promise.resolve(result);
     }
     result= await itemDTO.Device.DtoLinux.GetAll();
@@ -565,16 +467,13 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       this.SaveDevices();
     }
     //
-    this.HideStatusBar(); 
     return Promise.resolve(result); 
   }
 
   public async DisableDTO(itemDTO:IotDeviceDTO):  Promise<IotResult> {
-    this.ShowStatusBar("Disabling DTO");
     let result = await itemDTO.Disable()
     if(result.Status==StatusResult.Error)
     {
-      this.HideStatusBar(); 
       return Promise.resolve(result);
     }
     result= await itemDTO.Device.DtoLinux.GetAll();
@@ -584,7 +483,6 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       this.SaveDevices();
     }
     //
-    this.HideStatusBar(); 
     return Promise.resolve(result);
   }
 

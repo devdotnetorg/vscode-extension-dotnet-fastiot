@@ -6,10 +6,11 @@ import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { refreshDTO } from './refreshDTO';
+import {IoTUI} from '../ui/IoTUI';
 
-export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {       
+export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IoTUI): Promise<void> {       
     if(item.DtoLinux.Items.length==0)
-        await refreshDTO(treeData,item);        
+        await refreshDTO(treeData,item,contextUI);        
     if(item.DtoLinux.Items.length==0) return;
     const options: vscode.OpenDialogOptions = {
         defaultUri: vscode.Uri.file(`overlay.dts`),
@@ -24,7 +25,7 @@ export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice): 
     const file = await vscode.window.showOpenDialog(options);    
     if(file)
     {
-        treeData.OutputChannel.appendLine(`Action: Adding a DTO file ${file[0].fsPath}`);
+        contextUI.Output(`Action: Adding a DTO file ${file[0].fsPath}`);
         //dts or dtbo
         const dtoExt = path.extname(file[0].fsPath); // returns '.dts' or '.dtbo'
         let fileData:string;
@@ -39,14 +40,13 @@ export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice): 
             fileType="ascii"; //ascii base64
         }
         //
-        const fileName = path.parse(file[0].fsPath).base;        
+        const fileName = path.parse(file[0].fsPath).base;
+        contextUI.Output("Action: adding a DTO");
+        contextUI.StatusBarBackground.showAnimation("Adding a DTO");       
         const result = await treeData.AddDTO(<string>item.IdDevice,fileName,fileData,fileType);
+        contextUI.StatusBarBackground.hide();
         //Output 
-        treeData.OutputChannel.appendLine("------------- Result -------------");
-        treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-        treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-        treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-        treeData.OutputChannel.appendLine("----------------------------------");
+        contextUI.Output(result.toMultiLineString("head"));
         //Message
         if(result.Status==StatusResult.Ok)
         {

@@ -9,8 +9,9 @@ import { IotDevice } from '../IotDevice';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import {IotTemplate} from '../Templates/IotTemplate';
 import {IotTemplateAttribute} from '../Templates/IotTemplateAttribute';
+import {IoTUI} from '../ui/IoTUI';
 
-export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>): Promise<void> {
+export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,contextUI:IoTUI): Promise<void> {
     let values:Map<string,string>= new Map<string,string>();
     //Workspace		
     const workspaceDirectory = IoTHelper.GetWorkspaceFolder();
@@ -104,14 +105,12 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     values.set("%{project.mainfile.path.full.aswindows}",selectProject);
     values.set("%{project.name}",projectName);
     //Main process
-    treeData.OutputChannel.appendLine(`Action: adding Launch to the ${selectProject} project`);
+    contextUI.Output(`Action: adding Launch to the ${selectProject} project`);
+    contextUI.StatusBarBackground.showAnimation(`Adding Launch to the ${selectProject} project`);
     const result = await treeData.AddLaunch(selectDevice,selectTemplate,values);
+    contextUI.StatusBarBackground.hide();
     //Output
-    treeData.OutputChannel.appendLine("------------- Result -------------");
-    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-    treeData.OutputChannel.appendLine("----------------------------------");
+    contextUI.Output(result.toMultiLineString("head"));
     //Message
     if(result.Status==StatusResult.Ok)
     {

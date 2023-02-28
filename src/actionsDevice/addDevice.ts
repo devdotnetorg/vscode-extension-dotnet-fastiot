@@ -9,8 +9,9 @@ import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
+import {IoTUI} from '../ui/IoTUI';
 
-export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>): Promise<void> {                
+export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,contextUI:IoTUI): Promise<void> {                
         
         let hostName = await vscode.window.showInputBox({            
             prompt: 'prompt',
@@ -54,15 +55,13 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
        if(!SELECTED_ITEM) return;       
        //Info
        vscode.window.showInformationMessage('It may take 2 to 7 minutes to initialize and configure the device.');
-       treeData.OutputChannel.appendLine("Action: adding a device");
+       contextUI.Output("Action: adding a device");
        //Adding a device is the main process
+       contextUI.StatusBarBackground.showAnimation("Adding a device");
        const result = await treeData.AddDevice(hostName,port,userName,password,SELECTED_ITEM.value);
+       contextUI.StatusBarBackground.hide();
        //Output       
-       treeData.OutputChannel.appendLine("------------- Result -------------");
-       treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-       treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-       treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-       treeData.OutputChannel.appendLine("----------------------------------");
+       contextUI.Output(result.toMultiLineString("head"));
        //Message       
        if(result.Status==StatusResult.Ok)
        {
@@ -70,10 +69,9 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
             //Set focus
             const device=<IotDevice>result.returnObject;            
             treeView.reveal(device, {focus: true});
-            //Ping
+            //Connection test
             const newDevice=treeData.RootItems[treeData.RootItems.length-1];
-            connectionTestDevice(treeData,newDevice);
-            
+            connectionTestDevice(treeData,newDevice,contextUI);
        }else
        {            
             vscode.window.showErrorMessage(`Error. Device not added! \n${result.Message}`);

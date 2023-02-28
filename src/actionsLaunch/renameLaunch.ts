@@ -6,8 +6,9 @@ import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotLaunch } from '../IotLaunch';
 import { IoTHelper } from '../Helper/IoTHelper';
+import {IoTUI} from '../ui/IoTUI';
 
-export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch): Promise<void> {                    
+export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch,contextUI:IoTUI): Promise<void> {                    
     let newLabel = await vscode.window.showInputBox({				
         prompt: 'prompt',
         title: 'Enter a new name launch',
@@ -20,14 +21,12 @@ export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLau
         return;
     } 
     //Main process
-    treeData.OutputChannel.appendLine(`Action: launch rename. Old name: ${item.label}. New name: ${newLabel}`);
+    contextUI.Output(`Action: launch rename. Old name: ${item.label}. New name: ${newLabel}`);
+    contextUI.StatusBarBackground.showAnimation(`Launch rename. Old name: ${item.label}. New name: ${newLabel}`);
     const result = await treeData.RenameLaunch(item,newLabel);
+    contextUI.StatusBarBackground.hide();
     //Output
-    treeData.OutputChannel.appendLine("------------- Result -------------");
-    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-    treeData.OutputChannel.appendLine("----------------------------------");
+    contextUI.Output(result.toMultiLineString("head"));
     //Message
     if(result.Status==StatusResult.Ok)
     {

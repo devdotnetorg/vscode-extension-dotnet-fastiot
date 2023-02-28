@@ -5,16 +5,15 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
+import {IoTUI} from '../ui/IoTUI';
 
-export async function detectGpiochips(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {
-    treeData.OutputChannel.appendLine("Action: detecting all GPIO chips");                
+export async function detectGpiochips(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IoTUI): Promise<void> {
+    contextUI.Output("Action: detecting all GPIO chips");
+    contextUI.StatusBarBackground.showAnimation("Detecting all GPIO chips");              
     const result=await treeData.DetectGpiochips(<string>item.IdDevice);
+    contextUI.StatusBarBackground.hide();
     //Output 
-    treeData.OutputChannel.appendLine("------------- Result -------------");
-    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-    treeData.OutputChannel.appendLine("----------------------------------");
+    contextUI.Output(result.toMultiLineString("head"));
     //Message
     if(result.Status==StatusResult.Ok) {
         item.GpioChips.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;

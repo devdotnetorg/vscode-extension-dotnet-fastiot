@@ -7,10 +7,11 @@ import { dotnetHelper } from '../Helper/dotnetHelper';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { ItemQuickPick } from '../Helper/actionHelper';
+import {IoTUI} from '../ui/IoTUI';
 
 // async InstallPackage(idDevice:string,itemPackage:typePackage,objJSON:any): Promise<IotResult> {            
 
-export async function installPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage): Promise<void> {
+export async function installPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage,contextUI:IoTUI): Promise<void> {
     //catalogs
     //const catalogNetSDKChannel: Array<string>=["3.1","5.0","6.0","7.0"];
     //const catalogNetRuntimeChannel: Array<string>=["3.1","5.0","6.0","7.0"];
@@ -120,15 +121,13 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
     }    
     //Info
     vscode.window.showInformationMessage('Package installation/upgrade may take 2 to 7 minutes.');
-    treeData.OutputChannel.appendLine(`Action: package installation ${item.NamePackage}`);
     //main process
+    contextUI.Output(`Action: package installation/upgrade ${item.NamePackage}`);
+    contextUI.StatusBarBackground.showAnimation(`Package installation/upgrade ${item.NamePackage}`);
     const result = await treeData.InstallPackage(<string>item.Device.IdDevice,item.NamePackage,jsonObj);
+    contextUI.StatusBarBackground.hide();
     //Output       
-    treeData.OutputChannel.appendLine("------------- Result -------------");
-    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-    treeData.OutputChannel.appendLine("----------------------------------");
+    contextUI.Output(result.toMultiLineString("head"));
     //Message        
     if(result.Status==StatusResult.Ok) {
         vscode.window.showInformationMessage(`${item.NamePackage} package installation/upgrade completed successfully.`);

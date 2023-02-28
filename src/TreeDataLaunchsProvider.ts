@@ -12,9 +12,6 @@ import {IotTemplate} from './Templates/IotTemplate';
 export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTreeItem> {    
   public RootItems:Array<IotLaunch>=[];
 
-  //private _isStopStatusBar:boolean=false;
-  //private _statusBarText:string="";
-  public OutputChannel:vscode.OutputChannel;
   public Config: IotConfiguration;
     
   private _onDidChangeTreeData: vscode.EventEmitter<BaseTreeItem| undefined | null | void> = 
@@ -22,19 +19,14 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
   public readonly onDidChangeTreeData: vscode.Event<BaseTreeItem| undefined | null | void> = 
     this._onDidChangeTreeData.event;
 
-  private _statusBarItem:vscode.StatusBarItem;
   private _devices: Array<IotDevice>;
   private _workspaceDirectory:string;
 
-  constructor(    
-    statusBarItem:vscode.StatusBarItem,
-    outputChannel:vscode.OutputChannel,
+  constructor(
     config:IotConfiguration,
     devices: Array<IotDevice>,
     workspaceDirectory:string|undefined
-  ) {            
-      this._statusBarItem=statusBarItem;
-      this.OutputChannel=outputChannel;     
+  ) {
       //Set config
       this.Config=config;
       this._devices=devices;
@@ -73,49 +65,6 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     return result;  
   }
   
-  /*
-  private async ShowStatusBar(textStatusBar:string): Promise<void>{      
-    this._isStopStatusBar=false;
-    //  
-    if(this._statusBarItem)
-      {
-        this.SetTextStatusBar(textStatusBar);
-        //        
-        this._statusBarItem.text=this._statusBarText;      
-        this._statusBarItem.tooltip=this._statusBarText;
-        this._statusBarItem.show();
-        let progressChars: string = '|/-\\';
-        let lengthProgressChars = progressChars.length;
-        let posProgressChars:number=0;
-        
-          do { 				
-            let chars = progressChars.charAt(posProgressChars);
-            this._statusBarItem.text = chars + " " + this._statusBarText;
-            this._statusBarItem.tooltip=this._statusBarText;
-            posProgressChars=posProgressChars+1;
-            if(posProgressChars>lengthProgressChars) posProgressChars=0; 
-            await IoTHelper.Sleep(150);
-           } 
-           while(!this._isStopStatusBar)
-      }    
-    }
-
-  private async SetTextStatusBar(textStatusBar:string): Promise<void>{
-    if(this._statusBarItem)
-    {
-      this._statusBarText=textStatusBar;      
-    }    
-  }
- 
-  private async HideStatusBar(): Promise<void>{
-    if(this._statusBarItem)
-    {
-      this._isStopStatusBar=true;						
-      this._statusBarItem.hide();						
-    }    
-  }
-   */
-
   public async RecoveryLaunchsAsync(): Promise<IotResult>{
     return Promise.resolve(this.RecoveryLaunchs());  
   }
@@ -133,7 +82,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       const launchBase= new IotLaunch(this._workspaceDirectory);
       //fromJSON
       result = launchBase.GetJsonLaunch();
-      if(result.Status==StatusResult.Error) return result;  
+      if(result.Status==StatusResult.Error) return result;
       let obj=result.returnObject;
       //Recovery of every Launch    
       let index=0;    
@@ -173,7 +122,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     let launch=<IotLaunch>result.returnObject;
     if(launch){
       result=launch.Rename(newLabel);
-    }else result = new IotResult(StatusResult.Error,`Launch not found IdLaunch:${item.IdLaunch}`,undefined);
+    }else result = new IotResult(StatusResult.Error,`Launch not found IdLaunch:${item.IdLaunch}`);
     //result
     return Promise.resolve(result);
   }
@@ -190,7 +139,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       result=launch.GetJsonLaunch();
       if(result.Status==StatusResult.Error) return result;
       const jsonLaunch=result.returnObject;
-      result= new IotResult(StatusResult.No,`Not found. idLaunch: ${idLaunch}`,undefined);
+      result= new IotResult(StatusResult.No,`Not found. idLaunch: ${idLaunch}`);
       jsonLaunch.configurations.forEach((element:any) => {
         const fastiotIdLaunch = element.fastiotIdLaunch;
         if(idLaunch==fastiotIdLaunch)
@@ -214,7 +163,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     let launch=<IotLaunch>result.returnObject;
     if(launch){
       result=launch.Remove();  
-    }else result = new IotResult(StatusResult.Error,`Launch not found IdLaunch:${idLaunch}`,undefined);
+    }else result = new IotResult(StatusResult.Error,`Launch not found IdLaunch:${idLaunch}`);
     //result
     return Promise.resolve(result);
   }  
@@ -228,19 +177,19 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     //--------------Checks--------------
     //check device
     if(!launch.Device) {
-      result= new IotResult(StatusResult.Error,`Missing device for idLaunch: ${idLaunch}`,undefined);
+      result= new IotResult(StatusResult.Error,`Missing device for idLaunch: ${idLaunch}`);
       return Promise.resolve(result);
     }
     //check project
     const projectMainfilePath=IoTHelper.ReverseSeparatorLinuxToWin(`${this._workspaceDirectory}${launch.PathProject}`);
     if (!fs.existsSync(projectMainfilePath)) {
-      result= new IotResult(StatusResult.Error,`Missing project: ${projectMainfilePath}`,undefined);
+      result= new IotResult(StatusResult.Error,`Missing project: ${projectMainfilePath}`);
       return Promise.resolve(result);
     }
     //check template
     const template = this.Config.Templates.FindbyId(launch.IdTemplate);
     if (!template) {
-      result= new IotResult(StatusResult.Error,`Missing template: ${launch.IdTemplate}`,undefined);
+      result= new IotResult(StatusResult.Error,`Missing template: ${launch.IdTemplate}`);
       return Promise.resolve(result);
     }
     //--------------Main--------------
@@ -318,17 +267,13 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
   }
   // Create project from a template
   public async CreateProject(device:IotDevice,template:IotTemplate, dstPath:string,values:Map<string,string>):Promise<IotResult> {
-    //this.ShowStatusBar(`Create a project ${nameProject} ...`);
     const result=template.CreateProject(device,this.Config,dstPath,values);
-    //this.HideStatusBar();
     //result
     return Promise.resolve(result);  
   }
   //Add Launch
   public async AddLaunch(device:IotDevice,template:IotTemplate,values:Map<string,string>):Promise<IotResult> {
-    //this.ShowStatusBar(`Create a project ${nameProject} ...`);
     const result=template.AddConfigurationVscode(device,this.Config,this._workspaceDirectory,values);
-    //this.HideStatusBar();
     //result
     return Promise.resolve(result);  
   }

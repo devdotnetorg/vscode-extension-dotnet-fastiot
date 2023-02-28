@@ -5,8 +5,9 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
+import {IoTUI} from '../ui/IoTUI';
 
-export async function shutdownDevice(treeData: TreeDataDevicesProvider,item:IotDevice, firstText:string|undefined): Promise<void> { 
+export async function shutdownDevice(treeData: TreeDataDevicesProvider,item:IotDevice, firstText:string|undefined,contextUI:IoTUI): Promise<void> { 
     let textMessage:string;
     if(firstText){
         textMessage=`${firstText}. Shutdown your device: 
@@ -21,14 +22,12 @@ export async function shutdownDevice(treeData: TreeDataDevicesProvider,item:IotD
     if(answer=="Yes") {
         const device = treeData.FindbyIdDevice(<string>item.IdDevice);    
         if(device) {
-            treeData.OutputChannel.appendLine("Action: shutdown device");
+            contextUI.Output("Action: shutdown device");
+            contextUI.StatusBarBackground.showAnimation("Shutdown device");
             const result = await device.Shutdown();
+            contextUI.StatusBarBackground.hide();
             //Output       
-            treeData.OutputChannel.appendLine("------------- Result -------------");
-            treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-            treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-            treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-            treeData.OutputChannel.appendLine("----------------------------------");
+            contextUI.Output(result.toMultiLineString("head"));
             //Message                 
             if(result.Status==StatusResult.Ok) {
                 vscode.window.showInformationMessage(`Shutdown completed successfully. 
@@ -37,7 +36,7 @@ export async function shutdownDevice(treeData: TreeDataDevicesProvider,item:IotD
                 vscode.window.showInformationMessage(`Wait a while for the device to turn off completely`);                
             } else {            
                 vscode.window.showErrorMessage(`Error. Failed to shutdown device! ${result.Message}`);
-                if(result.SystemMessage) treeData.OutputChannel.appendLine(result.SystemMessage);
+                if(result.SystemMessage) contextUI.Output(result.SystemMessage);
             }            
         }
     }     

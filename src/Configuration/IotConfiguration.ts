@@ -7,8 +7,9 @@ import {IotResult,StatusResult } from '../IotResult';
 import {IotConfigurationFolder} from './IotConfigurationFolder';
 import {IotTemplateCollection} from '../Templates/IotTemplateCollection';
 import { IoTHelper } from '../Helper/IoTHelper';
+import {IoTUI} from '../ui/IoTUI';
 
-export class IotConfiguration {  
+export class IotConfiguration {
   public UsernameAccountDevice:string="";
   public GroupsAccountDevice:string="";
   public TypeKeySshDevice:string="";
@@ -20,14 +21,14 @@ export class IotConfiguration {
   public UpdateIntervalTemplatesHours:number;
   public LastUpdateTemplatesHours:number;
   private _context:vscode.ExtensionContext;
-  private _logCallback:(value:string) =>void;
-
+  private _contextUI:IoTUI;
+  
   constructor(
     context: vscode.ExtensionContext,
     versionExt:string,
-    logCallback:(value:string) =>void,
+    contextUI:IoTUI
     ){
-      this._logCallback=logCallback;
+      this._contextUI=contextUI;
       let applicationDataPath: string=<string>vscode.workspace.getConfiguration().get('fastiot.device.applicationdatafolder');
       //Application folder definition
       if(applicationDataPath == null||applicationDataPath == undefined||applicationDataPath == "") 
@@ -41,8 +42,9 @@ export class IotConfiguration {
       }
       //
       this.Folder = new IotConfigurationFolder(applicationDataPath,context);
-      this.Templates= new IotTemplateCollection(this.Folder.Templates,this.Folder.Extension+"\\templates\\system",
-        logCallback,versionExt,this.Folder.Schemas);
+      this.Templates= new IotTemplateCollection(this.Folder.Templates,
+        this.Folder.Extension+"\\templates\\system",versionExt,
+        this.Folder.Schemas,this._contextUI);
       this._context=context;
       //Template update
       this.IsUpdateTemplates=<boolean>vscode.workspace.getConfiguration().get('fastiot.template.isupdate');
@@ -144,7 +146,7 @@ export class IotConfiguration {
           //for test
           url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/templates/system/templatelist.fastiot.yaml";
         }
-        this._logCallback("-------- Loading templates -------");
+        this._contextUI.Output("-------- Loading templates -------");
         //Loading system templates
         progress.report({ message: "Loading system templates",increment: 20 }); //40
         await this.Templates.LoadTemplatesSystem();
@@ -153,23 +155,23 @@ export class IotConfiguration {
         //To get the number of hours since Unix epoch, i.e. Unix timestamp:
         const dateNow=Math.floor(Date.now() / 1000/ 3600);
         const TimeHasPassedHours=dateNow-this.LastUpdateTemplatesHours;
-        this._logCallback("Updating system templates");
+        this._contextUI.Output("Updating system templates");
         if(force||(this.IsUpdateTemplates&&(TimeHasPassedHours>=this.UpdateIntervalTemplatesHours))){
           result=await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
-          this._logCallback(result.toString());
+          this._contextUI.Output(result.toString());
           //timestamp of last update
           if(result.Status==StatusResult.Ok){
             vscode.workspace.getConfiguration().update('fastiot.template.lastupdate',<number>dateNow,true);
           }
-        } else this._logCallback(`Disabled or less than ${this.UpdateIntervalTemplatesHours} hour(s) have passed since the last update.`);
+        } else this._contextUI.Output(`Disabled or less than ${this.UpdateIntervalTemplatesHours} hour(s) have passed since the last update.`);
         //Loading custom templates
         progress.report({ message: "Loading custom templates",increment: 20 }); //80
         await this.Templates.LoadTemplatesUser();
         const endMsg=`${this.Templates.Count} template(s) available.`;
-        this._logCallback(endMsg);
-        this._logCallback("----------------------------------");
+        this._contextUI.Output(endMsg);
+        this._contextUI.Output("----------------------------------");
         progress.report({ message: "Templates loaded" , increment: 20 }); //100
-        await IoTHelper.Sleep(2000);
+        await IoTHelper.Sleep(1000);
         resolve(endMsg);
         //end
       });
