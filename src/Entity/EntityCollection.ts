@@ -9,7 +9,7 @@ import {IotResult,StatusResult } from '../IotResult';
 import {IoTUI} from '../ui/IoTUI';
 
 export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> {
-  public ContextUI:IoTUI;
+  protected ContextUI:IoTUI;
   
   private _data:Map<string,T>;
   protected _pathFolderSchemas: string;

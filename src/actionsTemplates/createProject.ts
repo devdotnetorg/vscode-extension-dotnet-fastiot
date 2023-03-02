@@ -12,7 +12,9 @@ import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import {IoTUI} from '../ui/IoTUI';
 
 export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>,context: vscode.ExtensionContext,contextUI:IoTUI): Promise<void> {
-    let values:Map<string,string>= new Map<string,string>()
+    //Load template
+    if(treeData.Config.Templates.Count==0)
+        await treeData.Config.LoadTemplatesAsync();
     //Devices
     if(devices.length==0) {
         vscode.window.showErrorMessage(`Error. No available devices. Add device`);
@@ -89,6 +91,8 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
             return;
         }
     }
+    //values
+    let values:Map<string,string>= new Map<string,string>();
     //depending on project type
     if(selectTemplate.Attributes.TypeProj=="dotnet"){
         //Shows a selection list allowing multiple selections.

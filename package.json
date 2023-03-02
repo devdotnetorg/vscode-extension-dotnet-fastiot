@@ -114,6 +114,11 @@
 						"default": 0,
 						"markdownDescription": "Number of hours since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), i.e. Unix timestamp, until the templates were last updated."
 					},
+					"fastiot.template.loadonstart": {
+						"type": "boolean",
+						"default": false,
+						"description": "Load templates on extension start (false, speeds up the start of the extension)."
+					},
 					"conf.resource.insertEmptyLastLine": {
 						"type": "object",
 						"default": {},

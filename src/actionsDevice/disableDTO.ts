@@ -6,7 +6,7 @@ import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDeviceDTO } from '../IotDeviceDTO';
 import { rebootDevice } from './rebootDevice';
-import {IoTUI} from '../ui/IoTUI';
+import { IoTUI } from '../ui/IoTUI';
 
 export async function disableDTO(treeData: TreeDataDevicesProvider,item:IotDeviceDTO,contextUI:IoTUI): Promise<void> {
     contextUI.Output("Action: disabling DTO");

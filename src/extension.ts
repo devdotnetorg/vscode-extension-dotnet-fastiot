@@ -65,26 +65,26 @@ import {openTemplateFolder} from './actionsTemplates/openTemplateFolder';
 export async function activate(context: vscode.ExtensionContext) {
 	
 	console.log('Congratulations, your extension "vscode-extension-dotnet-fastiot" is now active!');
-	//versionExt
-	const versionExt=context.extension.packageJSON.version;
-	//GUI design
+	//UI
 	//OutputChannel
 	const outputChannel = vscode.window.createOutputChannel(".NET FastIoT");
 	//StatusBar
 	let statusBarBackground= new StatusBarBackgroundItem(
 		vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000));
 	let contextUI= new IoTUI(outputChannel,statusBarBackground);
+	//Config
+	//Get config
+	let config=new IotConfiguration(context,contextUI);
 	//Output
 	contextUI.Output("Welcome to .NET FastIoT!");	
 	contextUI.Output("----------------------------------");
-	contextUI.Output(`Version: ${versionExt}`);	
+	contextUI.Output(`Version: ${config.ExtVersion}`);	
 	contextUI.Output("Feedback: fastiot@devdotnet.org");
 	contextUI.Output("Site: https://devdotnet.org/tag/fastiot/");
 	contextUI.Output("GitHub: https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot");
 	contextUI.Output("----------------------------------");
-	//Get config
-	let config=new IotConfiguration(context,versionExt,contextUI);
-	config.LoadTemplatesAsync();
+	//Init config
+	await config.Init();
 	//TreeView Devices
 	//read JSON devices
 	const jsonDevices=vscode.workspace.getConfiguration().get('fastiot.device.all.JSON');	 

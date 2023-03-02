@@ -9,12 +9,11 @@ export class IotConfigurationFolder {
   private _applicationData:string;
   public get ApplicationData(): string {
     return this._applicationData;}
-  private _context: vscode.ExtensionContext;
-  //
   public get DeviceKeys(): string {
     return this._applicationData+"\\settings\\keys";}
+  private _extension: string;
   public get Extension(): string {
-      return this._context.extensionUri.fsPath;}
+      return this._extension;}
   public get Templates(): string {
     return this.ApplicationData+"\\templates";}
   public get TemplatesSystem(): string {
@@ -34,8 +33,8 @@ export class IotConfigurationFolder {
     applicationDataPath: string,
     context: vscode.ExtensionContext
     ){
+      this._extension=context.extensionUri.fsPath;
       this._applicationData=applicationDataPath;
-      this._context=context;
       //Create folders
       IoTHelper.MakeDirSync(this.ApplicationData);
       IoTHelper.MakeDirSync(this.DeviceKeys);

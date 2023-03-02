@@ -12,13 +12,15 @@ import {IotTemplateAttribute} from '../Templates/IotTemplateAttribute';
 import {IoTUI} from '../ui/IoTUI';
 
 export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,contextUI:IoTUI): Promise<void> {
-    let values:Map<string,string>= new Map<string,string>();
     //Workspace		
     const workspaceDirectory = IoTHelper.GetWorkspaceFolder();
     if(!workspaceDirectory) {
         vscode.window.showErrorMessage(`Error. No Workspace. Open the menu: File -> Open Folder ...`);
         return;
     }
+    //Load template
+    if(treeData.Config.Templates.Count==0)
+        await treeData.Config.LoadTemplatesAsync();
     //Devices
     if(devices.length==0) {
         vscode.window.showErrorMessage(`Error. No available devices. Add device`);
@@ -102,6 +104,8 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     //Preparing values
     const baseName=path.basename(selectProject);
     const projectName=baseName.substring(0,baseName.length-selectTemplate.Attributes.ExtMainFileProj.length);
+    //values
+    let values:Map<string,string>= new Map<string,string>();
     values.set("%{project.mainfile.path.full.aswindows}",selectProject);
     values.set("%{project.name}",projectName);
     //Main process
