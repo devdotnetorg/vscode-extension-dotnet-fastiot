@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
+import * as cp from "child_process";
 import { v4 as uuidv4 } from 'uuid';
 import { IotResult,StatusResult } from '../IotResult';
 import { utimesSync } from 'utimes';
@@ -243,6 +244,12 @@ export class IoTHelper {
     const value='\n';
     content=content.replace(re,value);    
     return content;
+  }
+
+  static ShowExplorer(path:string)
+  {
+    const fullpath=`explorer ${path}`;
+    cp.exec(fullpath, undefined);
   }
 
 }

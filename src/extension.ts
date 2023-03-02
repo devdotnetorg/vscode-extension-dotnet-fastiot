@@ -142,13 +142,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		addDevice(treeDataDevicesProvider,vscodeTreeViewDevices,contextUI);	
 	});
 	//Refresh Devices
-	let commandRefreshDevices = vscode.commands.registerCommand('viewDevices.RefreshDevices', () => {			
-		//vscodeTreeViewDevices
-		//treeDataDevicesProvider
-		treeDataDevicesProvider.RootItems.forEach(element =>
-			{
-				//element.tooltip= element.tooltip+" new";
-			});
+	let commandRefreshDevices = vscode.commands.registerCommand('viewDevices.RefreshDevices', () => {
 		refreshDevices(treeDataDevicesProvider);	
 	});
 	//Export devices
@@ -181,7 +175,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Open folder with ssh keys
 	let commandOpenFolderKeys = vscode.commands.registerCommand("viewDevices.OpenFolderSshKeys", () => {
-		openFolderKeys(treeDataDevicesProvider);
+		openFolderKeys(config.Folder.DeviceKeys);
 	});
 	//Copy To Clipboard
 	let commandCopyToClipboard = vscode.commands.registerCommand("viewDevices.CopyToClipboard", (item:IotItemTree) => {
@@ -285,11 +279,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Open template folder
 	let commandOpenTemplateFolder = vscode.commands.registerCommand('viewTemplates.OpenTemplateFolder', () => {	
-			openTemplateFolder(treeDataLaunchsProvider);	
+			openTemplateFolder(config.Folder.Templates);	
 	});
 	//Events
 	//Extension configuration change event 
-	let eventChangeConfiguration=vscode.workspace.onDidChangeConfiguration((e) => {		
+	let eventChangeConfiguration=vscode.workspace.onDidChangeConfiguration((e) => {
 		if(e.affectsConfiguration('fastiot'))
 		{
 			/*
@@ -306,7 +300,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscodeTreeViewDevices);
 	context.subscriptions.push(vscodeTreeViewLaunchs);
 	context.subscriptions.push(vscodeTreeViewTemplates);
-
 	//Commands
 	//devices
 	//context.subscriptions.push(commandHelloWorld);
