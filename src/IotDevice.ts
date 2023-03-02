@@ -357,6 +357,7 @@ export class IotDevice extends BaseTreeItem {
     //Check ssh connection
     result=await this.Client.GetSshConnection(sshconfig);
     if(result.Status==StatusResult.Error) {
+      //Error
       result.Message=`${result.Message}\n`+
         `Checklist:\n`+
         `✔️ IP-Address defined;\n`+
@@ -364,6 +365,14 @@ export class IotDevice extends BaseTreeItem {
         `✔️ Port 22 availability;\n`+
         `❌ Authorization via ssh protocol.\n`+
         `${trubleshootingText}`;
+    } else {
+      //OK
+      result.Message=`${result.Message}\n`+
+        `Checklist:\n`+
+        `✔️ IP-Address defined;\n`+
+        `✔️ Host availability. Command: "ping";\n`+
+        `✔️ Port 22 availability;\n`+
+        `✔️ Authorization via ssh protocol.`;
     }
     return Promise.resolve(result);
   }

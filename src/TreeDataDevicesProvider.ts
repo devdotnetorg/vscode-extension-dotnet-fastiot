@@ -161,6 +161,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       //Connection test device
       this._contextUI.StatusBarBackground.showAnimation("Checking the network connection");
       let result=await device.ConnectionTest(hostName,port,userName,password);
+      this._contextUI.Output(result.toMultiLineString("head"));
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
       this._contextUI.StatusBarBackground.showAnimation("Create a device");
       this._contextUI.Output("Create a device");

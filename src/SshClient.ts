@@ -285,6 +285,15 @@ export class SshClient {
       const msg = `Unable to connect via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}.`;
       result=new IotResult(StatusResult.Error,msg,err);
     }
+    //type input - identity (key) or password
+    const identity=sshConfig.identity;
+    let msg:string;
+    if(identity){
+      msg = `Login "${sshConfig.username}" and key ${identity} were used to enter.`;
+    } else {
+      msg = `The login was "${sshConfig.username}" and the password was ******.`;
+    }
+    result.Message=`${result.Message}\n${msg}`;
     //end processing
     return Promise.resolve(result);
   }
