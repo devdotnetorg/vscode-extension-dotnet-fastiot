@@ -116,7 +116,7 @@
 					},
 					"fastiot.template.loadonstart": {
 						"type": "boolean",
-						"default": false,
+						"default": true,
 						"description": "Load templates on extension start (false, speeds up the start of the extension)."
 					},
 					"conf.resource.insertEmptyLastLine": {
@@ -304,6 +304,10 @@
 			{
 				"command": "viewTemplates.OpenTemplateFolder",
 				"title": "Open template folder"
+			},
+			{
+				"command": "viewTemplates.RestoreSystemTemplates",
+				"title": "Restore/upgrade system templates (offline)"
 			}
 		],
 		"viewsContainers": {
@@ -373,6 +377,10 @@
 				},
 				{
 					"command": "viewTemplates.OpenTemplateFolder",
+					"when": "view == viewTemplates"
+				},
+				{
+					"command": "viewTemplates.RestoreSystemTemplates",
 					"when": "view == viewTemplates"
 				}
 			],

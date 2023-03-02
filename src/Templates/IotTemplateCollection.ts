@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import {EntityType} from '../Entity/EntityType';
 import {EntityCollection,ContainsType} from '../Entity/EntityCollection';
@@ -51,22 +51,22 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     this.ContextUI.Output(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
   }
 
-  protected async LoadFromFolder(path:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
+  protected async LoadFromFolder(pathFolder:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
   {
     let result= new IotResult(StatusResult.Ok, undefined,undefined);
     //Recovery
     let recovery = new IotTemplateRecovery(type); 
     if(type==EntityType.system&&recoverySourcePath)
     {
-      result=recovery.RestoryDirStructure(recoverySourcePath,path);
+      result=recovery.RestoryDirStructure(recoverySourcePath,pathFolder);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
     } 
     //
-    const listFolders=IoTHelper.GetListDir(path);
+    const listFolders=IoTHelper.GetListDir(pathFolder);
     //ckeck
     if (listFolders.length==0)
     {
-      result=new IotResult(StatusResult.Ok,`${path} folder is empty. There are no templates to load.`);
+      result=new IotResult(StatusResult.Ok,`${pathFolder} folder is empty. There are no templates to load.`);
       return Promise.resolve(result);
     }
     //checking all folders
@@ -78,7 +78,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       if(!template.IsValid&&type==EntityType.system)
       {
         //Recovery
-        this.ContextUI.Output(`Template recovery: ${filePath}`);
+        this.ContextUI.Output(`Template recovery: ${path.dirname(filePath)}`);
         result= template.Recovery();
         if(result.Status==StatusResult.Ok)
           {
@@ -127,9 +127,9 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     });
     //result
     if(this.Count>0){
-      result= new IotResult(StatusResult.Ok,`Loading templates from ${path} folder successfully completed`,undefined);
+      result= new IotResult(StatusResult.Ok,`Loading templates from ${pathFolder} folder successfully completed`,undefined);
     }else{
-      result= new IotResult(StatusResult.Error,` No template was loaded from the ${path} folder`,undefined);
+      result= new IotResult(StatusResult.Error,` No template was loaded from the ${pathFolder} folder`,undefined);
     }
     return Promise.resolve(result);
   }
@@ -231,6 +231,15 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     //result
     result= new IotResult(StatusResult.Ok,`Update of ${type} templates completed successfully`);
     return Promise.resolve(result);
+  }
+
+  public RestoreSystemTemplates()
+  {
+    const path=`${this.BasePath}\\${EntityType.system}`;
+    if (fs.existsSync(path)) {
+      //clear
+      fs.emptyDirSync(path);
+    }
   }
 
 }

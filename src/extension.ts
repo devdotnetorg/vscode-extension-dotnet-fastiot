@@ -279,19 +279,26 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Open template folder
 	let commandOpenTemplateFolder = vscode.commands.registerCommand('viewTemplates.OpenTemplateFolder', () => {	
-			openTemplateFolder(config.Folder.Templates);	
+			openTemplateFolder(config.Folder.Templates);
+	});
+	//Restore/upgrade system templates
+	let commandRestoreSystemTemplates = vscode.commands.registerCommand('viewTemplates.RestoreSystemTemplates', async () => {
+		config.Templates.RestoreSystemTemplates();
+		if(config.Templates.Count>0) await config.LoadTemplatesAsync();
+		vscode.window.showInformationMessage("Restore/upgrade system templates completed successfully");
 	});
 	//Events
 	//Extension configuration change event 
 	let eventChangeConfiguration=vscode.workspace.onDidChangeConfiguration((e) => {
 		if(e.affectsConfiguration('fastiot'))
 		{
+			// TODO reload settings while the extension is running
 			/*
 			treeDataDevicesProvider.Config=config;
 			treeDataConfigurationsProvider.Config=config;
 			treeDataProjectsProvider.Config=config;
 			*/
-			vscode.window.showInformationMessage('Changed extension settings: .NET FastIoT');
+			//vscode.window.showInformationMessage('Changed extension settings: .NET FastIoT');
 			//vscode.window.showInformationMessage('You must restart the .NET FastIoT extension or VSCode to apply the new settings');	
 		}
     }, undefined, context.subscriptions);	
@@ -339,8 +346,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandCreateProject);
 	context.subscriptions.push(commandReloadTemplates);
 	context.subscriptions.push(commandOpenTemplateFolder);
+	context.subscriptions.push(commandOpenTemplateFolder);
 	//events
-	context.subscriptions.push(eventChangeConfiguration);
+	context.subscriptions.push(commandRestoreSystemTemplates);
 }
 
 // this method is called when your extension is deactivated

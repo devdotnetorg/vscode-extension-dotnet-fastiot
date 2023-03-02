@@ -188,27 +188,6 @@ export class IotConfiguration {
       });
     });
 
-    //old variant
-    /*
-    const loadTemplates = async () => {
-      let url:string="";
-      if(this._context.extensionMode==vscode.ExtensionMode.Production)
-      {
-        url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
-      }else{
-        //for test
-        url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/templates/system/templatelist.fastiot.yaml";
-      }
-      this._logCallback("-------- Loading templates -------");
-      this.Templates.Clear();
-      await this.Templates.LoadTemplatesSystem();
-      await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
-      await this.Templates.LoadTemplatesUser();
-      this._logCallback(`${this.Templates.Count} template(s) available.`);
-      this._logCallback("----------------------------------");
-      };
-	  loadTemplates();
-    */
   }
 }
 
