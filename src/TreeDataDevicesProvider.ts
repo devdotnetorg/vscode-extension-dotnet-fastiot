@@ -8,7 +8,7 @@ import {IotDeviceDTO} from './IotDeviceDTO';
 import {IoTHelper} from './Helper/IoTHelper';
 import {IotResult,StatusResult} from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
-import {IoTUI} from './ui/IoTUI';
+import {IContexUI} from './ui/IContexUI';
 
 export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTreeItem> {    
   public RootItems:Array<IotDevice>=[];
@@ -33,14 +33,14 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   public readonly onDidChangeTreeData: vscode.Event<BaseTreeItem| undefined | null | void> = 
     this._onDidChangeTreeData.event;
   
-  private _contextUI:IoTUI;
+  private _contextUI:IContexUI;
   public SaveDevicesCallback:(data:any) =>void;
     
   constructor(
     saveDevicesCallback:(data:any) =>void,
     config:IotConfiguration,    
     jsonDevices:any,
-    contextUI:IoTUI
+    contextUI:IContexUI
   ) {
       this._contextUI=contextUI;
       //
@@ -159,15 +159,15 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   public async AddDevice(hostName: string,port: number,userName: string,password: string,accountNameDebug:string): Promise<IotResult> {         
       let device = new IotDevice(this.Config);
       //Connection test device
-      this._contextUI.StatusBarBackground.showAnimation("Checking the network connection");
+      this._contextUI.ShowBackgroundNotification("Checking the network connection");
       let result=await device.ConnectionTest(hostName,port,userName,password);
-      this._contextUI.Output(result.toMultiLineString("head"));
+      this._contextUI.Output(result.toMultiLineString());
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
-      this._contextUI.StatusBarBackground.showAnimation("Create a device");
+      this._contextUI.ShowBackgroundNotification("Create a device");
       this._contextUI.Output("Create a device");
       //event subscription
       let handler=device.Client.OnChangedStateSubscribe(event => {        
-        if(event.status) this._contextUI.StatusBarBackground.showAnimation(event.status);
+        if(event.status) this._contextUI.ShowBackgroundNotification(event.status);
         if(event.status) this._contextUI.Output(event.status);
         if(event.console) this._contextUI.Output(event.console); 
       });

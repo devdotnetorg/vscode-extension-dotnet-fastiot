@@ -7,7 +7,7 @@ import {IotResult,StatusResult } from '../IotResult';
 import {IotConfigurationFolder} from './IotConfigurationFolder';
 import {IotTemplateCollection} from '../Templates/IotTemplateCollection';
 import { IoTHelper } from '../Helper/IoTHelper';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
 export class IotConfiguration {
   public UsernameAccountDevice:string="";
@@ -20,7 +20,7 @@ export class IotConfiguration {
   public IsUpdateTemplates:boolean;
   public UpdateIntervalTemplatesHours:number;
   public LastUpdateTemplatesHours:number;
-  private _contextUI:IoTUI;
+  private _contextUI:IContexUI;
   private _extVersion:string;
   public get ExtVersion(): string {
     return this._extVersion;}
@@ -30,7 +30,7 @@ export class IotConfiguration {
 
   constructor(
     context: vscode.ExtensionContext,
-    contextUI:IoTUI
+    contextUI:IContexUI
     ){
       //Get info from context
       this._extVersion=`${context.extension.packageJSON.version}`;

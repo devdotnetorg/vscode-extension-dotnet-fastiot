@@ -10,13 +10,13 @@ import {IoTHelper} from '../Helper/IoTHelper';
 import {IotTemplateRecovery} from './IotTemplateRecovery';
 import {IotTemplateDownloader} from './IotTemplateDownloader';
 import {EntityDownload} from '../Entity/EntityDownloader';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
 export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute,IotTemplate> {
   
   constructor(
     basePath: string, recoverySourcePath:string, versionExt:string,
-    pathFolderSchemas: string,contextUI:IoTUI
+    pathFolderSchemas: string,contextUI:IContexUI
     ){
       super(basePath,recoverySourcePath,versionExt,pathFolderSchemas,contextUI);  
   }

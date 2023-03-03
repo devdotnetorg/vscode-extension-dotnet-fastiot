@@ -6,9 +6,9 @@ import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { refreshDTO } from './refreshDTO';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IoTUI): Promise<void> {       
+export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IContexUI): Promise<void> {       
     if(item.DtoLinux.Items.length==0)
         await refreshDTO(treeData,item,contextUI);        
     if(item.DtoLinux.Items.length==0) return;
@@ -42,9 +42,9 @@ export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice,co
         //
         const fileName = path.parse(file[0].fsPath).base;
         contextUI.Output("Action: adding a DTO");
-        contextUI.StatusBarBackground.showAnimation("Adding a DTO");       
+        contextUI.ShowBackgroundNotification("Adding a DTO");       
         const result = await treeData.AddDTO(<string>item.IdDevice,fileName,fileData,fileType);
-        contextUI.StatusBarBackground.hide();
+        contextUI.HideBackgroundNotification();
         //Output 
         contextUI.Output(result.toMultiLineString("head"));
         //Message

@@ -5,9 +5,9 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function rebootDevice(treeData: TreeDataDevicesProvider,item:IotDevice, firstText:string|undefined,contextUI:IoTUI): Promise<void> { 
+export async function rebootDevice(treeData: TreeDataDevicesProvider,item:IotDevice, firstText:string|undefined,contextUI:IContexUI): Promise<void> { 
     let textMessage:string;
     if(firstText) {
         textMessage=`${firstText}. Reboot your device: 
@@ -22,9 +22,9 @@ export async function rebootDevice(treeData: TreeDataDevicesProvider,item:IotDev
         const device = treeData.FindbyIdDevice(<string>item.IdDevice);    
         if(device) {
             contextUI.Output("Action: reboot device");
-            contextUI.StatusBarBackground.showAnimation("Reboot device");
+            contextUI.ShowBackgroundNotification("Reboot device");
             const result = await device.Reboot();
-            contextUI.StatusBarBackground.hide();
+            contextUI.HideBackgroundNotification();
             //Output       
             contextUI.Output(result.toMultiLineString("head"));
             //Message                 

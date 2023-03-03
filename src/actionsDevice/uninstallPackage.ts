@@ -5,9 +5,9 @@ import * as path from 'path';
 import { IotResult,StatusResult } from '../IotResult';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';         
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage,contextUI:IoTUI): Promise<void> {    
+export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage,contextUI:IContexUI): Promise<void> {    
     const answer = await vscode.window.showInformationMessage(`Do you really want to remove the package: 
     ${item.NamePackage}?`, ...["Yes", "No"]);
     if(answer=="Yes")
@@ -53,9 +53,9 @@ export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:Io
         }
         //main process 
         contextUI.Output(`Action: package uninstallation ${item.NamePackage}`);
-        contextUI.StatusBarBackground.showAnimation(`Package uninstallation ${item.NamePackage}`);
+        contextUI.ShowBackgroundNotification(`Package uninstallation ${item.NamePackage}`);
         const result = await treeData.UnInstallPackage(<string>item.Device.IdDevice,item.NamePackage,jsonObj);
-        contextUI.StatusBarBackground.hide();
+        contextUI.HideBackgroundNotification();
         //Output       
         contextUI.Output(result.toMultiLineString("head"));
         //Message

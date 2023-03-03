@@ -293,7 +293,7 @@ export class SshClient {
     } else {
       msg = `The login was "${sshConfig.username}" and the password was ******.`;
     }
-    result.Message=`${result.Message}\n${msg}`;
+    result.AddMessage(msg);
     //end processing
     return Promise.resolve(result);
   }

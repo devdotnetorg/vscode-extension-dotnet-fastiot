@@ -323,56 +323,56 @@ export class IotDevice extends BaseTreeItem {
       //GetIp
     result=await networkHelper.GetIpAddress(sshconfig.host ?? "non");
     if(result.Status==StatusResult.Error) {
-      result.Message=`${result.Message}\n`+
+      result.AddMessage(
         `Checklist:\n`+
         `❌ IP-Address defined;\n`+
         `❌ Host availability. Command: "ping";\n`+
         `❌ Port 22 availability;\n`+
         `❌ Authorization via ssh protocol.\n`+
-        `${trubleshootingText}`;
+        `${trubleshootingText}`);
       return Promise.resolve(result);}
     const ipAddress = <string>result.returnObject;
     //Ping
     result=await networkHelper.PingHost(ipAddress);
     if(result.Status==StatusResult.Error) {
-      result.Message=`${result.Message}\n`+
+      result.AddMessage(
         `Checklist:\n`+
         `✔️ IP-Address defined;\n`+
         `❌ Host availability. Command: "ping";\n`+
         `❌ Port 22 availability;\n`+
         `❌ Authorization via ssh protocol.\n`+
-        `${trubleshootingText}`;
+        `${trubleshootingText}`);
       return Promise.resolve(result);}
     //Check port
     result=await networkHelper.CheckTcpPortUsed(ipAddress,sshconfig.port ?? 22);
     if(result.Status==StatusResult.Error) {
-      result.Message=`${result.Message}\n`+
+      result.AddMessage(
         `Checklist:\n`+
         `✔️ IP-Address defined;\n`+
         `✔️ Host availability. Command: "ping";\n`+
         `❌ Port 22 availability;\n`+
         `❌ Authorization via ssh protocol.\n`+
-        `${trubleshootingText}`;
+        `${trubleshootingText}`);
       return Promise.resolve(result);}
     //Check ssh connection
     result=await this.Client.GetSshConnection(sshconfig);
     if(result.Status==StatusResult.Error) {
       //Error
-      result.Message=`${result.Message}\n`+
+      result.AddMessage(
         `Checklist:\n`+
         `✔️ IP-Address defined;\n`+
         `✔️ Host availability. Command: "ping";\n`+
         `✔️ Port 22 availability;\n`+
         `❌ Authorization via ssh protocol.\n`+
-        `${trubleshootingText}`;
+        `${trubleshootingText}`);
     } else {
       //OK
-      result.Message=`${result.Message}\n`+
+      result.AddMessage(
         `Checklist:\n`+
         `✔️ IP-Address defined;\n`+
         `✔️ Host availability. Command: "ping";\n`+
         `✔️ Port 22 availability;\n`+
-        `✔️ Authorization via ssh protocol.`;
+        `✔️ Authorization via ssh protocol.`);
     }
     return Promise.resolve(result);
   }

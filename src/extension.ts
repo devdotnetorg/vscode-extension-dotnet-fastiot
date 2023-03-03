@@ -8,7 +8,8 @@ import {IotItemTree} from './IotItemTree';
 import {IotResult,StatusResult} from './IotResult';
 //UI
 import {IoTUI} from './ui/IoTUI';
-import {StatusBarBackgroundItem} from './ui/StatusBarBackgroundItem';
+import {IContexUI} from './ui/IContexUI';
+import {StatusBarBackground} from './ui/StatusBarBackground';
 //Devices
 import {TreeDataDevicesProvider} from './TreeDataDevicesProvider';
 import {IotDevice} from './IotDevice';
@@ -69,20 +70,20 @@ export async function activate(context: vscode.ExtensionContext) {
 	//OutputChannel
 	const outputChannel = vscode.window.createOutputChannel(".NET FastIoT");
 	//StatusBar
-	let statusBarBackground= new StatusBarBackgroundItem(
+	let statusBarBackground= new StatusBarBackground(
 		vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000));
-	let contextUI= new IoTUI(outputChannel,statusBarBackground);
-	//Config
-	//Get config
-	let config=new IotConfiguration(context,contextUI);
+	let contextUI:IContexUI= new IoTUI(outputChannel,statusBarBackground);
 	//Output
 	contextUI.Output("Welcome to .NET FastIoT!");	
 	contextUI.Output("----------------------------------");
-	contextUI.Output(`Version: ${config.ExtVersion}`);	
+	contextUI.Output(`Version: ${context.extension.packageJSON.version}`);	
 	contextUI.Output("Feedback: fastiot@devdotnet.org");
 	contextUI.Output("Site: https://devdotnet.org/tag/fastiot/");
 	contextUI.Output("GitHub: https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot");
 	contextUI.Output("----------------------------------");
+	//Config
+	//Get config
+	let config=new IotConfiguration(context,contextUI);
 	//Init config
 	await config.Init();
 	//TreeView Devices
@@ -147,7 +148,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Export devices
 	let commandExportDevices = vscode.commands.registerCommand('viewDevices.ExportDevices', () => {					
-		exportDevices(treeDataDevicesProvider,contextUI);
+		exportDevices(treeDataDevicesProvider);
 	});
 	//Import devices	
 	let commandImportDevices = vscode.commands.registerCommand('viewDevices.ImportDevices', () => {					
@@ -155,7 +156,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Rename Device
 	let commandRenameDevice = vscode.commands.registerCommand("viewDevices.RenameDevice", (item:IotDevice) => {
-		renameDevice(treeDataDevicesProvider,item,contextUI);
+		renameDevice(treeDataDevicesProvider,item);
 	});
 	//Ping Device
 	let commandPingDevice = vscode.commands.registerCommand("viewDevices.ConnectionTestDevice", (item:IotDevice) => {
@@ -247,7 +248,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Go to device 
 	let commandGoToDevice = vscode.commands.registerCommand('viewLaunchs.GoToDevice', 
 		(item:IotLaunch) => {
-			gotoDevice(treeDataLaunchsProvider,item,vscodeTreeViewDevices);
+			gotoDevice(item,vscodeTreeViewDevices);
 	});
 	//Add Enviroment
 	let commandAddEnviroment = vscode.commands.registerCommand('viewLaunchs.AddEnviroment',

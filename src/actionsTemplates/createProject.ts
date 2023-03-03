@@ -9,9 +9,9 @@ import { IoTHelper } from '../Helper/IoTHelper';
 import { dotnetHelper } from '../Helper/dotnetHelper';
 import {IotTemplate} from '../Templates/IotTemplate';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>,context: vscode.ExtensionContext,contextUI:IoTUI): Promise<void> {
+export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>,context: vscode.ExtensionContext,contextUI:IContexUI): Promise<void> {
     //Load template
     if(treeData.Config.Templates.Count==0)
         await treeData.Config.LoadTemplatesAsync();
@@ -111,9 +111,9 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
     values.set("%{project.name}",nameProject);
     //Main process
     contextUI.Output(`Action: create an ${nameProject} project, ${selectTemplate.ParentDir} template`);
-    contextUI.StatusBarBackground.showAnimation(`Create an ${nameProject} project, ${selectTemplate.ParentDir} template`);
+    contextUI.ShowBackgroundNotification(`Create an ${nameProject} project, ${selectTemplate.ParentDir} template`);
     const result=await treeData.CreateProject(selectDevice,selectTemplate,selectFolder,values);
-    contextUI.StatusBarBackground.hide();
+    contextUI.HideBackgroundNotification();
     //Output       
     contextUI.Output(result.toMultiLineString("head"));
     //Message       

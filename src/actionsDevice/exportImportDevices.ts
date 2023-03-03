@@ -4,9 +4,9 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function exportDevices(treeData: TreeDataDevicesProvider,contextUI:IoTUI): Promise<void> {        
+export async function exportDevices(treeData: TreeDataDevicesProvider): Promise<void> {        
     const options: vscode.SaveDialogOptions = {
         defaultUri: vscode.Uri.file(`FastIoT-devices.json`),
         saveLabel: 'Save Content To ...',
@@ -27,7 +27,7 @@ export async function exportDevices(treeData: TreeDataDevicesProvider,contextUI:
     }
 }
 
-export async function importDevices(treeData: TreeDataDevicesProvider,contextUI:IoTUI): Promise<void> {
+export async function importDevices(treeData: TreeDataDevicesProvider,contextUI:IContexUI): Promise<void> {
     //canSelectFiles: true,
     //canSelectFolders: false,
     const options: vscode.OpenDialogOptions = {

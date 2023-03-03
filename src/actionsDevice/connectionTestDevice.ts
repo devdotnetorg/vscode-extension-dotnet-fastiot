@@ -6,15 +6,15 @@ import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { IoTHelper } from '../Helper/IoTHelper';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function connectionTestDevice(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IoTUI): Promise<void> {   
+export async function connectionTestDevice(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IContexUI): Promise<void> {   
     const device= treeData.FindbyIdDevice(<string>item.IdDevice);
     if(device) {
         contextUI.Output("Action: connection test device");
-        contextUI.StatusBarBackground.showAnimation("Checking the network connection");
+        contextUI.ShowBackgroundNotification("Checking the network connection");
         const result = await device.ConnectionTest();
-        contextUI.StatusBarBackground.hide();
+        contextUI.HideBackgroundNotification();
         //Output
         contextUI.Output(result.toMultiLineString("head"));
         //Message          

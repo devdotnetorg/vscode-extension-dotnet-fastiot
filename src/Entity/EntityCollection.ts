@@ -6,10 +6,10 @@ import {EntityBase} from './EntityBase';
 import {EntityBaseAttribute} from './EntityBaseAttribute';
 import {EntityType} from './EntityType';
 import {IotResult,StatusResult } from '../IotResult';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
 export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> {
-  protected ContextUI:IoTUI;
+  protected ContextUI:IContexUI;
   
   private _data:Map<string,T>;
   protected _pathFolderSchemas: string;
@@ -30,7 +30,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
   constructor(
     basePath: string, recoverySourcePath:string,versionExt:string,
-    pathFolderSchemas: string,contextUI:IoTUI
+    pathFolderSchemas: string,contextUI:IContexUI
     ){
       this.ContextUI=contextUI;
       this._pathFolderSchemas=pathFolderSchemas;

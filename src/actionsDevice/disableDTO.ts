@@ -6,13 +6,13 @@ import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDeviceDTO } from '../IotDeviceDTO';
 import { rebootDevice } from './rebootDevice';
-import { IoTUI } from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function disableDTO(treeData: TreeDataDevicesProvider,item:IotDeviceDTO,contextUI:IoTUI): Promise<void> {
+export async function disableDTO(treeData: TreeDataDevicesProvider,item:IotDeviceDTO,contextUI:IContexUI): Promise<void> {
     contextUI.Output("Action: disabling DTO");
-    contextUI.StatusBarBackground.showAnimation("Disabling DTO");               
+    contextUI.ShowBackgroundNotification("Disabling DTO");               
     const result=await treeData.DisableDTO(item);
-    contextUI.StatusBarBackground.hide();
+    contextUI.HideBackgroundNotification();
     //Output 
     contextUI.Output(result.toMultiLineString("head"));
     //Message

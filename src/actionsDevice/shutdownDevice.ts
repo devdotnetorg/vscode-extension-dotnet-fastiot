@@ -5,9 +5,9 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function shutdownDevice(treeData: TreeDataDevicesProvider,item:IotDevice, firstText:string|undefined,contextUI:IoTUI): Promise<void> { 
+export async function shutdownDevice(treeData: TreeDataDevicesProvider,item:IotDevice, firstText:string|undefined,contextUI:IContexUI): Promise<void> { 
     let textMessage:string;
     if(firstText){
         textMessage=`${firstText}. Shutdown your device: 
@@ -23,9 +23,9 @@ export async function shutdownDevice(treeData: TreeDataDevicesProvider,item:IotD
         const device = treeData.FindbyIdDevice(<string>item.IdDevice);    
         if(device) {
             contextUI.Output("Action: shutdown device");
-            contextUI.StatusBarBackground.showAnimation("Shutdown device");
+            contextUI.ShowBackgroundNotification("Shutdown device");
             const result = await device.Shutdown();
-            contextUI.StatusBarBackground.hide();
+            contextUI.HideBackgroundNotification();
             //Output       
             contextUI.Output(result.toMultiLineString("head"));
             //Message                 

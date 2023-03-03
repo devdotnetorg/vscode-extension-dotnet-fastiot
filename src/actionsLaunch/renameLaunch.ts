@@ -6,9 +6,9 @@ import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotLaunch } from '../IotLaunch';
 import { IoTHelper } from '../Helper/IoTHelper';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch,contextUI:IoTUI): Promise<void> {                    
+export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch,contextUI:IContexUI): Promise<void> {                    
     let newLabel = await vscode.window.showInputBox({				
         prompt: 'prompt',
         title: 'Enter a new name launch',
@@ -22,9 +22,9 @@ export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLau
     } 
     //Main process
     contextUI.Output(`Action: launch rename. Old name: ${item.label}. New name: ${newLabel}`);
-    contextUI.StatusBarBackground.showAnimation(`Launch rename. Old name: ${item.label}. New name: ${newLabel}`);
+    contextUI.ShowBackgroundNotification(`Launch rename. Old name: ${item.label}. New name: ${newLabel}`);
     const result = await treeData.RenameLaunch(item,newLabel);
-    contextUI.StatusBarBackground.hide();
+    contextUI.HideBackgroundNotification();
     //Output
     contextUI.Output(result.toMultiLineString("head"));
     //Message

@@ -5,13 +5,13 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function checkAllPackages(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IoTUI): Promise<void> {   
+export async function checkAllPackages(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IContexUI): Promise<void> {   
     contextUI.Output("Action: checking all packages");
-    contextUI.StatusBarBackground.showAnimation("Checking all packages");
+    contextUI.ShowBackgroundNotification("Checking all packages");
     const result=await treeData.CheckAllPackages(<string>item.IdDevice);
-    contextUI.StatusBarBackground.hide();
+    contextUI.HideBackgroundNotification();
     //Output 
     contextUI.Output(result.toMultiLineString("head"));
     //Message

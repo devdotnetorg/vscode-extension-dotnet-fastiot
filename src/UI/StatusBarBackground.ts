@@ -2,9 +2,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export class StatusBarBackgroundItem {
+export class StatusBarBackground {
   private _statusBarItem: vscode.StatusBarItem;
-  //private _isShow:boolean=false;
   private _animationText: string;
 
   public get text(): string {

@@ -7,7 +7,7 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IotLaunch } from '../IotLaunch';
 import { BaseTreeItem } from '../BaseTreeItem';
 
-export async function gotoDevice(treeData: TreeDataLaunchsProvider,item:IotLaunch,treeViewDevices:vscode.TreeView<BaseTreeItem>): Promise<void> {                    
+export async function gotoDevice(item:IotLaunch,treeViewDevices:vscode.TreeView<BaseTreeItem>): Promise<void> {                    
     const device = item.Device;
     //Set focus
     if(device) {

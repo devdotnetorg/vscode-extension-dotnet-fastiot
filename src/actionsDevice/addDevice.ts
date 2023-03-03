@@ -9,9 +9,9 @@ import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,contextUI:IoTUI): Promise<void> {                
+export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,contextUI:IContexUI): Promise<void> {                
         
         let hostName = await vscode.window.showInputBox({            
             prompt: 'prompt',
@@ -57,9 +57,9 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
        vscode.window.showInformationMessage('It may take 2 to 7 minutes to initialize and configure the device.');
        contextUI.Output("Action: adding a device");
        //Adding a device is the main process
-       contextUI.StatusBarBackground.showAnimation("Adding a device");
+       contextUI.ShowBackgroundNotification("Adding a device");
        const result = await treeData.AddDevice(hostName,port,userName,password,SELECTED_ITEM.value);
-       contextUI.StatusBarBackground.hide();
+       contextUI.HideBackgroundNotification();
        //Output       
        contextUI.Output(result.toMultiLineString("head"));
        //Message       

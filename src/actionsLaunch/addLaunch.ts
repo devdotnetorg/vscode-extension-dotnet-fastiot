@@ -9,9 +9,9 @@ import { IotDevice } from '../IotDevice';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import {IotTemplate} from '../Templates/IotTemplate';
 import {IotTemplateAttribute} from '../Templates/IotTemplateAttribute';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,contextUI:IoTUI): Promise<void> {
+export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,contextUI:IContexUI): Promise<void> {
     //Workspace		
     const workspaceDirectory = IoTHelper.GetWorkspaceFolder();
     if(!workspaceDirectory) {
@@ -110,9 +110,9 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     values.set("%{project.name}",projectName);
     //Main process
     contextUI.Output(`Action: adding Launch to the ${selectProject} project`);
-    contextUI.StatusBarBackground.showAnimation(`Adding Launch to the ${selectProject} project`);
+    contextUI.ShowBackgroundNotification(`Adding Launch to the ${selectProject} project`);
     const result = await treeData.AddLaunch(selectDevice,selectTemplate,values);
-    contextUI.StatusBarBackground.hide();
+    contextUI.HideBackgroundNotification();
     //Output
     contextUI.Output(result.toMultiLineString("head"));
     //Message

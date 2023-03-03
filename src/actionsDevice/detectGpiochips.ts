@@ -5,13 +5,13 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
-import {IoTUI} from '../ui/IoTUI';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function detectGpiochips(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IoTUI): Promise<void> {
+export async function detectGpiochips(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IContexUI): Promise<void> {
     contextUI.Output("Action: detecting all GPIO chips");
-    contextUI.StatusBarBackground.showAnimation("Detecting all GPIO chips");              
+    contextUI.ShowBackgroundNotification("Detecting all GPIO chips");              
     const result=await treeData.DetectGpiochips(<string>item.IdDevice);
-    contextUI.StatusBarBackground.hide();
+    contextUI.HideBackgroundNotification();
     //Output 
     contextUI.Output(result.toMultiLineString("head"));
     //Message
