@@ -8,6 +8,7 @@ import SFTP from 'ssh2-promise';
 import {EventDispatcher,Handler} from './EventDispatcher';
 import {StatusResult,IotResult} from './IotResult';
 import {IoTHelper} from './Helper/IoTHelper';
+import { stderr } from 'process';
 
 export class SshClient {
   constructor(){}
@@ -94,22 +95,46 @@ export class SshClient {
         {
           let socket = await ssh.spawn(command);
           socket.on('data', (data:any) => {
+            lastConsoleLine=data.toString();
             this.FireChangedState({
               status:undefined,
               console:data,
               obj:undefined
             });
-            lastConsoleLine=data.toString();
-          })          
+          });
           let flagExit:Boolean=false;
-          socket.on('close', () => {
+          let codeErr:string|undefined;
+          let stdErr:string="";
+          socket.stderr.on('data', (data:any) => {
+            if(data) stdErr=`${stdErr}${data}`;
+          });
+          socket.on('close', (code:any) => {
+            if (code) codeErr=code.toString();
             flagExit=true;
-          });                    
+          });
           //circle          
           do{await IoTHelper.Sleep(300);}while(!flagExit);
+          await IoTHelper.Sleep(500);
+          //output
+          if(stdErr!="") {
+            stdErr=stdErr.replace(`W: `,`WARNING: `).replace(`E: `,`ERROR: `);
+            stdErr=IoTHelper.StringTrim(stdErr);
+            this.FireChangedState({
+              status:undefined,
+              console:`STDERR: ${stdErr}`,
+              obj:undefined
+            });
+          } 
+          if(codeErr) {
+            this.FireChangedState({
+              status:undefined,
+              console:`CODEERR: ${codeErr}`,
+              obj:undefined
+            });
+          }
           //Check "Successfully"
           lastConsoleLine=IoTHelper.StringTrim(lastConsoleLine);
-          if (!lastConsoleLine.includes("Successfully")){            
+          if ((!lastConsoleLine.includes("Successfully"))||codeErr){            
             return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${nameScript}.sh script ended with an error`,lastConsoleLine));
           }
         }
