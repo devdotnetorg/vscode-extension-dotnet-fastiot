@@ -45,10 +45,11 @@ export class IotResult {
   */
 
   public toString():string{
+    let msg=``;
     //Status
-    let msg=`[${this.Status.toString().toUpperCase()}]`;
+    if(this.Status!=StatusResult.None) msg=`[${this.Status.toString().toUpperCase()}] `;
     //Message
-    if(this.Message) msg=`${msg} ${this.Message}.`;
+    if(this.Message) msg=`${msg}${this.Message}.`;
     //SystemMessage
     if(this.SystemMessage) msg=`${msg}\nSystem message: ${this.SystemMessage}`;
     return msg;

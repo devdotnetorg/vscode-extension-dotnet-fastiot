@@ -71,15 +71,6 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     this._data.clear();
   }
 
-  protected LogValidationErrors(validationErrors:Array<string>) {
-    this.ContextUI.Output(`Validation messages:`);
-    let index=1;
-    validationErrors.forEach((item) => {
-      this.ContextUI.Output(`${index}. ${item}`);
-      index++;
-    });
-  }
-
   public IsCompatible1(value:T):boolean
   {
     const forVersionExt=value.Attributes.ForVersionExt;

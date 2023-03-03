@@ -169,7 +169,7 @@ export class IotConfiguration {
         this._contextUI.Output("Updating system templates");
         if(force||(this.IsUpdateTemplates&&(TimeHasPassedHours>=this.UpdateIntervalTemplatesHours))){
           result=await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
-          this._contextUI.Output(result.toString());
+          this._contextUI.Output(result);
           //timestamp of last update
           if(result.Status==StatusResult.Ok){
             vscode.workspace.getConfiguration().update('fastiot.template.lastupdate',<number>dateNow,true);
@@ -182,7 +182,6 @@ export class IotConfiguration {
         this._contextUI.Output(endMsg);
         this._contextUI.Output("----------------------------------");
         progress.report({ message: "Templates loaded" , increment: 20 }); //100
-        await IoTHelper.Sleep(1000);
         resolve(endMsg);
         //end
       });
