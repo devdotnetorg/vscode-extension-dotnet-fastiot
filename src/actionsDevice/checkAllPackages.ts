@@ -13,7 +13,7 @@ export async function checkAllPackages(treeData: TreeDataDevicesProvider,item:Io
     const result=await treeData.CheckAllPackages(<string>item.IdDevice);
     contextUI.HideBackgroundNotification();
     //Output 
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message
     if(result.Status==StatusResult.Ok)
     {

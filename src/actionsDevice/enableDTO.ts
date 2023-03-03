@@ -14,7 +14,7 @@ export async function enableDTO(treeData: TreeDataDevicesProvider,item:IotDevice
     const result=await treeData.EnableDTO(item);
     contextUI.HideBackgroundNotification();
     //Output 
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message
     if(result.Status==StatusResult.Ok) {        
         treeData.Refresh(); 

@@ -14,7 +14,7 @@ export async function deleteLaunch(treeData: TreeDataLaunchsProvider,item:IotLau
     const result = await treeData.DeleteLaunch(item.IdLaunch);
     contextUI.HideBackgroundNotification();
     //Output
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message
     if(result.Status==StatusResult.Ok)
     {

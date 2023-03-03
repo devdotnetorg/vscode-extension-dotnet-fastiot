@@ -13,7 +13,7 @@ export async function detectGpiochips(treeData: TreeDataDevicesProvider,item:Iot
     const result=await treeData.DetectGpiochips(<string>item.IdDevice);
     contextUI.HideBackgroundNotification();
     //Output 
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message
     if(result.Status==StatusResult.Ok) {
         item.GpioChips.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;

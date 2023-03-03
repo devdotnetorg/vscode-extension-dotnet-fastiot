@@ -52,7 +52,7 @@ export async function importDevices(treeData: TreeDataDevicesProvider,contextUI:
             result = new IotResult(StatusResult.Error,err,undefined);
         }     
         //Output       
-        contextUI.Output(result.toMultiLineString("head"));
+        contextUI.Output(result.toStringWithHead());
         //Message       
         if(result.Status==StatusResult.Ok) {
             vscode.window.showInformationMessage(`Devices imported successfully. ${result.Message}`);

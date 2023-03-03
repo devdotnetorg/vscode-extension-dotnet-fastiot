@@ -115,7 +115,7 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
     const result=await treeData.CreateProject(selectDevice,selectTemplate,selectFolder,values);
     contextUI.HideBackgroundNotification();
     //Output       
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message       
     if(result.Status==StatusResult.Ok)
     {

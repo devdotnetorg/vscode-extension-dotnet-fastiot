@@ -16,7 +16,7 @@ export async function connectionTestDevice(treeData: TreeDataDevicesProvider,ite
         const result = await device.ConnectionTest();
         contextUI.HideBackgroundNotification();
         //Output
-        contextUI.Output(result.toMultiLineString("head"));
+        contextUI.Output(result.toStringWithHead());
         //Message          
         if(result.Status==StatusResult.Ok) {
             vscode.window.showInformationMessage(`Connection to host ${device.Account.Host} via ssh 

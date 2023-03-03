@@ -16,7 +16,7 @@ export async function deleteDTO(treeData: TreeDataDevicesProvider,item:IotDevice
         const result=await treeData.DeleteDTO(item);
         contextUI.HideBackgroundNotification();
         //Output 
-        contextUI.Output(result.toMultiLineString("head"));
+        contextUI.Output(result.toStringWithHead());
         //Message
         if(result.Status==StatusResult.Ok) {        
             treeData.Refresh(); 

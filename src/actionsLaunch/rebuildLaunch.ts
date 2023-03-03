@@ -14,7 +14,7 @@ export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,item:IotLa
      const result = await treeData.RebuildLaunch(item.IdLaunch);
      contextUI.HideBackgroundNotification();
      //Output
-     contextUI.Output(result.toMultiLineString("head"));
+     contextUI.Output(result.toStringWithHead());
      //Message
      if(result.Status==StatusResult.Ok)
      {

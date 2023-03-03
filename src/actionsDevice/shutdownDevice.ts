@@ -27,7 +27,7 @@ export async function shutdownDevice(treeData: TreeDataDevicesProvider,item:IotD
             const result = await device.Shutdown();
             contextUI.HideBackgroundNotification();
             //Output       
-            contextUI.Output(result.toMultiLineString("head"));
+            contextUI.Output(result.toStringWithHead());
             //Message                 
             if(result.Status==StatusResult.Ok) {
                 vscode.window.showInformationMessage(`Shutdown completed successfully. 

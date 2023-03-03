@@ -61,7 +61,7 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
        const result = await treeData.AddDevice(hostName,port,userName,password,SELECTED_ITEM.value);
        contextUI.HideBackgroundNotification();
        //Output       
-       contextUI.Output(result.toMultiLineString("head"));
+       contextUI.Output(result.toStringWithHead());
        //Message       
        if(result.Status==StatusResult.Ok)
        {

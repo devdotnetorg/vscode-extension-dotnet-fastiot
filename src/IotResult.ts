@@ -50,14 +50,14 @@ export class IotResult {
     //Message
     if(this.Message) msg=`${msg} ${this.Message}.`;
     //SystemMessage
-    if(this.SystemMessage) msg=`${msg} ${this.SystemMessage}`;
+    if(this.SystemMessage) msg=`${msg}\nSystem message: ${this.SystemMessage}`;
     return msg;
   }
 
-  public toMultiLineString(format:string|undefined=undefined):string{
+  public toStringWithHead():string{
     let msg="";
     //HEAD
-    if(format&&format=="head") msg=msg+"------------- Result -------------\n";
+    msg=msg+"------------- Result -------------\n";
     //Status
     msg=`${msg}Status: ${this.Status.toString().toUpperCase()}`;
     //Message
@@ -65,8 +65,26 @@ export class IotResult {
     //SystemMessage
     if(this.SystemMessage) msg=`${msg}\nSystem message: ${this.SystemMessage}`;
     //HEAD
-    if(format&&format=="head") msg=msg+"\n----------------------------------";
+    msg=msg+"\n----------------------------------";
     return msg;
+  }
+
+  //result.RunTask(()=>this._contextUI.Output(result),()=> {return Promise.resolve(result)});
+  public RunTask(ifOK?:() =>void,ifError?:() =>void) {
+    switch(this.Status) { 
+      case StatusResult.Ok: {
+        if(ifOK) ifOK();
+        break; 
+      } 
+      case StatusResult.Error: {
+        if(ifError) ifError();
+        break;
+      }
+      default: {
+        vscode.window.showWarningMessage(`No task to execute`);
+        break; 
+      } 
+   }
   }
  }
   

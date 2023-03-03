@@ -114,7 +114,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     const result = await treeData.AddLaunch(selectDevice,selectTemplate,values);
     contextUI.HideBackgroundNotification();
     //Output
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message
     if(result.Status==StatusResult.Ok)
     {

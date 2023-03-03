@@ -26,7 +26,7 @@ export async function rebootDevice(treeData: TreeDataDevicesProvider,item:IotDev
             const result = await device.Reboot();
             contextUI.HideBackgroundNotification();
             //Output       
-            contextUI.Output(result.toMultiLineString("head"));
+            contextUI.Output(result.toStringWithHead());
             //Message                 
             if(result.Status==StatusResult.Ok) {
                 vscode.window.showInformationMessage(`Reboot completed successfully. 

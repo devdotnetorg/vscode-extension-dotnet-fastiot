@@ -26,7 +26,7 @@ export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLau
     const result = await treeData.RenameLaunch(item,newLabel);
     contextUI.HideBackgroundNotification();
     //Output
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message
     if(result.Status==StatusResult.Ok)
     {

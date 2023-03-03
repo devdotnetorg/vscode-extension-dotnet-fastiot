@@ -127,7 +127,7 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
     const result = await treeData.InstallPackage(<string>item.Device.IdDevice,item.NamePackage,jsonObj);
     contextUI.HideBackgroundNotification();
     //Output       
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message        
     if(result.Status==StatusResult.Ok) {
         vscode.window.showInformationMessage(`${item.NamePackage} package installation/upgrade completed successfully.`);

@@ -14,7 +14,7 @@ export async function testPackage(treeData: TreeDataDevicesProvider,item:IotDevi
     const result = await treeData.TestPackage(<string>item.Device.IdDevice,item.NamePackage);
     contextUI.HideBackgroundNotification();
     //Output       
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message
     if(result.Status==StatusResult.Ok) {
         vscode.window.showInformationMessage(`${item.NamePackage} package tested successfully.`);

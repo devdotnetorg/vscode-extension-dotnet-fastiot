@@ -57,7 +57,7 @@ export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:Io
         const result = await treeData.UnInstallPackage(<string>item.Device.IdDevice,item.NamePackage,jsonObj);
         contextUI.HideBackgroundNotification();
         //Output       
-        contextUI.Output(result.toMultiLineString("head"));
+        contextUI.Output(result.toStringWithHead());
         //Message
         if(result.Status==StatusResult.Ok) {
             vscode.window.showInformationMessage(`${item.NamePackage} package uninstallation completed successfully.`);

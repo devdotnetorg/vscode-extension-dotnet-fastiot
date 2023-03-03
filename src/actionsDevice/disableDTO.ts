@@ -14,7 +14,7 @@ export async function disableDTO(treeData: TreeDataDevicesProvider,item:IotDevic
     const result=await treeData.DisableDTO(item);
     contextUI.HideBackgroundNotification();
     //Output 
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message
     if(result.Status==StatusResult.Ok) {        
         treeData.Refresh(); 

@@ -46,7 +46,7 @@ export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice,co
         const result = await treeData.AddDTO(<string>item.IdDevice,fileName,fileData,fileType);
         contextUI.HideBackgroundNotification();
         //Output 
-        contextUI.Output(result.toMultiLineString("head"));
+        contextUI.Output(result.toStringWithHead());
         //Message
         if(result.Status==StatusResult.Ok)
         {

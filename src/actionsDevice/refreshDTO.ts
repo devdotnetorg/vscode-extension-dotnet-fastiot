@@ -13,7 +13,7 @@ export async function refreshDTO(treeData: TreeDataDevicesProvider,item:IotDevic
     const result=await treeData.GetAllDTO(<string>item.IdDevice);
     contextUI.HideBackgroundNotification();
     //Output 
-    contextUI.Output(result.toMultiLineString("head"));
+    contextUI.Output(result.toStringWithHead());
     //Message
     if(result.Status==StatusResult.Ok) {
         item.DtoLinux.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;

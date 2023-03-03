@@ -22,7 +22,7 @@ export class IoTUI implements IContexUI {
     if (typeof value === 'string') {
       msg=value;
     } else {
-      msg=value.toMultiLineString("head");
+      msg=value.toString();
     }
     this._outputChannel.appendLine(msg);
   }
@@ -50,23 +50,6 @@ export class IoTUI implements IContexUI {
       } 
       default: { 
         vscode.window.showInformationMessage(value.Message);
-         break; 
-      } 
-   }
-  }
-
-  public RunTask(value:IotResult,ifOK:() =>void,ifError:() =>void) {
-    switch(value.Status) { 
-      case StatusResult.Ok: {
-        ifOK();
-        break; 
-      } 
-      case StatusResult.Error: {
-        ifError();
-        break;
-      }
-      default: { 
-         //statements; 
          break; 
       } 
    }

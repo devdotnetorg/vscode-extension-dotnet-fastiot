@@ -15,7 +15,7 @@ export async function deleteDevice(treeData: TreeDataDevicesProvider,item:IotDev
         const result=await treeData.DeleteDevice(<string>item.IdDevice);
         contextUI.HideBackgroundNotification();
         //Output       
-        contextUI.Output(result.toMultiLineString("head"));
+        contextUI.Output(result.toStringWithHead());
         //Message
         if(result) {
             treeData.SaveDevices();
