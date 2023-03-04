@@ -4,11 +4,11 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotLaunch } from '../IotLaunch';
+import { LaunchNode } from '../LaunchNode';
 import { IoTHelper } from '../Helper/IoTHelper';
-import {IContexUI} from '../ui/IContexUI';
+import { IContexUI } from '../ui/IContexUI';
 
-export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch,contextUI:IContexUI): Promise<void> {                    
+export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:LaunchNode,contextUI:IContexUI): Promise<void> {                    
     let newLabel = await vscode.window.showInputBox({				
         prompt: 'prompt',
         title: 'Enter a new name launch',

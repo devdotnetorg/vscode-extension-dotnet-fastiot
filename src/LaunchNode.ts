@@ -4,22 +4,22 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotResult,StatusResult } from './IotResult';
 import {IotDevice} from './IotDevice';
-import {IotLaunchOptions} from './IotLaunchOptions';
-import {IotLaunchEnvironment} from './IotLaunchEnvironment';
+import {LaunchOptionsNode} from './LaunchOptionsNode';
+import {LaunchEnvironmentNode} from './LaunchEnvironmentNode';
 import {IoTHelper} from './Helper/IoTHelper';
 import {launchHelper} from './Helper/launchHelper';
 
-export class IotLaunch extends BaseTreeItem {  
+export class LaunchNode extends BaseTreeItem {  
   public Parent: undefined;
-  public Childs: Array<IotLaunchOptions| IotLaunchEnvironment>=[];
+  public Childs: Array<LaunchOptionsNode| LaunchEnvironmentNode>=[];
   public Device: IotDevice| undefined;
   
   public IdLaunch:string="";
   public PathProject:string="";
   public IdTemplate:string="";
 
-  public Options: IotLaunchOptions;  
-  public Environments: IotLaunchEnvironment; 
+  public Options: LaunchOptionsNode;  
+  public Environments: LaunchEnvironmentNode; 
   public WorkspaceDirectory:string;
 
   public readonly LaunchFilePath:string;
@@ -35,9 +35,9 @@ export class IotLaunch extends BaseTreeItem {
     //view
     this.contextValue="iotlaunch";
     //
-    this.Options = new IotLaunchOptions("Options",undefined,"Options",
+    this.Options = new LaunchOptionsNode("Options",undefined,"Options",
       vscode.TreeItemCollapsibleState.Collapsed,this,this);      
-    this.Environments = new IotLaunchEnvironment("Environments",undefined,"Environments",
+    this.Environments = new LaunchEnvironmentNode("Environments",undefined,"Environments",
       vscode.TreeItemCollapsibleState.Collapsed,this,this);
     //view
     this.Environments.contextValue="iotenviroments";

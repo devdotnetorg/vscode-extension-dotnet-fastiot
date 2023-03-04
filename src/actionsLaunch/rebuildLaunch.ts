@@ -4,10 +4,10 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotLaunch } from '../IotLaunch';
-import {IContexUI} from '../ui/IContexUI';
+import { LaunchNode } from '../LaunchNode';
+import { IContexUI } from '../ui/IContexUI';
 
-export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch,contextUI:IContexUI): Promise<void> {
+export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,item:LaunchNode,contextUI:IContexUI): Promise<void> {
      //Main process
      contextUI.Output(`Action: rebuild Launch. Launch: ${item.label}`);
      contextUI.ShowBackgroundNotification(`Rebuild Launch. Launch: ${item.label}`);

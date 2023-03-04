@@ -4,25 +4,25 @@ import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {StatusResult,IotResult} from './IotResult';
-import {IotLaunch} from './IotLaunch';
+import {LaunchNode} from './LaunchNode';
 
-export class IotLaunchEnvironment extends BaseTreeItem{
+export class LaunchEnvironmentNode extends BaseTreeItem{
   
-  public Parent: IotLaunch|IotLaunchEnvironment;
-  public Childs: Array<IotLaunchEnvironment>=[];
+  public Parent: LaunchNode|LaunchEnvironmentNode;
+  public Childs: Array<LaunchEnvironmentNode>=[];
   public Device: IotDevice| undefined;
 
   public Items:Map<string, string>=new Map<string, string>();
 
-  public Launch: IotLaunch;    
+  public Launch: LaunchNode;    
     
   constructor(
     label: string,
     description: string|  undefined,
     tooltip: string | vscode.MarkdownString | undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,    
-    parent: IotLaunch|IotLaunchEnvironment,    
-    launch: IotLaunch   
+    parent: LaunchNode|LaunchEnvironmentNode,    
+    launch: LaunchNode   
   ){
     super(label,description,tooltip,collapsibleState);
     this.Parent=parent;
@@ -87,10 +87,10 @@ export class IotLaunchEnvironment extends BaseTreeItem{
   private CreateChildElements(){
     //create child elements
     this.Childs=[];      
-    let element:IotLaunchEnvironment;
+    let element:LaunchEnvironmentNode;
     //
     this.Items.forEach((value,key) => {      
-      element = new IotLaunchEnvironment(key,value,value,vscode.TreeItemCollapsibleState.None,
+      element = new LaunchEnvironmentNode(key,value,value,vscode.TreeItemCollapsibleState.None,
         this,this.Launch);
         element.iconPath = undefined;
         element.contextValue="iotenviromentitem";

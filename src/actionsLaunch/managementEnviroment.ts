@@ -4,10 +4,10 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotLaunchEnvironment } from '../IotLaunchEnvironment';
+import { LaunchEnvironmentNode } from '../LaunchEnvironmentNode';
 import { IoTHelper } from '../Helper/IoTHelper';
 
-export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
+export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchEnvironmentNode):
     Promise<void> {
         let launch=treeData.FindbyIdLaunchInTree(item.Launch.IdLaunch);
         if(launch)
@@ -44,7 +44,7 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:IotLa
         } 
 }
 
-export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
+export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchEnvironmentNode):
     Promise<void> {
         //name
         let newName = await vscode.window.showInputBox({				
@@ -68,7 +68,7 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:Io
         }
 }
 
-export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
+export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchEnvironmentNode):
     Promise<void> {
         //value
         let newValue = await vscode.window.showInputBox({				
@@ -91,7 +91,7 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:IotL
         }        
 }
 
-export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:IotLaunchEnvironment):
+export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchEnvironmentNode):
     Promise<void> {
         let launch=treeData.FindbyIdLaunchInTree(item.Launch.IdLaunch);
         if(launch){

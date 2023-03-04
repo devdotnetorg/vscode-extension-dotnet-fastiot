@@ -5,21 +5,21 @@ import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotItemTree} from './IotItemTree';
 import {StatusResult,IotResult} from './IotResult';
-import {IotLaunch} from './IotLaunch';
+import {LaunchNode} from './LaunchNode';
 
-export class IotLaunchOptions extends BaseTreeItem{  
+export class LaunchOptionsNode extends BaseTreeItem{  
   public Parent: BaseTreeItem| any| undefined;
   public Childs: Array<IotItemTree>=[];
   public Device: IotDevice| undefined;
-  private _launch: IotLaunch;
+  private _launch: LaunchNode;
 
   constructor(
     label: string,
     description: string|  undefined,
     tooltip: string | vscode.MarkdownString | undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,
-    parent: IotLaunch| IotLaunchOptions,
-    launch: IotLaunch
+    parent: LaunchNode| LaunchOptionsNode,
+    launch: LaunchNode
   ){
     super(label,description,tooltip,collapsibleState);
     this.Parent=parent;

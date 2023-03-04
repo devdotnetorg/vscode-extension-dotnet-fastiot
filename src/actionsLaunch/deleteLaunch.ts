@@ -4,10 +4,10 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotLaunch } from '../IotLaunch';
-import {IContexUI} from '../ui/IContexUI';
+import { LaunchNode } from '../LaunchNode';
+import { IContexUI } from '../ui/IContexUI';
 
-export async function deleteLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch,contextUI:IContexUI): Promise<void> {                    
+export async function deleteLaunch(treeData: TreeDataLaunchsProvider,item:LaunchNode,contextUI:IContexUI): Promise<void> {                    
     //Main process
     contextUI.Output(`Action: launch removal ${item.label} ${item.IdLaunch}`);
     contextUI.ShowBackgroundNotification(`Launch removal ${item.label} ${item.IdLaunch}`);

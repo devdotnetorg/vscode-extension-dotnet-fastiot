@@ -3,14 +3,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
 import {IotDevice} from './IotDevice';
-import {IotLaunch} from './IotLaunch';
+import {LaunchNode} from './LaunchNode';
 import {IoTHelper} from './Helper/IoTHelper';
 import {IotResult,StatusResult } from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IotTemplate} from './Templates/IotTemplate';
 
 export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTreeItem> {    
-  public RootItems:Array<IotLaunch>=[];
+  public RootItems:Array<LaunchNode>=[];
 
   public Config: IotConfiguration;
     
@@ -79,7 +79,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
       //fromJSON(jsonObj:any,devices: Array<IotDevice>,workspaceDirectory:string):any{
       //check folder .vscode with launch.json
       //launch.json
-      const launchBase= new IotLaunch(this._workspaceDirectory);
+      const launchBase= new LaunchNode(this._workspaceDirectory);
       //fromJSON
       result = launchBase.GetJsonLaunch();
       if(result.Status==StatusResult.Error) return result;
@@ -93,7 +93,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
               if(jsonLaunch.fastiotIdLaunch)
               {
                 //parse
-                let launch = new IotLaunch(this._workspaceDirectory);
+                let launch = new LaunchNode(this._workspaceDirectory);
                 result=launch.FromJSON(jsonLaunch,this._devices);
                 if(result.Status==StatusResult.Ok){
                   launch.collapsibleState=vscode.TreeItemCollapsibleState.Collapsed;
@@ -115,11 +115,11 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     return result;
   }  
 
-  public async RenameLaunch(item:IotLaunch,newLabel:string): Promise<IotResult> {
+  public async RenameLaunch(item:LaunchNode,newLabel:string): Promise<IotResult> {
     let result:IotResult;
     result=this.GetLaunchbyIdLaunch(item.IdLaunch);
     if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
-    let launch=<IotLaunch>result.returnObject;
+    let launch=<LaunchNode>result.returnObject;
     if(launch){
       result=launch.Rename(newLabel);
     }else result = new IotResult(StatusResult.Error,`Launch not found IdLaunch:${item.IdLaunch}`);
@@ -127,14 +127,14 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     return Promise.resolve(result);
   }
 
-  public FindbyIdLaunchInTree(idLaunch:string): IotLaunch|undefined {
+  public FindbyIdLaunchInTree(idLaunch:string): LaunchNode|undefined {
     let launch = this.RootItems.find(x=>x.IdLaunch==idLaunch);
     return launch;    
   }
 
   public GetLaunchbyIdLaunch(idLaunch:string): IotResult {
     let result:IotResult;
-    let launch = new IotLaunch(this._workspaceDirectory);
+    let launch = new LaunchNode(this._workspaceDirectory);
     try {
       result=launch.GetJsonLaunch();
       if(result.Status==StatusResult.Error) return result;
@@ -160,7 +160,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     let result:IotResult;
     result=this.GetLaunchbyIdLaunch(idLaunch);
     if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
-    let launch=<IotLaunch>result.returnObject;
+    let launch=<LaunchNode>result.returnObject;
     if(launch){
       result=launch.Remove();  
     }else result = new IotResult(StatusResult.Error,`Launch not found IdLaunch:${idLaunch}`);
@@ -173,7 +173,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     let result:IotResult;
     result=this.GetLaunchbyIdLaunch(idLaunch);
     if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
-    let launch=<IotLaunch>result.returnObject;
+    let launch=<LaunchNode>result.returnObject;
     //--------------Checks--------------
     //check device
     if(!launch.Device) {
@@ -200,11 +200,11 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<BaseTree
     let jsonLinkedLaunchs=jsonLaunch.configurations.filter((e:any) => e.fastiotIdLaunch);
     jsonLinkedLaunchs=jsonLinkedLaunchs.filter((e:any) => e.fastiotIdLaunch.includes(launch.IdLaunch.substring(0,8)));
     //create a Message and get IotLaunch LinkedLaunchs
-    let LinkedLaunchs:Array<IotLaunch>=[];
+    let LinkedLaunchs:Array<LaunchNode>=[];
     let msg="\n";
     let index=1;
     jsonLinkedLaunchs.forEach((item:any) => {
-      let launchItem = new IotLaunch(this._workspaceDirectory);
+      let launchItem = new LaunchNode(this._workspaceDirectory);
       result=launchItem.FromJSON(item,this._devices);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
       LinkedLaunchs.push(launchItem);

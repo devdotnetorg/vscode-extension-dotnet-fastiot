@@ -44,8 +44,8 @@ import {disableDTO} from './actionsDevice/disableDTO';
 //Configurations
 import {TreeDataLaunchsProvider} from './TreeDataLaunchsProvider';
 import {TreeDataTemplatesProvider} from './TreeDataTemplatesProvider';
-import {IotLaunch} from './IotLaunch';
-import {IotLaunchEnvironment} from './IotLaunchEnvironment';
+import {LaunchNode} from './LaunchNode';
+import {LaunchEnvironmentNode} from './LaunchEnvironmentNode';
 
 //actionsLaunch.actions
 import {addLaunch} from './actionsLaunch/addLaunch';
@@ -232,42 +232,42 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Rename Configuration
 	let commandRenameLaunch = vscode.commands.registerCommand('viewLaunchs.Rename', 
-		(item:IotLaunch) => {
+		(item:LaunchNode) => {
 			renameLaunch(treeDataLaunchsProvider,item,contextUI);
 	});
 	//Delete Configuration
 	let commandDeleteLaunch = vscode.commands.registerCommand('viewLaunchs.Delete', 
-		(item:IotLaunch) => {
+		(item:LaunchNode) => {
 			deleteLaunch(treeDataLaunchsProvider,item,contextUI);
 	});
 	//Rebuild Configuration
 	let commandRebuildLaunch = vscode.commands.registerCommand('viewLaunchs.Rebuild', 
-		(item:IotLaunch) => {
+		(item:LaunchNode) => {
 			rebuildLaunch(treeDataLaunchsProvider,item,contextUI);
 	});
 	//Go to device 
 	let commandGoToDevice = vscode.commands.registerCommand('viewLaunchs.GoToDevice', 
-		(item:IotLaunch) => {
+		(item:LaunchNode) => {
 			gotoDevice(item,vscodeTreeViewDevices);
 	});
 	//Add Enviroment
 	let commandAddEnviroment = vscode.commands.registerCommand('viewLaunchs.AddEnviroment',
-		(item:IotLaunchEnvironment) => {
+		(item:LaunchEnvironmentNode) => {
 			addEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Rename Enviroment
 	let commandRenameEnviroment = vscode.commands.registerCommand('viewLaunchs.RenameEnviroment',
-		(item:IotLaunchEnvironment) => {
+		(item:LaunchEnvironmentNode) => {
 			renameEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Edit Enviroment
 	let commandEditEnviroment = vscode.commands.registerCommand('viewLaunchs.EditEnviroment', 
-		(item:IotLaunchEnvironment) => {
+		(item:LaunchEnvironmentNode) => {
 			editEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Delete Enviroment
 	let commandDeleteEnviroment = vscode.commands.registerCommand('viewLaunchs.DeleteEnviroment', 
-		(item:IotLaunchEnvironment) => {
+		(item:LaunchEnvironmentNode) => {
 			deleteEnviroment(treeDataLaunchsProvider,item);		
 	});
 	//Create project
