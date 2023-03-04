@@ -7,14 +7,15 @@ import { IotDevice } from '../IotDevice';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { dotnetHelper } from '../Helper/dotnetHelper';
-import {IotTemplate} from '../Templates/IotTemplate';
+import { IotTemplate } from '../Templates/IotTemplate';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
-import {IContexUI} from '../ui/IContexUI';
+import { IotConfiguration } from '../Configuration/IotConfiguration';
+import { IContexUI } from '../ui/IContexUI';
 
-export async function createProject(treeData: TreeDataLaunchsProvider,devices:Array<IotDevice>,context: vscode.ExtensionContext,contextUI:IContexUI): Promise<void> {
+export async function createProject(config:IotConfiguration,devices:Array<IotDevice>,contextUI:IContexUI): Promise<void> {
     //Load template
-    if(treeData.Config.Templates.Count==0)
-        await treeData.Config.LoadTemplatesAsync();
+    if(config.Templates.Count==0)
+        await config.LoadTemplatesAsync();
     //Devices
     if(devices.length==0) {
         vscode.window.showErrorMessage(`Error. No available devices. Add device`);
@@ -31,7 +32,7 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
     if(!SELECTED_ITEM) return;
     const selectDevice= <IotDevice>SELECTED_ITEM.value;
     //Select template
-    const listTemplates= treeData.Config.Templates.Select(selectDevice.Information.Architecture);
+    const listTemplates= config.Templates.Select(selectDevice.Information.Architecture);
     if(listTemplates.length==0) {
         vscode.window.showErrorMessage(`No projects available for device ${selectDevice.label} ${selectDevice.Information.Architecture}`);
         return;
@@ -53,7 +54,7 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
         openLabel: 'Select a folder for the project (3/5)',
     };
     let folder="";
-    if(context.extensionMode==vscode.ExtensionMode.Production){
+    if(config.ExtMode==vscode.ExtensionMode.Production){
         const folders = await vscode.window.showOpenDialog(options);
         if ((folders === undefined) || (folders[0] === undefined)) return;
         folder=folders[0].fsPath;
@@ -112,7 +113,8 @@ export async function createProject(treeData: TreeDataLaunchsProvider,devices:Ar
     //Main process
     contextUI.Output(`Action: create an ${nameProject} project, ${selectTemplate.ParentDir} template`);
     contextUI.ShowBackgroundNotification(`Create an ${nameProject} project, ${selectTemplate.ParentDir} template`);
-    const result=await treeData.CreateProject(selectDevice,selectTemplate,selectFolder,values);
+    // Create project from a template
+    const result=selectTemplate.CreateProject(selectDevice,config,selectFolder,values);
     contextUI.HideBackgroundNotification();
     //Output       
     contextUI.Output(result.toStringWithHead());

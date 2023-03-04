@@ -45,7 +45,7 @@ import {disableDTO} from './actionsDevice/disableDTO';
 import {TreeDataLaunchsProvider} from './TreeDataLaunchsProvider';
 import {TreeDataTemplatesProvider} from './TreeDataTemplatesProvider';
 import {LaunchNode} from './LaunchNode';
-import {LaunchEnvironmentNode} from './LaunchEnvironmentNode';
+import {LaunchTreeItemNode} from './LaunchTreeItemNode';
 
 //actionsLaunch.actions
 import {addLaunch} from './actionsLaunch/addLaunch';
@@ -94,9 +94,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		treeDataProvider: treeDataDevicesProvider
 	});
 	//TreeView Launchs
-	const workspaceFolder=IoTHelper.GetWorkspaceFolder();
-    let treeDataLaunchsProvider = new TreeDataLaunchsProvider(config,treeDataDevicesProvider.RootItems,
-		workspaceFolder);
+    let treeDataLaunchsProvider = new TreeDataLaunchsProvider(config,treeDataDevicesProvider.RootItems);
 	const loadLaunchs = async () => {
 		const result= await treeDataLaunchsProvider.RecoveryLaunchsAsync();
 		if(result.Status==StatusResult.Error&&result.tag!="404") {
@@ -243,7 +241,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Rebuild Configuration
 	let commandRebuildLaunch = vscode.commands.registerCommand('viewLaunchs.Rebuild', 
 		(item:LaunchNode) => {
-			rebuildLaunch(treeDataLaunchsProvider,item,contextUI);
+			rebuildLaunch(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,
+				item,contextUI);
 	});
 	//Go to device 
 	let commandGoToDevice = vscode.commands.registerCommand('viewLaunchs.GoToDevice', 
@@ -252,27 +251,27 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Add Enviroment
 	let commandAddEnviroment = vscode.commands.registerCommand('viewLaunchs.AddEnviroment',
-		(item:LaunchEnvironmentNode) => {
+		(item:LaunchTreeItemNode) => {
 			addEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Rename Enviroment
 	let commandRenameEnviroment = vscode.commands.registerCommand('viewLaunchs.RenameEnviroment',
-		(item:LaunchEnvironmentNode) => {
+		(item:LaunchTreeItemNode) => {
 			renameEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Edit Enviroment
 	let commandEditEnviroment = vscode.commands.registerCommand('viewLaunchs.EditEnviroment', 
-		(item:LaunchEnvironmentNode) => {
+		(item:LaunchTreeItemNode) => {
 			editEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Delete Enviroment
 	let commandDeleteEnviroment = vscode.commands.registerCommand('viewLaunchs.DeleteEnviroment', 
-		(item:LaunchEnvironmentNode) => {
+		(item:LaunchTreeItemNode) => {
 			deleteEnviroment(treeDataLaunchsProvider,item);		
 	});
 	//Create project
 	let commandCreateProject = vscode.commands.registerCommand('viewTemplates.CreateProject', () => {	
-			createProject(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,context,contextUI);	
+			createProject(config,treeDataDevicesProvider.RootItems,contextUI);	
 	});
 	//Reload templates
 	let commandReloadTemplates = vscode.commands.registerCommand('viewTemplates.ReloadTemplates', () => {	

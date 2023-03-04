@@ -4,12 +4,12 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import {IoTHelper} from '../Helper/IoTHelper';
+import { IoTHelper } from '../Helper/IoTHelper';
 import { IotDevice } from '../IotDevice';
 import { ItemQuickPick } from '../Helper/actionHelper';
-import {IotTemplate} from '../Templates/IotTemplate';
-import {IotTemplateAttribute} from '../Templates/IotTemplateAttribute';
-import {IContexUI} from '../ui/IContexUI';
+import { IotTemplate } from '../Templates/IotTemplate';
+import { IotTemplateAttribute } from '../Templates/IotTemplateAttribute';
+import { IContexUI } from '../ui/IContexUI';
 
 export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,contextUI:IContexUI): Promise<void> {
     //Workspace		
@@ -111,7 +111,9 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     //Main process
     contextUI.Output(`Action: adding Launch to the ${selectProject} project`);
     contextUI.ShowBackgroundNotification(`Adding Launch to the ${selectProject} project`);
-    const result = await treeData.AddLaunch(selectDevice,selectTemplate,values);
+    const result = 
+        selectTemplate.AddConfigurationVscode(selectDevice,treeData.Config,
+            treeData.Config.Folder.WorkspaceFolder ?? "non",values);
     contextUI.HideBackgroundNotification();
     //Output
     contextUI.Output(result.toStringWithHead());

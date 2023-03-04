@@ -23,7 +23,7 @@ export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:Launch
     //Main process
     contextUI.Output(`Action: launch rename. Old name: ${item.label}. New name: ${newLabel}`);
     contextUI.ShowBackgroundNotification(`Launch rename. Old name: ${item.label}. New name: ${newLabel}`);
-    const result = await treeData.RenameLaunch(item,newLabel);
+    const result = item.Launch.Rename(newLabel);
     contextUI.HideBackgroundNotification();
     //Output
     contextUI.Output(result.toStringWithHead());

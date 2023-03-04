@@ -1,0 +1,24 @@
+import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
+import {BaseTreeItemNode} from './BaseTreeItemNode';
+
+export class LaunchTreeItemNode extends BaseTreeItemNode { 
+  public Parent: LaunchTreeItemNode| undefined;
+  public Childs: Array<LaunchTreeItemNode>=[];
+  
+  constructor(
+    label: string,  
+    description: string|  undefined,
+    tooltip: string | vscode.MarkdownString | undefined,
+    collapsibleState: vscode.TreeItemCollapsibleState,
+    parent: LaunchTreeItemNode| undefined
+    ){
+      super(label,description,tooltip,collapsibleState);
+      this.Parent=parent;
+      //view
+      this.contextValue="iotitemtree";
+      //
+      if(!tooltip) this.tooltip=description;
+  }         
+}
