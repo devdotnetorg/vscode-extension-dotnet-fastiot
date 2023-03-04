@@ -189,8 +189,3 @@ export class IotConfiguration {
 
   }
 }
-
-type P = {
-  x: number;
-  y: number;
-}
