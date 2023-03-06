@@ -186,6 +186,6 @@ export class IotConfiguration {
         //end
       });
     });
-
   }
+  
 }

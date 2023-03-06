@@ -31,20 +31,17 @@ export class IotConfigurationFolder {
   public get WorkspaceDirectory(): string| undefined {
     return IoTHelper.GetWorkspaceDirectory();}
 
-  constructor(
-    applicationDataPath: string,
-    context: vscode.ExtensionContext
-    ){
-      this._extension=context.extensionUri.fsPath;
-      this._applicationData=applicationDataPath;
-      //Create folders
-      IoTHelper.MakeDirSync(this.ApplicationData);
-      IoTHelper.MakeDirSync(this.DeviceKeys);
-      IoTHelper.MakeDirSync(this.TemplatesSystem);
-      IoTHelper.MakeDirSync(this.TemplatesUser);
-      IoTHelper.MakeDirSync(this.TemplatesCommunity);
-      IoTHelper.MakeDirSync(this.Temp);
-    }
+  constructor(applicationDataPath: string, context: vscode.ExtensionContext) {
+    this._extension=context.extensionUri.fsPath;
+    this._applicationData=applicationDataPath;
+    //Create folders
+    IoTHelper.MakeDirSync(this.ApplicationData);
+    IoTHelper.MakeDirSync(this.DeviceKeys);
+    IoTHelper.MakeDirSync(this.TemplatesSystem);
+    IoTHelper.MakeDirSync(this.TemplatesUser);
+    IoTHelper.MakeDirSync(this.TemplatesCommunity);
+    IoTHelper.MakeDirSync(this.Temp);
+  }
 
   //clearing temporary files
   public ClearTmp() {

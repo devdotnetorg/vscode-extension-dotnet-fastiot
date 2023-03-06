@@ -113,7 +113,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     values.set("%{project.mainfile.path.full.aswindows}",selectProject);
     values.set("%{project.name}",projectName);
     //Main process
-    contextUI.Output(`Action: adding Launch to the ${selectProject} project, ${selectTemplate.Attributes.Id} template, dvice ${selectDevice.Information.BoardName} ${selectDevice.Information.Architecture}`);
+    contextUI.Output(`Action: adding Launch to the ${selectProject} project, template ${selectTemplate.Attributes.Id}, device ${selectDevice.Information.BoardName} ${selectDevice.Information.Architecture}`);
     contextUI.ShowBackgroundNotification(`Adding Launch to the ${selectProject} project`);
     result = 
         selectTemplate.AddConfigurationVscode(selectDevice,treeData.Config,
