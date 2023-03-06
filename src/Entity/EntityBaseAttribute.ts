@@ -133,6 +133,7 @@ export class EntityBaseAttribute {
 
   public ForceGetID(filePath:string):string|undefined
   {
+    if(!fs.existsSync(filePath)) return undefined;
     try {
       const file = fs.readFileSync(filePath, 'utf8');
       const obj=YAML.parse(file);

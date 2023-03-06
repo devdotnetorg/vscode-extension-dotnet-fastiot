@@ -55,10 +55,10 @@ export class IotResult {
     return msg;
   }
 
-  public toStringWithHead():string{
-    let msg="";
-    //HEAD
-    msg=msg+"------------- Result -------------\n";
+  public toStringWithHead(head:string|undefined=undefined):string{
+    if(!head) head="------------- Result -------------";
+    //Msg
+    let msg=`${head}\n`;
     //Status
     msg=`${msg}Status: ${this.Status.toString().toUpperCase()}`;
     //Message

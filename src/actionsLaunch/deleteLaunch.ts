@@ -16,12 +16,7 @@ export async function deleteLaunch(treeData: TreeDataLaunchsProvider,item:Launch
     //Output
     contextUI.Output(result.toStringWithHead());
     //Message
-    if(result.Status==StatusResult.Ok)
-    {
-        vscode.window.showInformationMessage('Launch successfully removed');
-    }else {
-        vscode.window.showErrorMessage(`Error. Launch is not deleted! \n${result.Message}. ${result.SystemMessage}`);            
-    }
+    contextUI.ShowNotification(result);
     //Refresh
     treeData.RefreshsFull();
 }

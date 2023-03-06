@@ -18,6 +18,12 @@ export class IotLaunchEnvironment {
   public Remove(key:string) {
     if(this.Items.has(key)) this.Items.delete(key);
   }
+  public Rename(oldkey:string, newkey:string) {
+    const oldValue=this.Items.get(oldkey);
+    if (!oldValue) return;
+    this.Remove(oldkey);
+    this.Add(newkey,oldValue); 
+  }
   public Edit = (key:string, newvalue:string) => this.Items.set(key,newvalue);
   public Clear = () => this.Items.clear();
 

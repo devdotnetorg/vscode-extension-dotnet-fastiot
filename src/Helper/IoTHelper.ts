@@ -22,7 +22,7 @@ export class IoTHelper {
     fs.mkdirSync(dir);
   }
 
-  static GetWorkspaceFolder(): string| undefined {
+  static GetWorkspaceDirectory(): string| undefined {
     let folder = vscode.workspace.workspaceFolders;
     if (folder != undefined) return folder[0].uri.fsPath;
     return undefined;  	
@@ -214,7 +214,7 @@ export class IoTHelper {
   static SetTimeFiles(filesPath:string[],timestamp:number):IotResult
   {
     let result:IotResult;
-    let lastFile:string="non";
+    let lastFile:string|undefined;
     try {
       filesPath.forEach(path =>{
         lastFile=path;

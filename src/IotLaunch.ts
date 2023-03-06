@@ -66,19 +66,29 @@ export class IotLaunch {
 
   public Load(idLaunch:string,devices: Array<IotDevice>): IotResult {  
     let result:IotResult;
+    const errorMsg=`Unable to load Launch IdLaunch: ${idLaunch}`;
     try {
       result = this.GetJsonLaunch();
-      if(result.Status==StatusResult.Error) return result;  
+      if(result.Status!=StatusResult.Ok)
+      {
+        result.AddMessage(errorMsg);
+        return result;
+      } 
       let jsonLaunch = result.returnObject;
       const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==idLaunch);
       if (launch) {
-        this.FromJSON(launch,devices);
+        result=this.FromJSON(launch,devices);
+        if(result.Status==StatusResult.Error) {
+          result.AddMessage(errorMsg);
+          return result;
+        }
       }else {
         result= new IotResult(StatusResult.Error,`Launch not found. IdLaunch: ${idLaunch}`);
       }
     } catch (err: any){
-      result= new IotResult(StatusResult.Error,`Read IdLaunch: ${idLaunch}`,err);
+      result= new IotResult(StatusResult.Error,errorMsg,err);
     }
+    result= new IotResult(StatusResult.Ok,`Launch successfully loaded. IdLaunch: ${idLaunch}`);
     return result;
   }
 
@@ -87,7 +97,9 @@ export class IotLaunch {
     let result:IotResult;
     try {
       result = this.GetJsonLaunch();
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status!=StatusResult.Ok) {
+        return result;
+      } 
       let jsonLaunchAll = result.returnObject;
       //Recovery of every Launch    
       let index=0;
@@ -151,7 +163,8 @@ export class IotLaunch {
     return result;
   }
 
-  public GetOptions(): IotOption[] {
+  public GetOptions():IotResult{
+    let result:IotResult;
     let options:IotOption[]=[];
     try {
       let option:IotOption;
@@ -204,29 +217,39 @@ export class IotLaunch {
         option=new IotOption("Device","not found","Device not found",StatusResult.Error);
         options.push(option);
       }
+      result= new IotResult(StatusResult.Ok, "GetOptions");
+      result.returnObject=options;
     } catch (err: any){
-      console.log(err);
+      result= new IotResult(StatusResult.Error,"Error. GetOptions",err);
     }
-    return options;
+    return result;
   }
 
   public Rename(newLabel:string): IotResult {
     let result:IotResult;
+    const errorMsg=`Launch has not been renamed!. IdLaunch: ${this.IdLaunch}`;
     try {
       //Change in file
       result = this.GetJsonLaunch();
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status!=StatusResult.Ok) {
+        result.AddMessage(errorMsg);
+        return result;
+      } 
       let jsonLaunch = result.returnObject;
-      result= new IotResult(StatusResult.Error,`Launch not found. IdLaunch: ${this.IdLaunch}`);
       //change
       const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.IdLaunch);
-      if(launch) {
+      if(launch) { 
         launch.name=newLabel;
         //write file
         result=this.SaveLaunch(jsonLaunch);
-      }
+        if(result.Status==StatusResult.Ok) {
+          result= new IotResult(StatusResult.Ok,'Launch rename succeeded');
+        }else{
+          result.AddMessage(errorMsg);
+        }
+      } else result= new IotResult(StatusResult.Error,`Launch not found. IdLaunch: ${this.IdLaunch}`);
     } catch (err: any){
-      result= new IotResult(StatusResult.Error,`Rename launch. IdLaunch: ${this.IdLaunch}`,err);
+      result= new IotResult(StatusResult.Error,errorMsg,err);
     }
     return result;
   }
@@ -234,15 +257,22 @@ export class IotLaunch {
   public Remove():IotResult
   {
     let result:IotResult;
+    const errorMsg=`Launch is not deleted! IdLaunch: ${this.IdLaunch}`;
     try {
       //get launch.json and tasks.json
       //launch.json
       result = this.GetJsonLaunch();
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status!=StatusResult.Ok) {
+        result.AddMessage(errorMsg);
+        return result;
+      } 
       let jsonLaunch = result.returnObject;
       //tasks.json
       result = this.GetJsonTasks();
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status!=StatusResult.Ok) {
+        result.AddMessage(errorMsg);
+        return result;
+      } 
       let jsonTasks = result.returnObject;
       //get preLaunchTask
       const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.IdLaunch);
@@ -253,8 +283,11 @@ export class IotLaunch {
         const preLaunchTask=launch.preLaunchTask;
         if(preLaunchTask){
           //delete a task chain
-          result= this.DeleteTaskChaine(this._idLaunch ?? "non",jsonLaunch,jsonTasks);
-          if(result.Status==StatusResult.Error) return result;
+          result= this.DeleteTaskChaine(jsonLaunch,jsonTasks);
+          if(result.Status==StatusResult.Error){
+            result.AddMessage(errorMsg);
+            return result;
+          }
           jsonTasks=result.returnObject;
         }
         //Launch
@@ -262,17 +295,24 @@ export class IotLaunch {
         jsonLaunch.configurations=jsonLaunch.configurations.filter((e:any) => e.fastiotIdLaunch !=this.IdLaunch);
         //save
         result = this.SaveLaunch(jsonLaunch);     
-        if(result.Status==StatusResult.Error) return result;
+        if(result.Status==StatusResult.Error) {
+          result.AddMessage(errorMsg);
+          return result;
+        } 
         result = this.SaveTasks(jsonTasks); 
-        if(result.Status==StatusResult.Error) return result;
+        if(result.Status==StatusResult.Error) {
+          result.AddMessage(errorMsg);
+          return result;
+        } 
       }
+      result= new IotResult(StatusResult.Ok, `Launch successfully removed`);
     } catch (err: any){
-      result= new IotResult(StatusResult.Error,`Launch removal. IdLaunch: ${this.IdLaunch}`,err);
+      result= new IotResult(StatusResult.Error,errorMsg,err);
     }
     return result; 
   }
 
-  private get existsLaunchTasks(): boolean {
+  public get existsLaunchTasks(): boolean {
     return (fs.existsSync(this.LaunchFilePath)&&fs.existsSync(this.TasksFilePath));}
 
   private GetJsonLaunch():IotResult{
@@ -292,15 +332,14 @@ export class IotLaunch {
         let dataFile:string= fs.readFileSync(filePath, 'utf8');
         dataFile=IoTHelper.DeleteComments(dataFile);
         let json = JSON.parse(dataFile);
-        result= new IotResult(StatusResult.Ok,`GetJsonFile ${filePath}`);
+        result= new IotResult(StatusResult.Ok,`JSON file successfully read. Path: ${filePath}`);
         result.returnObject=json;
         return result;
       }else {
-        result= new IotResult(StatusResult.Error,`Files launch.json and tasks.json not found in folder /.vscode. Project is a ${this.PathProject}`);
-        result.tag="404";
+        result= new IotResult(StatusResult.No,`File not found. Path: ${filePath}`);
       }
     } catch (err: any){
-      result= new IotResult(StatusResult.Error,`GetJsonFile ${filePath}`,err);
+      result= new IotResult(StatusResult.Error,`JSON file read error. Path: ${filePath}`,err);
     }
     return result;
   }
@@ -319,26 +358,31 @@ export class IotLaunch {
       const datafile = JSON.stringify(json,null,2);
       //write file
       fs.writeFileSync(filePath,datafile);
-      result=new IotResult(StatusResult.Ok, undefined,undefined);
+      result=new IotResult(StatusResult.Ok,`File saved. filePath: ${filePath}`);
     } catch (err: any){
-      result= new IotResult(StatusResult.Error,`SaveFile filePath: ${filePath}, json: ${json}`,err); 
+      result= new IotResult(StatusResult.Error,`SaveFile. filePath: ${filePath}, json: ${json}`,err); 
     }
     return result; 
   }
 
-  private DeleteTaskChaine(fastiotIdLaunch:string,jsonLaunch:any,jsonTasks:any):IotResult
+  private DeleteTaskChaine(jsonLaunch:any,jsonTasks:any):IotResult
   {
+    const fastiotIdLaunch:string=this.IdLaunch ?? "non";
+    const errorMsg=`Error deleting task chains. IdLaunch: ${fastiotIdLaunch}`;
     let result:IotResult;
     try {
       result=this.BuildingChainsTasks(jsonLaunch,jsonTasks);
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
       // key - fastiotIdLaunch, value - labels tasks
       let taskChains:Map<string,string[]>= new Map<string,string[]>();
       taskChains=result.returnObject;
       const tasksChainDelete=taskChains.get(fastiotIdLaunch);
       if(!tasksChainDelete){
         //no tasks to delete
-        result= new IotResult(StatusResult.Ok,`No tasks to delete. IdLaunch: ${this.IdLaunch}`);
+        result= new IotResult(StatusResult.Ok,`No tasks to delete. IdLaunch: ${fastiotIdLaunch}`);
         result.returnObject=jsonTasks;
         return result;
       }
@@ -356,7 +400,7 @@ export class IotLaunch {
       if(differenceTasks.length==0)
       {
         //no tasks to delete
-        result= new IotResult(StatusResult.Ok,`No tasks to delete. IdLaunch: ${this.IdLaunch}`);
+        result= new IotResult(StatusResult.Ok,`No tasks to delete. IdLaunch: ${fastiotIdLaunch}`);
         result.returnObject=jsonTasks;
         return result;
       }
@@ -378,13 +422,14 @@ export class IotLaunch {
       result= new IotResult(StatusResult.Ok,`Task chain successfully deleted for IdLaunch: ${fastiotIdLaunch}`);
       result.returnObject=jsonTasks;
     } catch (err: any){
-      result= new IotResult(StatusResult.Error,`DeleteTaskChaine. IdLaunch: ${this.IdLaunch}`,err);
+      result= new IotResult(StatusResult.Error,`DeleteTaskChaine. IdLaunch: ${fastiotIdLaunch}`,err);
     }
     return result;
   }
 
   private BuildingChainsTasks(jsonLaunch:any,jsonTasks:any):IotResult
   {
+    const errorMsg=`Building task chains. IdLaunch: ${this.IdLaunch}`;
     let result:IotResult;
     try {
       // key - fastiotIdLaunch, value - labels tasks
@@ -397,7 +442,10 @@ export class IotLaunch {
         {
           //get task chain
           result=this.GetTaskChain(preLaunchTask,jsonTasks);
-          if(result.Status==StatusResult.Error) return result;
+          if(result.Status==StatusResult.Error) {
+            result.AddMessage(errorMsg);
+            return result;
+          }
           if(result.Status==StatusResult.Ok) {
             const taskChain=<string[]>result.returnObject;
             taskChains.set(fastiotIdLaunch,taskChain);
@@ -442,16 +490,28 @@ export class IotLaunch {
 
   public WriteEnvironments(): IotResult {  
     let result:IotResult;
+    const errorMsg=`Error writing Environments for Launch. IdLaunch: ${this.IdLaunch}`;
     try {
       result = this.GetJsonLaunch();
-      if(result.Status==StatusResult.Error) return result;  
+      if(result.Status!=StatusResult.Ok) {
+        result.AddMessage(errorMsg);
+        return result;
+      } 
       let jsonLaunch = result.returnObject;
       const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.IdLaunch);
       if (launch) {
         launch.env= this.Environments.ToJSON();
         //write file
         result=this.SaveLaunch(jsonLaunch);
+        if(result.Status==StatusResult.Error) {
+          result.AddMessage(errorMsg);
+          return result;
+        } 
+      } else {
+        result= new IotResult(StatusResult.Error,`Launch not found. IdLaunch: ${this.IdLaunch}`);
+        return result;
       }
+      result= new IotResult(StatusResult.Ok,`"Environment" updated successfully`);
     } catch (err: any){
       result= new IotResult(StatusResult.Error,`Write Environment IdLaunch: ${this.IdLaunch}`,err);
     }
@@ -459,33 +519,41 @@ export class IotLaunch {
   }
 
   public RebuildLaunch(config:IotConfiguration, devices: Array<IotDevice>): IotResult {
+    const errorMsg=`Unable to execute RebuildLaunch. IdLaunch: ${this.IdLaunch}`;
     let result:IotResult;
     //--------------Checks--------------
     //check device
     if(!this.Device) {
       result= new IotResult(StatusResult.Error,`Missing device for idLaunch: ${this.IdLaunch}`);
+      result.AddMessage(errorMsg);
       return result;
     }
     if(typeof this.Device === "string") {
       result= new IotResult(StatusResult.Error,`Missing device for idLaunch: ${this.IdLaunch}`);
+      result.AddMessage(errorMsg);
       return result;
     }
     //check project
     const projectMainfilePath=IoTHelper.ReverseSeparatorLinuxToWin(`${this._workspaceDirectory}${this.PathProject}`);
     if (!fs.existsSync(projectMainfilePath)) {
       result= new IotResult(StatusResult.Error,`Missing project: ${projectMainfilePath}`);
+      result.AddMessage(errorMsg);
       return result;
     }
     //check template
     const template = config.Templates.FindbyId(this.IdTemplate ?? "non");
     if (!template) {
       result= new IotResult(StatusResult.Error,`Missing template: ${this.IdTemplate}`);
+      result.AddMessage(errorMsg);
       return result;
     }
     //--------------Main--------------
     //get json linked Launchs
     result=this.GetJsonLaunch();
-    if(result.Status==StatusResult.Error) return result;
+    if(result.Status!=StatusResult.Ok) {
+      result.AddMessage(errorMsg);
+      return result;
+    }
     let jsonLaunch=<any>result.returnObject;
     let jsonLinkedLaunchs=jsonLaunch.configurations.filter((e:any) => e.fastiotIdLaunch);
     jsonLinkedLaunchs=jsonLinkedLaunchs.filter((e:any) => e.fastiotIdLaunch.includes(this.IdLaunch?.substring(0,8)));
@@ -496,7 +564,10 @@ export class IotLaunch {
     jsonLinkedLaunchs.forEach((item:any) => {
       let launchItem = new IotLaunch(this._workspaceDirectory);
       result=launchItem.FromJSON(item,devices);
-      if(result.Status==StatusResult.Error) return Promise.resolve(result);
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
       LinkedLaunchs.push(launchItem);
       //
       msg= msg + `${index}) ${launchItem.IdLaunch} ${launchItem.Label?.toString()}\n`;
@@ -506,7 +577,10 @@ export class IotLaunch {
     //remove linked launchs
     LinkedLaunchs.forEach((item) => {
       result=item.Remove();
-      if(result.Status==StatusResult.Error) return Promise.resolve(result);
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
     });
     //Add Configuration Vscode
     let values:Map<string,string>= new Map<string,string>();
@@ -516,33 +590,35 @@ export class IotLaunch {
     values.set("%{project.mainfile.path.full.aswindows}",projectMainfilePath);
     values.set("%{project.name}",projectName);
     result = template.AddConfigurationVscode(this.Device,config,this._workspaceDirectory,values);
-    if(result.Status==StatusResult.Error) return result;
+    if(result.Status==StatusResult.Error) {
+      result.AddMessage(errorMsg);
+      return result;
+    }
     const newLaunchId=result.tag;
     //--------------End of process--------------
     //Name and env recovery
     result = this.GetJsonLaunch();
-    if(result.Status==StatusResult.Error) return result;
+    if(result.Status!=StatusResult.Ok) {
+      result.AddMessage(errorMsg);
+      return result;
+    }
     let jsonNewLaunch=result.returnObject;
     //launchs
     index=0; 
     do {
       let newItemLaunch=jsonNewLaunch.configurations[index];
-      if(newItemLaunch)
-      {
+      if(newItemLaunch) {
         if(newItemLaunch.fastiotIdLaunch&&newItemLaunch.fastiotIdLaunch.includes(newLaunchId)){
           const oldItemLaunch=jsonLinkedLaunchs.find((x:any)=>x.fastiotIdLaunch.substring(8)==newItemLaunch.fastiotIdLaunch.substring(8));
-          if(oldItemLaunch)
-          {
+          if(oldItemLaunch) {
             //replace name
             newItemLaunch.name=oldItemLaunch.name;
             //replace env
-            if(oldItemLaunch.env){
-              if(newItemLaunch.env){
+            if(oldItemLaunch.env) {
+              if(newItemLaunch.env) {
                 if(JSON.stringify(oldItemLaunch.env)!="{}")
                   newItemLaunch.env=oldItemLaunch.env;
-              }else{
-                newItemLaunch.push(oldItemLaunch.env);
-              }
+              }else newItemLaunch.push(oldItemLaunch.env);
             }
           }
         }
@@ -552,16 +628,12 @@ export class IotLaunch {
     while(true)
     //result
     result=this.SaveLaunch(jsonNewLaunch);
-    if(result.Status==StatusResult.Error) return result;
+    if(result.Status==StatusResult.Error) {
+      result.AddMessage(errorMsg);
+      return result;
+    }
+    result= new IotResult(StatusResult.Ok,`Configuration rebuild completed successfully`);
     return result;
   }
-
-
-
-
-
-
-
-
-
+  
 }

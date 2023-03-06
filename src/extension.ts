@@ -60,6 +60,8 @@ import {rebuildLaunch} from './actionsLaunch/rebuildLaunch';
 import {createProject} from './actionsTemplates/createProject';
 import {reloadTemplates} from './actionsTemplates/reloadTemplates';
 import {openTemplateFolder} from './actionsTemplates/openTemplateFolder';
+import path from 'path';
+import { fstat } from 'fs';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -97,13 +99,10 @@ export async function activate(context: vscode.ExtensionContext) {
     let treeDataLaunchsProvider = new TreeDataLaunchsProvider(config,treeDataDevicesProvider.RootItems);
 	const loadLaunchs = async () => {
 		const result= await treeDataLaunchsProvider.RecoveryLaunchsAsync();
-		if(result.Status==StatusResult.Error&&result.tag!="404") {
-			outputChannel.appendLine("-------- Loading launchs -------");
-			outputChannel.appendLine(`Status: ${result.Status.toString()}`);
-			outputChannel.appendLine(`Message: ${result.Message}`);
-			outputChannel.appendLine(`System message: ${result.SystemMessage}`);
-			outputChannel.appendLine("----------------------------------");
-			vscode.window.showErrorMessage(`Error. Loaded Launchs! \n${result.Message}. ${result.SystemMessage}`);
+		if(result.Status==StatusResult.Error) {
+			const head="--------- Loading launchs --------";
+			contextUI.Output(result.toStringWithHead(head));
+			vscode.window.showErrorMessage(`Error. Loaded Launchs!`);
 		}
 		treeDataLaunchsProvider.Refresh();
 		};
@@ -226,7 +225,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Refresh Configurations
 	let commandRefreshLaunch = vscode.commands.registerCommand('viewLaunchs.Refresh', () => {
-		refreshLaunch(treeDataLaunchsProvider);		
+		refreshLaunch(treeDataLaunchsProvider,contextUI);		
 	});
 	//Rename Configuration
 	let commandRenameLaunch = vscode.commands.registerCommand('viewLaunchs.Rename', 
@@ -252,22 +251,22 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Add Enviroment
 	let commandAddEnviroment = vscode.commands.registerCommand('viewLaunchs.AddEnviroment',
 		(item:LaunchTreeItemNode) => {
-			addEnviroment(treeDataLaunchsProvider,item);
+			addEnviroment(treeDataLaunchsProvider,item,contextUI);
 	});
 	//Rename Enviroment
 	let commandRenameEnviroment = vscode.commands.registerCommand('viewLaunchs.RenameEnviroment',
 		(item:LaunchTreeItemNode) => {
-			renameEnviroment(treeDataLaunchsProvider,item);
+			renameEnviroment(treeDataLaunchsProvider,item,contextUI);
 	});
 	//Edit Enviroment
 	let commandEditEnviroment = vscode.commands.registerCommand('viewLaunchs.EditEnviroment', 
 		(item:LaunchTreeItemNode) => {
-			editEnviroment(treeDataLaunchsProvider,item);
+			editEnviroment(treeDataLaunchsProvider,item,contextUI);
 	});
 	//Delete Enviroment
 	let commandDeleteEnviroment = vscode.commands.registerCommand('viewLaunchs.DeleteEnviroment', 
 		(item:LaunchTreeItemNode) => {
-			deleteEnviroment(treeDataLaunchsProvider,item);		
+			deleteEnviroment(treeDataLaunchsProvider,item,contextUI);		
 	});
 	//Create project
 	let commandCreateProject = vscode.commands.registerCommand('viewTemplates.CreateProject', () => {	
@@ -301,7 +300,21 @@ export async function activate(context: vscode.ExtensionContext) {
 			//vscode.window.showInformationMessage('Changed extension settings: .NET FastIoT');
 			//vscode.window.showInformationMessage('You must restart the .NET FastIoT extension or VSCode to apply the new settings');	
 		}
-    }, undefined, context.subscriptions);	
+    }, undefined, context.subscriptions);
+	// TODO FileSystemWatcher
+	// - "**/.vscode/*.json"
+	/*
+	//FileSystemWatcher
+	const watcher: vscode.FileSystemWatcher =
+		vscode.workspace.createFileSystemWatcher("REP", false, false, false);
+	watcher.onDidChange(async (uri: vscode.Uri) => {
+		contextUI.Output("---");
+		contextUI.Output(Date.now().toString());
+		contextUI.Output(`Change ${uri.fsPath}`);
+		const msg = path.basename(uri.fsPath.toString());
+		if(msg=="launch.json") contextUI.Output("Change launch.json");
+	});
+	*/
 	//Subscriptions
 	context.subscriptions.push(outputChannel);
 	context.subscriptions.push(vscodeTreeViewDevices);

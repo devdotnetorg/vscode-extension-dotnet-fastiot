@@ -28,8 +28,8 @@ export class IotConfigurationFolder {
     return this.ApplicationData+"\\tmp";}
   public get Schemas(): string {
     return this.Extension+"\\schemas";}
-  public get WorkspaceFolder(): string| undefined {
-    return IoTHelper.GetWorkspaceFolder();}
+  public get WorkspaceDirectory(): string| undefined {
+    return IoTHelper.GetWorkspaceDirectory();}
 
   constructor(
     applicationDataPath: string,

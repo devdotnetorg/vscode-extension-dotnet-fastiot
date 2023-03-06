@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {LaunchTreeItemNode} from './LaunchTreeItemNode';
-import {IotResult,StatusResult } from './IotResult';
-import {IotLaunch} from './IotLaunch';
+import { LaunchTreeItemNode } from './LaunchTreeItemNode';
+import { IotResult,StatusResult } from './IotResult';
+import { IotLaunch } from './IotLaunch';
+import { IotOption } from './IotOption';
 
 export class LaunchNode extends LaunchTreeItemNode {  
   public Parent: undefined;
@@ -64,7 +65,11 @@ export class LaunchNode extends LaunchTreeItemNode {
     //create child elements
     this.Options.Childs=[];
     let item:LaunchTreeItemNode;
-    this._launch.GetOptions().forEach((value) => {
+    const result=this._launch.GetOptions();
+    if(result.Status==StatusResult.Error) return result;
+    //read
+    const options=<IotOption[]>result.returnObject;
+    options.forEach((value) => {
       item=new LaunchTreeItemNode(value.Label,value.Description,
         value.Tooltip,vscode.TreeItemCollapsibleState.None,this.Options);
       item.contextValue="iotenviromentoption";

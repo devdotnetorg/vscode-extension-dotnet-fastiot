@@ -12,18 +12,26 @@ import { IotTemplateAttribute } from '../Templates/IotTemplateAttribute';
 import { IContexUI } from '../ui/IContexUI';
 
 export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,contextUI:IContexUI): Promise<void> {
-    //Workspace		
-    const workspaceDirectory = IoTHelper.GetWorkspaceFolder();
+    let result:IotResult;
+    const workspaceDirectory=treeData.Config.Folder.WorkspaceDirectory;
     if(!workspaceDirectory) {
-        vscode.window.showErrorMessage(`Error. No Workspace. Open the menu: File -> Open Folder ...`);
+        result=new IotResult(StatusResult.No,`No Workspace. Open the menu: File -> Open Folder ... or create a project`);
+        contextUI.ShowNotification(result);
         return;
     }
     //Load template
     if(treeData.Config.Templates.Count==0)
         await treeData.Config.LoadTemplatesAsync();
+    //repeat
+    if(treeData.Config.Templates.Count==0) {
+        result=new IotResult(StatusResult.No,`No templates available`);
+        contextUI.ShowNotification(result);
+        return;
+    }
     //Devices
     if(devices.length==0) {
-        vscode.window.showErrorMessage(`Error. No available devices. Add device`);
+        result=new IotResult(StatusResult.No,`No devices. Add device`);
+        contextUI.ShowNotification(result);
         return;
     }
     //Select Device
@@ -40,18 +48,14 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     //get id template
     let idTemplate=new IotTemplateAttribute().ForceGetID(workspaceDirectory+"\\template.fastiot.yaml");
     let selectTemplate:IotTemplate|undefined;
-    if(idTemplate) 
+    if(idTemplate)
         selectTemplate=treeData.Config.Templates.FindbyId(idTemplate);
-    //
-    if(selectTemplate)
-    {
+    if(selectTemplate) {
         //check platform
         const isCompatible=selectTemplate.IsCompatible1(selectDevice.Information.Architecture);
         if(!isCompatible) selectTemplate=undefined;
     }
-    //
-    if(selectTemplate)
-    {
+    if(selectTemplate) {
         //Choice of two options
         let items:Array<ItemQuickPick>=[];
         let item = new ItemQuickPick("1. Select template (recommended): "+<string>selectTemplate.Attributes.Label,
@@ -63,12 +67,12 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         if(!SELECTED_ITEM) return;
         selectTemplate=SELECTED_ITEM.value;
     }
-    if(!selectTemplate)
-    {
+    if(!selectTemplate) {
         //select template
         const listTemplates= treeData.Config.Templates.Select(selectDevice.Information.Architecture);
         if(listTemplates.length==0) {
-            vscode.window.showErrorMessage(`No templates compatible with ${selectDevice.label} ${selectDevice.Information.Architecture} device`);
+            result=new IotResult(StatusResult.No,`No templates compatible with ${selectDevice.label} ${selectDevice.Information.Architecture} device`);
+            contextUI.ShowNotification(result);
             return;
         }
         let itemTemplates:Array<ItemQuickPick>=[];
@@ -83,9 +87,9 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     }
     //Find projects
     const projects=selectTemplate.FindProjects(workspaceDirectory);
-    if (projects.length==0)
-    {
-        vscode.window.showErrorMessage(`Error. There are no projects in the folder: ${workspaceDirectory}`);
+    if (projects.length==0) {
+        result=new IotResult(StatusResult.No,`There are no projects in the folder ${workspaceDirectory} compatible with ${selectTemplate.Attributes.Id}`);
+        contextUI.ShowNotification(result);
         return;
     }
     //Select Project
@@ -109,21 +113,16 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     values.set("%{project.mainfile.path.full.aswindows}",selectProject);
     values.set("%{project.name}",projectName);
     //Main process
-    contextUI.Output(`Action: adding Launch to the ${selectProject} project`);
+    contextUI.Output(`Action: adding Launch to the ${selectProject} project, ${selectTemplate.Attributes.Id} template, dvice ${selectDevice.Information.BoardName} ${selectDevice.Information.Architecture}`);
     contextUI.ShowBackgroundNotification(`Adding Launch to the ${selectProject} project`);
-    const result = 
+    result = 
         selectTemplate.AddConfigurationVscode(selectDevice,treeData.Config,
-            treeData.Config.Folder.WorkspaceFolder ?? "non",values);
+            workspaceDirectory,values);
     contextUI.HideBackgroundNotification();
     //Output
     contextUI.Output(result.toStringWithHead());
     //Message
-    if(result.Status==StatusResult.Ok)
-    {
-        vscode.window.showInformationMessage('Launch and tasks added successfully');
-    }else {
-        vscode.window.showErrorMessage(`Error. Launch and tasks not added! \n${result.Message}. ${result.SystemMessage}`);            
-    }
+    contextUI.ShowNotification(result);
     //Refresh
     treeData.RefreshsFull();
 }

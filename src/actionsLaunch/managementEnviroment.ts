@@ -9,8 +9,9 @@ import { IotLaunch } from '../IotLaunch';
 import { LaunchNode } from '../LaunchNode';
 import { LaunchTreeItemNode } from '../LaunchTreeItemNode';
 import { IotLaunchEnvironment } from '../IotLaunchEnvironment';
+import { IContexUI } from '../ui/IContexUI';
 
-export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode):
+export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode,contextUI:IContexUI):
     Promise<void> {
         let launchNode=<LaunchNode>item.Parent;
         //name
@@ -19,10 +20,12 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:Launc
             title: 'Enter enviroment name',
             value:'FASTIOT'
         });
-        if(nameEnviroment==undefined) return;
+        if(!nameEnviroment) return;
         nameEnviroment=IoTHelper.StringTrim(nameEnviroment);
-        if(nameEnviroment==""){
-            vscode.window.showErrorMessage(`Error. Empty name specified`);
+        let result:IotResult;
+        if(nameEnviroment=="") {
+            result=new IotResult(StatusResult.Error,`Empty name specified`);
+            contextUI.ShowNotification(result);
             return;
         }
         //value
@@ -31,21 +34,27 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:Launc
             title: `Enter the value of the enviroment: ${nameEnviroment}`,
             value:'easy'
         });
-        if(valueEnviroment==undefined) return;
+        if(!valueEnviroment) return;
         valueEnviroment=IoTHelper.StringTrim(valueEnviroment);
         if(valueEnviroment==""){
-            vscode.window.showErrorMessage(`Error. Empty name specified`);
+            result=new IotResult(StatusResult.Error,`Empty name specified`);
+            contextUI.ShowNotification(result);
             return;
         }
-        //
+        //Main process
         launchNode.Launch.Environments.Add(nameEnviroment,valueEnviroment);
-        launchNode.Launch.WriteEnvironments();
+        result=launchNode.Launch.WriteEnvironments();
         launchNode.BuildEnvironments();
+        //Message
+        contextUI.ShowNotification(result);
+        //Output
+        if(result.Status==StatusResult.Error)
+            contextUI.Output(result);
+        //Refresh
         treeData.Refresh();
-        vscode.window.showInformationMessage('Enviroment added successfully');
 }
 
-export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode):
+export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode,contextUI:IContexUI):
     Promise<void> {
         let environmentsNode=<LaunchTreeItemNode>item.Parent;
         let launchNode=<LaunchNode>environmentsNode.Parent;
@@ -55,21 +64,28 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:La
             title: 'Enter enviroment name',
             value:`${item.label}`
         });
-        if(newName==undefined) return;
+        if(!newName) return;
         newName=IoTHelper.StringTrim(newName);
-        if(newName==""){
-            vscode.window.showErrorMessage(`Error. Empty name specified`);
+        let result:IotResult;
+        if(newName=="") {
+            result=new IotResult(StatusResult.Error,`Empty name specified`);
+            contextUI.ShowNotification(result);
             return;
         }
-        //
-        launchNode.Launch.Environments.Remove(<string>item.label);
-        launchNode.Launch.Environments.Add(newName,<string>item.description);
-        launchNode.Launch.WriteEnvironments();
+        //Main process
+        launchNode.Launch.Environments.Rename(<string>item.label,newName);
+        result=launchNode.Launch.WriteEnvironments();
         launchNode.BuildEnvironments();
+        //Message
+        contextUI.ShowNotification(result);
+        //Output
+        if(result.Status==StatusResult.Error)
+            contextUI.Output(result);
+        //Refresh
         treeData.Refresh();
 }
 
-export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode):
+export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode,contextUI:IContexUI):
     Promise<void> {
         let environmentsNode=<LaunchTreeItemNode>item.Parent;
         let launchNode=<LaunchNode>environmentsNode.Parent;
@@ -79,25 +95,42 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:Laun
             title: `Enter the value of the enviroment: ${item.label}`,
             value:`${item.description}`
         });
-        if(newValue==undefined) return;
+        if(!newValue) return;
         newValue=IoTHelper.StringTrim(newValue);
+        let result:IotResult;
         if(newValue==""){
-            vscode.window.showErrorMessage(`Error. Empty name specified`);
+            result=new IotResult(StatusResult.Error,`Empty name specified`);
+            contextUI.ShowNotification(result);
             return;
         }
-        //
+        //Main process
         launchNode.Launch.Environments.Edit(<string>item.label,newValue);
-        launchNode.Launch.WriteEnvironments();
+        result=launchNode.Launch.WriteEnvironments();
         launchNode.BuildEnvironments();
+        //Message
+        contextUI.ShowNotification(result);
+        //Output
+        if(result.Status==StatusResult.Error)
+            contextUI.Output(result);
+        //Refresh
         treeData.Refresh();
 }
 
-export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode):
+export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode,contextUI:IContexUI):
     Promise<void> {
         let environmentsNode=<LaunchTreeItemNode>item.Parent;
         let launchNode=<LaunchNode>environmentsNode.Parent;
-        //
+        let result:IotResult;
+        //Main process
         launchNode.Launch.Environments.Remove(<string>item.label);
-        launchNode.BuildEnvironments();
-        treeData.Refresh();            
+        result=launchNode.Launch.WriteEnvironments();
+        launchNode.BuildEnvironments();  
+        //Message
+        contextUI.ShowNotification(result);
+        //Output
+        if(result.Status==StatusResult.Error)
+            contextUI.Output(result);
+        //Refresh
+        treeData.Refresh();
+
 }

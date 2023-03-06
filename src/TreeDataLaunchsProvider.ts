@@ -47,7 +47,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
     }else
     {
       //Creating a root structure            
-      return Promise.resolve(this.RootItems);        
+      return Promise.resolve(this.RootItems);
     }    
   }
 
@@ -55,44 +55,68 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
     this._onDidChangeTreeData.fire();    
   }
 
-  public RefreshsFull(): IotResult {
+  public RefreshsFull(sortLaunchs:boolean=false): IotResult {
     let result:IotResult;
-    result= new IotResult(StatusResult.Ok);
-    if(this.Config.Folder.WorkspaceFolder) result = this.RecoveryLaunchs();  
-    this.Refresh();
+    result = this.LoadLaunches(sortLaunchs);
     return result;  
   }
   
-  public async RecoveryLaunchsAsync(): Promise<IotResult>{
-    return Promise.resolve(this.RecoveryLaunchs());  
+  public async RecoveryLaunchsAsync(sortLaunchs:boolean=false): Promise<IotResult>{
+    return Promise.resolve(this.LoadLaunches(sortLaunchs));  
   }
 
-  public RecoveryLaunchs():IotResult {
+  public LoadLaunches(sortLaunchs:boolean=false):IotResult {
     let result:IotResult;
+    //Check WorkspaceDirectory
+    if(!this.Config.Folder.WorkspaceDirectory) {
+      result= new IotResult(StatusResult.No,`WorkspaceDirectory not open`);
+      return result;
+    }
     try
     {
       //Clear
       this.RootItems = [];
+      //Refresh treeView
+      this.Refresh();
       //Recovery launchs from config in JSON format
-      result=new IotLaunch(this.Config.Folder.WorkspaceFolder ?? "non").
-        GetAllLaunchs(this._devices);
-      if(result.Status==StatusResult.Error) return result;
-      let launchs:IotLaunch[];
-      launchs=<IotLaunch[]>result.returnObject;
+      let launch =new IotLaunch(this.Config.Folder.WorkspaceDirectory);
+      result=launch.GetAllLaunchs(this._devices);
+      if(result.Status==StatusResult.No) {
+        result.AddMessage(`No Launches.`);
+        return result;
+      }
+      if(result.Status!=StatusResult.Ok) return result;
+      let launchs=<IotLaunch[]>result.returnObject;
+      if(launchs.length==0) {
+        result.AddMessage(`No Launches.`);
+        return result;
+      }
       launchs.forEach((launch) => {
         //add
         let launchNode = new LaunchNode(launch);
         this.RootItems.push(launchNode);
       });
-      result= new IotResult(StatusResult.Ok);      
+      //Sort
+      if(sortLaunchs) this.SortNodes();
+      //
+      result= new IotResult(StatusResult.Ok,`Launchs loaded successfully`);      
     }
     catch (err:any)
     {
-      result= new IotResult(StatusResult.Error,`RecoveryLaunchs. Path: ${this.Config.Folder.WorkspaceFolder}`,err);
+      const launchPath=path.join(this.Config.Folder.WorkspaceDirectory, ".vscode", "launch.json");
+      result= new IotResult(StatusResult.Error,`Launches loading error. Path: ${launchPath}`,err);
     }
     //Refresh treeView
     this.Refresh();
     return result;
+  }
+
+  public SortNodes() {
+    this.RootItems=this.RootItems.sort((a, b)=>{
+      if((a.label ?? "non") < (b.label ?? "non")) { return -1; }
+      if((a.label ?? "non") > (b.label ?? "non")) { return 1; }
+      return 0;
+      });
   }
   
 }
