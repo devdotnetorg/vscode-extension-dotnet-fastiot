@@ -173,7 +173,10 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
         if(event.console) this._contextUI.Output(event.console); 
       });
       result = await device.Create(hostName,port,userName, password,accountNameDebug);
-      if(result.Status==StatusResult.Error) return Promise.resolve(result);
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(`Device not added!`);
+        return Promise.resolve(result);
+      }
       //Rename. checking for matching names.
       device.label= this.GetUniqueLabel(<string>device.label,'#',undefined);      
       //
@@ -182,11 +185,12 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       this.SaveDevices()
       //Refresh treeView
       this.Refresh();
-      //return new device
-      result.returnObject=device;
-      //event unsubscription    
+      //event unsubscription
       device.Client.OnChangedStateUnsubscribe(handler);
       //
+      result=new IotResult(StatusResult.Ok,`Device added successfully. Device: ${device.label}`);
+      //return new device
+      result.returnObject=device;
       return Promise.resolve(result);   
   }
 
