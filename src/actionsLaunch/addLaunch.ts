@@ -36,12 +36,14 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     }
     //Select Device
     let itemDevices:Array<ItemQuickPick>=[];
-    devices.forEach((device) => {                        
-        const item = new ItemQuickPick(<string>device.label,
-            `${device.Information.BoardName} ${device.Information.Architecture}`,device);            
+    devices.forEach((device) => {
+        const label=`${device.label}`;
+        const description=`${device.Information.Architecture}`;
+        const detail=`$(circuit-board) ${device.Information.BoardName} $(terminal-linux) ${device.Information.OsDescription} ${device.Information.OsKernel} $(account) ${device.Account.UserName}`;
+        const item = new ItemQuickPick(label,description,device,detail);
         itemDevices.push(item);
     });
-    let SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: 'Choose a device (1/4):',});
+    let SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: 'Choose a device (1/4)',placeHolder:`Developer board`});
     if(!SELECTED_ITEM) return;
     const selectDevice= <IotDevice>SELECTED_ITEM.value;
     //Select template
@@ -59,11 +61,11 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         //Choice of two options
         let items:Array<ItemQuickPick>=[];
         let item = new ItemQuickPick("1. Select template (recommended): "+<string>selectTemplate.Attributes.Label,
-            `${selectTemplate.Attributes.Detail}. Language: ${selectTemplate.Attributes.Language}`,selectTemplate);
+            `Language: ${selectTemplate.Attributes.Language}`,selectTemplate,`Detail: ${selectTemplate.Attributes.Detail}`);
         items.push(item);
         item = new ItemQuickPick("2. Choose another template from the collection","",undefined);
         items.push(item);
-        SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Select an action (2/4):',});
+        SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Select an action (2/4)'});
         if(!SELECTED_ITEM) return;
         selectTemplate=SELECTED_ITEM.value;
     }
@@ -78,10 +80,10 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         let itemTemplates:Array<ItemQuickPick>=[];
         listTemplates.forEach((template) => {
             const item = new ItemQuickPick(<string>template.Attributes.Label,
-                `${template.Attributes.Detail}. Language: ${template.Attributes.Language}`,template);            
+                `Language: ${template.Attributes.Language}`,template,`${template.Attributes.Detail}`);
             itemTemplates.push(item);
         });
-        SELECTED_ITEM = await vscode.window.showQuickPick(itemTemplates,{title: 'Choose a template (3/4):',});
+        SELECTED_ITEM = await vscode.window.showQuickPick(itemTemplates,{title: 'Choose a template (3/4)',placeHolder:`Template`});
         if(!SELECTED_ITEM) return;
         selectTemplate= <IotTemplate>SELECTED_ITEM.value;
     }
@@ -102,7 +104,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         const item = new ItemQuickPick(label,description,fileName);
         itemProjects.push(item);
     });
-    SELECTED_ITEM = await vscode.window.showQuickPick(itemProjects,{title: 'Choose a project (4/4):'});
+    SELECTED_ITEM = await vscode.window.showQuickPick(itemProjects,{title: 'Choose a project (4/4)',placeHolder:`Project`});
     if(!SELECTED_ITEM) return;
     selectProject=SELECTED_ITEM.value;
     //Preparing values

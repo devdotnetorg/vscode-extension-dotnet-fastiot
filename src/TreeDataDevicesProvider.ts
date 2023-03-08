@@ -188,7 +188,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       //event unsubscription
       device.Client.OnChangedStateUnsubscribe(handler);
       //
-      result=new IotResult(StatusResult.Ok,`Device added successfully. Device: ${device.label}`);
+      result=new IotResult(StatusResult.Ok,`Device added successfully 🎉! Device: ${device.label}`);
       //return new device
       result.returnObject=device;
       return Promise.resolve(result);   

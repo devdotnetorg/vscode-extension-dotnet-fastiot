@@ -31,12 +31,14 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
     }
     //Select Device
     let itemDevices:Array<ItemQuickPick>=[];
-    devices.forEach((device) => {                        
-        const item = new ItemQuickPick(<string>device.label,
-            `${device.Information.BoardName} ${device.Information.Architecture}`,device);
+    devices.forEach((device) => {
+        const label=`${device.label}`;
+        const description=`${device.Information.Architecture}`;
+        const detail=`$(circuit-board) ${device.Information.BoardName} $(terminal-linux) ${device.Information.OsDescription} ${device.Information.OsKernel} $(account) ${device.Account.UserName}`;
+        const item = new ItemQuickPick(label,description,device,detail);
         itemDevices.push(item);
     });
-    let SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: 'Choose a device (1/5):',});
+    let SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: 'Choose a device (1/4)',placeHolder:`Developer board`});
     if(!SELECTED_ITEM) return;
     const selectDevice= <IotDevice>SELECTED_ITEM.value;
     //Select template
@@ -49,16 +51,16 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
     let itemTemplates:Array<ItemQuickPick>=[];
     listTemplates.forEach((template) => {
         const item = new ItemQuickPick(<string>template.Attributes.Label,
-            `${template.Attributes.Detail}. Language: ${template.Attributes.Language}`,template);            
+            `Language: ${template.Attributes.Language}`,template,`${template.Attributes.Detail}`);
         itemTemplates.push(item);
     });
-    SELECTED_ITEM = await vscode.window.showQuickPick(itemTemplates,{title: 'Choose a template (2/5):',});
+    SELECTED_ITEM = await vscode.window.showQuickPick(itemTemplates,{title: 'Choose a template (2/5)',placeHolder:`Template`});
     if(!SELECTED_ITEM) return;
     const selectTemplate= <IotTemplate>SELECTED_ITEM.value;
     //Select name project
     let nameProject = await vscode.window.showInputBox({				
-        prompt: 'prompt',
-        title: 'Application name (3/5). Enter the name of your application',
+        prompt: 'Enter the name of your application',
+        title: 'Application name (3/5)',
         value: selectTemplate.Attributes.ProjName
     });
     if(!nameProject) return;
@@ -76,7 +78,7 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
         canSelectFolders: true,
         canSelectMany: false,
         title: "Select a folder for the project (4/5)",
-        openLabel: 'Select',
+        openLabel: 'Select folder',
     };
     let folder:string;
     if(config.ExtMode==vscode.ExtensionMode.Production){
@@ -90,8 +92,8 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
     //Project path confirmation
     folder=`${folder}\\${nameProject}`;
     let selectFolder = await vscode.window.showInputBox({				
-        prompt: 'prompt',
-        title: 'Project path (5/5). Confirm project location',
+        prompt: 'Confirm project location',
+        title: 'Project path (5/5)',
         value: folder
     });
     if(!selectFolder) return;
@@ -115,7 +117,7 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
             const item = new ItemQuickPick(value[1],"",value[0]);
             itemTarget.push(item);
         });
-        SELECTED_ITEM = await vscode.window.showQuickPick(itemTarget,{title: 'Choose a .NET framework:',});
+        SELECTED_ITEM = await vscode.window.showQuickPick(itemTarget,{title: 'Choose a .NET framework',placeHolder:`.NET framework`});
         if(!SELECTED_ITEM) return;
         //
         values.set("%{project.dotnet.targetframework}",<string>SELECTED_ITEM.value);

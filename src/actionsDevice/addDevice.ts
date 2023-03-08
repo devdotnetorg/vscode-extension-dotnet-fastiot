@@ -14,23 +14,23 @@ import { IContexUI } from '../ui/IContexUI';
 export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,contextUI:IContexUI): Promise<void> {
     
     let hostName = await vscode.window.showInputBox({
-        prompt: 'prompt',
-        title: 'Add Device (1/5). Enter the host of the developer board',
-        value:'192.168.50.75',       
+        prompt: 'Enter the hostname of the developer board',
+        title: 'Add Device (1/5)',
+        value:'192.168.50.75'
     });
     if(!hostName) return;
     hostName=IoTHelper.StringTrim(hostName);
     let portAnswer = await vscode.window.showInputBox({
-        prompt: 'prompt',
-        title: 'Add Device (2/5). Enter a number port ssh',
+        prompt: 'Enter a number port ssh',
+        title: 'Add Device (2/5)',
         value:'22'
     });
     if(!portAnswer) return;
     portAnswer=IoTHelper.StringTrim(portAnswer);
     const port=+portAnswer;
     let userName = await vscode.window.showInputBox({
-        prompt: 'prompt',
-        title: 'Add Device (3/5). Enter username with sudo rights (usually root)',
+        prompt: 'Enter username with sudo rights (usually root)',
+        title: 'Add Device (3/5)',
         value:'root'
     });
     if(!userName) return;
@@ -47,11 +47,11 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
     item = new ItemQuickPick("root","Select if you have problems accessing /dev/* and /sys/* devices","root");
     itemAccounts.push(item);
     const SELECTED_ITEM = await vscode.window.showQuickPick(
-        itemAccounts,{title: 'Add Device (5/5). Select an account to debugging .NET applications:',});
+        itemAccounts,{title: 'Add Device (5/5)',placeHolder:`Select an account to debugging .NET applications`});
     if(!SELECTED_ITEM) return;
     const accountNameDebug=SELECTED_ITEM.value;
     //Info
-    vscode.window.showInformationMessage('It may take 2 to 7 minutes to initialize and configure the device.');
+    vscode.window.showInformationMessage('⌛ It may take 2 to 7 minutes to initialize and configure the device.');
     //Main process
     contextUI.Output("Action: adding a device");
     //Adding a device is the main process
