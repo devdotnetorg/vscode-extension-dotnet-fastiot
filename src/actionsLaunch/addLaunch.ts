@@ -35,17 +35,8 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         return;
     }
     //Select Device
-    let itemDevices:Array<ItemQuickPick>=[];
-    devices.forEach((device) => {
-        const label=`${device.label}`;
-        const description=`${device.Information.Architecture}`;
-        const detail=`$(circuit-board) ${device.Information.BoardName} $(terminal-linux) ${device.Information.OsDescription} ${device.Information.OsKernel} $(account) ${device.Account.UserName}`;
-        const item = new ItemQuickPick(label,description,device,detail);
-        itemDevices.push(item);
-    });
-    let SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: 'Choose a device (1/4)',placeHolder:`Developer board`});
-    if(!SELECTED_ITEM) return;
-    const selectDevice= <IotDevice>SELECTED_ITEM.value;
+    const selectDevice = await contextUI.ShowDeviceDialog(devices,'Choose a device (1/4)');
+    if(!selectDevice) return;
     //Select template
     //get id template
     let idTemplate=new IotTemplateAttribute().ForceGetID(workspaceDirectory+"\\template.fastiot.yaml");
@@ -65,7 +56,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         items.push(item);
         item = new ItemQuickPick("2. Choose another template from the collection","",undefined);
         items.push(item);
-        SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Select an action (2/4)'});
+        let SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Select an action (2/4)'});
         if(!SELECTED_ITEM) return;
         selectTemplate=SELECTED_ITEM.value;
     }
@@ -77,15 +68,8 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
             contextUI.ShowNotification(result);
             return;
         }
-        let itemTemplates:Array<ItemQuickPick>=[];
-        listTemplates.forEach((template) => {
-            const item = new ItemQuickPick(<string>template.Attributes.Label,
-                `Language: ${template.Attributes.Language}`,template,`${template.Attributes.Detail}`);
-            itemTemplates.push(item);
-        });
-        SELECTED_ITEM = await vscode.window.showQuickPick(itemTemplates,{title: 'Choose a template (3/4)',placeHolder:`Template`});
-        if(!SELECTED_ITEM) return;
-        selectTemplate= <IotTemplate>SELECTED_ITEM.value;
+        selectTemplate = await contextUI.ShowTemplateDialog(listTemplates,'Choose a template (3/4)');
+        if(!selectTemplate) return;
     }
     //Find projects
     const projects=selectTemplate.FindProjects(workspaceDirectory);
@@ -104,7 +88,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         const item = new ItemQuickPick(label,description,fileName);
         itemProjects.push(item);
     });
-    SELECTED_ITEM = await vscode.window.showQuickPick(itemProjects,{title: 'Choose a project (4/4)',placeHolder:`Project`});
+    let SELECTED_ITEM = await vscode.window.showQuickPick(itemProjects,{title: 'Choose a project (4/4)',placeHolder:`Project`});
     if(!SELECTED_ITEM) return;
     selectProject=SELECTED_ITEM.value;
     //Preparing values

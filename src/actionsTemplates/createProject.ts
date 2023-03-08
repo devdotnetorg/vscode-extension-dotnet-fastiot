@@ -30,17 +30,8 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
         return;
     }
     //Select Device
-    let itemDevices:Array<ItemQuickPick>=[];
-    devices.forEach((device) => {
-        const label=`${device.label}`;
-        const description=`${device.Information.Architecture}`;
-        const detail=`$(circuit-board) ${device.Information.BoardName} $(terminal-linux) ${device.Information.OsDescription} ${device.Information.OsKernel} $(account) ${device.Account.UserName}`;
-        const item = new ItemQuickPick(label,description,device,detail);
-        itemDevices.push(item);
-    });
-    let SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: 'Choose a device (1/4)',placeHolder:`Developer board`});
-    if(!SELECTED_ITEM) return;
-    const selectDevice= <IotDevice>SELECTED_ITEM.value;
+    const selectDevice = await contextUI.ShowDeviceDialog(devices,'Choose a device (1/4)');
+    if(!selectDevice) return;
     //Select template
     const listTemplates= config.Templates.Select(selectDevice.Information.Architecture);
     if(listTemplates.length==0) {
@@ -48,15 +39,8 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
         contextUI.ShowNotification(result);
         return;
     }
-    let itemTemplates:Array<ItemQuickPick>=[];
-    listTemplates.forEach((template) => {
-        const item = new ItemQuickPick(<string>template.Attributes.Label,
-            `Language: ${template.Attributes.Language}`,template,`${template.Attributes.Detail}`);
-        itemTemplates.push(item);
-    });
-    SELECTED_ITEM = await vscode.window.showQuickPick(itemTemplates,{title: 'Choose a template (2/5)',placeHolder:`Template`});
-    if(!SELECTED_ITEM) return;
-    const selectTemplate= <IotTemplate>SELECTED_ITEM.value;
+    const selectTemplate = await contextUI.ShowTemplateDialog(listTemplates,'Choose a template (2/5)');
+        if(!selectTemplate) return;
     //Select name project
     let nameProject = await vscode.window.showInputBox({				
         prompt: 'Enter the name of your application',
@@ -117,7 +101,7 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
             const item = new ItemQuickPick(value[1],"",value[0]);
             itemTarget.push(item);
         });
-        SELECTED_ITEM = await vscode.window.showQuickPick(itemTarget,{title: 'Choose a .NET framework',placeHolder:`.NET framework`});
+        let SELECTED_ITEM = await vscode.window.showQuickPick(itemTarget,{title: 'Choose a .NET framework',placeHolder:`.NET framework`});
         if(!SELECTED_ITEM) return;
         //
         values.set("%{project.dotnet.targetframework}",<string>SELECTED_ITEM.value);
