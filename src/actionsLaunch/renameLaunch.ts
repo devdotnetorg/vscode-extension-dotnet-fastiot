@@ -30,7 +30,7 @@ export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:Launch
     //Output
     contextUI.Output(result.toStringWithHead());
     //Message
-    contextUI.ShowNotification(result);
+    //contextUI.ShowNotification(result);
     //Refresh
     treeData.RefreshsFull();
 }

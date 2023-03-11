@@ -247,7 +247,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Go to device 
 	let commandGoToDevice = vscode.commands.registerCommand('viewLaunchs.GoToDevice', 
 		(item:LaunchNode) => {
-			gotoDevice(item,vscodeTreeViewDevices);
+			gotoDevice(item,vscodeTreeViewDevices,treeDataDevicesProvider);
 	});
 	//Add Enviroment
 	let commandAddEnviroment = vscode.commands.registerCommand('viewLaunchs.AddEnviroment',

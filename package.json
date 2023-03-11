@@ -510,15 +510,15 @@
 		"viewsWelcome": [
 			{
 				"view": "viewDevices",
-				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device). \n[Add Device](command:viewDevices.AddDevice)"
+				"contents": "No devices. How to add device see [Adding a device](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device).\n[Add Device](command:viewDevices.AddDevice)"
 			},
 			{
 				"view": "viewLaunchs",
-				"contents": "No launchs [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Additional-materials.md#setting-up-an-existing-project-for-remote-debugging).  \n[Add Launch](command:viewLaunchs.Add)"
+				"contents": "No launchs. How to add Launch see [Adding Launch](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Additional-materials.md#setting-up-an-existing-project-for-remote-debugging).\n[Add Launch](command:viewLaunchs.Add)"
 			},
 			{
 				"view": "viewTemplates",
-				"contents": "[Create project](command:viewTemplates.CreateProject)  \n [About Project Templates](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Project-templates.md)."
+				"contents": "[Create project](command:viewTemplates.CreateProject)\n About [Project Templates](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Project-templates.md)."
 			}
 		]
 	},
