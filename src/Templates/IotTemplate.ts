@@ -13,6 +13,8 @@ import {IotDevice} from '../IotDevice';
 import {IotConfiguration} from '../Configuration/IotConfiguration';
 import {FilesValidator} from '../Validator/FilesValidator';
 import {YamlSchemaValidator} from '../Validator/YamlSchemaValidator';
+import { openStdin } from 'process';
+import * as os from 'os';
 
 export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   public get StoragePath(): string {
@@ -351,8 +353,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     let dirProjectWin;
     let projMainfilePathFullWin=this._mergeDictionary.get("%{project.mainfile.path.full.aswindows}");
     let projMainfilePathFullLinux=this._mergeDictionary.get("%{project.mainfile.path.full.aslinux}");
-    if((projMainfilePathFullWin)/*||(projMainfilePathFullLinux)*/)
-        {
+    if((projMainfilePathFullWin)/*||(projMainfilePathFullLinux)*/) {
           //in <= project.mainfile.path.full.aswindows
           //--------------------ADD--------------------
           this._mergeDictionary.set("%{project.mainfile.path.full.aswindows}",projMainfilePathFullWin);
@@ -414,9 +415,13 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     //fastiot
     this._mergeDictionary.set("%{launch.id}", IoTHelper.CreateGuid());
     this._mergeDictionary.set("%{template.id}", this.Attributes.Id);
-    //template app folder
+    //app folder
     const storagePath=IoTHelper.ReverseSeparatorReplacement(this.StoragePath);
     this._mergeDictionary.set("%{template.storage.path.aswindows}",<string>storagePath);
+    const appsBuiltInPath=IoTHelper.ReverseSeparatorReplacement(config.Folder.AppsBuiltIn);
+    this._mergeDictionary.set("%{extension.apps.builtin.aswindows}",<string>appsBuiltInPath);
+    const userName=os.userInfo().username;
+    this._mergeDictionary.set("%{os.userinfo.username}",<string>userName);
   }
 
   private PostCreatingMergeDictionary(device:IotDevice, config:IotConfiguration,

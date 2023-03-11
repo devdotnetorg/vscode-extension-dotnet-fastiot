@@ -90,7 +90,7 @@ export class IoTUI implements IContexUI {
     devices.forEach((device) => {
         const label=`${device.label}`;
         const description=`${device.Information.Architecture}`;
-        const detail=`$(circuit-board) ${device.Information.BoardName} $(terminal-linux) ${device.Information.OsDescription} ${device.Information.OsKernel} $(account) ${device.Account.UserName}`;
+        const detail=`$(circuit-board) ${device.Information.BoardName} $(terminal-linux) ${device.Information.OsDescription} $(circle-filled) ${device.Information.OsKernel} $(account) ${device.Account.UserName}`;
         const item = new ItemQuickPick(label,description,device,detail);
         itemDevices.push(item);
     });

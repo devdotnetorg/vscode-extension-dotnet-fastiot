@@ -6,7 +6,8 @@ namespace %{project.dotnet.namespace}
     {
         static void Main(string[] args)
         {            
-            Console.WriteLine(".NET console application!");
+            Console.WriteLine(".NET console application");
+			Console.WriteLine("Hello, %{os.userinfo.username}!");
         }
     }
 }

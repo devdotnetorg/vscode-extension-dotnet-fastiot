@@ -18,7 +18,7 @@
         {
 			"label": "fastiot-%{launch.id}-create-folder",
 			"dependsOn":"fastiot-%{launch.id}-build",
-			"command": "%{template.storage.path.aswindows}\\apps\\cwrsync\\ssh.exe",
+			"command": "%{extension.apps.builtin.aswindows}\\cwrsync\\ssh.exe",
 			"type": "process",
 			"args": [
 					"-i",
@@ -35,13 +35,13 @@
         {
 			"label": "fastiot-%{launch.id}-copy-app-to-device",
 			"dependsOn":"fastiot-%{launch.id}-create-folder",
-			"command": "%{template.storage.path.aswindows}\\apps\\cwrsync\\rsync.exe",
+			"command": "%{extension.apps.builtin.aswindows}\\cwrsync\\rsync.exe",
 			"type": "process",
 			"args": [
 				"--progress",
 				"-avz" ,
 				"-e",
-				"%{template.storage.path.aswindows}\\apps\\cwrsync\\ssh.exe -i %{device.ssh.key.path.full.aswindows} -o 'StrictHostKeyChecking no' -p %{device.ssh.port}",
+				"%{extension.apps.builtin.aswindows}\\cwrsync\\ssh.exe -i %{device.ssh.key.path.full.aswindows} -o 'StrictHostKeyChecking no' -p %{device.ssh.port}",
 				"%{project.path.full.ascygdrive}/bin/Debug/%{project.dotnet.targetframework}/%{device.dotnet.rid}/",
 				"%{device.user.debug}@%{device.host}:~/fastiot/debugapps/%{project.name}"
 			],

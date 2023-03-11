@@ -109,11 +109,11 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
             } 
           }
         }else{
-          this.ContextUI.Output(`[ERROR] The template ${template.DescriptionFilePath} is for a newer version of the extension.` +
+          this.ContextUI.Output(`[ERROR] The template ${template.ParentDir} is for a newer version of the extension. ` +
             `Update the extension.`);
         }
       }else{
-        this.ContextUI.Output(`[ERROR] The template ${template.DescriptionFilePath} has not been validated.`);
+        this.ContextUI.Output(`[ERROR] The template ${template.ParentDir} has not been validated.`);
         this.ContextUI.Output(template.ValidationErrorsToString);
         //delete system template
         if(type==EntityType.system) {
@@ -218,7 +218,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
               } 
             }
         }else{
-          this.ContextUI.Output(`Error. The template ${item.Url} is for a newer version of the extension.` +
+          this.ContextUI.Output(`Error. The template ${item.Url} is for a newer version of the extension. ` +
               `Update the extension.`);
         }
         //
@@ -228,15 +228,6 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     //result
     result= new IotResult(StatusResult.Ok,`Update of ${type} templates completed successfully`);
     return Promise.resolve(result);
-  }
-
-  public RestoreSystemTemplates()
-  {
-    const path=`${this.BasePath}\\${EntityType.system}`;
-    if (fs.existsSync(path)) {
-      //clear
-      fs.emptyDirSync(path);
-    }
   }
 
 }

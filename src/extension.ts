@@ -82,6 +82,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	contextUI.Output("Feedback: fastiot@devdotnet.org");
 	contextUI.Output("Site: https://devdotnet.org/tag/fastiot/");
 	contextUI.Output("GitHub: https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot");
+	contextUI.Output("Note: The next version of the extension above v0.3 will not support Windows 7");
 	contextUI.Output("----------------------------------");
 	//Config
 	//Get config
@@ -282,8 +283,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Restore/upgrade system templates
 	let commandRestoreSystemTemplates = vscode.commands.registerCommand('viewTemplates.RestoreSystemTemplates', async () => {
-		config.Templates.RestoreSystemTemplates();
-		if(config.Templates.Count>0) await config.LoadTemplatesAsync();
+		config.RestoreSystemTemplates();
 		vscode.window.showInformationMessage("Restore/upgrade system templates completed successfully");
 	});
 	//Events
@@ -291,6 +291,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	let eventChangeConfiguration=vscode.workspace.onDidChangeConfiguration((e) => {
 		if(e.affectsConfiguration('fastiot'))
 		{
+			//e.affectsConfiguration('conf.resource.insertEmptyLastLine')
 			// TODO reload settings while the extension is running
 			/*
 			treeDataDevicesProvider.Config=config;
