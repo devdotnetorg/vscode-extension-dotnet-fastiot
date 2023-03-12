@@ -82,7 +82,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	contextUI.Output("Feedback: fastiot@devdotnet.org");
 	contextUI.Output("Site: https://devdotnet.org/tag/fastiot/");
 	contextUI.Output("GitHub: https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot");
-	contextUI.Output("Note: The next version of the extension above v0.3 will not support Windows 7");
+	//contextUI.Output("Note: The next version of the extension above v0.3 will not support Windows 7");
 	contextUI.Output("----------------------------------");
 	//Config
 	//Get config

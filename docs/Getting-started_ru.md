@@ -118,6 +118,8 @@ sudo systemctl status ssh
 
 Примеры проектов с добавленной конфигурацией Launch (`/.vscode/launch.json`) и Tasks (`/.vscode/tasks.json`) располагаются в папке [samples](/samples/).
 
+В папке с проектом будет размещен файл `template.fastiot.yaml`. Этот файл необходим для определения идентификатора шаблона при добавлении Launch. Если его удалить, то не будет точного определения шаблона из которого был сформирован проект. Из файла `template.fastiot.yaml` берется только строка идентификатор шаблона `id: dotnet-console`.
+
 ## Перестройка (Rebuild) Launch
 
 Конфигурации Launch (`/.vscode/launch.json`) и Tasks (`/.vscode/tasks.json`) содержат абсолютные пути к бинарным файлам, которые загружаются на устройство, например `/cygdrive/d/Anton/Projects/Tests/DotnetConsoleAppRuntimeInfo/bin/Debug/net5.0/linux-arm/`. В связи с этим, если вы изменяете путь к папке `Applicationdatafolder` в настройках или переименовываете/перемещаете папку с проектом, то пути становятся несуществующими. В этом случае необходимо перестроить (Rebuild) Launch. Выбрать необходимый Launch и затем вызвать контекстное меню, нажать на пункт меню `Rebuild`.
