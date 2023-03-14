@@ -91,8 +91,8 @@
 
 ## Тестирование
 
-Тестирование выполнялось на одноплатных компьютерах:
+Тестирование выполняется на следующих одноплатных компьютерах:
 
-- [Cubieboard](https://github.com/devdotnetorg/Cubieboard "Cubieboard")
-- [Cubietruck](https://devdotnet.org/post/otladochnaya-plata-cubietruck/ "Cubietruck")
-- [Banana Pi BPI-M64](https://devdotnet.org/post/otladochnaya-plata-banana-pi-bpi-m64/ "Banana Pi BPI-M64")
+- [Cubieboard](https://github.com/devdotnetorg/Cubieboard "Cubieboard"). Дистрибутив Armbian.
+- [Cubietruck](https://devdotnet.org/post/otladochnaya-plata-cubietruck/ "Cubietruck"). Дистрибутив Armbian.
+- [Banana Pi BPI-M64](https://devdotnet.org/post/otladochnaya-plata-banana-pi-bpi-m64/ "Banana Pi BPI-M64"). Дистрибутив Armbian.

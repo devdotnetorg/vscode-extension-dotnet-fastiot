@@ -16,8 +16,6 @@ apt-get install -y sudo
 ```bash
 sudo apt-get update
 sudo apt-get install -y openssh-server mc
-sudo systemctl reload ssh
-sudo systemctl status ssh
 sudo mcedit /etc/ssh/sshd_config
 ```
 
@@ -61,7 +59,7 @@ sudo systemctl status ssh
 
 ### Шаг 3 — Установка пакетов
 
-Для запуска .NET IoT приложения и выполнения удаленной отладки необходимо установить:
+Для запуска .NET IoT приложении и выполнения удаленной отладки необходимо установить:
 
 - Среду исполнения - .NET Runtime;
 - Удаленный отладчик - .NET Debugger (vsdbg).
