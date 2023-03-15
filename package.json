@@ -482,7 +482,7 @@
 				},
 				{
 					"command": "viewLaunchs.AddEnviroment",
-					"when": "view == viewLaunchs && viewItem == iotenviroments",
+					"when": "view == viewLaunchs && viewItem == iotenviroment",
 					"group": "inline"
 				},
 				{

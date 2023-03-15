@@ -42,7 +42,7 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:Launc
             return;
         }
         //Main process
-        launchNode.Launch.Environments.Add(nameEnviroment,valueEnviroment);
+        launchNode.Launch.Environment.Add(nameEnviroment,valueEnviroment);
         result=launchNode.Launch.WriteEnvironments();
         launchNode.BuildEnvironments();
         //Message
@@ -73,7 +73,7 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:La
             return;
         }
         //Main process
-        launchNode.Launch.Environments.Rename(<string>item.label,newName);
+        launchNode.Launch.Environment.Rename(<string>item.label,newName);
         result=launchNode.Launch.WriteEnvironments();
         launchNode.BuildEnvironments();
         //Message
@@ -104,7 +104,7 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:Laun
             return;
         }
         //Main process
-        launchNode.Launch.Environments.Edit(<string>item.label,newValue);
+        launchNode.Launch.Environment.Edit(<string>item.label,newValue);
         result=launchNode.Launch.WriteEnvironments();
         launchNode.BuildEnvironments();
         //Message
@@ -122,7 +122,7 @@ export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:La
         let launchNode=<LaunchNode>environmentsNode.Parent;
         let result:IotResult;
         //Main process
-        launchNode.Launch.Environments.Remove(<string>item.label);
+        launchNode.Launch.Environment.Remove(<string>item.label);
         result=launchNode.Launch.WriteEnvironments();
         launchNode.BuildEnvironments();  
         //Message

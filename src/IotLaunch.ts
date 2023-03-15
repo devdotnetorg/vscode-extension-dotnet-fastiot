@@ -52,16 +52,16 @@ export class IotLaunch {
   public get Options(): IotOption[] {
     return this._options;}
 
-  private _environments:IotLaunchEnvironment;
-  public get Environments(): IotLaunchEnvironment {
-    return this._environments;}
+  private _environment:IotLaunchEnvironment;
+  public get Environment(): IotLaunchEnvironment {
+    return this._environment;}
 
   constructor(workspaceDirectory:string){
     this._workspaceDirectory=workspaceDirectory;
     this._launchFilePath=<string>this.WorkspaceDirectory+"\\.vscode\\launch.json";
     this._tasksFilePath=<string>this.WorkspaceDirectory+"\\.vscode\\tasks.json";
     this._options = [];
-    this._environments = new IotLaunchEnvironment();  
+    this._environment = new IotLaunchEnvironment();  
   }
 
   public Load(idLaunch:string,devices: Array<IotDevice>): IotResult {  
@@ -148,7 +148,7 @@ export class IotLaunch {
       //fastiotIdTemplate
       this._idTemplate=jsonObj.fastiotIdTemplate;
       //Environments
-      if(jsonObj.env) this.Environments.FromJSON(jsonObj.env);
+      if(jsonObj.env) this.Environment.FromJSON(jsonObj.env);
       //Label-name
       this._label=jsonObj.name;
       //Description
@@ -500,7 +500,7 @@ export class IotLaunch {
       let jsonLaunch = result.returnObject;
       const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.IdLaunch);
       if (launch) {
-        launch.env= this.Environments.ToJSON();
+        launch.env= this.Environment.ToJSON();
         //write file
         result=this.SaveLaunch(jsonLaunch);
         if(result.Status==StatusResult.Error) {

@@ -15,13 +15,18 @@ export class LaunchNode extends LaunchTreeItemNode {
     return this._launch;}
 
   public Options:LaunchTreeItemNode;
-  public Environments:LaunchTreeItemNode;
+  public Environment:LaunchTreeItemNode;
 
   constructor(launch: IotLaunch){
     super("Configuration",undefined, undefined,vscode.TreeItemCollapsibleState.Collapsed,undefined);
     this._launch=launch;
     this.label=this._launch.Label;
-    this.tooltip=this._launch.Label;
+    let tooltip:vscode.MarkdownString;
+    if(this._launch.Description)
+      tooltip= new vscode.MarkdownString(`$(debug-start) ${this._launch.Label}   \nDescription: ${this._launch.Description}`,true);
+    else
+      tooltip=new vscode.MarkdownString(`$(debug-start) ${this._launch.Label}`,true);
+    this.tooltip=tooltip;
     //view
     this.contextValue="iotlaunch";
     //Options
@@ -34,15 +39,15 @@ export class LaunchNode extends LaunchTreeItemNode {
     //Added in childs
     this.Childs.push(this.Options);
     //Environments
-    this.Environments=new LaunchTreeItemNode("Environments",undefined,"Environments",
+    this.Environment=new LaunchTreeItemNode("Environment",undefined,"Environment",
       vscode.TreeItemCollapsibleState.Collapsed,this);
-    this.Environments.contextValue="iotenviroments";
-    this.Environments.iconPath = {
+    this.Environment.contextValue="iotenviroment";
+    this.Environment.iconPath = {
       light: path.join(__filename, '..', '..', 'resources', 'light', 'enviroment.svg'),
       dark: path.join(__filename, '..', '..', 'resources', 'dark', 'enviroment.svg')
     };
     //Added in childs
-    this.Childs.push(this.Environments);
+    this.Childs.push(this.Environment);
     //Build
     this.Build();
   }
@@ -81,13 +86,13 @@ export class LaunchNode extends LaunchTreeItemNode {
   public BuildEnvironments() {
     //main
     //create child elements
-    this.Environments.Childs=[];
+    this.Environment.Childs=[];
     let item:LaunchTreeItemNode;
-    this._launch.Environments.Items.forEach((value,key) => {
+    this._launch.Environment.Items.forEach((value,key) => {
       item = new LaunchTreeItemNode(key,value,value,
-        vscode.TreeItemCollapsibleState.None,this.Environments);
+        vscode.TreeItemCollapsibleState.None,this.Environment);
       item.contextValue="iotenviromentitem"
-      this.Environments.Childs.push(item);      
+      this.Environment.Childs.push(item);      
     });
   }
 
