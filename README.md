@@ -36,7 +36,7 @@ Additional extensions required for developing .NET applications:
 
 Recommended additional extensions that improve the development process and interaction with the remote device:
 
-- [NuGet Package Manager](https://marketplace.visualstudio.com/items?itemName=jmrog.vscode-nuget-package-manager "NuGet Package Manager") - adding Nuget packages (later the Nuget package manager will be built into extension);
+- [NuGet Package Manager GUI](https://marketplace.visualstudio.com/items?itemName=aliasadidev.nugetpackagemanagergui "NuGet Package Manager GUI") - adding Nuget packages (later the Nuget package manager will be built into the extension);
 - [DeviceTree](https://marketplace.visualstudio.com/items?itemName=plorefice.devicetree "DeviceTree") - Syntax support for Device Tree (DT) files. Used to edit `*.dts` files. For example, it will be necessary if it becomes necessary to adapt the [SPI LCD ILI9341 display](https://devdotnet.org/post/rabota-s-gpio-v-linux-na-primere-banana-pi-bpi-m64-chast-4-device-tree-overlays-podkluchenie-displey-spi-lcd-ili9341/ "SPI LCD ILI9341 display") for your SBC;
 - [Output Colorizer](https://marketplace.visualstudio.com/items?itemName=IBM.output-colorizer "Output Colorizer") - adds color to the test messages in the OUTPUT window, makes it easier to perceive the information provided by the extension.
 
@@ -93,6 +93,6 @@ See [ISSUES](ISSUES.md "ISSUES") and [Issues on GitHub](https://github.com/devdo
 
 Testing was performed on single-board computers:
 
-- [Cubieboard](https://github.com/devdotnetorg/Cubieboard "Cubieboard")
-- [Cubietruck](https://devdotnet.org/post/otladochnaya-plata-cubietruck/ "Cubietruck")
-- [Banana Pi BPI-M64](https://devdotnet.org/post/otladochnaya-plata-banana-pi-bpi-m64/ "Banana Pi BPI-M64")
+- [Cubieboard](https://github.com/devdotnetorg/Cubieboard "Cubieboard"). Armbian distribution.
+- [Cubietruck](https://devdotnet.org/post/otladochnaya-plata-cubietruck/ "Cubietruck"). Armbian distribution.
+- [Banana Pi BPI-M64](https://devdotnet.org/post/otladochnaya-plata-banana-pi-bpi-m64/ "Banana Pi BPI-M64"). Armbian distribution.

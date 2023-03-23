@@ -102,6 +102,7 @@ PasswordAuthentication yes
 ChallengeResponseAuthentication yes
 AuthenticationMethods publickey keyboard-interactive password
 ```
+
 И перезапустить OpenSSH сервер командой: `sudo systemctl reload ssh`. Затем посмотрите состояние работы OpenSSH сервера, командой: `sudo systemctl status ssh`.
 
 Если возникнут проблемы с конфигурационными файлами, то выполните следующие действия:

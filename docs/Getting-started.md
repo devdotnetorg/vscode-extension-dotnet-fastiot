@@ -16,8 +16,6 @@ apt-get install -y sudo
 ```bash
 sudo apt-get update
 sudo apt-get install -y openssh-server mc
-sudo systemctl reload ssh
-sudo systemctl status ssh
 sudo mcedit /etc/ssh/sshd_config
 ```
 
@@ -117,6 +115,8 @@ To run a .NET IoT application and perform remote debugging, you need to install:
 ![VSCode dotnet FastIoT](vscode-dotnet-fastiot-create-project-11.png)
 
 Sample projects with added configuration Launch (`/.vscode/launch.json`) and Tasks (`/.vscode/tasks.json`) are located in the [samples](/samples/) folder.
+
+The `template.fastiot.yaml` file will be placed in the project folder. This file is required to determine the template ID when adding Launch. If it is removed, then there will be no exact definition of the template from which the project was formed. From the `template.fastiot.yaml` file, only the template identifier string `id: dotnet-console` is taken.
 
 ## Rebuild Launch
 

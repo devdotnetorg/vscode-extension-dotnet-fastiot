@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.3.2 (24-03-2023)
+
+- Added output of diagnostic information when connecting via ssh protocol.
+- Added stdErr and codeErr output at the end of ssh script execution.
+- Fixed the problem of long execution of scripts when adding a device.
+- Added parameter `fastiot.template.loadonstart`, you can disable the loading of templates at the start of the extension.
+- Added parameter `fastiot.template.updateinterval`, time interval between template updates.
+- Added parameter `fastiot.template.isupdate`, disables template updates.
+- Added `Restore/upgrade system templates` command to restore system templates.
+- Variables added for project templates: `%{extension.apps.builtin.aswindows}`, `%{os.userinfo.username}`.
+- Compliance with UX Guidelines is done.
+- Improved UI.
+- Changed the description of the settings.
+- Added Crlf normalization for bash scripts.
+- Fixed bugs.
+
 ## v0.3.1 (27-02-2023)
 
 - Bugs fixed.
