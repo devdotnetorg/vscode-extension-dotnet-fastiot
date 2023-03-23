@@ -85,6 +85,13 @@
 
 В Launch были добавлены дополнительные ключи, с приставкой `fastiotId*`, ключи: `fastiotIdLaunch`, `fastiotIdDevice`, `fastiotProject`, `fastiotIdTemplate`. Не рекомендуется их изменять т.к. некоторые функции расширения из-за этого могут быть недоступны.
 
+Ключи:
+- `fastiotIdLaunch` - уникальный идентификатор Launch;
+- `fastiotIdDevice` - уникальный идентификатор устроства;
+- `fastiotProject` - уникальный идентификатор шаблона, из которого был создан Launch;
+- `fastiotIdTemplate` - путь к проекту, с которым связан данный Launch;
+- `fastiotDescription` - (наличие необязательно) текстовое описание Launch. Для переноса строки использовать `  \n` (два пробела и \n).
+
 Пример:
 
 ```json
@@ -93,6 +100,7 @@
   "fastiotIdDevice": "cubieboard-5e835aae",
   "fastiotProject": "/DotnetConsoleAppRuntimeInfo.csproj",
   "fastiotIdTemplate": "dotnet-console-runtime-info",
+  "fastiotDescription": "Launch with logging.  \nRsync copying executable files - project_folder/rsync.log.  \nDebugger - /var/log/vsdbg.log",
   "name": "Launch on cubieboard (DotnetConsoleAppRuntimeInfo, Cubieboard, debugvscode)",
   "type": "coreclr",
   "request": "launch",
