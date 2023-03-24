@@ -9,12 +9,11 @@ export class IotConfigurationFolder {
   private _applicationData:string;
   public get ApplicationData(): string {
     return this._applicationData;}
-  private _context: vscode.ExtensionContext;
-  //
   public get DeviceKeys(): string {
     return this._applicationData+"\\settings\\keys";}
+  private _extension: string;
   public get Extension(): string {
-      return this._context.extensionUri.fsPath;}
+      return this._extension;}
   public get Templates(): string {
     return this.ApplicationData+"\\templates";}
   public get TemplatesSystem(): string {
@@ -29,21 +28,20 @@ export class IotConfigurationFolder {
     return this.ApplicationData+"\\tmp";}
   public get Schemas(): string {
     return this.Extension+"\\schemas";}
+  public get WorkspaceDirectory(): string| undefined {
+    return IoTHelper.GetWorkspaceDirectory();}
 
-  constructor(
-    applicationDataPath: string,
-    context: vscode.ExtensionContext
-    ){
-      this._applicationData=applicationDataPath;
-      this._context=context;
-      //Create folders
-      IoTHelper.MakeDirSync(this.ApplicationData);
-      IoTHelper.MakeDirSync(this.DeviceKeys);
-      IoTHelper.MakeDirSync(this.TemplatesSystem);
-      IoTHelper.MakeDirSync(this.TemplatesUser);
-      IoTHelper.MakeDirSync(this.TemplatesCommunity);
-      IoTHelper.MakeDirSync(this.Temp);
-    }
+  constructor(applicationDataPath: string, context: vscode.ExtensionContext) {
+    this._extension=context.extensionUri.fsPath;
+    this._applicationData=applicationDataPath;
+    //Create folders
+    IoTHelper.MakeDirSync(this.ApplicationData);
+    IoTHelper.MakeDirSync(this.DeviceKeys);
+    IoTHelper.MakeDirSync(this.TemplatesSystem);
+    IoTHelper.MakeDirSync(this.TemplatesUser);
+    IoTHelper.MakeDirSync(this.TemplatesCommunity);
+    IoTHelper.MakeDirSync(this.Temp);
+  }
 
   //clearing temporary files
   public ClearTmp() {

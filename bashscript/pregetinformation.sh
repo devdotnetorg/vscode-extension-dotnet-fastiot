@@ -9,10 +9,18 @@ set -e #Exit immediately if a comman returns a non-zero status
 
 echo "Run: pregetinformation.sh"
 
+#
+PACKAGELIST="lsb-release rsync jq sudo curl wget"
+#
+
 export DEBIAN_FRONTEND="noninteractive"
 
+echo "System update and package installation: $PACKAGELIST"
+
 apt-get update
-apt-get install -y lsb-release rsync jq sudo curl wget
+apt-get install -y $PACKAGELIST
+
+echo "System update and package installation completed successfully"
 
 echo "Successfully"
 

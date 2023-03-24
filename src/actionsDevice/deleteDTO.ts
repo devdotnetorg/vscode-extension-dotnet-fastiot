@@ -5,19 +5,18 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDeviceDTO } from '../IotDeviceDTO';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function deleteDTO(treeData: TreeDataDevicesProvider,item:IotDeviceDTO): Promise<void> { 
+export async function deleteDTO(treeData: TreeDataDevicesProvider,item:IotDeviceDTO,contextUI:IContexUI): Promise<void> { 
     const answer = await vscode.window.showInformationMessage(`Do you really want to remove the DTO: 
         ${item.label}?`, ...["Yes", "No"]);
     if(answer=="Yes") {
-        treeData.OutputChannel.appendLine("Action: DTO removal");                
+        contextUI.Output("Action: DTO removal");
+        contextUI.ShowBackgroundNotification("DTO removal");                
         const result=await treeData.DeleteDTO(item);
+        contextUI.HideBackgroundNotification();
         //Output 
-        treeData.OutputChannel.appendLine("------------- Result -------------");
-        treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-        treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-        treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-        treeData.OutputChannel.appendLine("----------------------------------");
+        contextUI.Output(result.toStringWithHead());
         //Message
         if(result.Status==StatusResult.Ok) {        
             treeData.Refresh(); 

@@ -5,8 +5,9 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function rebootDevice(treeData: TreeDataDevicesProvider,item:IotDevice, firstText:string|undefined): Promise<void> { 
+export async function rebootDevice(treeData: TreeDataDevicesProvider,item:IotDevice, firstText:string|undefined,contextUI:IContexUI): Promise<void> { 
     let textMessage:string;
     if(firstText) {
         textMessage=`${firstText}. Reboot your device: 
@@ -20,14 +21,12 @@ export async function rebootDevice(treeData: TreeDataDevicesProvider,item:IotDev
     if(answer=="Yes") {
         const device = treeData.FindbyIdDevice(<string>item.IdDevice);    
         if(device) {
-            treeData.OutputChannel.appendLine("Action: reboot device");
+            contextUI.Output("Action: reboot device");
+            contextUI.ShowBackgroundNotification("Reboot device");
             const result = await device.Reboot();
+            contextUI.HideBackgroundNotification();
             //Output       
-            treeData.OutputChannel.appendLine("------------- Result -------------");
-            treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-            treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-            treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-            treeData.OutputChannel.appendLine("----------------------------------");
+            contextUI.Output(result.toStringWithHead());
             //Message                 
             if(result.Status==StatusResult.Ok) {
                 vscode.window.showInformationMessage(`Reboot completed successfully. 
@@ -35,7 +34,7 @@ export async function rebootDevice(treeData: TreeDataDevicesProvider,item:IotDev
             } else {            
                 vscode.window.showErrorMessage(`Error. Failed to reboot device! ${result.Message}`);
                 if(result.SystemMessage) 
-                    treeData.OutputChannel.appendLine(result.SystemMessage);
+                    contextUI.Output(result.SystemMessage);
             }       
         }
     }

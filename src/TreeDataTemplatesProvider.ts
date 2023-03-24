@@ -1,21 +1,21 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './BaseTreeItem';
-import {IotLaunch} from './IotLaunch';
+import {LaunchTreeItemNode} from './LaunchTreeItemNode';
+import {LaunchNode} from './LaunchNode';
 import {IotResult,StatusResult} from './IotResult';
 
-export class TreeDataTemplatesProvider implements vscode.TreeDataProvider<BaseTreeItem> {
+export class TreeDataTemplatesProvider implements vscode.TreeDataProvider<LaunchTreeItemNode> {
 
   constructor() {}
 
-  public getTreeItem(element: BaseTreeItem): vscode.TreeItem | Thenable<BaseTreeItem> {
+  public getTreeItem(element: LaunchTreeItemNode): vscode.TreeItem | Thenable<LaunchTreeItemNode> {
     return element;
   }  
   
-  public getChildren(element?: BaseTreeItem): Thenable<BaseTreeItem[]> {
+  public getChildren(element?: LaunchTreeItemNode): Thenable<LaunchTreeItemNode[]> {
       //Creating a root structure   
-      let RootItems:Array<IotLaunch>=[];         
+      let RootItems:Array<LaunchNode>=[];         
       return Promise.resolve(RootItems);        
   }
 

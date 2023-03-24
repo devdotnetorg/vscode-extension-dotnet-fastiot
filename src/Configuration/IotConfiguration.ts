@@ -3,11 +3,13 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
-import {IotConfigurationFolder} from './IotConfigurationFolder';
-import {IotTemplateCollection} from '../Templates/IotTemplateCollection';
+import { IotResult,StatusResult } from '../IotResult';
+import { IotConfigurationFolder } from './IotConfigurationFolder';
+import { IotTemplateCollection } from '../Templates/IotTemplateCollection';
 import { IoTHelper } from '../Helper/IoTHelper';
+import { IContexUI } from '../ui/IContexUI';
 
-export class IotConfiguration {  
+export class IotConfiguration {
   public UsernameAccountDevice:string="";
   public GroupsAccountDevice:string="";
   public TypeKeySshDevice:string="";
@@ -15,16 +17,27 @@ export class IotConfiguration {
   public TemplateTitleLaunch:string="";
   public Folder: IotConfigurationFolder;
   public Templates: IotTemplateCollection;
-
-  private _context:vscode.ExtensionContext;
-  private _logCallback:(value:string) =>void;
+  public IsUpdateTemplates:boolean;
+  public UpdateIntervalTemplatesHours:number;
+  public LastUpdateTemplatesHours:number;
+  private _contextUI:IContexUI;
+  private _extVersion:string;
+  public get ExtVersion(): string {
+    return this._extVersion;}
+  private _extMode:vscode.ExtensionMode;
+  public get ExtMode(): vscode.ExtensionMode {
+    return this._extMode;}
 
   constructor(
     context: vscode.ExtensionContext,
-    versionExt:string,
-    logCallback:(value:string) =>void,
+    contextUI:IContexUI
     ){
-      this._logCallback=logCallback;
+      //Get info from context
+      this._extVersion=`${context.extension.packageJSON.version}`;
+      this._extMode=context.extensionMode;
+      //UI
+      this._contextUI=contextUI;
+      //Get Application folder
       let applicationDataPath: string=<string>vscode.workspace.getConfiguration().get('fastiot.device.applicationdatafolder');
       //Application folder definition
       if(applicationDataPath == null||applicationDataPath == undefined||applicationDataPath == "") 
@@ -38,14 +51,17 @@ export class IotConfiguration {
       }
       //
       this.Folder = new IotConfigurationFolder(applicationDataPath,context);
-      this.Templates= new IotTemplateCollection(this.Folder.Templates,this.Folder.Extension+"\\templates\\system",
-        logCallback,versionExt,this.Folder.Schemas);
-      this._context=context;
-      //Init
-      this.Init();
+      this.Templates= new IotTemplateCollection(this.Folder.Templates,
+        this.Folder.Extension+"\\templates\\system",this.ExtVersion,
+        this.Folder.Schemas,this._contextUI);
+      
+      //Template update
+      this.IsUpdateTemplates=<boolean>vscode.workspace.getConfiguration().get('fastiot.template.isupdate');
+      this.UpdateIntervalTemplatesHours=<number>vscode.workspace.getConfiguration().get('fastiot.template.updateinterval');
+      this.LastUpdateTemplatesHours=<number>vscode.workspace.getConfiguration().get('fastiot.template.lastupdate');
     }
 
-  private Init()
+  public async Init()
   {
     //Device----------------------------------
     this.UsernameAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
@@ -109,15 +125,19 @@ export class IotConfiguration {
       //Saving settings
       vscode.workspace.getConfiguration().update('fastiot.device.pathfolderkeys',"",true);
     }
+    //Templates-------------------------------
     //Clear
-	  this.Folder.ClearTmp();
+    this.Folder.ClearTmp();
+    //Load
+    const loadTemplatesOnStart =  <boolean>vscode.workspace.getConfiguration().get('fastiot.template.loadonstart');
+    if(loadTemplatesOnStart) this.LoadTemplatesAsync();
   }
   
-  public async LoadTemplatesAsync()
+  public async LoadTemplatesAsync(force:boolean=false)
   {
     await vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
-      title: "Starting ... ",
+      title: "Loading ... ",
       cancellable: false
     }, (progress, token) => {
       //token.onCancellationRequested(() => {
@@ -127,60 +147,54 @@ export class IotConfiguration {
         //main code
         progress.report({ message: "Preparing to load",increment: 20 }); //20
         //Preparing
+        let result= new IotResult(StatusResult.None,undefined,undefined);
         this.Templates.Clear();
         let url:string="";
-        if(this._context.extensionMode==vscode.ExtensionMode.Production)
+        if(this.ExtMode==vscode.ExtensionMode.Production)
         {
           url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
         }else{
           //for test
           url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/templates/system/templatelist.fastiot.yaml";
         }
-        this._logCallback("-------- Loading templates -------");
+        this._contextUI.Output("-------- Loading templates -------");
         //Loading system templates
         progress.report({ message: "Loading system templates",increment: 20 }); //40
         await this.Templates.LoadTemplatesSystem();
         //Updating system templates
         progress.report({ message: "Updating system templates",increment: 20 }); //60
-        await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
+        //To get the number of hours since Unix epoch, i.e. Unix timestamp:
+        const dateNow=Math.floor(Date.now() / 1000/ 3600);
+        const TimeHasPassedHours=dateNow-this.LastUpdateTemplatesHours;
+        this._contextUI.Output("Updating system templates");
+        if(force||(this.IsUpdateTemplates&&(TimeHasPassedHours>=this.UpdateIntervalTemplatesHours))){
+          result=await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
+          this._contextUI.Output(result);
+          //timestamp of last update
+          if(result.Status==StatusResult.Ok){
+            vscode.workspace.getConfiguration().update('fastiot.template.lastupdate',<number>dateNow,true);
+          }
+        } else this._contextUI.Output(`Disabled or less than ${this.UpdateIntervalTemplatesHours} hour(s) have passed since the last update.`);
         //Loading custom templates
         progress.report({ message: "Loading custom templates",increment: 20 }); //80
         await this.Templates.LoadTemplatesUser();
         const endMsg=`${this.Templates.Count} template(s) available.`;
-        this._logCallback(endMsg);
-        this._logCallback("----------------------------------");
+        this._contextUI.Output(endMsg);
+        this._contextUI.Output("----------------------------------");
         progress.report({ message: "Templates loaded" , increment: 20 }); //100
-        await IoTHelper.Sleep(2000);
         resolve(endMsg);
         //end
       });
     });
-
-    //old variant
-    /*
-    const loadTemplates = async () => {
-      let url:string="";
-      if(this._context.extensionMode==vscode.ExtensionMode.Production)
-      {
-        url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
-      }else{
-        //for test
-        url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/templates/system/templatelist.fastiot.yaml";
-      }
-      this._logCallback("-------- Loading templates -------");
-      this.Templates.Clear();
-      await this.Templates.LoadTemplatesSystem();
-      await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
-      await this.Templates.LoadTemplatesUser();
-      this._logCallback(`${this.Templates.Count} template(s) available.`);
-      this._logCallback("----------------------------------");
-      };
-	  loadTemplates();
-    */
   }
-}
 
-type P = {
-  x: number;
-  y: number;
+  public RestoreSystemTemplates()
+  {
+    if (fs.existsSync(this.Folder.TemplatesSystem)) {
+      //clear
+      fs.emptyDirSync(this.Folder.TemplatesSystem);
+    }
+    this.LoadTemplatesAsync(true);
+  }
+  
 }

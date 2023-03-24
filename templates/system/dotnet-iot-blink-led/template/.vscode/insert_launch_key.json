@@ -18,7 +18,7 @@
 			},
 			"pipeTransport": {
 				"pipeCwd": "${workspaceFolder}",
-				"pipeProgram": "%{template.storage.path.aswindows}\\apps\\cwrsync\\ssh.exe",
+				"pipeProgram": "%{extension.apps.builtin.aswindows}\\cwrsync\\ssh.exe",
 				"pipeArgs": [
 					"-i",
 					"%{device.ssh.key.path.full.aswindows}",

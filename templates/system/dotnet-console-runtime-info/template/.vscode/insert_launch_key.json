@@ -5,6 +5,7 @@
 			"fastiotIdDevice": "%{device.id}",
 			"fastiotProject":"%{project.mainfile.path.relative.aslinux}",
 			"fastiotIdTemplate": "%{template.id}",
+			"fastiotDescription": "Launch with logging.  \nRsync copying executable files - project_folder/rsync.log.  \nDebugger - /var/log/vsdbg.log.",
 			"name": "%{launch.label}",
 			"type": "coreclr",
 			"request": "launch",

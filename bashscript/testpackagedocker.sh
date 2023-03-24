@@ -10,6 +10,6 @@ echo "Run: testpackagedocker.sh"
 sudo systemctl status docker
 docker --version
 docker version
-docker info
+sudo docker info
 
 echo "Successfully"

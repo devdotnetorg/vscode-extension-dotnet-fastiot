@@ -5,20 +5,18 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
+import { IoTHelper } from '../Helper/IoTHelper';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function connectionTestDevice(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {   
+export async function connectionTestDevice(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IContexUI): Promise<void> {   
     const device= treeData.FindbyIdDevice(<string>item.IdDevice);
     if(device) {
-        treeData.OutputChannel.appendLine("Action: connection test device");
-        treeData.ShowStatusBar("Checking the network connection");
+        contextUI.Output("Action: connection test device");
+        contextUI.ShowBackgroundNotification("Checking the network connection");
         const result = await device.ConnectionTest();
-        treeData.HideStatusBar();
-        //Output       
-        treeData.OutputChannel.appendLine("------------- Result -------------");
-        treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-        treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-        treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-        treeData.OutputChannel.appendLine("----------------------------------");
+        contextUI.HideBackgroundNotification();
+        //Output
+        contextUI.Output(result.toStringWithHead());
         //Message          
         if(result.Status==StatusResult.Ok) {
             vscode.window.showInformationMessage(`Connection to host ${device.Account.Host} via ssh 

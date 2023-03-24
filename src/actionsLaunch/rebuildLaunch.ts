@@ -4,25 +4,30 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotLaunch } from '../IotLaunch';
+import { LaunchNode } from '../LaunchNode';
+import { IContexUI } from '../ui/IContexUI';
+import { IotDevice } from '../IotDevice';
 
-export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch): Promise<void> {
-     //Main process
-     treeData.OutputChannel.appendLine(`Action: rebuild Launch. Launch: ${item.label}`);
-     const result = await treeData.RebuildLaunch(item.IdLaunch);
-     //Output
-     treeData.OutputChannel.appendLine("------------- Result -------------");
-     treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-     treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-     treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-     treeData.OutputChannel.appendLine("----------------------------------");
-     //Message
-     if(result.Status==StatusResult.Ok)
-     {
-        vscode.window.showInformationMessage("Configuration rebuild completed successfully");
-     }else {
-         vscode.window.showErrorMessage(`Error. Rebuild is not completed! \n${result.Message}. ${result.SystemMessage}`);            
-     }
-     //Refresh
-     treeData.RefreshsFull();
+export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,devices: Array<IotDevice>,item:LaunchNode,contextUI:IContexUI): Promise<void> {
+   let result:IotResult;
+   //Load template
+   if(treeData.Config.Templates.Count==0)
+      await treeData.Config.LoadTemplatesAsync();
+   //repeat
+   if(treeData.Config.Templates.Count==0) {
+      result=new IotResult(StatusResult.No,`No templates available`);
+      contextUI.ShowNotification(result);
+      return;
+   }
+   //Main process
+   contextUI.Output(`Action: rebuild Launch. Launch: ${item.label}`);
+   contextUI.ShowBackgroundNotification(`Rebuild Launch. Launch: ${item.label}`);
+   result = item.Launch.RebuildLaunch(treeData.Config,devices);
+   contextUI.HideBackgroundNotification();
+   //Output
+   contextUI.Output(result.toStringWithHead());
+   //Message
+   contextUI.ShowNotification(result);
+   //Refresh
+   treeData.RefreshsFull();
 }

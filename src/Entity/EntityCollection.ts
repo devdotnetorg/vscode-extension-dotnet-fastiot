@@ -6,8 +6,11 @@ import {EntityBase} from './EntityBase';
 import {EntityBaseAttribute} from './EntityBaseAttribute';
 import {EntityType} from './EntityType';
 import {IotResult,StatusResult } from '../IotResult';
+import {IContexUI} from '../ui/IContexUI';
 
 export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> {
+  protected ContextUI:IContexUI;
+  
   private _data:Map<string,T>;
   protected _pathFolderSchemas: string;
 
@@ -25,12 +28,11 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public get Count(): number {
       return this._data.size;}
 
-  protected LogCallback:(value:string) =>void;
-
-  constructor(basePath: string, recoverySourcePath:string,logCallback:(value:string) =>void,
-    versionExt:string,pathFolderSchemas: string
+  constructor(
+    basePath: string, recoverySourcePath:string,versionExt:string,
+    pathFolderSchemas: string,contextUI:IContexUI
     ){
-      this.LogCallback=logCallback;
+      this.ContextUI=contextUI;
       this._pathFolderSchemas=pathFolderSchemas;
       this._data = new Map<string,T>(); 
       this._basePath=basePath;
@@ -67,15 +69,6 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public Clear()
   {
     this._data.clear();
-  }
-
-  protected LogValidationErrors(validationErrors:Array<string>) {
-    this.LogCallback(`Validation messages:`);
-    let index=1;
-    validationErrors.forEach((item) => {
-      this.LogCallback(`${index}. ${item}`);
-      index++;
-    });
   }
 
   public IsCompatible1(value:T):boolean

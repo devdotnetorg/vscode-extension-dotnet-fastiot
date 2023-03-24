@@ -4,37 +4,33 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotLaunch } from '../IotLaunch';
+import { LaunchNode } from '../LaunchNode';
 import { IoTHelper } from '../Helper/IoTHelper';
+import { IContexUI } from '../ui/IContexUI';
 
-export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch): Promise<void> {                    
+export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:LaunchNode,contextUI:IContexUI): Promise<void> {                    
     let newLabel = await vscode.window.showInputBox({				
         prompt: 'prompt',
         title: 'Enter a new name launch',
         value:<string>item.label
     });
-    if((newLabel==undefined)||(newLabel==item.label)) return;
+    if((!newLabel)||(newLabel==item.label)) return;
     newLabel=IoTHelper.StringTrim(newLabel);
+    let result:IotResult;
     if(newLabel==""){
-        vscode.window.showErrorMessage(`Error. Empty name specified`);
+        result=new IotResult(StatusResult.Error,`Empty name specified`);
+        contextUI.ShowNotification(result);
         return;
     } 
     //Main process
-    treeData.OutputChannel.appendLine(`Action: launch rename. Old name: ${item.label}. New name: ${newLabel}`);
-    const result = await treeData.RenameLaunch(item,newLabel);
+    contextUI.Output(`Action: launch rename. Old name: ${item.label}. New name: ${newLabel}`);
+    contextUI.ShowBackgroundNotification(`Launch rename. Old name: ${item.label}. New name: ${newLabel}`);
+    result = item.Launch.Rename(newLabel);
+    contextUI.HideBackgroundNotification();
     //Output
-    treeData.OutputChannel.appendLine("------------- Result -------------");
-    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-    treeData.OutputChannel.appendLine("----------------------------------");
+    contextUI.Output(result.toStringWithHead());
     //Message
-    if(result.Status==StatusResult.Ok)
-    {
-        vscode.window.showInformationMessage('Launch rename succeeded');
-    }else {
-        vscode.window.showErrorMessage(`Error. Launch has not been renamed! \n${result.Message}. ${result.SystemMessage}`);
-    }
+    //contextUI.ShowNotification(result);
     //Refresh
     treeData.RefreshsFull();
 }

@@ -5,16 +5,15 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
+import {IContexUI} from '../ui/IContexUI';
 
-export async function refreshDTO(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {   
-    treeData.OutputChannel.appendLine("Action: retrieving all DTOs");                
+export async function refreshDTO(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IContexUI): Promise<void> {   
+    contextUI.Output("Action: retrieving all DTOs");
+    contextUI.ShowBackgroundNotification("Retrieving all DTOs");              
     const result=await treeData.GetAllDTO(<string>item.IdDevice);
+    contextUI.HideBackgroundNotification();
     //Output 
-    treeData.OutputChannel.appendLine("------------- Result -------------");
-    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-    treeData.OutputChannel.appendLine("----------------------------------");
+    contextUI.Output(result.toStringWithHead());
     //Message
     if(result.Status==StatusResult.Ok) {
         item.DtoLinux.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;

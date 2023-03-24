@@ -4,25 +4,19 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotLaunch } from '../IotLaunch';
+import { LaunchNode } from '../LaunchNode';
+import { IContexUI } from '../ui/IContexUI';
 
-export async function deleteLaunch(treeData: TreeDataLaunchsProvider,item:IotLaunch): Promise<void> {                    
+export async function deleteLaunch(treeData: TreeDataLaunchsProvider,item:LaunchNode,contextUI:IContexUI): Promise<void> {                    
     //Main process
-    treeData.OutputChannel.appendLine(`Action: launch removal ${item.label} ${item.IdLaunch}`);
-    const result = await treeData.DeleteLaunch(item.IdLaunch);
+    contextUI.Output(`Action: launch removal ${item.label} ${item.Launch.IdLaunch}`);
+    contextUI.ShowBackgroundNotification(`Launch removal ${item.label} ${item.Launch.IdLaunch}`);
+    const result = item.Launch.Remove();
+    contextUI.HideBackgroundNotification();
     //Output
-    treeData.OutputChannel.appendLine("------------- Result -------------");
-    treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-    treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-    treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-    treeData.OutputChannel.appendLine("----------------------------------");
+    contextUI.Output(result.toStringWithHead());
     //Message
-    if(result.Status==StatusResult.Ok)
-    {
-        vscode.window.showInformationMessage('Launch successfully removed');
-    }else {
-        vscode.window.showErrorMessage(`Error. Launch is not deleted! \n${result.Message}. ${result.SystemMessage}`);            
-    }
+    contextUI.ShowNotification(result);
     //Refresh
     treeData.RefreshsFull();
 }

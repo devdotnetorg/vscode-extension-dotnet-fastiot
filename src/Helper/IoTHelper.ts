@@ -3,8 +3,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
-import {v4 as uuidv4} from 'uuid';
-import {IotResult,StatusResult } from '../IotResult';
+import * as cp from "child_process";
+import { v4 as uuidv4 } from 'uuid';
+import { IotResult,StatusResult } from '../IotResult';
+import { utimesSync } from 'utimes';
 
 export class IoTHelper {
 
@@ -20,7 +22,7 @@ export class IoTHelper {
     fs.mkdirSync(dir);
   }
 
-  static GetWorkspaceFolder(): string| undefined {
+  static GetWorkspaceDirectory(): string| undefined {
     let folder = vscode.workspace.workspaceFolders;
     if (folder != undefined) return folder[0].uri.fsPath;
     return undefined;  	
@@ -56,7 +58,7 @@ export class IoTHelper {
     let result:string=data;
     dictionary.forEach((value,key) => {      
       const re = new RegExp(key, 'g');
-      result=result.replace(re,value);      
+      result=result.replace(re,value);
     });
     return result;
   }
@@ -116,7 +118,7 @@ export class IoTHelper {
         }       
     });
     //
-    return result;     
+    return result;
   }
 
   static CreateGuid():string
@@ -167,10 +169,7 @@ export class IoTHelper {
     files.forEach(name => {
       //directory
       const dir=`${path}\\${name}`;
-      if(fs.lstatSync(dir).isDirectory())
-        {
-          listFolders.push(dir);
-        }
+      if(fs.lstatSync(dir).isDirectory()) listFolders.push(dir);
       });
     return listFolders;
   }
@@ -190,5 +189,67 @@ export class IoTHelper {
     });
     return cyPath;
   }
-  
+
+  static GetAllFile(dirPath:string):string[]
+  {
+    let listFiles:Array<string>=[];
+    try {
+      const files=fs.readdirSync(dirPath);
+      files.forEach((name) => {
+        const filename=`${dirPath}\\${name}`;
+        if(fs.lstatSync(filename).isDirectory())
+        {
+          //Directory
+          const files2=this.GetAllFile(filename);
+          listFiles=files2.slice();
+        }
+        if(fs.lstatSync(filename).isFile())
+          listFiles.push(filename);
+      });
+    } catch (err: any){}
+    //result
+    return listFiles;
+  }
+
+  static SetTimeFiles(filesPath:string[],timestamp:number):IotResult
+  {
+    let result:IotResult;
+    let lastFile:string|undefined;
+    try {
+      filesPath.forEach(path =>{
+        lastFile=path;
+        utimesSync(path,timestamp); 
+      });
+      result= new IotResult(StatusResult.Ok, `All files have time set to ${timestamp}.`);
+    } catch (err: any){
+      result = new IotResult(StatusResult.Error,`time setting error ${timestamp} for file ${lastFile}.`,err);
+    }
+    //result
+    return result;
+  }
+
+  static SetCurrentTimeToFiles(dirPath:string)
+  {
+    //Unix epoch, i.e. Unix timestamp:
+    const dateNow=Date.now();
+    this.SetTimeFiles(this.GetAllFile(dirPath),dateNow);
+  }
+
+  static SetLineEnding(content:string):string
+  {
+    //https://github.com/Neoklosch/crlf-helper/
+    //CRLF: /\r\n/g
+    const re = new RegExp("\r\n", 'g');
+    //LF: '\n',
+    const value='\n';
+    content=content.replace(re,value);    
+    return content;
+  }
+
+  static ShowExplorer(path:string)
+  {
+    const fullpath=`explorer ${path}`;
+    cp.exec(fullpath, undefined);
+  }
+
 }

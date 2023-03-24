@@ -13,3 +13,7 @@
 - **Fastiot › Device > ssh > Key: Bits** - длина ключа в битах. Значение по умолчанию: `256`.
 - **Fastiot › Device > ssh > Key: Type** - Название используемого алгоритма для генерации ключа. Более подробно об алгоритмах для ключей в публикации [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). Значение по умолчанию: `ed25519`. Если выберете алгоритм `rsa`, то вам потребуется в файл `/etc/ssh/sshd_config` внести строку `PubkeyAcceptedAlgorithms=+ssh-rsa`.
 - **Fastiot › Launch: Templatetitle** - шаблон для формирования названия Launch. Значения переменных можно посмотреть по [ссылке](Launch-title-template_ru.md "Template for forming the name Launch"). Значение по умолчанию: `Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})`.
+- **Fastiot › Template: Isupdate** - вкл/выкл обновление шаблонов с ресурсов сети Интернет.
+- **Fastiot › Template: Lastupdate** - время последнего обновления. Технически параметр.
+- **Fastiot › Template: Loadonstart** - загрузка шаблонов при старте расширения. При отключенном параметре шаблоны загрузятся только при первом обращение к ним.
+- **Fastiot › Template: Updateinterval** - интервал обновления шаблонов в часах.

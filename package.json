@@ -5,14 +5,13 @@
 	"icon": "assets/fastiot-logo-256.png",
 	"license": "LGPL-3.0-only",
 	"preview": true,
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"publisher": "devdotnetorg",
 	"private": "false",
 	"identity": {
 		"internalName": "vscode-extension-dotnet-fastiot"
 	},
 	"categories": [
-		"Programming Languages",
 		"Other"
 	],
 	"keywords": [
@@ -38,8 +37,7 @@
 		"email": "fastiot@devdotnet.org"
 	},
 	"activationEvents": [
-		"onView:viewDevices",
-		"onCommand:vscode-extension-dotnet-fastiot.helloWorld"
+		"onView:viewDevices"
 	],
 	"os": [
 		"win32"
@@ -59,27 +57,27 @@
 					"fastiot.device.account.username": {
 						"type": "string",
 						"default": "debugvscode",
-						"description": "Debug account name"
+						"markdownDescription": "Debug account name. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.account.groups": {
 						"type": "string",
 						"default": "sudo",
-						"description": "Linux group for a new user (debugvscode) of a development device."
+						"markdownDescription": "Linux group for a new user (debugvscode) of a development device. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.applicationdatafolder": {
 						"type": "string",
 						"default": "",
-						"description": "Shared folder for storing keys, templates"
+						"markdownDescription": "Shared folder for storing keys, templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.ssh.key.type": {
 						"type": "string",
 						"default": "ed25519",
-						"markdownDescription": "Type of key generation algorithm for ssh. Can take values: ed25519 (default), ecdsa, dsa, rsa. Used to authenticate with a device after it has been added to the device list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the PubkeyAcceptedAlgorithms=+ssh-rsa line to the /etc/ssh/sshd_config file."
+						"markdownDescription": "Type of key generation algorithm for ssh. Can take values: ed25519 (default), ecdsa, dsa, rsa. Used to authenticate with a device after it has been added to the device list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the `PubkeyAcceptedAlgorithms=+ssh-rsa` line to the `/etc/ssh/sshd_config` file. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.ssh.key.bits": {
 						"type": "number",
 						"default": 256,
-						"markdownDescription": "Key length in bits. Can take values: 256, 384, 521, 512, 1024, 2048, 3072, 4096. ED25519 only 256. ECDSA key length: valid lengths are 256, 384, 521, recommended 521. DSA only 1024. RSA key length: valid lengths are 1024, 2048, 3072, 4096, recommended 4096."
+						"markdownDescription": "Key length in bits. Can take values: 256, 384, 521, 512, 1024, 2048, 3072, 4096. ED25519 only 256. ECDSA key length: valid lengths are 256, 384, 521, recommended 521. DSA only 1024. RSA key length: valid lengths are 1024, 2048, 3072, 4096, recommended 4096. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.pathfolderkeys": {
 						"type": "string",
@@ -101,20 +99,36 @@
 						"default": {},
 						"description": "Configuration of all devices in JSON format."
 					},
+					"fastiot.template.isupdate": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "Update templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+					},
+					"fastiot.template.updateinterval": {
+						"type": "number",
+						"default": 24,
+						"markdownDescription": "Update interval in hours for templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+					},
+					"fastiot.template.lastupdate": {
+						"type": "number",
+						"default": 0,
+						"markdownDescription": "Number of hours since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), i.e. Unix timestamp, until the templates were last updated."
+					},
+					"fastiot.template.loadonstart": {
+						"type": "boolean",
+						"default": true,
+						"description": "Load templates on extension start (false, speeds up the start of the extension)."
+					},
 					"conf.resource.insertEmptyLastLine": {
 						"type": "object",
 						"default": {},
-						"description": "Resource configuration: Configure files using glob patterns to have an empty last line always",
+						"markdownDescription": "Resource configuration: Configure files using glob patterns to have an empty last line always",
 						"scope": "resource"
 					}
 				}
 			}
 		],
 		"commands": [
-			{
-				"command": "vscode-extension-dotnet-fastiot.helloWorld",
-				"title": "Hello World"
-			},
 			{
 				"command": "viewDevices.AddDevice",
 				"title": "Add Device",
@@ -290,6 +304,10 @@
 			{
 				"command": "viewTemplates.OpenTemplateFolder",
 				"title": "Open template folder"
+			},
+			{
+				"command": "viewTemplates.RestoreSystemTemplates",
+				"title": "Restore/upgrade system templates (offline)"
 			}
 		],
 		"viewsContainers": {
@@ -359,6 +377,10 @@
 				},
 				{
 					"command": "viewTemplates.OpenTemplateFolder",
+					"when": "view == viewTemplates"
+				},
+				{
+					"command": "viewTemplates.RestoreSystemTemplates",
 					"when": "view == viewTemplates"
 				}
 			],
@@ -460,20 +482,20 @@
 				},
 				{
 					"command": "viewLaunchs.AddEnviroment",
-					"when": "view == viewLaunchs && viewItem == iotenviroments",
+					"when": "view == viewLaunchs && viewItem == iotenviroment",
 					"group": "inline"
 				},
 				{
 					"command": "viewLaunchs.RenameEnviroment",
-					"when": "view == viewLaunchs && viewItem == iotenviroment"
+					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
 				},
 				{
 					"command": "viewLaunchs.EditEnviroment",
-					"when": "view == viewLaunchs && viewItem == iotenviroment"
+					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
 				},
 				{
 					"command": "viewLaunchs.DeleteEnviroment",
-					"when": "view == viewLaunchs && viewItem == iotenviroment"
+					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
 				},
 				{
 					"command": "viewDevices.CopyToClipboard",
@@ -488,15 +510,15 @@
 		"viewsWelcome": [
 			{
 				"view": "viewDevices",
-				"contents": "No devices added [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device). \n[Add Device](command:viewDevices.AddDevice)"
+				"contents": "No devices. How to add device see [Adding a device](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device).\n[Add Device](command:viewDevices.AddDevice)"
 			},
 			{
 				"view": "viewLaunchs",
-				"contents": "No launchs [learn more](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Additional-materials.md#setting-up-an-existing-project-for-remote-debugging).  \n[Add Launch](command:viewLaunchs.Add)"
+				"contents": "No launchs. How to add Launch see [Adding Launch](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Additional-materials.md#setting-up-an-existing-project-for-remote-debugging).\n[Add Launch](command:viewLaunchs.Add)"
 			},
 			{
 				"view": "viewTemplates",
-				"contents": "[Create project](command:viewTemplates.CreateProject)  \n [About Project Templates](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Project-templates.md)."
+				"contents": "[Create project](command:viewTemplates.CreateProject)\n About [Project Templates](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Project-templates.md)."
 			}
 		]
 	},
@@ -538,6 +560,7 @@
 		"ssh2": "^1.9.0",
 		"ssh2-promise": "^1.0.3",
 		"tcp-port-used": "^1.0.2",
+		"utimes": "^5.1.1",
 		"uuid": "^8.3.2",
 		"xmldom": "^0.6.0",
 		"xpath": "0.0.32",

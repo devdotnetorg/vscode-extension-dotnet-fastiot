@@ -36,7 +36,7 @@
 
 Рекомендуемые дополнительные расширения, улучшающие процесс разработки и взаимодействия с удаленным устройством:
 
-- [NuGet Package Manager](https://marketplace.visualstudio.com/items?itemName=jmrog.vscode-nuget-package-manager "NuGet Package Manager") — добавление Nuget-пакетов (позже менеджер Nuget-пакетов будет встроен в расширение);
+- [NuGet Package Manager GUI](https://marketplace.visualstudio.com/items?itemName=aliasadidev.nugetpackagemanagergui "NuGet Package Manager GUI") — добавление Nuget-пакетов (позже менеджер Nuget-пакетов будет встроен в расширение);
 - [DeviceTree](https://marketplace.visualstudio.com/items?itemName=plorefice.devicetree "DeviceTree") — поддержка синтаксиса для файлов дерева устройств (Device Tree, DT). Используется для редактирования файлов `*.dts`. Например, потребуется если возникнет необходимость адаптации [дисплея SPI LCD ILI9341](https://devdotnet.org/post/rabota-s-gpio-v-linux-na-primere-banana-pi-bpi-m64-chast-4-device-tree-overlays-podkluchenie-displey-spi-lcd-ili9341/ "дисплея SPI LCD ILI9341") для вашего одноплатного компьютера;
 - [Output Colorizer](https://marketplace.visualstudio.com/items?itemName=IBM.output-colorizer "Output Colorizer") — добавляет цвет к тестовым сообщениям в окне OUTPUT, облегчает восприятие информации выдаваемой расширением.
 
@@ -91,8 +91,8 @@
 
 ## Тестирование
 
-Тестирование выполнялось на одноплатных компьютерах:
+Тестирование выполняется на следующих одноплатных компьютерах:
 
-- [Cubieboard](https://github.com/devdotnetorg/Cubieboard "Cubieboard")
-- [Cubietruck](https://devdotnet.org/post/otladochnaya-plata-cubietruck/ "Cubietruck")
-- [Banana Pi BPI-M64](https://devdotnet.org/post/otladochnaya-plata-banana-pi-bpi-m64/ "Banana Pi BPI-M64")
+- [Cubieboard](https://github.com/devdotnetorg/Cubieboard "Cubieboard"). Дистрибутив Armbian.
+- [Cubietruck](https://devdotnet.org/post/otladochnaya-plata-cubietruck/ "Cubietruck"). Дистрибутив Armbian.
+- [Banana Pi BPI-M64](https://devdotnet.org/post/otladochnaya-plata-banana-pi-bpi-m64/ "Banana Pi BPI-M64"). Дистрибутив Armbian.

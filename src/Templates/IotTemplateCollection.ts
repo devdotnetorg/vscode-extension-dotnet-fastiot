@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import {EntityType} from '../Entity/EntityType';
 import {EntityCollection,ContainsType} from '../Entity/EntityCollection';
@@ -10,61 +10,63 @@ import {IoTHelper} from '../Helper/IoTHelper';
 import {IotTemplateRecovery} from './IotTemplateRecovery';
 import {IotTemplateDownloader} from './IotTemplateDownloader';
 import {EntityDownload} from '../Entity/EntityDownloader';
+import {IContexUI} from '../ui/IContexUI';
 
 export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute,IotTemplate> {
   
-  constructor(basePath: string, recoverySourcePath:string, logCallback:(value:string) =>void,
-    versionExt:string,pathFolderSchemas: string
+  constructor(
+    basePath: string, recoverySourcePath:string, versionExt:string,
+    pathFolderSchemas: string,contextUI:IContexUI
     ){
-      super(basePath,recoverySourcePath,logCallback,versionExt,pathFolderSchemas);  
+      super(basePath,recoverySourcePath,versionExt,pathFolderSchemas,contextUI);  
   }
 
   public async LoadTemplatesSystem():Promise<void>
   {
-    this.LogCallback("Loading system templates");
+    this.ContextUI.Output("Loading system templates");
     const type=EntityType.system;
-    //
     const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,this.RecoverySourcePath);
-    this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
+    this.ContextUI.Output(result);
   }
 
   public async LoadTemplatesUser():Promise<void>
   {
-    this.LogCallback("Loading custom templates");
+    this.ContextUI.Output("Loading custom templates");
     const type=EntityType.user;
     //
     const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,undefined);
-    this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
+    this.ContextUI.Output(result);
   }
 
   public async LoadTemplatesCommunity():Promise<void>
   {
-    this.LogCallback("Loading community templates");
+    this.ContextUI.Output("Loading community templates");
     const type=EntityType.community;
     //
     const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,undefined);
-    this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
+    this.ContextUI.Output(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
   }
 
-  protected async LoadFromFolder(path:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
+  protected async LoadFromFolder(pathFolder:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
   {
-    let result= new IotResult(StatusResult.Ok, undefined,undefined);
+    let result:IotResult;
+    const templatesCountBegin=this.Count;
     //Recovery
     let recovery = new IotTemplateRecovery(type); 
     if(type==EntityType.system&&recoverySourcePath)
     {
-      result=recovery.RestoryDirStructure(recoverySourcePath,path);
+      result=recovery.RestoryDirStructure(recoverySourcePath,pathFolder);
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
     } 
     //
-    const listFolders=IoTHelper.GetListDir(path);
+    const listFolders=IoTHelper.GetListDir(pathFolder);
     //ckeck
     if (listFolders.length==0)
     {
-      result=new IotResult(StatusResult.Ok,`${path} folder is empty`,undefined);
+      result=new IotResult(StatusResult.Ok,`${pathFolder} folder is empty. There are no templates to load`);
       return Promise.resolve(result);
     }
     //checking all folders
@@ -76,14 +78,11 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       if(!template.IsValid&&type==EntityType.system)
       {
         //Recovery
-        this.LogCallback(`Template recovery: ${filePath}`);
+        this.ContextUI.Output(`Template recovery: ${path.dirname(filePath)}`);
         result= template.Recovery();
         if(result.Status==StatusResult.Ok)
-          {
-            template.Init(type,filePath,recoverySourcePath);
-          }else{
-            this.LogCallback(`Error. Template restore error. ${result.Message}. ${result.SystemMessage}`);
-          }
+          template.Init(type,filePath,recoverySourcePath);
+          else this.ContextUI.Output(result);
       }
       //main
       if(template.IsValid)
@@ -96,64 +95,63 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
           switch(isContains) { 
             case ContainsType.no: {
               this.Add(template.Attributes.Id,template);
-              this.LogCallback(`Template added: [${template.Attributes.Id}] ${filePath}`);
+              this.ContextUI.Output(`Template added: [${template.Attributes.Id}] ${template.ParentDir}`);
               break; 
             } 
             case ContainsType.yesVersionSmaller: {
               this.Update(template.Attributes.Id,template);
-              this.LogCallback(`Template updated: ${filePath}`);
+              this.ContextUI.Output(`Template updated: [${template.Attributes.Id}] ${template.ParentDir}`);
               break; 
             }
-            default: { 
-              //statements; 
+            default: {
+              this.ContextUI.Output(`Adding a  template was skipped because already in the collection: [${template.Attributes.Id}] ${template.ParentDir}`);
               break; 
             } 
           }
         }else{
-          this.LogCallback(`Error. The template ${template.DescriptionFilePath} is for a newer version of the extension.` +
+          this.ContextUI.Output(`[ERROR] The template ${template.ParentDir} is for a newer version of the extension. ` +
             `Update the extension.`);
         }
       }else{
-        this.LogCallback(`Error. The template ${template.DescriptionFilePath} has not been validated`);
-        this.LogValidationErrors(template.ValidationErrors);
+        this.ContextUI.Output(`[ERROR] The template ${template.ParentDir} has not been validated.`);
+        this.ContextUI.Output(template.ValidationErrorsToString);
         //delete system template
         if(type==EntityType.system) {
           result= template.Remove();
-          this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
+          this.ContextUI.Output(result);
         }
       }
     });
     //result
-    if(this.Count>0){
-      result= new IotResult(StatusResult.Ok,`Loading templates from ${path} folder successfully completed`,undefined);
+    if((this.Count-templatesCountBegin)>0){
+      result= new IotResult(StatusResult.Ok,`Loading templates from ${pathFolder} folder successfully completed`);
     }else{
-      result= new IotResult(StatusResult.Error,` No template was loaded from the ${path} folder`,undefined);
+      result= new IotResult(StatusResult.None,`No template was loaded from the ${pathFolder} folder`);
     }
     return Promise.resolve(result);
   }
 
-  public async UpdateSystemTemplate(url:string,tempPath:string):Promise<void>
+  public async UpdateSystemTemplate(url:string,tempPath:string):Promise<IotResult>
   {
-    this.LogCallback("Updating system templates");
     const result = await this.UpdateTemplate(url,EntityType.system,tempPath);
-    this.LogCallback(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
-    //result
-    if(!(result.Status==StatusResult.Error)) this.LogCallback("Update of system templates completed successfully");
-    return;
+    if(result.Status==StatusResult.Error)
+      result.AddMessage(`Error updating system templates`);
+    return result;
   }
 
   public async UpdateTemplate(url:string,type:EntityType,tempPath:string):Promise<IotResult>
   {
     const destPath=`${this.BasePath}\\${type}`;
     let downloader = new IotTemplateDownloader();
-    let result= new IotResult(StatusResult.None,undefined,undefined);
+    let result:IotResult;
+    this.ContextUI.Output(`Downloading a list of templates to update: ${url}`);
     result= await downloader.GetDownloadListTemplate(url);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
-    this.LogCallback(`List of templates loaded ${url}`);
+    this.ContextUI.Output(`List of templates loaded ${url}`);
     let listDownload:Array<EntityDownload>=result.returnObject;
     if(listDownload.length==0)
     {
-      result= new IotResult(StatusResult.Ok,`Url: ${url}. No templates to download`,undefined);
+      result= new IotResult(StatusResult.Ok,`Url: ${url}. No templates to download`);
       return Promise.resolve(result);
     }
     //next
@@ -178,16 +176,15 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
                   if(template.IsValid)
                   {
                     result=template.Move(path.join(destPath, template.Attributes.Id));
-                    if(result.Status==StatusResult.Error)
-                    {
-                      this.LogCallback(`Error. The template ${template.DescriptionFilePath}. ${result.Message}. ${result.SystemMessage}`);
+                    if(result.Status==StatusResult.Error) {
+                      this.ContextUI.Output(result);
                       break;
                     } 
                     this.Add(template.Attributes.Id,template);
-                    this.LogCallback(`Template added: [${template.Attributes.Id}] ${template.DescriptionFilePath}`);
+                    this.ContextUI.Output(`Template added/updated: [${template.Attributes.Id}] ${template.ParentDir}`);
                   } else {
-                    this.LogCallback(`Error. The template ${template.DescriptionFilePath} has not been validated`);
-                    this.LogValidationErrors(template.ValidationErrors);
+                    this.ContextUI.Output(`[ERROR] The template ${template.DescriptionFilePath} has not been validated`);
+                    this.ContextUI.Output(template.ValidationErrorsToString);
                   }
                 }
                 break; 
@@ -203,19 +200,17 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
                   if(template.IsValid)
                   {
                     result=template.Move(path.join(destPath, template.Attributes.Id));
-                    if(result.Status==StatusResult.Error)
-                    {
-                      this.LogCallback(`Error. The template ${template.DescriptionFilePath}. ${result.Message}. ${result.SystemMessage}`);
+                    if(result.Status==StatusResult.Error) {
+                      this.ContextUI.Output(result);
                       break;
-                    }
+                    } 
                     this.Update(template.Attributes.Id,template);
-                    this.LogCallback(`Template updated: [${template.Attributes.Id}] ${template.DescriptionFilePath}`);
+                    this.ContextUI.Output(`Template added/updated: [${template.Attributes.Id}] ${template.ParentDir}`);
                   } else {
-                    this.LogCallback(`Error. The template ${template.DescriptionFilePath} has not been validated`);
-                    this.LogValidationErrors(template.ValidationErrors);
+                    this.ContextUI.Output(`[ERROR] The template ${template.DescriptionFilePath} has not been validated`);
+                    this.ContextUI.Output(template.ValidationErrorsToString);
                   }
                 }
-                break; 
               }
               default: { 
                 //statements; 
@@ -223,7 +218,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
               } 
             }
         }else{
-          this.LogCallback(`Error. The template ${item.Url} is for a newer version of the extension.` +
+          this.ContextUI.Output(`Error. The template ${item.Url} is for a newer version of the extension. ` +
               `Update the extension.`);
         }
         //
@@ -231,7 +226,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       index++;
     }while(true)
     //result
-    result= new IotResult(StatusResult.Ok,undefined,undefined);
+    result= new IotResult(StatusResult.Ok,`Update of ${type} templates completed successfully`);
     return Promise.resolve(result);
   }
 

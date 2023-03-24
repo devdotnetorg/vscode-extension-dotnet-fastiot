@@ -25,7 +25,9 @@ The template is a regular zip archive with the following structure:
 
 ### Folder - storage
 
-Any files can be placed. In particular, each template folder contains the **cwRsync** and **ssh** utilities used to remotely log into the device and copy executable binaries. Optionally, you can replace the package by downloading from the official site at [link](https://itefix.net/cwrsync "link").
+Any files can be placed. For example, the **cwRsync** and **ssh** utilities used to remotely login to a device and copy executable binaries. Optionally, you can replace the package by downloading from the official site at [link](https://itefix.net/cwrsync "link").
+
+The **cwRsync** and **ssh** utilities have been moved to the [system application directory](/windows/apps/) to avoid unnecessary increase in the size of the template. Now there is no need to duplicate the specified utilities for each template. It is enough to specify the path to system utilities in the template, for example: "%{extension.apps.builtin.aswindows}\\\\cwrsync\\\\ssh.exe".
 
 ### Folder - template
 
@@ -82,6 +84,13 @@ If the value of the `name` key, e.g. `Launch on cubieboard (DotnetApp, Cubieboar
 
 Additional keys have been added to Launch, prefixed with `fastiotId*`, keys: `fastiotIdLaunch`, `fastiotIdDevice`, `fastiotProject`, `fastiotIdTemplate`. It is not recommended to change them. some extension functions may not be available because of this.
 
+Keys:
+- `fastiotIdLaunch` - unique Launch identifier;
+- `fastiotIdDevice` - unique device identifier;
+- `fastiotProject` - unique ID of the template from which Launch was created;
+- `fastiotIdTemplate` - the path to the project with which this Launch is associated;
+- `fastiotDescription` - (optional) Text description of Launch. Use ` \n` (two spaces and \n) to break a line.
+
 Example:
 
 ```json
@@ -90,6 +99,7 @@ Example:
   "fastiotIdDevice": "cubieboard-5e835aae",
   "fastiotProject": "/DotnetConsoleAppRuntimeInfo.csproj",
   "fastiotIdTemplate": "dotnet-console-runtime-info",
+  "fastiotDescription": "Launch with logging.  \nRsync copying executable files - project_folder/rsync.log.  \nDebugger - /var/log/vsdbg.log",
   "name": "Launch on cubieboard (DotnetConsoleAppRuntimeInfo, Cubieboard, debugvscode)",
   "type": "coreclr",
   "request": "launch",
@@ -188,6 +198,8 @@ Variables:
 21. "%{project.dotnet.namespace}" => "DotnetConsoleAppRuntimeInfo".
 22. "%{device.dotnet.rid}" => "linux-arm".
 23. "%{launch.label}" => "Launch on cubieboard (DotnetConsoleAppRuntimeInfo, Cubieboard, debugvscode)".
+24. "%{extension.apps.builtin.aswindows}" => "d:\\\\Anton\\\\GitHub\\\\vscode-extension-dotnet-fastiot\\\\windows\\\\apps\\\\cwrsync\\\\ssh.exe".
+25. "%{os.userinfo.username}" => "Anton".
 
 **Values when there are directories in the path**
 
@@ -202,6 +214,8 @@ Variables:
 5. "%{project.path.relative.aslinux}" => "/nested".
 6. "%{project.path.relative.aswindows}" => "\\\\nested".
 7. "%{project.path.full.ascygdrive}" => "/cygdrive/d/Anton/Projects/Tests/DotnetConsoleAppTestNested/nested".
+
+If you need additional variables, please create an [ISSUE](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "ISSUE").
 
 ## Debugging the template
 

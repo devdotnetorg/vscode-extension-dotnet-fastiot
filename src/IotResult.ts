@@ -28,20 +28,64 @@ export class IotResult {
       this._status=status;
       this._message=message;
       this._systemMessage=systemMessage;
-    }       
-  public async AppendResult(iotResult: IotResult): Promise<void>{
-    this._status=iotResult.Status;
-    this._message=iotResult.Message;
-    if(!this._systemMessage) this._systemMessage=iotResult.SystemMessage;
-    this._systemMessage=this.SystemMessage+ '\n '+ iotResult.SystemMessage;
-    this._systemMessage.toString()   
+    }
+
+  public AddMessage = (value: string|undefined) =>
+    {if(value) this._message=`${this._message}\n${value}`};
+
+  public AddSystemMessage= (value: string|undefined) =>
+    {if(value) this._systemMessage=`${this._systemMessage}\n${value}`};
+
+  /*
+  public AppendResult(value: IotResult): void{
+    this._status=value.Status;
+    this.AddMessage(value.Message);
+    this.AddSystemMessage(value.SystemMessage);
   }
+  */
 
   public toString():string{
-    let msg=this.Status.toString();
-    if(this.Message) msg=msg+" "+this.Message;
-    if(this.SystemMessage) msg=msg+" "+this.SystemMessage;
+    let msg=``;
+    //Status
+    if(this.Status!=StatusResult.None) msg=`[${this.Status.toString().toUpperCase()}] `;
+    //Message
+    if(this.Message) msg=`${msg}${this.Message}.`;
+    //SystemMessage
+    if(this.SystemMessage) msg=`${msg}\nSystem message: ${this.SystemMessage}`;
     return msg;
+  }
+
+  public toStringWithHead(head:string|undefined=undefined):string{
+    if(!head) head="------------- Result -------------";
+    //Msg
+    let msg=`${head}\n`;
+    //Status
+    msg=`${msg}Status: ${this.Status.toString().toUpperCase()}`;
+    //Message
+    if(this.Message) msg=`${msg}\nMessage: ${this.Message}.`;
+    //SystemMessage
+    if(this.SystemMessage) msg=`${msg}\nSystem message: ${this.SystemMessage}`;
+    //HEAD
+    msg=msg+"\n----------------------------------";
+    return msg;
+  }
+
+  //result.RunTask(()=>this._contextUI.Output(result),()=> {return Promise.resolve(result)});
+  public RunTask(ifOK?:() =>void,ifError?:() =>void) {
+    switch(this.Status) { 
+      case StatusResult.Ok: {
+        if(ifOK) ifOK();
+        break; 
+      } 
+      case StatusResult.Error: {
+        if(ifError) ifError();
+        break;
+      }
+      default: {
+        vscode.window.showWarningMessage(`No task to execute`);
+        break; 
+      } 
+   }
   }
  }
   

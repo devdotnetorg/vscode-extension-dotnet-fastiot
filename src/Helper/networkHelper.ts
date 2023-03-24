@@ -17,7 +17,7 @@ import {IotResult,StatusResult } from '../IotResult';
 
 export class networkHelper {
   static async GetIpAddress(hostName:string): Promise<IotResult>{
-    let result:IotResult = new IotResult(StatusResult.Ok);
+    let result:IotResult;
     let ipAddress:string;
     try {
       if(ip.isV4Format(hostName)){
@@ -29,9 +29,10 @@ export class networkHelper {
         let hostIp = await lookup(hostName);
         ipAddress = hostIp.address;
       }
+      result = new IotResult(StatusResult.Ok,"IP-Address defined.");
       result.returnObject=ipAddress;
     } catch (err: any){
-      result= new IotResult(StatusResult.Error,`Unable to get IP-Address or invalid IP-Address. Host: ${hostName}`,err);
+      result= new IotResult(StatusResult.Error,`Unable to get IP-Address or invalid IP-Address. Host: ${hostName}.`,err);
     }
     return Promise.resolve(result);
   }
@@ -41,13 +42,13 @@ export class networkHelper {
     result=await this.GetIpAddress(hostName);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     const ipAddress=<string>result.returnObject;
-    const msg=`The host is unavailable. Host: ${hostName} IP-Address: ${ipAddress}`;
+    const msg=`The host is unavailable. Host: ${hostName} IP-Address: ${ipAddress}.`;
     try
     {
       const response = await ping(ipAddress,{logToFile:false, numberOfEchos: numberOfEchos, timeout: timeout, IPV4: true});
       const packetLoss =+(response.packetLoss ?? "100");
       if(packetLoss>50)
-        result=new IotResult(StatusResult.Error, msg); else result=new IotResult(StatusResult.Ok); 
+        result=new IotResult(StatusResult.Error, msg); else result=new IotResult(StatusResult.Ok,`Host ${ipAddress} is available.`); 
     } catch (err:any) {
       result=new IotResult(StatusResult.Error, msg,err);  
     }
@@ -60,12 +61,12 @@ export class networkHelper {
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     const ipAddress=<string>result.returnObject;
     //next
-    const msg=`${port} port unavailable. Host: ${hostName} IP-Address: ${ipAddress}`;
+    const msg=`${port} port unavailable. Host: ${hostName} IP-Address: ${ipAddress}.`;
     try
     {
       const inUse = await tcpPortUsed.check(port,ipAddress);
       if(inUse)
-        result=new IotResult(StatusResult.Ok); else result=new IotResult(StatusResult.Error,msg); 
+        result=new IotResult(StatusResult.Ok,`Network port ${port} host ${ipAddress} available.`); else result=new IotResult(StatusResult.Error,msg); 
     } catch (err:any) {
       result=new IotResult(StatusResult.Error, msg,err);  
     }

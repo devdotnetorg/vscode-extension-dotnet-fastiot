@@ -49,42 +49,11 @@ export class IotDeviceInformation extends BaseTreeItem{
          console:"Run: pregetinformation.sh",
          obj:undefined
        });       
-      //Иногда с первого раза не устанавливается пакет в Ubuntu после его удаления
-      //поэтому три попытки установить
-      //1
+      //# apt-get update иногда останавливает выполнение из-за WARNING
+      // которые не являются критическими, поэтому выполнение только
+      // как Stream
       let result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
-          "pregetinformation",undefined, false,false);
-      if(result.Status==StatusResult.Ok&&result.SystemMessage){
-         this.Client.FireChangedState({
-            status:undefined,
-            console:result.SystemMessage,
-            obj:undefined
-          });
-      }      
-      //2
-      if(result.Status==StatusResult.Error) {
-         result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
-            "pregetinformation",undefined, false,false);
-         if(result.Status==StatusResult.Ok&&result.SystemMessage){
-            this.Client.FireChangedState({
-               status:undefined,
-               console:result.SystemMessage,
-               obj:undefined
-               });
-         }
-      }
-      //3
-      if(result.Status==StatusResult.Error) {
-         result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
-            "pregetinformation",undefined, false,false);
-         if(result.SystemMessage){
-            this.Client.FireChangedState({
-               status:undefined,
-               console:result.SystemMessage,
-               obj:undefined
-               });
-         }
-      }
+         "pregetinformation",undefined, true,false);
       //Result
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
       //get information

@@ -13,6 +13,8 @@ import {IotDevice} from '../IotDevice';
 import {IotConfiguration} from '../Configuration/IotConfiguration';
 import {FilesValidator} from '../Validator/FilesValidator';
 import {YamlSchemaValidator} from '../Validator/YamlSchemaValidator';
+import { openStdin } from 'process';
+import * as os from 'os';
 
 export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   public get StoragePath(): string {
@@ -55,36 +57,59 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   public CreateProject(device:IotDevice, config:IotConfiguration, dstPath:string,
     values:Map<string,string>):IotResult {
     let result:IotResult;
+    const errorMsg=`Project not created!`;
     try {
       //Copy
       result=this.Copy(dstPath);
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
       //Create MergeDictionary
       this.CreatingMergeDictionary(device,config,dstPath,values);
       //PostCreatingMergeDictionary
       this.PostCreatingMergeDictionary(device,config,dstPath);
       //File Name Replacement
       result=this.FileNameReplacement(dstPath);
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
       //Set new name project
       this.SetNewNameProject();
       //PostCreatingMergeDictionary V2
       this.PostCreatingMergeDictionary(device,config,dstPath);
       //FilesToProcess
       result=this.FilesToProcess(dstPath);
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
       //Insert Launch
       result=this.InsertLaunchOrTask(dstPath,"launch");
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
       //Unique names for Launchs
       result=launchHelper.FixUniqueLabel(`${dstPath}\\.vscode\\launch.json`);
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
       //Insert Tasks
       result=this.InsertLaunchOrTask(dstPath,"tasks");
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
+      //Not necessary. Time setting
+      IoTHelper.SetCurrentTimeToFiles(dstPath);
+      //
+      result= new IotResult(StatusResult.Ok, `Project successfully created!`);
     } catch (err: any){
       //result
-      result = new IotResult(StatusResult.Error,"An error occurred while creating the project",err);
+      result = new IotResult(StatusResult.Error,errorMsg,err);
     }
     return result;
   }
@@ -92,28 +117,46 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   public AddConfigurationVscode(device:IotDevice, config:IotConfiguration, dstPath:string,
     values:Map<string,string>):IotResult {
     let result:IotResult;
+    const errorMsg=`Launch and tasks not added!`;
     try {
       //Copy
       result=this.CopyOnlyFilesVscode(dstPath+"\\.vscode");
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
       //Create MergeDictionary
       this.CreatingMergeDictionary(device,config,dstPath,values);
       //PostCreatingMergeDictionary
       this.PostCreatingMergeDictionary(device,config,dstPath);
       //Insert Launch
       result=this.InsertLaunchOrTask(dstPath,"launch");
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
       //Unique names for Launchs
       result=launchHelper.FixUniqueLabel(`${dstPath}\\.vscode\\launch.json`);
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
       //Insert Tasks
       result=this.InsertLaunchOrTask(dstPath,"tasks");
-      if(result.Status==StatusResult.Error) return result;
+      if(result.Status==StatusResult.Error) {
+        result.AddMessage(errorMsg);
+        return result;
+      }
+      //Not necessary. Time setting
+      IoTHelper.SetCurrentTimeToFiles(`${dstPath}\\.vscode`);
+      //launch.id
+      result.tag=this._mergeDictionary.get("%{launch.id}");
+      //
+      result= new IotResult(StatusResult.Ok, `Launch and tasks added successfully`);
     } catch (err: any){
       //result
-      result = new IotResult(StatusResult.Error,`Error when adding Launch to ${dstPath} project`,err);
+      result = new IotResult(StatusResult.Error,`Launch and tasks not added! Path is ${dstPath} project`,err);
     }
-    result.tag=this._mergeDictionary.get("%{launch.id}");
     return result;
   }
   //---------------------------------
@@ -305,15 +348,12 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     dstPath:string, values:Map<string,string>) {
     this._mergeDictionary.clear();
     //copy values to _mergeDictionary
-    values.forEach((value,key) => {
-      this._mergeDictionary.set(key,value);
-    });
+    values.forEach((value,key) => this._mergeDictionary.set(key,value));
     //NEW or ADD
     let dirProjectWin;
     let projMainfilePathFullWin=this._mergeDictionary.get("%{project.mainfile.path.full.aswindows}");
     let projMainfilePathFullLinux=this._mergeDictionary.get("%{project.mainfile.path.full.aslinux}");
-    if((projMainfilePathFullWin)/*||(projMainfilePathFullLinux)*/)
-        {
+    if((projMainfilePathFullWin)/*||(projMainfilePathFullLinux)*/) {
           //in <= project.mainfile.path.full.aswindows
           //--------------------ADD--------------------
           this._mergeDictionary.set("%{project.mainfile.path.full.aswindows}",projMainfilePathFullWin);
@@ -375,9 +415,13 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     //fastiot
     this._mergeDictionary.set("%{launch.id}", IoTHelper.CreateGuid());
     this._mergeDictionary.set("%{template.id}", this.Attributes.Id);
-    //template app folder
+    //app folder
     const storagePath=IoTHelper.ReverseSeparatorReplacement(this.StoragePath);
     this._mergeDictionary.set("%{template.storage.path.aswindows}",<string>storagePath);
+    const appsBuiltInPath=IoTHelper.ReverseSeparatorReplacement(config.Folder.AppsBuiltIn);
+    this._mergeDictionary.set("%{extension.apps.builtin.aswindows}",<string>appsBuiltInPath);
+    const userName=os.userInfo().username;
+    this._mergeDictionary.set("%{os.userinfo.username}",<string>userName);
   }
 
   private PostCreatingMergeDictionary(device:IotDevice, config:IotConfiguration,

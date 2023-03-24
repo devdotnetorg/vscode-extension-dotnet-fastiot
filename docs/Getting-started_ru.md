@@ -16,8 +16,6 @@ apt-get install -y sudo
 ```bash
 sudo apt-get update
 sudo apt-get install -y openssh-server mc
-sudo systemctl reload ssh
-sudo systemctl status ssh
 sudo mcedit /etc/ssh/sshd_config
 ```
 
@@ -61,7 +59,7 @@ sudo systemctl status ssh
 
 ### Шаг 3 — Установка пакетов
 
-Для запуска .NET IoT приложения и выполнения удаленной отладки необходимо установить:
+Для запуска .NET IoT приложении и выполнения удаленной отладки необходимо установить:
 
 - Среду исполнения - .NET Runtime;
 - Удаленный отладчик - .NET Debugger (vsdbg).
@@ -117,6 +115,8 @@ sudo systemctl status ssh
 ![VSCode dotnet FastIoT](vscode-dotnet-fastiot-create-project-11.png)
 
 Примеры проектов с добавленной конфигурацией Launch (`/.vscode/launch.json`) и Tasks (`/.vscode/tasks.json`) располагаются в папке [samples](/samples/).
+
+В папке с проектом будет размещен файл `template.fastiot.yaml`. Этот файл необходим для определения идентификатора шаблона при добавлении Launch. Если его удалить, то не будет точного определения шаблона из которого был сформирован проект. Из файла `template.fastiot.yaml` берется только строка идентификатор шаблона `id: dotnet-console`.
 
 ## Перестройка (Rebuild) Launch
 

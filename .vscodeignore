@@ -12,14 +12,13 @@ src/**
 
 #add
 #folders
+archive/**
 assets/source/**
 bashscript/_old_*.sh
 bashscript/_test*.sh
 docs/**
 packages/**
 samples/**
-vscodetemplates/**
-windows/**
 
 #files
 .gitattributes

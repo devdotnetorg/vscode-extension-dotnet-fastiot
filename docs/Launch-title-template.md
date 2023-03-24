@@ -4,6 +4,6 @@ Default value: `Launch on %{device.label} (%{project.name}, %{device.board.name}
 
 Merging example: `Launch on cubieboard (DotnetConsoleBlinkLEDApplication, Cubieboard, debugvscode)`.
 
-Variables for creating the name of the Launch configuration and their values can be viewed on the [Project Templates](Project-templates.md "Project Templates") page.
+See the [Project Templates](Project-templates.md "Project Templates") page for the variables to create the Launch configuration name and their values.
 
 If you need additional variables, please create an [ISSUE](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "ISSUE").

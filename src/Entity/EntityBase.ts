@@ -25,6 +25,15 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   protected _validationErrors:Array<string>=[]; 
   public get ValidationErrors(): Array<string> {
       return this._validationErrors;}
+
+  public get ValidationErrorsToString(): string {
+    let msg=`Validation messages:`;
+    let index=1;
+    this._validationErrors.forEach((item) => {
+      msg=`${msg}\n${index}. ${item}`;
+      index++;
+    });
+    return msg;}
   //public Attributes: EntityBaseAttribute|undefined;
   public Attributes: T;
   public Type:EntityType=EntityType.none;
@@ -57,7 +66,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       if(this.ParentNameDir!=attributes.Id)
         this._validationErrors.push(`${this._entityIntLabel} folder name ${this.ParentNameDir} `+
           `does not match id value ${attributes.Id}.`+
-          `You need to rename the folder or change the ${this._entityIntLabel} id`);
+          `You need to rename the folder or change the ${this._entityIntLabel} id.`);
     }else{
       //error
       this._validationErrors = attributes.ValidationErrors.slice();
@@ -84,7 +93,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       //replace fields
       const fileName=this._descFilePath.substring(this.ParentDir.length+1);
       this._descFilePath= path.join(destDir, fileName);
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok,`${this._entityIntLabel}. ${this.ParentDir} folder successfully moved to ${destDir} folder`);
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Unable to move ${this._entityIntLabel} from folder ${this.ParentDir} to folder ${destDir}`,err);
     }
@@ -128,6 +137,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
     let result:IotResult;
     const fileZipPath=`${this.RecoverySourcePath}\\${this.ParentNameDir}.zip`;
     result= IoTHelper.UnpackFromZip(fileZipPath,path.dirname(this.ParentDir));
+    if(result.Status==StatusResult.Error) result.AddMessage("Template restore error");
     //result
     return result;
   }

@@ -4,13 +4,23 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { IotLaunch } from '../IotLaunch';
 import { BaseTreeItem } from '../BaseTreeItem';
+import { LaunchNode } from '../LaunchNode';
+import { LaunchTreeItemNode } from '../LaunchTreeItemNode';
+import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 
-export async function gotoDevice(treeData: TreeDataLaunchsProvider,item:IotLaunch,treeViewDevices:vscode.TreeView<BaseTreeItem>): Promise<void> {                    
-    const device = item.Device;
+
+export async function gotoDevice(item:LaunchNode,treeViewDevices:vscode.TreeView<BaseTreeItem>,treeDataDevicesProvider:TreeDataDevicesProvider): Promise<void> {                    
+    const sourceDevice=item.Launch.Device;
+    if(!sourceDevice) return;
+    if(typeof sourceDevice === "string") return;
+    if(!sourceDevice.IdDevice) return;
+    //find device
+    const device = treeDataDevicesProvider.FindbyIdDevice(sourceDevice.IdDevice);
     //Set focus
     if(device) {
+        //IotDevice or string
+        if(typeof device === "string") return;
         treeViewDevices.reveal(device, {focus: true});
     }else{
         vscode.window.showErrorMessage('Device not found.');

@@ -25,7 +25,9 @@
 
 ### Папка - storage
 
-Могут размещаться любые файлы. В частности, в папке каждого шаблона размещаются утилиты **cwRsync** и **ssh** используемые для удаленного входа на устройство и копирования исполняемых бинарных фалов. По желанию можно заменить пакет, загрузив с официального сайта по [ссылке](https://itefix.net/cwrsync "ссылке").
+Могут размещаться любые файлы. Например, утилиты **cwRsync** и **ssh**, используемые для удаленного входа на устройство и копирования исполняемых бинарных фалов. По желанию можно заменить пакет, загрузив с официального сайта по [ссылке](https://itefix.net/cwrsync "ссылке").
+
+Для исключения лишнего увеличения размера шаблона утилиты **cwRsync** и **ssh** были перенесены в [каталог системных приложений](/windows/apps/). Теперь нет необходимости дублировать укзанные утилиты для каждого шаблона. Достаточно указать в шаблоне путь к системным утилитам, например: "%{extension.apps.builtin.aswindows}\\\\cwrsync\\\\ssh.exe".
 
 ### Папка - template
 
@@ -83,6 +85,13 @@
 
 В Launch были добавлены дополнительные ключи, с приставкой `fastiotId*`, ключи: `fastiotIdLaunch`, `fastiotIdDevice`, `fastiotProject`, `fastiotIdTemplate`. Не рекомендуется их изменять т.к. некоторые функции расширения из-за этого могут быть недоступны.
 
+Ключи:
+- `fastiotIdLaunch` - уникальный идентификатор Launch;
+- `fastiotIdDevice` - уникальный идентификатор устроства;
+- `fastiotProject` - уникальный идентификатор шаблона, из которого был создан Launch;
+- `fastiotIdTemplate` - путь к проекту, с которым связан данный Launch;
+- `fastiotDescription` - (наличие необязательно) текстовое описание Launch. Для переноса строки использовать `  \n` (два пробела и \n).
+
 Пример:
 
 ```json
@@ -91,6 +100,7 @@
   "fastiotIdDevice": "cubieboard-5e835aae",
   "fastiotProject": "/DotnetConsoleAppRuntimeInfo.csproj",
   "fastiotIdTemplate": "dotnet-console-runtime-info",
+  "fastiotDescription": "Launch with logging.  \nRsync copying executable files - project_folder/rsync.log.  \nDebugger - /var/log/vsdbg.log",
   "name": "Launch on cubieboard (DotnetConsoleAppRuntimeInfo, Cubieboard, debugvscode)",
   "type": "coreclr",
   "request": "launch",
@@ -189,6 +199,8 @@
 21. "%{project.dotnet.namespace}" => "DotnetConsoleAppRuntimeInfo".
 22. "%{device.dotnet.rid}" => "linux-arm".
 23. "%{launch.label}" => "Launch on cubieboard (DotnetConsoleAppRuntimeInfo, Cubieboard, debugvscode)".
+24. "%{extension.apps.builtin.aswindows}" => "d:\\\\Anton\\\\GitHub\\\\vscode-extension-dotnet-fastiot\\\\windows\\\\apps\\\\cwrsync\\\\ssh.exe".
+25. "%{os.userinfo.username}" => "Anton".
 
 **Значения при наличии каталогов в пути**
 
@@ -204,8 +216,10 @@
 6. "%{project.path.relative.aswindows}" => "\\\\nested".
 7. "%{project.path.full.ascygdrive}" => "/cygdrive/d/Anton/Projects/Tests/DotnetConsoleAppTestNested/nested".
 
+Если вам нужны дополнительные переменные, создайте [ISSUE](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues "ISSUE").
+
 ## Отладка шаблона
 
 Все ошибки связанные с проверкой шаблона будут отображены в окне OUTPUT.
 
-Если возникнет ошибка валидации структуры JSON, то в окне OUTPUT отобразится позиция в файле, которая вызвала ошибку. В этом случае исходный файл останется неизменным, а будет создан новый с именем `debug_launch_json.txt` или `debug_tasks_json.txt` в каталоге проекта.
+Если возникнет ошибка валидации структуры JSON, то в окне OUTPUT отобразится позиция в файле, которая вызвала ошибку. В этом случае исходный файл останется неизменным, и будет создан новый с именем `debug_launch_json.txt` или `debug_tasks_json.txt` в каталоге проекта.

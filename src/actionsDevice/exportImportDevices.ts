@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
+import {IContexUI} from '../ui/IContexUI';
 
 export async function exportDevices(treeData: TreeDataDevicesProvider): Promise<void> {        
     const options: vscode.SaveDialogOptions = {
@@ -26,7 +27,7 @@ export async function exportDevices(treeData: TreeDataDevicesProvider): Promise<
     }
 }
 
-export async function importDevices(treeData: TreeDataDevicesProvider): Promise<void> {
+export async function importDevices(treeData: TreeDataDevicesProvider,contextUI:IContexUI): Promise<void> {
     //canSelectFiles: true,
     //canSelectFolders: false,
     const options: vscode.OpenDialogOptions = {
@@ -42,7 +43,7 @@ export async function importDevices(treeData: TreeDataDevicesProvider): Promise<
     let result = new IotResult(StatusResult.None,undefined,undefined);
     if(file)
     {        
-        treeData.OutputChannel.appendLine(`Action: Import devices from file ${file[0].fsPath}`);        
+        contextUI.Output(`Action: Import devices from file ${file[0].fsPath}`);        
         try
         {
             const jsonObj = JSON.parse(fs.readFileSync(file[0].fsPath, 'utf-8'));
@@ -51,11 +52,7 @@ export async function importDevices(treeData: TreeDataDevicesProvider): Promise<
             result = new IotResult(StatusResult.Error,err,undefined);
         }     
         //Output       
-        treeData.OutputChannel.appendLine("------------- Result -------------");
-        treeData.OutputChannel.appendLine(`Status: ${result.Status.toString()}`);
-        treeData.OutputChannel.appendLine(`Message: ${result.Message}`);
-        treeData.OutputChannel.appendLine(`System message: ${result.SystemMessage}`);
-        treeData.OutputChannel.appendLine("----------------------------------");
+        contextUI.Output(result.toStringWithHead());
         //Message       
         if(result.Status==StatusResult.Ok) {
             vscode.window.showInformationMessage(`Devices imported successfully. ${result.Message}`);
