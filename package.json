@@ -119,6 +119,11 @@
 						"default": true,
 						"description": "Load templates on extension start (false, speeds up the start of the extension)."
 					},
+					"fastiot.config.JSON": {
+						"type": "object",
+						"default": {},
+						"description": "Technical built-in config."
+					},
 					"conf.resource.insertEmptyLastLine": {
 						"type": "object",
 						"default": {},
