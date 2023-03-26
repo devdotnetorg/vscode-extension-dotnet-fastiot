@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotDevice } from '../IotDevice';
-import {IContexUI} from '../ui/IContexUI';
+import { IContexUI } from '../ui/IContexUI';
 
 export async function deleteDevice(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IContexUI): Promise<void> {
     const answer = await vscode.window.showInformationMessage(`Do you really want to remove the device:

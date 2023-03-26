@@ -29,6 +29,7 @@ import {renameDevice} from './actionsDevice/renameDevice';
 import {detectGpiochips} from './actionsDevice/detectGpiochips';
 import {copyTexttoClipboard} from './actionsDevice/copyTexttoClipboard';
 import {openFolderKeys} from './actionsDevice/openFolderKeys';
+import {openSshTerminal} from './actionsDevice/openSshTerminal';
 import {checkAllPackages} from './actionsDevice/checkAllPackages';
 import {installPackage} from './actionsDevice/installPackage';
 import {upgradePackage} from './actionsDevice/upgradePackage';
@@ -175,6 +176,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Open folder with ssh keys
 	let commandOpenFolderKeys = vscode.commands.registerCommand("viewDevices.OpenFolderSshKeys", () => {
 		openFolderKeys(config.Folder.DeviceKeys);
+	});
+	//Open ssh-terminal in New Window
+	let commandOpenSshTerminal = vscode.commands.registerCommand("viewDevices.OpenSshTerminal", (item:IotDevice) => {
+		openSshTerminal(item,config);
 	});
 	//Copy To Clipboard
 	let commandCopyToClipboard = vscode.commands.registerCommand("viewDevices.CopyToClipboard", (item:IotItemTree) => {
@@ -334,6 +339,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandShutdownDevice);
 	context.subscriptions.push(commandDeleteDevice);
 	context.subscriptions.push(commandOpenFolderKeys);
+	context.subscriptions.push(commandOpenSshTerminal);
 	context.subscriptions.push(commandCopyToClipboard);
 	context.subscriptions.push(commandCheckAllPackages);
 	context.subscriptions.push(commandInstallationPackage);
