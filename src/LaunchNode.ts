@@ -4,7 +4,7 @@ import * as path from 'path';
 import { LaunchTreeItemNode } from './LaunchTreeItemNode';
 import { IotResult,StatusResult } from './IotResult';
 import { IotLaunch } from './IotLaunch';
-import { IotOption } from './IotOption';
+import { IotTreeItem } from './IotTreeItem';
 
 export class LaunchNode extends LaunchTreeItemNode {  
   public Parent: undefined;
@@ -14,7 +14,7 @@ export class LaunchNode extends LaunchTreeItemNode {
   public get Launch(): IotLaunch {
     return this._launch;}
 
-  public Options:LaunchTreeItemNode;
+  public Configuration:LaunchTreeItemNode;
   public Environment:LaunchTreeItemNode;
 
   constructor(launch: IotLaunch){
@@ -30,14 +30,14 @@ export class LaunchNode extends LaunchTreeItemNode {
     //view
     this.contextValue="iotlaunch";
     //Options
-    this.Options = new LaunchTreeItemNode("Options",undefined,"Options",
+    this.Configuration = new LaunchTreeItemNode("Configuration",undefined,"Configuration",
       vscode.TreeItemCollapsibleState.Collapsed,this);
-      this.Options.iconPath = {
+      this.Configuration.iconPath = {
         light: path.join(__filename, '..', '..', 'resources', 'light', 'info.svg'),
         dark: path.join(__filename, '..', '..', 'resources', 'dark', 'info.svg')
       };
     //Added in childs
-    this.Childs.push(this.Options);
+    this.Childs.push(this.Configuration);
     //Environments
     this.Environment=new LaunchTreeItemNode("Environment",undefined,"Environment",
       vscode.TreeItemCollapsibleState.Collapsed,this);
@@ -57,33 +57,33 @@ export class LaunchNode extends LaunchTreeItemNode {
   }
 
   private Build() {
-    this.BuildOptions();
-    this.BuildEnvironments();
+    this.BuildConfiguration();
+    this.BuildEnvironment();
   }
 
-  private BuildOptions() {
+  private BuildConfiguration() {
     //main
     const iconPathError = {
       light: path.join(__filename, '..', '..', 'resources', 'light', 'error.svg'),
       dark: path.join(__filename, '..', '..', 'resources', 'dark', 'error.svg')
     };
     //create child elements
-    this.Options.Childs=[];
+    this.Configuration.Childs=[];
     let item:LaunchTreeItemNode;
-    const result=this._launch.GetOptions();
+    const result=this._launch.GetConfigurationItems();
     if(result.Status==StatusResult.Error) return result;
     //read
-    const options=<IotOption[]>result.returnObject;
+    const options=<IotTreeItem[]>result.returnObject;
     options.forEach((value) => {
       item=new LaunchTreeItemNode(value.Label,value.Description,
-        value.Tooltip,vscode.TreeItemCollapsibleState.None,this.Options);
+        value.Tooltip,vscode.TreeItemCollapsibleState.None,this.Configuration);
       item.contextValue="iotenviromentoption";
       if(value.Status==StatusResult.Error) item.iconPath=iconPathError;
-      this.Options.Childs.push(item);
+      this.Configuration.Childs.push(item);
     });
   }
 
-  public BuildEnvironments() {
+  public BuildEnvironment() {
     //main
     //create child elements
     this.Environment.Childs=[];

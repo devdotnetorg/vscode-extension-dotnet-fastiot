@@ -44,7 +44,7 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:Launc
         //Main process
         launchNode.Launch.Environment.Add(nameEnviroment,valueEnviroment);
         result=launchNode.Launch.WriteEnvironments();
-        launchNode.BuildEnvironments();
+        launchNode.BuildEnvironment();
         //Message
         contextUI.ShowNotification(result);
         //Output
@@ -75,7 +75,7 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:La
         //Main process
         launchNode.Launch.Environment.Rename(<string>item.label,newName);
         result=launchNode.Launch.WriteEnvironments();
-        launchNode.BuildEnvironments();
+        launchNode.BuildEnvironment();
         //Message
         //contextUI.ShowNotification(result);
         //Output
@@ -106,7 +106,7 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:Laun
         //Main process
         launchNode.Launch.Environment.Edit(<string>item.label,newValue);
         result=launchNode.Launch.WriteEnvironments();
-        launchNode.BuildEnvironments();
+        launchNode.BuildEnvironment();
         //Message
         //contextUI.ShowNotification(result);
         //Output
@@ -124,7 +124,7 @@ export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:La
         //Main process
         launchNode.Launch.Environment.Remove(<string>item.label);
         result=launchNode.Launch.WriteEnvironments();
-        launchNode.BuildEnvironments();  
+        launchNode.BuildEnvironment();  
         //Message
         //contextUI.ShowNotification(result);
         //Output

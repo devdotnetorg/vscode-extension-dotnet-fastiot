@@ -3,11 +3,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {StatusResult,IotResult} from './IotResult';
 
-export class IotOption {  
+export class IotTreeItem {  
   public Status: StatusResult;
   public Label: string;
-  public Description: string|  undefined;
-  public Tooltip: string | vscode.MarkdownString | undefined;
+  public Description?: string;
+  public Tooltip?: string | vscode.MarkdownString;
 
   constructor(
     label: string,

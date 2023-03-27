@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './BaseTreeItem';
-import {IotResult,StatusResult } from './IotResult';
-import {IotDevice} from './IotDevice';
-import {IotLaunchEnvironment} from './IotLaunchEnvironment';
-import {IotOption} from './IotOption';
-import {IoTHelper} from './Helper/IoTHelper';
-import {launchHelper} from './Helper/launchHelper';
-import {IotConfiguration} from './Configuration/IotConfiguration';
+import { BaseTreeItem } from './BaseTreeItem';
+import { IotResult,StatusResult } from './IotResult';
+import { IotDevice } from './IotDevice';
+import { IotLaunchEnvironment } from './IotLaunchEnvironment';
+import { IotTreeItem } from './IotTreeItem';
+import { IoTHelper } from './Helper/IoTHelper';
+import { launchHelper } from './Helper/launchHelper';
+import { IotConfiguration } from './Configuration/IotConfiguration';
 
 export class IotLaunch {
 
@@ -48,8 +48,8 @@ export class IotLaunch {
   public get IdTemplate(): string| undefined {
     return this._idTemplate;}
 
-  private _options:IotOption[];
-  public get Options(): IotOption[] {
+  private _options:IotTreeItem[];
+  public get Options(): IotTreeItem[] {
     return this._options;}
 
   private _environment:IotLaunchEnvironment;
@@ -163,62 +163,62 @@ export class IotLaunch {
     return result;
   }
 
-  public GetOptions():IotResult{
+  public GetConfigurationItems():IotResult{
     let result:IotResult;
-    let options:IotOption[]=[];
+    let items:IotTreeItem[]=[];
     try {
-      let option:IotOption;
+      let item:IotTreeItem;
       //IdLaunch
-      option=new IotOption("ID Launch",this.IdLaunch);
-      options.push(option);
+      item=new IotTreeItem("ID Launch",this.IdLaunch);
+      items.push(item);
       //Project
       if(this.PathProject) {
         const fullPathProject= IoTHelper.ReverseSeparatorLinuxToWin(this.WorkspaceDirectory+this.PathProject);
-        option=new IotOption("Project",this.PathProject);
+        item=new IotTreeItem("Project",this.PathProject);
         if(fs.existsSync(fullPathProject)) {
           //OK
-          option.Tooltip=fullPathProject;
+          item.Tooltip=fullPathProject;
         } else{
           //not found
-          option.Status=StatusResult.Error;
-          option.Tooltip=`Not found: ${fullPathProject}`;
+          item.Status=StatusResult.Error;
+          item.Tooltip=`Not found: ${fullPathProject}`;
         }
-        options.push(option);
+        items.push(item);
       } else{
-        option=new IotOption("Project","not found","Project not found",StatusResult.Error);
-        options.push(option);
+        item=new IotTreeItem("Project","not found","Project not found",StatusResult.Error);
+        items.push(item);
       }
       //IdTemplate
       if(this.IdTemplate) {
-        option=new IotOption("Template",this.IdTemplate);
-        options.push(option);
+        item=new IotTreeItem("Template",this.IdTemplate);
+        items.push(item);
       } else{
-        option=new IotOption("Template","not found","Template not found",StatusResult.Error);
-        options.push(option);
+        item=new IotTreeItem("Template","not found","Template not found",StatusResult.Error);
+        items.push(item);
       }
       //IdDevice - IotDevice|string| undefined
       if(this.Device) {
         //IotDevice or string
         if(typeof this.Device === "string") {
           //string - device not found
-          option=new IotOption("Device",this.Device,`${this.Device} not found`,StatusResult.Error);
-          options.push(option);
+          item=new IotTreeItem("Device",this.Device,`${this.Device} not found`,StatusResult.Error);
+          items.push(item);
         } else{
           //IotDevice
           const description=`${this.Device?.label} ${this.Device?.Information.Architecture}`;
           const tooltip=`label: ${this.Device?.label}. Id device: ${this.Device?.IdDevice}`;
-          option=new IotOption("Device",description,tooltip);
-          options.push(option);
+          item=new IotTreeItem("Device",description,tooltip);
+          items.push(item);
           //Username
-          option=new IotOption("Username",this.Device?.Account.UserName);
-          options.push(option);
+          //option=new IotOption("Username",this.Device?.Account.UserName);
+          //options.push(option);
         }
       } else {
-        option=new IotOption("Device","not found","Device not found",StatusResult.Error);
-        options.push(option);
+        item=new IotTreeItem("Device","not found","Device not found",StatusResult.Error);
+        items.push(item);
       }
       result= new IotResult(StatusResult.Ok, "GetOptions");
-      result.returnObject=options;
+      result.returnObject=items;
     } catch (err: any){
       result= new IotResult(StatusResult.Error,"Error. GetOptions",err);
     }
