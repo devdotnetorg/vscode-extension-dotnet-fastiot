@@ -10,6 +10,7 @@ import { IotTemplateCollection } from '../Templates/IotTemplateCollection';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IContexUI } from '../ui/IContexUI';
 import { compare } from 'compare-versions';
+import * as platformFolders from 'platform-folders';
 
 export class IotConfiguration {
   public UsernameAccountDevice:string="";
@@ -29,7 +30,10 @@ export class IotConfiguration {
   public get ExtMode(): vscode.ExtensionMode {
     return this._extMode;}
   public BuiltInConfig: IotBuiltInConfig;
-
+  private _defaultProjectFolder:string;
+  public get DefaultProjectFolder(): string {
+    return this._defaultProjectFolder;}
+  
   constructor(
     context: vscode.ExtensionContext,
     contextUI:IContexUI
@@ -69,6 +73,19 @@ export class IotConfiguration {
       this.Templates= new IotTemplateCollection(this.Folder.Templates,
         path.join(this.Folder.Extension, "templates", "system"),
         this.ExtVersion,this.Folder.Schemas,this._contextUI);
+      //Get default project folder
+      let defaultProjectFolder: string=<string>vscode.workspace.getConfiguration().get('fastiot.template.defaultprojectfolder');
+      //default project folder definition
+      if(defaultProjectFolder == null||defaultProjectFolder == undefined||defaultProjectFolder == "") 
+      {
+        defaultProjectFolder=path.join(platformFolders.getDocumentsFolder(), "Projects");
+        //check folder
+        IoTHelper.MakeDirSync(defaultProjectFolder);
+        //Saving settings
+        vscode.workspace.getConfiguration().update('fastiot.template.defaultprojectfolder',defaultProjectFolder,true);
+      }
+      //set
+      this._defaultProjectFolder=defaultProjectFolder;
     }
 
   public async Init()

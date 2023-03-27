@@ -11,6 +11,7 @@ import { IotTemplate } from '../Templates/IotTemplate';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotConfiguration } from '../Configuration/IotConfiguration';
 import { IContexUI } from '../ui/IContexUI';
+import { stringify } from 'querystring';
 
 export async function createProject(config:IotConfiguration,devices:Array<IotDevice>,contextUI:IContexUI): Promise<void> {
     let result:IotResult;
@@ -30,7 +31,7 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
         return;
     }
     //Select Device
-    const selectDevice = await contextUI.ShowDeviceDialog(devices,'Choose a device (1/4)');
+    const selectDevice = await contextUI.ShowDeviceDialog(devices,'Choose a device (1/6)');
     if(!selectDevice) return;
     //Select template
     const listTemplates= config.Templates.Select(selectDevice.Information.Architecture);
@@ -39,12 +40,12 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
         contextUI.ShowNotification(result);
         return;
     }
-    const selectTemplate = await contextUI.ShowTemplateDialog(listTemplates,'Choose a template (2/5)');
+    const selectTemplate = await contextUI.ShowTemplateDialog(listTemplates,'Choose a template (2/6)');
         if(!selectTemplate) return;
     //Select name project
     let nameProject = await vscode.window.showInputBox({				
         prompt: 'Enter the name of your application',
-        title: 'Application name (3/5)',
+        title: 'Application name (3/6)',
         value: selectTemplate.Attributes.ProjName
     });
     if(!nameProject) return;
@@ -56,31 +57,43 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
         return;
     }
     //Select folder
-    //TODO defaultUri?: Uri;
-    const options: vscode.OpenDialogOptions = {
-        canSelectFiles: false,
-        canSelectFolders: true,
-        canSelectMany: false,
-        title: "Select a folder for the project (4/5)",
-        openLabel: 'Select folder',
-    };
-    let folder:string;
-    if(config.ExtMode==vscode.ExtensionMode.Production){
+    let selectFolder:string|undefined;
+    selectFolder=path.join(config.DefaultProjectFolder, nameProject);
+    //Debug
+    if(config.ExtMode==vscode.ExtensionMode.Development)
+        selectFolder=`${selectFolder}-${IoTHelper.CreateGuid()}`;
+    let itemFolders:Array<ItemQuickPick>=[];
+    let item = new ItemQuickPick(selectFolder,"(default)",selectFolder);
+    itemFolders.push(item);
+    item = new ItemQuickPick("$(folder) Browse ...","",undefined);
+    itemFolders.push(item);
+    const SELECTED_ITEM = await vscode.window.showQuickPick(
+        itemFolders,{title: 'Create project (4/6)',placeHolder:`Select a folder for the project`});
+    if(!SELECTED_ITEM) return;
+    selectFolder=SELECTED_ITEM.value;
+    if(!selectFolder) {
+        const options: vscode.OpenDialogOptions = {
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            title: "Select a folder for the project (5/6)",
+            openLabel: 'Select folder',
+            defaultUri:vscode.Uri.file(config.DefaultProjectFolder)
+        };
+        let folder:string;
         const folders = await vscode.window.showOpenDialog(options);
         if(!folders||folders.length==0) return;
         folder=folders[0].fsPath;
-    }else{
-        //test
-        folder ="D:\\Anton\\Projects\\Tests";
+        //Project path confirmation
+        folder=`${folder}\\${nameProject}`;
+        selectFolder = await vscode.window.showInputBox({				
+            prompt: 'Confirm project location',
+            title: 'Project path (6/6)',
+            value: folder
+        });
+        if(!selectFolder) return;
     }
-    //Project path confirmation
-    folder=`${folder}\\${nameProject}`;
-    let selectFolder = await vscode.window.showInputBox({				
-        prompt: 'Confirm project location',
-        title: 'Project path (5/5)',
-        value: folder
-    });
-    if(!selectFolder) return;
+    //
     selectFolder=IoTHelper.StringTrim(selectFolder);
     if (fs.existsSync(selectFolder)) {
         const files = fs.readdirSync(selectFolder);

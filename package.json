@@ -71,10 +71,17 @@
 					},
 					"fastiot.device.ssh.keytype": {
 						"type": "string",
-						"enum": ["ed25519-256",
-						"ecdsa-256","ecdsa-384","ecdsa-521",
-						"dsa-1024",
-						"rsa-1024","rsa-2048","rsa-3072","rsa-4096"],
+						"enum": [
+							"ed25519-256",
+							"ecdsa-256",
+							"ecdsa-384",
+							"ecdsa-521",
+							"dsa-1024",
+							"rsa-1024",
+							"rsa-2048",
+							"rsa-3072",
+							"rsa-4096"
+						],
 						"default": "ed25519-256",
 						"markdownDescription": "Type of key generation algorithm for ssh. Used to authenticate with a device after it has been added to the device list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the `PubkeyAcceptedAlgorithms=+ssh-rsa` line to the `/etc/ssh/sshd_config` file. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
@@ -106,12 +113,17 @@
 					"fastiot.template.updateinterval": {
 						"type": "number",
 						"default": 24,
-						"enum": [1, 24,72,168],
+						"enum": [
+							1,
+							24,
+							72,
+							168
+						],
 						"enumItemLabels": [
-						  "1 hour",
-						  "1 day",
-						  "3 days",
-						  "1 week"
+							"1 hour",
+							"1 day",
+							"3 days",
+							"1 week"
 						],
 						"markdownDescription": "Update interval for templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
@@ -119,6 +131,11 @@
 						"type": "boolean",
 						"default": true,
 						"description": "Load templates on extension start (false, speeds up the start of the extension)."
+					},
+					"fastiot.template.defaultprojectfolder": {
+						"type": "string",
+						"default": "",
+						"markdownDescription": "Default folder for storing projects. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.config.JSON": {
 						"type": "object",
@@ -589,6 +606,7 @@
 		"fs-extra": "^11.1.0",
 		"ip": "^1.1.8",
 		"pingman": "^1.1.5",
+		"platform-folders": "^0.6.0",
 		"ssh2": "^1.9.0",
 		"ssh2-promise": "^1.0.3",
 		"tcp-port-used": "^1.0.2",
