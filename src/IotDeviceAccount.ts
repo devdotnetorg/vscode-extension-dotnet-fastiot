@@ -92,7 +92,7 @@ export class IotDeviceAccount extends BaseTreeItem{
       //if debugvscode
       if(accountNameDebug!="root"){
         nameScript="createaccount";
-        paramsScript=`${accountNameDebug} ${this.Device.Config.GroupsAccountDevice} ${paramsScript}`;
+        paramsScript=`${accountNameDebug} ${this.Device.Config.GroupAccountDevice} ${paramsScript}`;
       }
       //event
       this.Client.FireChangedState({
@@ -140,7 +140,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         this.Port=sshconfig.port?.toString();
         this.UserName=accountNameDebug;
         this.Identity=fileName;
-        this.Groups.push(this.Device.Config.GroupsAccountDevice);	        
+        this.Groups.push(this.Device.Config.GroupAccountDevice);	        
       }
       //-------------------------------
       //udev rules

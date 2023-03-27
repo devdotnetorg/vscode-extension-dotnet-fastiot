@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotConfigurationFolder } from './IotConfigurationFolder';
-import { IBuiltInConfig } from './IBuiltInConfig';
+import { IotBuiltInConfig } from './IotBuiltInConfig';
 import { IotTemplateCollection } from '../Templates/IotTemplateCollection';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IContexUI } from '../ui/IContexUI';
@@ -13,7 +13,7 @@ import { compare } from 'compare-versions';
 
 export class IotConfiguration {
   public UsernameAccountDevice:string="";
-  public GroupsAccountDevice:string="";
+  public GroupAccountDevice:string="";
   public TypeKeySshDevice:string="";
   public BitsKeySshDevice:number=256;
   public TemplateTitleLaunch:string="";
@@ -21,7 +21,6 @@ export class IotConfiguration {
   public Templates: IotTemplateCollection;
   public IsUpdateTemplates:boolean;
   public UpdateIntervalTemplatesHours:number;
-  public LastUpdateTemplatesHours:number;
   private _contextUI:IContexUI;
   private _extVersion:string;
   public get ExtVersion(): string {
@@ -29,17 +28,24 @@ export class IotConfiguration {
   private _extMode:vscode.ExtensionMode;
   public get ExtMode(): vscode.ExtensionMode {
     return this._extMode;}
-  public BuiltInConfig: IBuiltInConfig;
+  public BuiltInConfig: IotBuiltInConfig;
 
   constructor(
     context: vscode.ExtensionContext,
     contextUI:IContexUI
     ){
+      //UI
+      this._contextUI=contextUI;
       //Get info from context
       this._extVersion=`${context.extension.packageJSON.version}`;
       this._extMode=context.extensionMode;
-      //UI
-      this._contextUI=contextUI;
+      //Template update
+      this.IsUpdateTemplates=<boolean>vscode.workspace.getConfiguration().get('fastiot.template.isupdate');
+      this.UpdateIntervalTemplatesHours=<number>vscode.workspace.getConfiguration().get('fastiot.template.updateinterval');
+      //Built-in config
+      const configJson:any=vscode.workspace.getConfiguration().get('fastiot.config.JSON');
+      this.BuiltInConfig=new IotBuiltInConfig(configJson);
+      //Main
       //Get Application folder
       let applicationDataPath: string=<string>vscode.workspace.getConfiguration().get('fastiot.device.applicationdatafolder');
       //Application folder definition
@@ -48,118 +54,85 @@ export class IotConfiguration {
         /* Get home directory of the user in Node.js */
         // check the available memory
         const userHomeDir = os.homedir();
-        applicationDataPath=userHomeDir+"\\fastiot";
+        applicationDataPath=path.join(userHomeDir, "fastiot");
         //Saving settings
         vscode.workspace.getConfiguration().update('fastiot.device.applicationdatafolder',applicationDataPath,true);
       }
-      //
+      //Folders
       this.Folder = new IotConfigurationFolder(applicationDataPath,context);
+      const result=this.Folder.CheckingFolders();
+      if(result.Status!=StatusResult.Ok) {
+        this._contextUI.Output(result);
+        //return;
+      }
+      //Templates
       this.Templates= new IotTemplateCollection(this.Folder.Templates,
-        this.Folder.Extension+"\\templates\\system",this.ExtVersion,
-        this.Folder.Schemas,this._contextUI);
-      //Template update
-      this.IsUpdateTemplates=<boolean>vscode.workspace.getConfiguration().get('fastiot.template.isupdate');
-      this.UpdateIntervalTemplatesHours=<number>vscode.workspace.getConfiguration().get('fastiot.template.updateinterval');
-      this.LastUpdateTemplatesHours=<number>vscode.workspace.getConfiguration().get('fastiot.template.lastupdate');
-      //Built-in config
-      const data:IBuiltInConfig = { previousVerExt: "0.1" };
-      this.BuiltInConfig=data;
+        path.join(this.Folder.Extension, "templates", "system"),
+        this.ExtVersion,this.Folder.Schemas,this._contextUI);
     }
 
   public async Init()
   {
-    //Built-in config-------------------------
-    //read JSON devices
-    const configJson:any=vscode.workspace.getConfiguration().get('fastiot.config.JSON');
-    //Recovery config
-    if(configJson.previousVerExt) {
-      this.BuiltInConfig=configJson;
-    }
-    //Device----------------------------------
-    this.UsernameAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
-	  this.GroupsAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.groups');
-	  //check type and bits of key
-    let typeKeySshDevice=<string>vscode.workspace.getConfiguration().get('fastiot.device.ssh.key.type');	
-    let bitsKeySshDevice=<number>vscode.workspace.getConfiguration().get('fastiot.device.ssh.key.bits');	
-    const oldTypeKeySshDevice=typeKeySshDevice;
-    const oldBitsKeySshDevice=bitsKeySshDevice;
-    //making dictionary
-    let keySshDictionary=new Map<string,Array<number>>(); 
-    keySshDictionary.set("ed25519",[256]);
-    keySshDictionary.set("ecdsa",[256, 384, 521]);
-    keySshDictionary.set("dsa",[1024]);
-    keySshDictionary.set("rsa",[1024, 2048, 3072, 4096]);
-    const arrayBits=keySshDictionary.get(typeKeySshDevice);
-    if(arrayBits){
-      //find
-      if(!arrayBits.includes(bitsKeySshDevice))
-        bitsKeySshDevice=arrayBits[arrayBits.length-1];
-    } else{
-      typeKeySshDevice="ed25519";
-      bitsKeySshDevice=256;
-    }
-    let msg="";
-    if(oldTypeKeySshDevice!=typeKeySshDevice){
-      msg=`Invalid ssh key type: ${oldTypeKeySshDevice}. The ssh key type parameter has been changed to: ${typeKeySshDevice}.\n`;
-      vscode.workspace.getConfiguration().update('fastiot.device.ssh.key.type',typeKeySshDevice,true);
-    }
-    if(oldBitsKeySshDevice!=bitsKeySshDevice){
-      msg=msg+`Invalid bits value for key: ${oldTypeKeySshDevice}. The bits parameter has been changed to: ${bitsKeySshDevice}`;
-      vscode.workspace.getConfiguration().update('fastiot.device.ssh.key.bits',<number>bitsKeySshDevice,true);
-    }
-    this.TypeKeySshDevice=typeKeySshDevice;
-    this.BitsKeySshDevice=bitsKeySshDevice;
-    if(msg!="") vscode.window.showErrorMessage(msg);
-    //Launch----------------------------------
-    this.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
-	  //replace old format
-    //const oldFormatTitleLaunch="Launch on %DEVICE_LABEL% (%NAME_PROJECT%, %BOARD_NAME%, %USER_DEBUG%)";
-    const oldFormatTitleLaunch="%DEVICE_LABEL%";
-    if(this.TemplateTitleLaunch.includes(oldFormatTitleLaunch))
-    {
-      this.TemplateTitleLaunch="Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})";
-      vscode.workspace.getConfiguration().update('fastiot.launch.templatetitle',this.TemplateTitleLaunch,true);
-    }
-    //Keys of devices-------------------------
-    //Migrating key files from a previous version of the extension
-	  const PreviousKeysFolder:string= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfolderkeys');
-    if(PreviousKeysFolder != "")
-    {
-      try {
-        const srcDir = PreviousKeysFolder;
-        const destDir = this.Folder.DeviceKeys;
-        // To copy a folder or file, select overwrite accordingly
-        fs.copySync(srcDir, destDir);
-        vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
-      } catch (err) {
-          console.error(err)
-      }
-      //Saving settings
-      vscode.workspace.getConfiguration().update('fastiot.device.pathfolderkeys',"",true);
-    }
-    //Templates-------------------------------
-    //Clear
-    this.Folder.ClearTmp();
-    //Load
-    const loadTemplatesOnStart =  <boolean>vscode.workspace.getConfiguration().get('fastiot.template.loadonstart');
-    if(loadTemplatesOnStart) this.LoadTemplatesAsync();
-    //Checking if templates need to be updated after updating an extension
-    const isNeedUpgrade=compare(`${this.ExtVersion}`,`${this.BuiltInConfig?.previousVerExt}`, '>');
-    if(isNeedUpgrade)
+    try {
+      //Device----------------------------------
+      this.UsernameAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.username');	
+      this.GroupAccountDevice= <string>vscode.workspace.getConfiguration().get('fastiot.device.account.group');
+      //check type and bits of key
+      let typeKeySshDevice=<string>vscode.workspace.getConfiguration().get('fastiot.device.ssh.key.customtype');
+      let bitsKeySshDevice=<number>vscode.workspace.getConfiguration().get('fastiot.device.ssh.key.custombits');
+      if(typeKeySshDevice == null||typeKeySshDevice == undefined||typeKeySshDevice == "")
+        {
+          const sshKeytype=<string>vscode.workspace.getConfiguration().get('fastiot.device.ssh.keytype');
+          const sshKeytypeArray=sshKeytype.split('-');
+          typeKeySshDevice=sshKeytypeArray[0];
+          bitsKeySshDevice=+sshKeytypeArray[1];
+        }
+      this.TypeKeySshDevice=typeKeySshDevice;
+      this.BitsKeySshDevice=bitsKeySshDevice;
+      //Launch----------------------------------
+      this.TemplateTitleLaunch= <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');
+      //Keys of devices-------------------------
+      /*
+      //Migrating key files from a previous version of the extension
+      const PreviousKeysFolder:string= <string>vscode.workspace.getConfiguration().get('fastiot.device.pathfolderkeys');
+      if(PreviousKeysFolder != "")
       {
-        this.RestoreSystemTemplates(true);
-        this.BuiltInConfig.previousVerExt=this.ExtVersion;
-        this.WriteBuiltInConfig();
+        try {
+          const srcDir = PreviousKeysFolder;
+          const destDir = this.Folder.DeviceKeys;
+          // To copy a folder or file, select overwrite accordingly
+          fs.copySync(srcDir, destDir);
+          vscode.window.showWarningMessage(`Keys for devices from folder ${srcDir} have been moved to folder ${destDir}`);
+        } catch (err) {
+            console.error(err)
+        }
+        //Saving settings
+        vscode.workspace.getConfiguration().update('fastiot.device.pathfolderkeys',"",true);
       }
-  }
-
-  public async WriteBuiltInConfig()
-  {
-    vscode.workspace.getConfiguration().update('fastiot.config.JSON',this.BuiltInConfig,true);
+      */
+      //Templates-------------------------------
+      //Clear
+      this.Folder.ClearTmp();
+      //Load
+      const loadTemplatesOnStart =  <boolean>vscode.workspace.getConfiguration().get('fastiot.template.loadonstart');
+      if(loadTemplatesOnStart) this.LoadTemplatesAsync();
+      //Checking if templates need to be updated after updating an extension
+      const isNeedUpgrade=compare(`${this.ExtVersion}`,`${this.BuiltInConfig.PreviousVerExt}`, '>');
+      if(isNeedUpgrade)
+        {
+          this.RestoreSystemTemplates(true);
+          this.BuiltInConfig.PreviousVerExt=this.ExtVersion;
+          this.BuiltInConfig.Save();
+        }
+    } catch (err: any){
+      const result=new IotResult(StatusResult.Error,`Settings loading error`,err);
+      this._contextUI.Output(result);
+    }
   }
 
   public async LoadTemplatesAsync(force:boolean=false)
   {
+    //TODO Перенести в IotTemplateCollection
     await vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
       title: "Loading ... ",
@@ -190,14 +163,15 @@ export class IotConfiguration {
         progress.report({ message: "Updating system templates",increment: 20 }); //60
         //To get the number of hours since Unix epoch, i.e. Unix timestamp:
         const dateNow=Math.floor(Date.now() / 1000/ 3600);
-        const TimeHasPassedHours=dateNow-this.LastUpdateTemplatesHours;
+        const TimeHasPassedHours=dateNow-this.BuiltInConfig.LastUpdateTemplatesHours;
         this._contextUI.Output("Updating system templates");
         if(force||(this.IsUpdateTemplates&&(TimeHasPassedHours>=this.UpdateIntervalTemplatesHours))){
           result=await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
           this._contextUI.Output(result);
           //timestamp of last update
           if(result.Status==StatusResult.Ok){
-            vscode.workspace.getConfiguration().update('fastiot.template.lastupdate',<number>dateNow,true);
+            this.BuiltInConfig.LastUpdateTemplatesHours=<number>dateNow;
+            this.BuiltInConfig.Save();
           }
         } else this._contextUI.Output(`Disabled or less than ${this.UpdateIntervalTemplatesHours} hour(s) have passed since the last update.`);
         //Loading custom templates
@@ -215,6 +189,7 @@ export class IotConfiguration {
 
   public RestoreSystemTemplates(force=false)
   {
+    //TODO Перенести в IotTemplateCollection
     //clear
     if (fs.existsSync(this.Folder.TemplatesSystem))
       fs.emptyDirSync(this.Folder.TemplatesSystem);

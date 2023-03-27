@@ -59,7 +59,7 @@
 						"default": "debugvscode",
 						"markdownDescription": "Debug account name. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-					"fastiot.device.account.groups": {
+					"fastiot.device.account.group": {
 						"type": "string",
 						"default": "sudo",
 						"markdownDescription": "Linux group for a new user (debugvscode) of a development device. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
@@ -69,25 +69,24 @@
 						"default": "",
 						"markdownDescription": "Shared folder for storing keys, templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-					"fastiot.device.ssh.key.type": {
+					"fastiot.device.ssh.keytype": {
 						"type": "string",
-						"default": "ed25519",
-						"markdownDescription": "Type of key generation algorithm for ssh. Can take values: ed25519 (default), ecdsa, dsa, rsa. Used to authenticate with a device after it has been added to the device list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the `PubkeyAcceptedAlgorithms=+ssh-rsa` line to the `/etc/ssh/sshd_config` file. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+						"enum": ["ed25519-256",
+						"ecdsa-256","ecdsa-384","ecdsa-521",
+						"dsa-1024",
+						"rsa-1024","rsa-2048","rsa-3072","rsa-4096"],
+						"default": "ed25519-256",
+						"markdownDescription": "Type of key generation algorithm for ssh. Used to authenticate with a device after it has been added to the device list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the `PubkeyAcceptedAlgorithms=+ssh-rsa` line to the `/etc/ssh/sshd_config` file. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-					"fastiot.device.ssh.key.bits": {
+					"fastiot.device.ssh.key.customtype": {
+						"type": "string",
+						"default": "",
+						"markdownDescription": "Custom type of key generation algorithm for ssh. Replaces `#fastiot.device.ssh.keytype#`. For example `ed25519`."
+					},
+					"fastiot.device.ssh.key.custombits": {
 						"type": "number",
-						"default": 256,
-						"markdownDescription": "Key length in bits. Can take values: 256, 384, 521, 512, 1024, 2048, 3072, 4096. ED25519 only 256. ECDSA key length: valid lengths are 256, 384, 521, recommended 521. DSA only 1024. RSA key length: valid lengths are 1024, 2048, 3072, 4096, recommended 4096. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
-					},
-					"fastiot.device.pathfolderkeys": {
-						"type": "string",
-						"default": "C:\\RemoteCode\\keys",
-						"description": "![Not used] Path to ssh key storage folder"
-					},
-					"fastiot.device.pathfoldercwrsync": {
-						"type": "string",
-						"default": "C:\\RemoteCode\\cwrsync",
-						"markdownDescription": "![Not used] The folder with the [cwRsync](https://itefix.net/cwrsync) package to copy the application to a remote device and provide a transport for the debugger."
+						"default": 0,
+						"markdownDescription": "Custom key length in bits. Replaces `#fastiot.device.ssh.keytype#`. For example `256`."
 					},
 					"fastiot.launch.templatetitle": {
 						"type": "string",
@@ -107,12 +106,14 @@
 					"fastiot.template.updateinterval": {
 						"type": "number",
 						"default": 24,
-						"markdownDescription": "Update interval in hours for templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
-					},
-					"fastiot.template.lastupdate": {
-						"type": "number",
-						"default": 0,
-						"markdownDescription": "Number of hours since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), i.e. Unix timestamp, until the templates were last updated."
+						"enum": [1, 24,72,168],
+						"enumItemLabels": [
+						  "1 hour",
+						  "1 day",
+						  "3 days",
+						  "1 week"
+						],
+						"markdownDescription": "Update interval for templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.template.loadonstart": {
 						"type": "boolean",
