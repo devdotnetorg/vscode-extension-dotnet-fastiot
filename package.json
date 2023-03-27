@@ -358,19 +358,23 @@
 				},
 				{
 					"command": "viewDevices.RefreshDevices",
-					"when": "view == viewDevices"
+					"when": "view == viewDevices",
+					"group": "7_modification"
 				},
 				{
 					"command": "viewDevices.ExportDevices",
-					"when": "view == viewDevices"
+					"when": "view == viewDevices",
+					"group": "7_modification"
 				},
 				{
 					"command": "viewDevices.ImportDevices",
-					"when": "view == viewDevices"
+					"when": "view == viewDevices",
+					"group": "7_modification"
 				},
 				{
 					"command": "viewDevices.OpenFolderSshKeys",
-					"when": "view == viewDevices"
+					"when": "view == viewDevices",
+					"group": "2_workspace"
 				},
 				{
 					"command": "viewLaunchs.Add",
@@ -397,31 +401,38 @@
 			"view/item/context": [
 				{
 					"command": "viewDevices.RenameDevice",
-					"when": "view == viewDevices && viewItem == iotdevice"
+					"when": "view == viewDevices && viewItem == iotdevice",
+					"group": "5_cutcopypaste"
 				},
 				{
 					"command": "viewDevices.DeleteDevice",
-					"when": "view == viewDevices && viewItem == iotdevice"
+					"when": "view == viewDevices && viewItem == iotdevice",
+					"group": "7_modification"
 				},
 				{
 					"command": "viewDevices.ConnectionTestDevice",
-					"when": "view == viewDevices && viewItem == iotdevice"
+					"when": "view == viewDevices && viewItem == iotdevice",
+					"group": "navigation"
 				},
 				{
 					"command": "viewDevices.RebootDevice",
-					"when": "view == viewDevices && viewItem == iotdevice"
+					"when": "view == viewDevices && viewItem == iotdevice",
+					"group": "7_modification"
 				},
 				{
 					"command": "viewDevices.ShutdownDevice",
-					"when": "view == viewDevices && viewItem == iotdevice"
+					"when": "view == viewDevices && viewItem == iotdevice",
+					"group": "7_modification"
 				},
 				{
 					"command": "viewDevices.OpenSshTerminal",
-					"when": "view == viewDevices && viewItem == iotdevice"
+					"when": "view == viewDevices && viewItem == iotdevice",
+					"group": "navigation"
 				},
 				{
 					"command": "viewDevices.CopyToClipboard",
-					"when": "view == viewDevices && viewItem == iotitemtree"
+					"when": "view == viewDevices && viewItem == iotitemtree",
+					"group": "navigation"
 				},
 				{
 					"command": "viewDevices.CheckAllPackages",
@@ -447,7 +458,8 @@
 				},
 				{
 					"command": "viewDevices.CopyToClipboard",
-					"when": "view == viewDevices && viewItem == iotpackage_installed"
+					"when": "view == viewDevices && viewItem == iotpackage_installed",
+					"group": "navigation"
 				},
 				{
 					"command": "viewDevices.UpdateDTO",
@@ -480,19 +492,23 @@
 				},
 				{
 					"command": "viewLaunchs.Rename",
-					"when": "view == viewLaunchs && viewItem == iotlaunch"
+					"when": "view == viewLaunchs && viewItem == iotlaunch",
+					"group": "5_cutcopypaste"
 				},
 				{
 					"command": "viewLaunchs.Delete",
-					"when": "view == viewLaunchs && viewItem == iotlaunch"
+					"when": "view == viewLaunchs && viewItem == iotlaunch",
+					"group": "7_modification"
 				},
 				{
 					"command": "viewLaunchs.Rebuild",
-					"when": "view == viewLaunchs && viewItem == iotlaunch"
+					"when": "view == viewLaunchs && viewItem == iotlaunch",
+					"group": "7_modification"
 				},
 				{
 					"command": "viewLaunchs.GoToDevice",
-					"when": "view == viewLaunchs && viewItem == iotlaunch"
+					"when": "view == viewLaunchs && viewItem == iotlaunch",
+					"group": "navigation"
 				},
 				{
 					"command": "viewLaunchs.AddEnviroment",
@@ -513,11 +529,13 @@
 				},
 				{
 					"command": "viewDevices.CopyToClipboard",
-					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
+					"when": "view == viewLaunchs && viewItem == iotenviromentitem",
+					"group": "navigation"
 				},
 				{
 					"command": "viewDevices.CopyToClipboard",
-					"when": "view == viewLaunchs && viewItem == iotenviromentoption"
+					"when": "view == viewLaunchs && viewItem == iotenviromentoption",
+					"group": "navigation"
 				}
 			]
 		},
