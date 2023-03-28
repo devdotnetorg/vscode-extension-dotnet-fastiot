@@ -488,7 +488,41 @@ export class IotLaunch {
     return result;
   }
 
-  public WriteEnvironments(): IotResult {  
+  private ChangeValueofKey(key:string,value:any,labelKey:string=key): IotResult {
+    let result:IotResult;
+    const errorMsg=`Error writing key: ${key} value: ${value} for Launch. IdLaunch: ${this.IdLaunch}`;
+    try {
+      result = this.GetJsonLaunch();
+      if(result.Status!=StatusResult.Ok) {
+        result.AddMessage(errorMsg);
+        return result;
+      } 
+      let jsonLaunch = result.returnObject;
+      const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.IdLaunch);
+      if (launch) {
+        launch[key] = value;
+        //write file
+        result=this.SaveLaunch(jsonLaunch);
+        if(result.Status==StatusResult.Error) {
+          result.AddMessage(errorMsg);
+          return result;
+        } 
+      } else {
+        result= new IotResult(StatusResult.Error,`Launch not found. IdLaunch: ${this.IdLaunch}`);
+        return result;
+      }
+      result= new IotResult(StatusResult.Ok,`"${labelKey}" updated successfully`);
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,errorMsg,err);
+    }
+    return result;
+  }
+
+  public WriteEnvironments(): IotResult {
+    const result = this.ChangeValueofKey('env',this.Environment.ToJSON(),`Environment`);
+    return result;
+    
+    /*
     let result:IotResult;
     const errorMsg=`Error writing Environments for Launch. IdLaunch: ${this.IdLaunch}`;
     try {
@@ -516,6 +550,7 @@ export class IotLaunch {
       result= new IotResult(StatusResult.Error,`Write Environment IdLaunch: ${this.IdLaunch}`,err);
     }
     return result;
+    */
   }
 
   public RebuildLaunch(config:IotConfiguration, devices: Array<IotDevice>): IotResult {
