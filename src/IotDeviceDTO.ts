@@ -67,10 +67,13 @@ export class IotDeviceDTO extends BaseTreeItem {
     //view
     this.contextValue="iotdtos";
     //
+    /*
     this.iconPath = {
       light: path.join(__filename, '..', '..', 'resources', 'light', 'dto.svg'),
       dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dto.svg')
     };
+    */
+    this.iconPath = new vscode.ThemeIcon("layers");
   }
 
   public InitDTO( dto: IoTDTO)

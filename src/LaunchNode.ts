@@ -32,20 +32,26 @@ export class LaunchNode extends LaunchTreeItemNode {
     //Options
     this.Configuration = new LaunchTreeItemNode("Configuration",undefined,"Configuration",
       vscode.TreeItemCollapsibleState.Collapsed,this);
+      /*
       this.Configuration.iconPath = {
         light: path.join(__filename, '..', '..', 'resources', 'light', 'info.svg'),
         dark: path.join(__filename, '..', '..', 'resources', 'dark', 'info.svg')
       };
+      */
+    this.Configuration.iconPath = new vscode.ThemeIcon("gear");
     //Added in childs
     this.Childs.push(this.Configuration);
     //Environments
     this.Environment=new LaunchTreeItemNode("Environment",undefined,"Environment",
       vscode.TreeItemCollapsibleState.Collapsed,this);
     this.Environment.contextValue="iotenviroment";
+    /*
     this.Environment.iconPath = {
       light: path.join(__filename, '..', '..', 'resources', 'light', 'enviroment.svg'),
       dark: path.join(__filename, '..', '..', 'resources', 'dark', 'enviroment.svg')
     };
+    */
+    this.Environment.iconPath = new vscode.ThemeIcon("note");
     //Added in childs
     this.Childs.push(this.Environment);
     //Build
@@ -96,8 +102,13 @@ export class LaunchNode extends LaunchTreeItemNode {
     });
   }
 
+  /*
   iconPath = {
     light: path.join(__filename, '..', '..', 'resources', 'light', 'lanch.svg'),
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'lanch.svg')
   };
+  */
+
+  iconPath = new vscode.ThemeIcon("play");
+
 }

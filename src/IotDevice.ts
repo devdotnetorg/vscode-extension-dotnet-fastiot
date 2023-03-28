@@ -414,8 +414,11 @@ export class IotDevice extends BaseTreeItem {
     this.AddidDeviceInChildsInformation();  
   }
 
+  /*
   iconPath = {
     light: path.join(__filename, '..', '..', 'resources', 'light', 'device.svg'),
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'device.svg')
   };
+  */
+  iconPath = new vscode.ThemeIcon("circuit-board");
 }
