@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import { BaseTreeItem } from './BaseTreeItem';
 import { IotResult,StatusResult } from './IotResult';
@@ -357,13 +357,29 @@ export class IotLaunch {
     let result:IotResult;
     try {
       const datafile = JSON.stringify(json,null,2);
+      //create lock file
+      const fileLockPath = path.join(path.dirname(filePath), ".lockreadlaunch");
+      fs.writeFileSync(fileLockPath,``);
       //write file
       fs.writeFileSync(filePath,datafile);
+      //wait unlock read launch
+      this.WaitUnlockReadLaunch(fileLockPath);
+      //result
       result=new IotResult(StatusResult.Ok,`File saved. filePath: ${filePath}`);
     } catch (err: any){
       result= new IotResult(StatusResult.Error,`SaveFile. filePath: ${filePath}, json: ${json}`,err); 
     }
     return result; 
+  }
+
+  private async WaitUnlockReadLaunch(fileLockPath:string, time:number=500)
+  {
+    try {
+      //wait
+      await IoTHelper.Sleep(time);
+      //delete file
+      if (fs.existsSync(fileLockPath)) fs.removeSync(fileLockPath);
+    } catch (err: any){ }
   }
 
   private DeleteTaskChaine(jsonLaunch:any,jsonTasks:any):IotResult

@@ -10,7 +10,7 @@ import { utimesSync } from 'utimes';
 
 export class IoTHelper {
 
-  static Sleep (time:number) {
+  static Sleep (time:number=1000) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 

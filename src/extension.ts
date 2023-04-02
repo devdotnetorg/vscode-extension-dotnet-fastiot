@@ -1,6 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs-extra';
 //shared
 import { IoTHelper } from './Helper/IoTHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
@@ -16,7 +18,6 @@ import { IotDevice } from './IotDevice';
 import { IotDevicePackage } from './IotDevicePackage';
 import { IotDeviceDTO } from './IotDeviceDTO';
 import { IotDeviceGpiochip } from './IotDeviceGpiochip';
-
 //Devices.actions
 import { addDevice } from './actionsDevice/addDevice';
 import { refreshDevices } from './actionsDevice/refreshDevices';
@@ -41,14 +42,12 @@ import { addDTO } from './actionsDevice/addDTO';
 import { deleteDTO } from './actionsDevice/deleteDTO';
 import { enableDTO } from './actionsDevice/enableDTO';
 import { disableDTO } from './actionsDevice/disableDTO';
-
 //Launchs
 import { TreeDataLaunchsProvider } from './TreeDataLaunchsProvider';
 import { TreeDataTemplatesProvider } from './TreeDataTemplatesProvider';
 import { LaunchNode } from './LaunchNode';
 import { LaunchTreeItemNode } from './LaunchTreeItemNode';
 import { LaunchOptionNode } from './LaunchOptionNode';
-
 //actionsLaunch.actions
 import { addLaunch } from './actionsLaunch/addLaunch';
 import { addEnviroment,renameEnviroment,editEnviroment,deleteEnviroment } from './actionsLaunch/managementEnviroment';
@@ -58,13 +57,10 @@ import { refreshLaunch } from './actionsLaunch/refreshLaunch';
 import { deleteLaunch } from './actionsLaunch/deleteLaunch';
 import { rebuildLaunch } from './actionsLaunch/rebuildLaunch';
 import { changeOption } from './actionsLaunch/changeOption';
-
 //Template.actions
 import { createProject } from './actionsTemplates/createProject';
 import { reloadTemplates } from './actionsTemplates/reloadTemplates';
 import { openTemplateFolder } from './actionsTemplates/openTemplateFolder';
-import path from 'path';
-import { fstat } from 'fs';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -313,21 +309,33 @@ export async function activate(context: vscode.ExtensionContext) {
 			//vscode.window.showInformationMessage('You must restart the .NET FastIoT extension or VSCode to apply the new settings');	
 		}
     }, undefined, context.subscriptions);
-	// TODO FileSystemWatcher
-	// - "**/.vscode/*.json"
-	/*
 	//FileSystemWatcher
-	const watcher: vscode.FileSystemWatcher =
-		vscode.workspace.createFileSystemWatcher("REP", false, false, false);
-	watcher.onDidChange(async (uri: vscode.Uri) => {
-		contextUI.Output("---");
-		contextUI.Output(Date.now().toString());
-		contextUI.Output(`Change ${uri.fsPath}`);
-		const msg = path.basename(uri.fsPath.toString());
-		if(msg=="launch.json") contextUI.Output("Change launch.json");
+	//- "**/.vscode/*.json"
+	const debounce = (fn: Function, ms = 200) => {
+		let timeoutId: ReturnType<typeof setTimeout>;
+		return function (this: any, ...args: any[]) {
+		  clearTimeout(timeoutId);
+		  timeoutId = setTimeout(() => fn.apply(this, args), ms);
+		};
+	};
+	const reloadLaunchs = debounce( () => {
+		if(config.Folder.WorkspaceDirectory) {
+			const lockFilePath=path.join(config.Folder.WorkspaceDirectory,".vscode",".lockreadlaunch");
+			if (!fs.existsSync(lockFilePath)) loadLaunchs();
+		}
 	});
-	*/
-	//Subscriptions
+	const watcher: vscode.FileSystemWatcher =
+		vscode.workspace.createFileSystemWatcher("**/.vscode/launch.json", false, false, false);
+	watcher.onDidChange((uri: vscode.Uri) => {
+		reloadLaunchs();
+	});
+	watcher.onDidCreate((uri: vscode.Uri) => {
+		reloadLaunchs();
+	});
+	watcher.onDidDelete((uri: vscode.Uri) => {
+		reloadLaunchs();
+	});
+ 	//Subscriptions
 	context.subscriptions.push(outputChannel);
 	context.subscriptions.push(vscodeTreeViewDevices);
 	context.subscriptions.push(vscodeTreeViewLaunchs);
@@ -376,6 +384,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandOpenTemplateFolder);
 	//events
 	context.subscriptions.push(commandRestoreSystemTemplates);
+	//other
+	//context.subscriptions.push(watcher);
 }
 
 // this method is called when your extension is deactivated

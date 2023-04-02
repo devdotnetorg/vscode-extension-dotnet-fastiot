@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import { LaunchTreeItemNode } from './LaunchTreeItemNode';
 import { IotDevice } from './IotDevice';
@@ -98,7 +98,10 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
       });
       //Sort
       if(sortLaunchs) this.SortNodes();
-      //
+      //check .lockreadlaunch
+      const lockFilePath=path.join(this.Config.Folder.WorkspaceDirectory,".vscode",".lockreadlaunch");
+      if (fs.existsSync(lockFilePath)) fs.removeSync(lockFilePath);
+      //result
       result= new IotResult(StatusResult.Ok,`Launchs loaded successfully`);      
     }
     catch (err:any)
