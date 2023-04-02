@@ -42,11 +42,12 @@ import { deleteDTO } from './actionsDevice/deleteDTO';
 import { enableDTO } from './actionsDevice/enableDTO';
 import { disableDTO } from './actionsDevice/disableDTO';
 
-//Configurations
+//Launchs
 import { TreeDataLaunchsProvider } from './TreeDataLaunchsProvider';
 import { TreeDataTemplatesProvider } from './TreeDataTemplatesProvider';
 import { LaunchNode } from './LaunchNode';
 import { LaunchTreeItemNode } from './LaunchTreeItemNode';
+import { LaunchOptionNode } from './LaunchOptionNode';
 
 //actionsLaunch.actions
 import { addLaunch } from './actionsLaunch/addLaunch';
@@ -56,6 +57,7 @@ import { renameLaunch } from './actionsLaunch/renameLaunch';
 import { refreshLaunch } from './actionsLaunch/refreshLaunch';
 import { deleteLaunch } from './actionsLaunch/deleteLaunch';
 import { rebuildLaunch } from './actionsLaunch/rebuildLaunch';
+import { changeOption } from './actionsLaunch/changeOption';
 
 //Template.actions
 import { createProject } from './actionsTemplates/createProject';
@@ -228,21 +230,21 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandAddLaunch = vscode.commands.registerCommand('viewLaunchs.Add', () => {	
 		addLaunch(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,contextUI);	
 	});
-	//Refresh Configurations
+	//Refresh Launchs
 	let commandRefreshLaunch = vscode.commands.registerCommand('viewLaunchs.Refresh', () => {
 		refreshLaunch(treeDataLaunchsProvider,contextUI);		
 	});
-	//Rename Configuration
+	//Rename Launch
 	let commandRenameLaunch = vscode.commands.registerCommand('viewLaunchs.Rename', 
 		(item:LaunchNode) => {
 			renameLaunch(treeDataLaunchsProvider,item,contextUI);
 	});
-	//Delete Configuration
+	//Delete Launch
 	let commandDeleteLaunch = vscode.commands.registerCommand('viewLaunchs.Delete', 
 		(item:LaunchNode) => {
 			deleteLaunch(treeDataLaunchsProvider,item,contextUI);
 	});
-	//Rebuild Configuration
+	//Rebuild Launch
 	let commandRebuildLaunch = vscode.commands.registerCommand('viewLaunchs.Rebuild', 
 		(item:LaunchNode) => {
 			rebuildLaunch(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,
@@ -272,6 +274,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandDeleteEnviroment = vscode.commands.registerCommand('viewLaunchs.DeleteEnviroment', 
 		(item:LaunchTreeItemNode) => {
 			deleteEnviroment(treeDataLaunchsProvider,item,contextUI);		
+	});
+	//Change Option
+	let commandChangeOptionLaunch = vscode.commands.registerCommand('viewLaunchs.ChangeOption', 
+		(item:LaunchOptionNode) => {
+			changeOption(treeDataLaunchsProvider,item);
 	});
 	//Create project
 	let commandCreateProject = vscode.commands.registerCommand('viewTemplates.CreateProject', () => {	
@@ -362,6 +369,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandRenameEnviroment);
 	context.subscriptions.push(commandEditEnviroment);
 	context.subscriptions.push(commandDeleteEnviroment);
+	context.subscriptions.push(commandChangeOptionLaunch);
 	context.subscriptions.push(commandCreateProject);
 	context.subscriptions.push(commandReloadTemplates);
 	context.subscriptions.push(commandOpenTemplateFolder);

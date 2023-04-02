@@ -5,6 +5,8 @@ import { LaunchTreeItemNode } from './LaunchTreeItemNode';
 import { IotResult,StatusResult } from './IotResult';
 import { IotLaunch } from './IotLaunch';
 import { IotTreeItem } from './IotTreeItem';
+import { LaunchOptionNode } from './LaunchOptionNode';
+import { IotLaunchOption } from './IotLaunchOption';
 
 export class LaunchNode extends LaunchTreeItemNode {  
   public Parent: undefined;
@@ -16,6 +18,7 @@ export class LaunchNode extends LaunchTreeItemNode {
 
   public Configuration:LaunchTreeItemNode;
   public Environment:LaunchTreeItemNode;
+  public Options:LaunchTreeItemNode;
 
   constructor(launch: IotLaunch){
     super("Configuration",undefined, undefined,vscode.TreeItemCollapsibleState.Collapsed,undefined);
@@ -29,7 +32,7 @@ export class LaunchNode extends LaunchTreeItemNode {
     this.tooltip=tooltip;
     //view
     this.contextValue="iotlaunch";
-    //Options
+    //Configuration
     this.Configuration = new LaunchTreeItemNode("Configuration",undefined,"Configuration",
       vscode.TreeItemCollapsibleState.Collapsed,this);
       /*
@@ -39,8 +42,6 @@ export class LaunchNode extends LaunchTreeItemNode {
       };
       */
     this.Configuration.iconPath = new vscode.ThemeIcon("gear");
-    //Added in childs
-    this.Childs.push(this.Configuration);
     //Environments
     this.Environment=new LaunchTreeItemNode("Environment",undefined,"Environment",
       vscode.TreeItemCollapsibleState.Collapsed,this);
@@ -52,8 +53,15 @@ export class LaunchNode extends LaunchTreeItemNode {
     };
     */
     this.Environment.iconPath = new vscode.ThemeIcon("note");
+    //Options
+    this.Options=new LaunchTreeItemNode("Options",undefined,"Options",
+    vscode.TreeItemCollapsibleState.Collapsed,this);
+    this.Options.contextValue="iotlaunchoptions";
+    this.Options.iconPath = new vscode.ThemeIcon("three-bars");
     //Added in childs
+    this.Childs.push(this.Configuration);
     this.Childs.push(this.Environment);
+    this.Childs.push(this.Options);
     //Build
     this.Build();
   }
@@ -65,6 +73,7 @@ export class LaunchNode extends LaunchTreeItemNode {
   private Build() {
     this.BuildConfiguration();
     this.BuildEnvironment();
+    this.BuildOptions();
   }
 
   private BuildConfiguration() {
@@ -100,6 +109,37 @@ export class LaunchNode extends LaunchTreeItemNode {
       item.contextValue="iotenviromentitem"
       this.Environment.Childs.push(item);      
     });
+  }
+
+  private BuildOptions() {
+    //main
+    //create child elements
+    this.Options.Childs=[];
+    let item:LaunchOptionNode;
+    //Console (terminal) window
+    //https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+    let label="Console (terminal)";
+    let headtooltip=`The "console" setting controls what console (terminal) window the target app is launched into:`
+    let iotLaunchOption=new IotLaunchOption("console","internalConsole",this._launch);
+    let values:Map<any,string>= new Map<any,string>();
+    values.set("internalConsole","the target process's console output (stdout/stderr) goes to the VS Code Debug Console.");
+    values.set("integratedTerminal","the target process will run inside VS Code's integrated terminal.");
+    values.set("externalTerminal","the target process will run inside its own external terminal.");
+    item = new LaunchOptionNode(label,headtooltip,this,iotLaunchOption,values);
+    item.ReadValue();
+    this.Options.Childs.push(item);
+    //Just My Code
+    //https://medium.com/@thiagoalves/how-to-disable-the-just-my-code-setting-on-the-vs-code-debugger-f5fd774e0af8
+    label="Just My Code";
+    headtooltip=`Debugging just my code:`
+    iotLaunchOption=new IotLaunchOption("justMyCode",true,this._launch);
+    values = new Map<any,string>();
+    values.set(true,"True");
+    values.set(false,"False");
+    item = new LaunchOptionNode(label,headtooltip,this,iotLaunchOption,values);
+    item.ReadValue();
+    this.Options.Childs.push(item);
+    //
   }
 
   /*

@@ -224,7 +224,7 @@ export class IotDeviceAccount extends BaseTreeItem{
     //Key availability check
     if(this.PathKey&&!fs.existsSync(this.PathKey)){
       //Not found
-      const msg=`Error. SSH key not found: ${this.PathKey}`;
+      const msg=`Error. SSH key not found: ${this.PathKey}. Device: ${this.Device.label}`;
       element.tooltip=msg;          
       element.iconPath = {
         light: path.join(__filename, '..', '..', 'resources', 'light', 'error.svg'),

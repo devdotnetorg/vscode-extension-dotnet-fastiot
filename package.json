@@ -12,6 +12,7 @@
 		"internalName": "vscode-extension-dotnet-fastiot"
 	},
 	"categories": [
+		"Programming Languages",
 		"Other"
 	],
 	"keywords": [
@@ -325,6 +326,11 @@
 				"title": "Delete"
 			},
 			{
+				"command": "viewLaunchs.ChangeOption",
+				"title": "Change",
+				"icon": "$(edit)"
+			},
+			{
 				"command": "viewTemplates.ReloadTemplates",
 				"title": "Reload templates"
 			},
@@ -424,7 +430,7 @@
 				{
 					"command": "viewDevices.DeleteDevice",
 					"when": "view == viewDevices && viewItem == iotdevice",
-					"group": "7_modification"
+					"group": "5_cutcopypaste"
 				},
 				{
 					"command": "viewDevices.ConnectionTestDevice",
@@ -515,7 +521,7 @@
 				{
 					"command": "viewLaunchs.Delete",
 					"when": "view == viewLaunchs && viewItem == iotlaunch",
-					"group": "7_modification"
+					"group": "5_cutcopypaste"
 				},
 				{
 					"command": "viewLaunchs.Rebuild",
@@ -539,6 +545,11 @@
 				{
 					"command": "viewLaunchs.EditEnviroment",
 					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
+				},
+				{
+					"command": "viewLaunchs.ChangeOption",
+					"when": "view == viewLaunchs && viewItem == iotlaunchoption",
+					"group": "inline"
 				},
 				{
 					"command": "viewLaunchs.DeleteEnviroment",

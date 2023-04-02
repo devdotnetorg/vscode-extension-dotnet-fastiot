@@ -9,6 +9,7 @@ import { IotTreeItem } from './IotTreeItem';
 import { IoTHelper } from './Helper/IoTHelper';
 import { launchHelper } from './Helper/launchHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
+import { IotLaunchOption } from './IotLaunchOption';
 
 export class IotLaunch {
 
@@ -48,10 +49,6 @@ export class IotLaunch {
   public get IdTemplate(): string| undefined {
     return this._idTemplate;}
 
-  private _options:IotTreeItem[];
-  public get Options(): IotTreeItem[] {
-    return this._options;}
-
   private _environment:IotLaunchEnvironment;
   public get Environment(): IotLaunchEnvironment {
     return this._environment;}
@@ -60,7 +57,6 @@ export class IotLaunch {
     this._workspaceDirectory=workspaceDirectory;
     this._launchFilePath=<string>this.WorkspaceDirectory+"\\.vscode\\launch.json";
     this._tasksFilePath=<string>this.WorkspaceDirectory+"\\.vscode\\tasks.json";
-    this._options = [];
     this._environment = new IotLaunchEnvironment();  
   }
 
@@ -153,6 +149,11 @@ export class IotLaunch {
       this._label=jsonObj.name;
       //Description
       this._description=jsonObj.fastiotDescription;
+      //
+
+
+
+
       //
       result=new IotResult(StatusResult.Ok,`Launch successfully loaded ${this._idLaunch}`);
     }
@@ -488,7 +489,7 @@ export class IotLaunch {
     return result;
   }
 
-  private ChangeValueofKey(key:string,value:any,labelKey:string=key): IotResult {
+  public WriteValueofKey(key:string,value:any,labelKey:string=key): IotResult {
     let result:IotResult;
     const errorMsg=`Error writing key: ${key} value: ${value} for Launch. IdLaunch: ${this.IdLaunch}`;
     try {
@@ -518,8 +519,37 @@ export class IotLaunch {
     return result;
   }
 
+  public ReadValueofKey(key:string,labelKey:string=key): IotResult {
+    let result:IotResult;
+    const errorMsg=`Error getting value for key: ${key} for Launch. IdLaunch: ${this.IdLaunch}`;
+    try {
+      result = this.GetJsonLaunch();
+      if(result.Status!=StatusResult.Ok) {
+        result.AddMessage(errorMsg);
+        return result;
+      } 
+      let jsonLaunch = result.returnObject;
+      const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.IdLaunch);
+      if (launch) {
+        if(launch.hasOwnProperty(key)) {
+          const value:any= launch[key];
+          result= new IotResult(StatusResult.Ok,`Key: "${labelKey}", Value: ${value}"`);
+          result.returnObject=value;
+        } else {
+          result= new IotResult(StatusResult.No,`Key: "${labelKey}" is not found`);
+        }
+      } else {
+        result= new IotResult(StatusResult.Error,`Launch not found. IdLaunch: ${this.IdLaunch}`);
+        return result;
+      }
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,errorMsg,err);
+    }
+    return result;
+  }
+
   public WriteEnvironments(): IotResult {
-    const result = this.ChangeValueofKey('env',this.Environment.ToJSON(),`Environment`);
+    const result = this.WriteValueofKey('env',this.Environment.ToJSON(),`Environment`);
     return result;
     
     /*
