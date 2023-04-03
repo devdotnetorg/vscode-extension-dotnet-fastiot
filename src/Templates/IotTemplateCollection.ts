@@ -23,7 +23,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
 
   public async LoadTemplatesSystem():Promise<void>
   {
-    this.ContextUI.Output("Loading system templates");
+    this.ContextUI.Output("☑️ Loading system templates");
     const type=EntityType.system;
     const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,this.RecoverySourcePath);
@@ -32,7 +32,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
 
   public async LoadTemplatesUser():Promise<void>
   {
-    this.ContextUI.Output("Loading custom templates");
+    this.ContextUI.Output("☑️ Loading custom templates");
     const type=EntityType.user;
     //
     const path=`${this.BasePath}\\${type}`;
@@ -42,7 +42,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
 
   public async LoadTemplatesCommunity():Promise<void>
   {
-    this.ContextUI.Output("Loading community templates");
+    this.ContextUI.Output("☑️ Loading community templates");
     const type=EntityType.community;
     //
     const path=`${this.BasePath}\\${type}`;
@@ -139,15 +139,42 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     return result;
   }
 
+  public async UpdateCommunityTemplate(urls:string[],tempPath:string):Promise<IotResult>
+  {
+    let result:IotResult;
+    const type=EntityType.community;
+    //Check urls
+    if(urls.length==0) {
+      result= new IotResult(StatusResult.No,`No update sources for community templates`);
+      return Promise.resolve(result);
+    }
+    //list
+    let index:number=0;
+    do{
+      const url = urls[index];
+      if(url) {
+        //update
+        result = await this.UpdateTemplate(url,type,tempPath);
+        if(result.Status==StatusResult.Error)
+          this.ContextUI.Output(result);
+        //
+      }else break;
+      index++;
+    }while(true)
+    //result
+    result= new IotResult(StatusResult.Ok,`Update of ${type} templates completed successfully`);
+    return Promise.resolve(result);
+  }
+
   public async UpdateTemplate(url:string,type:EntityType,tempPath:string):Promise<IotResult>
   {
     const destPath=`${this.BasePath}\\${type}`;
     let downloader = new IotTemplateDownloader();
     let result:IotResult;
-    this.ContextUI.Output(`Downloading a list of templates to update: ${url}`);
+    this.ContextUI.Output(`🔗 Downloading a list of templates to update: ${url}`);
     result= await downloader.GetDownloadListTemplate(url);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
-    this.ContextUI.Output(`List of templates loaded ${url}`);
+    this.ContextUI.Output(`🔗 List of templates loaded ${url}`);
     let listDownload:Array<EntityDownload>=result.returnObject;
     if(listDownload.length==0)
     {

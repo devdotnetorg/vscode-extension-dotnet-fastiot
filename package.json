@@ -138,6 +138,12 @@
 						"default": "",
 						"markdownDescription": "Default folder for storing projects. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
+
+					"fastiot.template.community.updatesource": {
+						"type": "string",
+						"default": "",
+						"markdownDescription": "Update source for community project templates. Sources are separated by the symbol `;`. For example: `htts://url1/list.yaml;htts://url2/list.yaml`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+					},
 					"fastiot.config.JSON": {
 						"type": "object",
 						"default": {},

@@ -33,7 +33,10 @@ export class IotConfiguration {
   private _defaultProjectFolder:string;
   public get DefaultProjectFolder(): string {
     return this._defaultProjectFolder;}
-  
+  private _listSourceUpdateTemplateCommunity:string[];
+  public get ListSourceUpdateTemplateCommunity(): string[] {
+    return this._listSourceUpdateTemplateCommunity;}
+
   constructor(
     context: vscode.ExtensionContext,
     contextUI:IContexUI
@@ -86,6 +89,8 @@ export class IotConfiguration {
       }
       //set
       this._defaultProjectFolder=defaultProjectFolder;
+      //Urls
+      this._listSourceUpdateTemplateCommunity=[];
     }
 
   public async Init()
@@ -128,6 +133,20 @@ export class IotConfiguration {
       }
       */
       //Templates-------------------------------
+      //Get url line for update community template
+      let urlLine: string=<string>vscode.workspace.getConfiguration().get('fastiot.template.community.updatesource');
+      if(urlLine != null && urlLine != undefined && urlLine != "") 
+      {
+        //Get urls
+        let urls=urlLine.split(`;`);
+        urls.forEach((url) => {
+          url=IoTHelper.StringTrim(url);
+          if(url != "") this._listSourceUpdateTemplateCommunity.push(url);
+        });
+        urlLine=this._listSourceUpdateTemplateCommunity.join(`;`);
+        //Saving settings
+        vscode.workspace.getConfiguration().update('fastiot.template.community.updatesource',urlLine,true);
+      }
       //Clear
       this.Folder.ClearTmp();
       //Load
@@ -176,13 +195,15 @@ export class IotConfiguration {
         //Loading system templates
         progress.report({ message: "Loading system templates",increment: 20 }); //40
         await this.Templates.LoadTemplatesSystem();
-        //Updating system templates
-        progress.report({ message: "Updating system templates",increment: 20 }); //60
+        //Updating templates
+        progress.report({ message: "Updating templates",increment: 20 }); //60
         //To get the number of hours since Unix epoch, i.e. Unix timestamp:
         const dateNow=Math.floor(Date.now() / 1000/ 3600);
         const TimeHasPassedHours=dateNow-this.BuiltInConfig.LastUpdateTemplatesHours;
-        this._contextUI.Output("Updating system templates");
+        this._contextUI.Output("📥 Updating templates:");
         if(force||(this.IsUpdateTemplates&&(TimeHasPassedHours>=this.UpdateIntervalTemplatesHours))){
+          //system
+          this._contextUI.Output("☑️ Updating system templates");
           result=await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
           this._contextUI.Output(result);
           //timestamp of last update
@@ -190,11 +211,15 @@ export class IotConfiguration {
             this.BuiltInConfig.LastUpdateTemplatesHours=<number>dateNow;
             this.BuiltInConfig.Save();
           }
+          //community
+          this._contextUI.Output("☑️ Updating community templates");
+          result=await this.Templates.UpdateCommunityTemplate(this._listSourceUpdateTemplateCommunity,this.Folder.Temp);
+          this._contextUI.Output(result);
         } else this._contextUI.Output(`Disabled or less than ${this.UpdateIntervalTemplatesHours} hour(s) have passed since the last update.`);
         //Loading custom templates
         progress.report({ message: "Loading custom templates",increment: 20 }); //80
         await this.Templates.LoadTemplatesUser();
-        const endMsg=`${this.Templates.Count} template(s) available.`;
+        const endMsg=`📚 ${this.Templates.Count} template(s) available.`;
         this._contextUI.Output(endMsg);
         this._contextUI.Output("----------------------------------");
         progress.report({ message: "Templates loaded" , increment: 20 }); //100

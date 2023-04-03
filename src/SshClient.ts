@@ -314,7 +314,7 @@ export class SshClient {
     const identity=sshConfig.identity;
     let msg:string;
     if(identity){
-      msg = `Login "${sshConfig.username}" and key ${identity} were used to enter.`;
+      msg = `Login "${sshConfig.username}" and key 🔑 ${identity} were used to enter.`;
     } else {
       msg = `The login was "${sshConfig.username}" and the password was ******.`;
     }
