@@ -54,14 +54,8 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
   public Refresh(): void {        
     this._onDidChangeTreeData.fire();    
   }
-
-  public RefreshsFull(sortLaunchs:boolean=false): IotResult {
-    let result:IotResult;
-    result = this.LoadLaunches(sortLaunchs);
-    return result;  
-  }
   
-  public async RecoveryLaunchsAsync(sortLaunchs:boolean=false): Promise<IotResult>{
+  public async LoadLaunchesAsync(sortLaunchs:boolean=false): Promise<IotResult>{
     return Promise.resolve(this.LoadLaunches(sortLaunchs));  
   }
 

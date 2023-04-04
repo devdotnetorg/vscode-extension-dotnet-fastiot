@@ -17,7 +17,7 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
     let result:IotResult;
     //Load template
     if(config.Templates.Count==0)
-        await config.LoadTemplatesAsync();
+        await config.Templates.LoadTemplatesAsync();
     //repeat
     if(config.Templates.Count==0) {
         result=new IotResult(StatusResult.No,`No templates available`);

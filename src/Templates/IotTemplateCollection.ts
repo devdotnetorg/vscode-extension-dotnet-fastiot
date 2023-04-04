@@ -11,14 +11,18 @@ import {IotTemplateRecovery} from './IotTemplateRecovery';
 import {IotTemplateDownloader} from './IotTemplateDownloader';
 import {EntityDownload} from '../Entity/EntityDownloader';
 import {IContexUI} from '../ui/IContexUI';
+import {IotConfiguration} from '../Configuration/IotConfiguration';
 
 export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute,IotTemplate> {
   
+  private _config:IotConfiguration;
+
   constructor(
     basePath: string, recoverySourcePath:string, versionExt:string,
-    pathFolderSchemas: string,contextUI:IContexUI
+    pathFolderSchemas: string,contextUI:IContexUI,config:IotConfiguration
     ){
-      super(basePath,recoverySourcePath,versionExt,pathFolderSchemas,contextUI);  
+      super(basePath,recoverySourcePath,versionExt,pathFolderSchemas,contextUI);
+      this._config=config;
   }
 
   public async LoadTemplatesSystem():Promise<void>
@@ -255,6 +259,76 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     //result
     result= new IotResult(StatusResult.Ok,`Update of ${type} templates completed successfully`);
     return Promise.resolve(result);
+  }
+
+  public async LoadTemplatesAsync(force:boolean=false)
+  {
+    await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: "Loading ... ",
+      cancellable: false
+    }, (progress, token) => {
+      //token.onCancellationRequested(() => {
+      //  console.log("User canceled the long running operation");
+      //});
+      return new Promise(async (resolve, reject) => {
+        //main code
+        progress.report({ message: "Preparing to load",increment: 20 }); //20
+        //Preparing
+        let result= new IotResult(StatusResult.None,undefined,undefined);
+        this.Clear();
+        let url:string="";
+        if(this._config.ExtMode==vscode.ExtensionMode.Production)
+        {
+          url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
+        }else{
+          //for test
+          url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/templates/system/templatelist.fastiot.yaml";
+        }
+        this.ContextUI.Output("-------- Loading templates -------");
+        //Loading system templates
+        progress.report({ message: "Loading system templates",increment: 20 }); //40
+        await this.LoadTemplatesSystem();
+        //Updating templates
+        progress.report({ message: "Updating templates",increment: 20 }); //60
+        //To get the number of hours since Unix epoch, i.e. Unix timestamp:
+        const dateNow=Math.floor(Date.now() / 1000/ 3600);
+        const TimeHasPassedHours=dateNow-this._config.BuiltInConfig.LastUpdateTemplatesHours;
+        this.ContextUI.Output("📥 Updating templates:");
+        if(force||(this._config.IsUpdateTemplates&&(TimeHasPassedHours>=this._config.UpdateIntervalTemplatesHours))){
+          //system
+          this.ContextUI.Output("☑️ Updating system templates");
+          result=await this.UpdateSystemTemplate(url,this._config.Folder.Temp);
+          this.ContextUI.Output(result);
+          //timestamp of last update
+          if(result.Status==StatusResult.Ok){
+            this._config.BuiltInConfig.LastUpdateTemplatesHours=<number>dateNow;
+            this._config.BuiltInConfig.Save();
+          }
+          //community
+          this.ContextUI.Output("☑️ Updating community templates");
+          result=await this.UpdateCommunityTemplate(this._config.ListSourceUpdateTemplateCommunity,this._config.Folder.Temp);
+          this.ContextUI.Output(result);
+        } else this.ContextUI.Output(`Disabled or less than ${this._config.UpdateIntervalTemplatesHours} hour(s) have passed since the last update.`);
+        //Loading custom templates
+        progress.report({ message: "Loading custom templates",increment: 20 }); //80
+        await this.LoadTemplatesUser();
+        const endMsg=`📚 ${this.Count} template(s) available.`;
+        this.ContextUI.Output(endMsg);
+        this.ContextUI.Output("----------------------------------");
+        progress.report({ message: "Templates loaded" , increment: 20 }); //100
+        resolve(endMsg);
+        //end
+      });
+    });
+  }
+
+  public RestoreSystemTemplates(force=false)
+  {
+    //clear
+    if (fs.existsSync(this._config.Folder.TemplatesSystem))
+      fs.emptyDirSync(this._config.Folder.TemplatesSystem);
+    this.LoadTemplatesAsync(force);
   }
 
 }

@@ -21,7 +21,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     }
     //Load template
     if(treeData.Config.Templates.Count==0)
-        await treeData.Config.LoadTemplatesAsync();
+        await treeData.Config.Templates.LoadTemplatesAsync();
     //repeat
     if(treeData.Config.Templates.Count==0) {
         result=new IotResult(StatusResult.No,`No templates available`);
@@ -110,5 +110,5 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     //Message
     contextUI.ShowNotification(result);
     //Refresh
-    treeData.RefreshsFull();
+    treeData.LoadLaunches();
 }

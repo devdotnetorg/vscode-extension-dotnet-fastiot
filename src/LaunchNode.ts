@@ -139,7 +139,6 @@ export class LaunchNode extends LaunchTreeItemNode {
     item = new LaunchOptionNode(label,headtooltip,this,iotLaunchOption,values);
     item.ReadValue();
     this.Options.Childs.push(item);
-    //
   }
 
   /*

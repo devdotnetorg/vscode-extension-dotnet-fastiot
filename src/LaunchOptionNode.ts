@@ -29,18 +29,19 @@ export class LaunchOptionNode extends LaunchTreeItemNode {
   public ReadValue() {
     //get
     const value=this._iotLaunchOption.GetValue();
-    //
-    this.description=`${value}`;
-    let desText=this.Values.get(value);
-    if(!desText) desText=`${value}`;
-    this.tooltip=new vscode.MarkdownString(`${this.Headtooltip}\n\n(${this.description}) ${desText}`);
+    //refresh
+    this.Refresh(value);
   }
 
   public WriteValue(value:any) {
     //set
     const result=this._iotLaunchOption.SetValue(value);
     if(result.Status!=StatusResult.Ok) return;
-    //
+    //refresh
+    this.Refresh(value);
+  }
+
+  private Refresh (value:any) {
     this.description=`${value}`;
     let desText=this.Values.get(value);
     if(!desText) desText=`${value}`;

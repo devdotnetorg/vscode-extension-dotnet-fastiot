@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItemNode} from './BaseTreeItemNode';
-import {LaunchOptionNode} from './LaunchOptionNode';
+import { BaseTreeItemNode } from './BaseTreeItemNode';
+import { LaunchOptionNode } from './LaunchOptionNode';
 
 export class LaunchTreeItemNode extends BaseTreeItemNode { 
   public Parent: LaunchTreeItemNode| undefined;

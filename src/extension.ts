@@ -97,7 +97,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	//TreeView Launchs
     let treeDataLaunchsProvider = new TreeDataLaunchsProvider(config,treeDataDevicesProvider.RootItems);
 	const loadLaunchs = async () => {
-		const result= await treeDataLaunchsProvider.RecoveryLaunchsAsync();
+		const result= treeDataLaunchsProvider.LoadLaunches();
 		if(result.Status==StatusResult.Error) {
 			const head="--------- Loading launchs --------";
 			contextUI.Output(result.toStringWithHead(head));
@@ -290,7 +290,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Restore/upgrade system templates
 	let commandRestoreSystemTemplates = vscode.commands.registerCommand('viewTemplates.RestoreSystemTemplates', async () => {
-		config.RestoreSystemTemplates();
+		config.Templates.RestoreSystemTemplates();
 		vscode.window.showInformationMessage("Restore/upgrade system templates completed successfully");
 	});
 	//Events

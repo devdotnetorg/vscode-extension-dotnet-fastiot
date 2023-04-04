@@ -18,5 +18,5 @@ export async function deleteLaunch(treeData: TreeDataLaunchsProvider,item:Launch
     //Message
     contextUI.ShowNotification(result);
     //Refresh
-    treeData.RefreshsFull();
+    treeData.LoadLaunches();
 }

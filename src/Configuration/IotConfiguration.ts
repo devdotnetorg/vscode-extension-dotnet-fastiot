@@ -12,6 +12,8 @@ import { IContexUI } from '../ui/IContexUI';
 import { compare } from 'compare-versions';
 import * as platformFolders from 'platform-folders';
 
+//TODO Запихать устроства
+
 export class IotConfiguration {
   public UsernameAccountDevice:string="";
   public GroupAccountDevice:string="";
@@ -75,7 +77,7 @@ export class IotConfiguration {
       //Templates
       this.Templates= new IotTemplateCollection(this.Folder.Templates,
         path.join(this.Folder.Extension, "templates", "system"),
-        this.ExtVersion,this.Folder.Schemas,this._contextUI);
+        this.ExtVersion,this.Folder.Schemas,this._contextUI,this);
       //Get default project folder
       let defaultProjectFolder: string=<string>vscode.workspace.getConfiguration().get('fastiot.template.defaultprojectfolder');
       //default project folder definition
@@ -151,12 +153,12 @@ export class IotConfiguration {
       this.Folder.ClearTmp();
       //Load
       const loadTemplatesOnStart =  <boolean>vscode.workspace.getConfiguration().get('fastiot.template.loadonstart');
-      if(loadTemplatesOnStart) this.LoadTemplatesAsync();
+      if(loadTemplatesOnStart) this.Templates.LoadTemplatesAsync();
       //Checking if templates need to be updated after updating an extension
       const isNeedUpgrade=compare(`${this.ExtVersion}`,`${this.BuiltInConfig.PreviousVerExt}`, '>');
       if(isNeedUpgrade)
         {
-          this.RestoreSystemTemplates(true);
+          this.Templates.RestoreSystemTemplates(true);
           this.BuiltInConfig.PreviousVerExt=this.ExtVersion;
           this.BuiltInConfig.Save();
         }
@@ -164,78 +166,6 @@ export class IotConfiguration {
       const result=new IotResult(StatusResult.Error,`Settings loading error`,err);
       this._contextUI.Output(result);
     }
-  }
-
-  public async LoadTemplatesAsync(force:boolean=false)
-  {
-    //TODO Перенести в IotTemplateCollection
-    await vscode.window.withProgress({
-      location: vscode.ProgressLocation.Notification,
-      title: "Loading ... ",
-      cancellable: false
-    }, (progress, token) => {
-      //token.onCancellationRequested(() => {
-      //  console.log("User canceled the long running operation");
-      //});
-      return new Promise(async (resolve, reject) => {
-        //main code
-        progress.report({ message: "Preparing to load",increment: 20 }); //20
-        //Preparing
-        let result= new IotResult(StatusResult.None,undefined,undefined);
-        this.Templates.Clear();
-        let url:string="";
-        if(this.ExtMode==vscode.ExtensionMode.Production)
-        {
-          url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
-        }else{
-          //for test
-          url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/templates/system/templatelist.fastiot.yaml";
-        }
-        this._contextUI.Output("-------- Loading templates -------");
-        //Loading system templates
-        progress.report({ message: "Loading system templates",increment: 20 }); //40
-        await this.Templates.LoadTemplatesSystem();
-        //Updating templates
-        progress.report({ message: "Updating templates",increment: 20 }); //60
-        //To get the number of hours since Unix epoch, i.e. Unix timestamp:
-        const dateNow=Math.floor(Date.now() / 1000/ 3600);
-        const TimeHasPassedHours=dateNow-this.BuiltInConfig.LastUpdateTemplatesHours;
-        this._contextUI.Output("📥 Updating templates:");
-        if(force||(this.IsUpdateTemplates&&(TimeHasPassedHours>=this.UpdateIntervalTemplatesHours))){
-          //system
-          this._contextUI.Output("☑️ Updating system templates");
-          result=await this.Templates.UpdateSystemTemplate(url,this.Folder.Temp);
-          this._contextUI.Output(result);
-          //timestamp of last update
-          if(result.Status==StatusResult.Ok){
-            this.BuiltInConfig.LastUpdateTemplatesHours=<number>dateNow;
-            this.BuiltInConfig.Save();
-          }
-          //community
-          this._contextUI.Output("☑️ Updating community templates");
-          result=await this.Templates.UpdateCommunityTemplate(this._listSourceUpdateTemplateCommunity,this.Folder.Temp);
-          this._contextUI.Output(result);
-        } else this._contextUI.Output(`Disabled or less than ${this.UpdateIntervalTemplatesHours} hour(s) have passed since the last update.`);
-        //Loading custom templates
-        progress.report({ message: "Loading custom templates",increment: 20 }); //80
-        await this.Templates.LoadTemplatesUser();
-        const endMsg=`📚 ${this.Templates.Count} template(s) available.`;
-        this._contextUI.Output(endMsg);
-        this._contextUI.Output("----------------------------------");
-        progress.report({ message: "Templates loaded" , increment: 20 }); //100
-        resolve(endMsg);
-        //end
-      });
-    });
-  }
-
-  public RestoreSystemTemplates(force=false)
-  {
-    //TODO Перенести в IotTemplateCollection
-    //clear
-    if (fs.existsSync(this.Folder.TemplatesSystem))
-      fs.emptyDirSync(this.Folder.TemplatesSystem);
-    this.LoadTemplatesAsync(force);
   }
   
 }

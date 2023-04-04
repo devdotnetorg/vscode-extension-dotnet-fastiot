@@ -6,5 +6,5 @@ import { IotResult,StatusResult } from '../IotResult';
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 
 export async function reloadTemplates(treeData: TreeDataLaunchsProvider): Promise<void> {        
-    treeData.Config.LoadTemplatesAsync(true);
+    treeData.Config.Templates.LoadTemplatesAsync(true);
 }

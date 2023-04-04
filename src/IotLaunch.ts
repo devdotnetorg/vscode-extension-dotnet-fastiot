@@ -150,11 +150,6 @@ export class IotLaunch {
       //Description
       this._description=jsonObj.fastiotDescription;
       //
-
-
-
-
-      //
       result=new IotResult(StatusResult.Ok,`Launch successfully loaded ${this._idLaunch}`);
     }
     catch (err:any)

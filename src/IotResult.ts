@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
    
-export enum StatusResult { None="None", Ok="Ok", No ="No", Error="Error"};
+export enum StatusResult { None="None", Ok="Ok", No ="No", Error="Error" };
 
 export class IotResult {  
   private _status: StatusResult;  
@@ -35,14 +35,6 @@ export class IotResult {
 
   public AddSystemMessage= (value: string|undefined) =>
     {if(value) this._systemMessage=`${this._systemMessage}\n${value}`};
-
-  /*
-  public AppendResult(value: IotResult): void{
-    this._status=value.Status;
-    this.AddMessage(value.Message);
-    this.AddSystemMessage(value.SystemMessage);
-  }
-  */
 
   public toString():string{
     let msg=``;
