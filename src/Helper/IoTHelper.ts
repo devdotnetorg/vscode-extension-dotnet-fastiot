@@ -14,13 +14,17 @@ export class IoTHelper {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-  static MakeDirSync(dir: string) {
-    //TODO добавиь try IoTResault
-    if (fs.existsSync(dir)) return;
-    if (!fs.existsSync(path.dirname(dir))) {
-      IoTHelper.MakeDirSync(path.dirname(dir));
+  static MakeDirSync(dir: string):IotResult {
+    try {
+      if (fs.existsSync(dir)) return new IotResult(StatusResult.Ok,`Directory ${dir} created successfully`);
+      if (!fs.existsSync(path.dirname(dir))) {
+        IoTHelper.MakeDirSync(path.dirname(dir));
+      }
+      fs.mkdirSync(dir);
+    } catch (err: any){
+      return new IotResult(StatusResult.Error,`Failed to create directory ${dir}`,err);
     }
-    fs.mkdirSync(dir);
+    return new IotResult(StatusResult.Ok,`Directory ${dir} created successfully`);
   }
 
   static GetWorkspaceDirectory(): string| undefined {
