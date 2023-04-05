@@ -17,11 +17,10 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
   
   private _config:IotConfiguration;
 
-  constructor(
-    basePath: string, recoverySourcePath:string, versionExt:string,
-    pathFolderSchemas: string,contextUI:IContexUI,config:IotConfiguration
-    ){
-      super(basePath,recoverySourcePath,versionExt,pathFolderSchemas,contextUI);
+  constructor(config:IotConfiguration, contextUI:IContexUI){
+      super(config.Folder.Templates,
+        path.join(config.Folder.Extension, "templates", "system"),
+        config.ExtVersion,config.Folder.Schemas,contextUI);
       this._config=config;
   }
 

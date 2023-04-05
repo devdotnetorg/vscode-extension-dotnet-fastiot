@@ -15,6 +15,7 @@ export class IoTHelper {
   }
 
   static MakeDirSync(dir: string) {
+    //TODO добавиь try IoTResault
     if (fs.existsSync(dir)) return;
     if (!fs.existsSync(path.dirname(dir))) {
       IoTHelper.MakeDirSync(path.dirname(dir));

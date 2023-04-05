@@ -12,35 +12,36 @@ import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotConfiguration } from '../Configuration/IotConfiguration';
 import { IContexUI } from '../ui/IContexUI';
 import { stringify } from 'querystring';
+import { IoTApplication } from '../IoTApplication';
 
-export async function createProject(config:IotConfiguration,devices:Array<IotDevice>,contextUI:IContexUI): Promise<void> {
+export async function createProject(app:IoTApplication,devices:Array<IotDevice>): Promise<void> {
     let result:IotResult;
     //Load template
-    if(config.Templates.Count==0)
-        await config.Templates.LoadTemplatesAsync();
+    if(app.Templates.Count==0)
+        await app.Templates.LoadTemplatesAsync();
     //repeat
-    if(config.Templates.Count==0) {
+    if(app.Templates.Count==0) {
         result=new IotResult(StatusResult.No,`No templates available`);
-        contextUI.ShowNotification(result);
+        app.UI.ShowNotification(result);
         return;
     }
     //Devices
     if(devices.length==0) {
         result=new IotResult(StatusResult.No,`No devices. Add device`);
-        contextUI.ShowNotification(result);
+        app.UI.ShowNotification(result);
         return;
     }
     //Select Device
-    const selectDevice = await contextUI.ShowDeviceDialog(devices,'Choose a device (1/6)');
+    const selectDevice = await app.UI.ShowDeviceDialog(devices,'Choose a device (1/6)');
     if(!selectDevice) return;
     //Select template
-    const listTemplates= config.Templates.Select(selectDevice.Information.Architecture);
+    const listTemplates= app.Templates.Select(selectDevice.Information.Architecture);
     if(listTemplates.length==0) {
         result=new IotResult(StatusResult.No,`No templates for device ${selectDevice.label} ${selectDevice.Information.Architecture}`);
-        contextUI.ShowNotification(result);
+        app.UI.ShowNotification(result);
         return;
     }
-    const selectTemplate = await contextUI.ShowTemplateDialog(listTemplates,'Choose a template (2/6)');
+    const selectTemplate = await app.UI.ShowTemplateDialog(listTemplates,'Choose a template (2/6)');
         if(!selectTemplate) return;
     //Select name project
     let nameProject = await vscode.window.showInputBox({				
@@ -53,14 +54,14 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
     nameProject=IoTHelper.ConvertToValidFilename(nameProject,'_');
     if(dotnetHelper.CheckDotNetAppName(nameProject)){
         result=new IotResult(StatusResult.Error,`${nameProject}: The project name contains prohibited characters`);
-        contextUI.ShowNotification(result);
+        app.UI.ShowNotification(result);
         return;
     }
     //Select folder
     let selectFolder:string|undefined;
-    selectFolder=path.join(config.DefaultProjectFolder, nameProject);
+    selectFolder=path.join(app.Config.DefaultProjectFolder, nameProject);
     //Debug
-    if(config.ExtMode==vscode.ExtensionMode.Development)
+    if(app.Config.ExtMode==vscode.ExtensionMode.Development)
         selectFolder=`${selectFolder}-${IoTHelper.CreateGuid()}`;
     let itemFolders:Array<ItemQuickPick>=[];
     let item = new ItemQuickPick(selectFolder,"(default)",selectFolder);
@@ -78,7 +79,7 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
             canSelectMany: false,
             title: "Select a folder for the project (5/6)",
             openLabel: 'Select folder',
-            defaultUri:vscode.Uri.file(config.DefaultProjectFolder)
+            defaultUri:vscode.Uri.file(app.Config.DefaultProjectFolder)
         };
         let folder:string;
         const folders = await vscode.window.showOpenDialog(options);
@@ -99,7 +100,7 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
         const files = fs.readdirSync(selectFolder);
         if(files.length>0) {
             result=new IotResult(StatusResult.Error,`Folder ${selectFolder} must be empty`);
-            contextUI.ShowNotification(result);
+            app.UI.ShowNotification(result);
             return;
         }
     }
@@ -122,15 +123,15 @@ export async function createProject(config:IotConfiguration,devices:Array<IotDev
     //values
     values.set("%{project.name}",nameProject);
     //Main process
-    contextUI.Output(`Action: create an ${nameProject} project, ${selectTemplate.Attributes.Id} template, path ${selectFolder}, device ${selectDevice.Information.BoardName} ${selectDevice.Information.Architecture}`);
-    contextUI.ShowBackgroundNotification(`Create an ${nameProject} project`);
+    app.UI.Output(`Action: create an ${nameProject} project, ${selectTemplate.Attributes.Id} template, path ${selectFolder}, device ${selectDevice.Information.BoardName} ${selectDevice.Information.Architecture}`);
+    app.UI.ShowBackgroundNotification(`Create an ${nameProject} project`);
     //Create project from a template
-    result=selectTemplate.CreateProject(selectDevice,config,selectFolder,values);
-    contextUI.HideBackgroundNotification();
+    result=selectTemplate.CreateProject(selectDevice,app.Config,selectFolder,values);
+    app.UI.HideBackgroundNotification();
     //Output       
-    contextUI.Output(result.toStringWithHead());
+    app.UI.Output(result.toStringWithHead());
     //Message
-    contextUI.ShowNotification(result);
+    app.UI.ShowNotification(result);
     if(result.Status==StatusResult.Ok) {
         //Open Workspace
         const folderPathParsed = "/"+selectFolder.split(`\\`).join(`/`);

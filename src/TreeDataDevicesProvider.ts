@@ -9,46 +9,22 @@ import {IoTHelper} from './Helper/IoTHelper';
 import {IotResult,StatusResult} from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IContexUI} from './ui/IContexUI';
+import { IoTApplication } from './IoTApplication';
 
 export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTreeItem> {    
   public RootItems:Array<IotDevice>=[];
 
-  private _config:IotConfiguration
-  public get Config(): IotConfiguration {
-    return this._config;}
-
-  public set Config(newConfig:IotConfiguration){
-    this._config=newConfig;    
-    //devices
-    this.RootItems.forEach(item =>
-      {	                
-        item.Config=newConfig;        
-      });
-    //
-    this.RefreshsFull();
-  }
+  private _app:IoTApplication
 
   private _onDidChangeTreeData: vscode.EventEmitter<BaseTreeItem| undefined | null | void> = 
     new vscode.EventEmitter<BaseTreeItem| undefined | null | void>();
   public readonly onDidChangeTreeData: vscode.Event<BaseTreeItem| undefined | null | void> = 
     this._onDidChangeTreeData.event;
-  
-  private _contextUI:IContexUI;
-  public SaveDevicesCallback:(data:any) =>void;
     
-  constructor(
-    saveDevicesCallback:(data:any) =>void,
-    config:IotConfiguration,    
-    jsonDevices:any,
-    contextUI:IContexUI
-  ) {
-      this._contextUI=contextUI;
-      //
-      this.SaveDevicesCallback=saveDevicesCallback;
-      //Set config
-      this._config=config;
+  constructor(app:IoTApplication) {
+      this._app=app;
       //Recovery devices
-      if(jsonDevices.IotDevices) this.RecoveryDevices(jsonDevices);
+      if(this._app.Config.JsonDevices.IotDevices) this.RecoveryDevices(this._app.Config.JsonDevices);
   }
 
   public getTreeItem(element: BaseTreeItem): vscode.TreeItem | Thenable<BaseTreeItem> {
@@ -127,7 +103,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
             if(jsonDevice)
             {
               //parse
-              let device = new IotDevice(this.Config);
+              let device = new IotDevice(this._app.Config);
               device.collapsibleState=vscode.TreeItemCollapsibleState.Collapsed;
               device.FromJSON(jsonDevice);              
               if(device.IdDevice){
@@ -147,7 +123,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       } 
       while(true)
       //
-      return Promise.resolve(new IotResult(StatusResult.Ok,`Imported ${importedDevices} of ${index} devices.`,undefined));
+      return Promise.resolve(new IotResult(StatusResult.Ok,`Imported ${importedDevices} of ${index} devices.`));
     }
     catch (err:any)
     {        
@@ -157,20 +133,20 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
 
   //------------ Devices ------------
   public async AddDevice(hostName: string,port: number,userName: string,password: string,accountNameDebug:string): Promise<IotResult> {         
-      let device = new IotDevice(this.Config);
+      let device = new IotDevice(this._app.Config);
       //Connection test device
-      this._contextUI.ShowBackgroundNotification("Checking the network connection");
+      this._app.UI.ShowBackgroundNotification("Checking the network connection");
       let result=await device.ConnectionTest(hostName,port,userName,password);
       if(result.Status==StatusResult.Ok)
-          this._contextUI.Output(result);
+      this._app.UI.Output(result);
         else return Promise.resolve(result);
-      this._contextUI.ShowBackgroundNotification("Create a device");
-      this._contextUI.Output("Create a device");
+        this._app.UI.ShowBackgroundNotification("Create a device");
+        this._app.UI.Output("Create a device");
       //event subscription
       let handler=device.Client.OnChangedStateSubscribe(event => {        
-        if(event.status) this._contextUI.ShowBackgroundNotification(event.status);
-        if(event.status) this._contextUI.Output(event.status);
-        if(event.console) this._contextUI.Output(event.console); 
+        if(event.status) this._app.UI.ShowBackgroundNotification(event.status);
+        if(event.status) this._app.UI.Output(event.status);
+        if(event.console) this._app.UI.Output(event.console); 
       });
       result = await device.Create(hostName,port,userName, password,accountNameDebug);
       if(result.Status==StatusResult.Error) {
@@ -196,7 +172,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
 
   public async SaveDevices(): Promise<void> {
     const jsonObj = this.ToJSON();
-    this.SaveDevicesCallback(jsonObj);     
+    this._app.Config.JsonDevices=jsonObj;
   }      
   
   private async RecoveryDevices(jsonObj:any): Promise<void>{    
@@ -248,8 +224,8 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     //event subscription
     let handler=device.PackagesLinux.Client.OnChangedStateSubscribe(event => {
       //output
-      if(event.status) this._contextUI.Output(event.status);
-      if(event.console) this._contextUI.Output(event.console);
+      if(event.status) this._app.UI.Output(event.status);
+      if(event.console) this._app.UI.Output(event.console);
       //IotResult
       if(event.obj) result=<IotResult>event.obj;                
     });
@@ -282,7 +258,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     }
     //event subscription    
     let handler=devicePackage.Client.OnChangedStateSubscribe(event => {
-      if(event.console) this._contextUI.Output(event.console);
+      if(event.console) this._app.UI.Output(event.console);
     });
     //Upgrade
     result = await devicePackage.Install(objJSON);

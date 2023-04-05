@@ -6,7 +6,6 @@ import {IotDevice} from './IotDevice';
 import {IotItemTree} from './IotItemTree';
 import {StatusResult,IotResult} from './IotResult';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
-//
 
 export class IotDeviceAccount extends BaseTreeItem{  
   public Parent: IotDevice| undefined;

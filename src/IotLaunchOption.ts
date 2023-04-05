@@ -13,8 +13,7 @@ export class IotLaunchOption {
   constructor(
     key:string,
     defaultValue:any,
-    launch: IotLaunch,
-
+    launch: IotLaunch
     ){
       this.Key=key;
       this.DefaultValue=defaultValue;

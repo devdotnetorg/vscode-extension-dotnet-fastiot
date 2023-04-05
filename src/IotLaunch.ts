@@ -10,6 +10,7 @@ import { IoTHelper } from './Helper/IoTHelper';
 import { launchHelper } from './Helper/launchHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
 import { IotLaunchOption } from './IotLaunchOption';
+import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 
 export class IotLaunch {
 
@@ -594,7 +595,7 @@ export class IotLaunch {
     */
   }
 
-  public RebuildLaunch(config:IotConfiguration, devices: Array<IotDevice>): IotResult {
+  public RebuildLaunch(config:IotConfiguration, templates:IotTemplateCollection, devices: Array<IotDevice>): IotResult {
     const errorMsg=`Unable to execute RebuildLaunch. IdLaunch: ${this.IdLaunch}`;
     let result:IotResult;
     //--------------Checks--------------
@@ -617,7 +618,7 @@ export class IotLaunch {
       return result;
     }
     //check template
-    const template = config.Templates.FindbyId(this.IdTemplate ?? "non");
+    const template = templates.FindbyId(this.IdTemplate ?? "non");
     if (!template) {
       result= new IotResult(StatusResult.Error,`Missing template: ${this.IdTemplate}`);
       result.AddMessage(errorMsg);

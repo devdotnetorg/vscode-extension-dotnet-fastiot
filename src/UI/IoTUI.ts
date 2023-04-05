@@ -12,12 +12,12 @@ export class IoTUI implements IContexUI {
   private _outputChannel:vscode.OutputChannel;
   private _statusBarBackground: StatusBarBackground;
   
-  constructor(
-    outputChannel:vscode.OutputChannel,
-    statusBarBackground: StatusBarBackground
-  ){
-    this._outputChannel=outputChannel;
-    this._statusBarBackground=statusBarBackground;
+  constructor(){
+    //OutputChannel
+	  this._outputChannel = vscode.window.createOutputChannel(".NET FastIoT");
+	  //StatusBar
+	  this._statusBarBackground= new StatusBarBackground(
+		  vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000));
   }
 
   public Output(value:string|IotResult) {
