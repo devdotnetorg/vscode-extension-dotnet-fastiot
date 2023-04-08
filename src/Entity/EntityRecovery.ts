@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IotResult,StatusResult } from '../IotResult';
-import {IoTHelper} from '../Helper/IoTHelper';
+import { IotResult,StatusResult } from '../IotResult';
+import { IoTHelper } from '../Helper/IoTHelper';
 
 export abstract class EntityRecovery {
   constructor(
@@ -18,7 +18,7 @@ export abstract class EntityRecovery {
         //MkDir
         IoTHelper.MakeDirSync(dir);
       });
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok,`Created structure in ${destDir} folder`);
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Unable to create struct in ${destDir} path`,err);
     }
@@ -35,8 +35,7 @@ export abstract class EntityRecovery {
       if(fs.lstatSync(`${sourceDir}\\${name}`).isFile())
       {
         const extFile=IoTHelper.GetFileExtensions(name);
-        if(extFile==".zip")
-          {
+        if(extFile==".zip") {
             const nameTemplate=name.substring(0,name.length-4)
             listNames.push(nameTemplate);
           }

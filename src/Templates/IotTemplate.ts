@@ -1,28 +1,25 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-
-import {EntityType} from '../Entity/EntityType';
-import {EntityBase} from '../Entity/EntityBase';
-import {IotTemplateAttribute} from './IotTemplateAttribute';
-import {IotResult,StatusResult } from '../IotResult';
-import {IoTHelper} from '../Helper/IoTHelper';
-import {launchHelper} from '../Helper/launchHelper';
-import {dotnetHelper} from '../Helper/dotnetHelper';
-import {IotDevice} from '../IotDevice';
-import {IotConfiguration} from '../Configuration/IotConfiguration';
-import {FilesValidator} from '../Validator/FilesValidator';
-import {YamlSchemaValidator} from '../Validator/YamlSchemaValidator';
-import { openStdin } from 'process';
 import * as os from 'os';
+import { EntityType } from '../Entity/EntityType';
+import { EntityBase } from '../Entity/EntityBase';
+import { IotTemplateAttribute } from './IotTemplateAttribute';
+import { IotResult,StatusResult } from '../IotResult';
+import { IoTHelper } from '../Helper/IoTHelper';
+import { launchHelper } from '../Helper/launchHelper';
+import { dotnetHelper } from '../Helper/dotnetHelper';
+import { IotDevice } from '../IotDevice';
+import { IotConfiguration } from '../Configuration/IotConfiguration';
+import { FilesValidator } from '../Validator/FilesValidator';
 
 export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   public get StoragePath(): string {
-    return this.ParentDir+"\\storage";}
+    return this.RootDir+"\\storage";}
   public get TemplatePath(): string {
-    return this.ParentDir+"\\template";}
+    return this.RootDir+"\\template";}
   public get ImagePath(): string {
-    return this.ParentDir+"\\template.fastiot.png";}
+    return this.RootDir+"\\template.fastiot.png";}
 
   private _mergeDictionary:Map<string,string>= new Map<string,string>();
 
@@ -45,7 +42,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     //checking folder structure
     //FilesValidator
     let filesValidator=new FilesValidator(this._pathFolderSchemas);
-    let result = filesValidator.ValidateFiles(this.ParentDir,"template.files.schema.json");
+    let result = filesValidator.ValidateFiles(this.RootDir,"template.files.schema.json");
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();
     //check id=""
@@ -303,7 +300,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       file=dstPath+"\\.vscode\\insert_tasks_key.json";
       if (fs.existsSync(file)) fs.removeSync(file);
       //copy template.fastiot.yaml
-      fs.copyFileSync(this.DescriptionFilePath,dstPath+"\\template.fastiot.yaml");
+      fs.copyFileSync(this.YAMLFilePath,dstPath+"\\template.fastiot.yaml");
       result = new IotResult(StatusResult.Ok,undefined,undefined);
     } catch (err: any){
       //result

@@ -42,10 +42,10 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     let idTemplate=new IotTemplateAttribute().ForceGetID(workspaceDirectory+"\\template.fastiot.yaml");
     let selectTemplate:IotTemplate|undefined;
     if(idTemplate)
-        selectTemplate=app.Templates.FindbyId(idTemplate);
+        selectTemplate=app.Templates.FindById(idTemplate);
     if(selectTemplate) {
         //check platform
-        const isCompatible=selectTemplate.IsCompatible1(selectDevice.Information.Architecture);
+        const isCompatible=selectTemplate.IsCompatibleByEndDeviceArchitecture(selectDevice.Information.Architecture);
         if(!isCompatible) selectTemplate=undefined;
     }
     if(selectTemplate) {
@@ -62,7 +62,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     }
     if(!selectTemplate) {
         //select template
-        const listTemplates= app.Templates.Select(selectDevice.Information.Architecture);
+        const listTemplates= app.Templates.SelectByEndDeviceArchitecture(selectDevice.Information.Architecture);
         if(listTemplates.length==0) {
             result=new IotResult(StatusResult.No,`No templates compatible with ${selectDevice.label} ${selectDevice.Information.Architecture} device`);
             app.UI.ShowNotification(result);

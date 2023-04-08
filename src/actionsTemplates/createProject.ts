@@ -35,7 +35,7 @@ export async function createProject(app:IoTApplication,devices:Array<IotDevice>)
     const selectDevice = await app.UI.ShowDeviceDialog(devices,'Choose a device (1/6)');
     if(!selectDevice) return;
     //Select template
-    const listTemplates= app.Templates.Select(selectDevice.Information.Architecture);
+    const listTemplates= app.Templates.SelectByEndDeviceArchitecture(selectDevice.Information.Architecture);
     if(listTemplates.length==0) {
         result=new IotResult(StatusResult.No,`No templates for device ${selectDevice.label} ${selectDevice.Information.Architecture}`);
         app.UI.ShowNotification(result);

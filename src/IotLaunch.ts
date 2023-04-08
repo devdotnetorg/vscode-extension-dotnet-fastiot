@@ -618,7 +618,7 @@ export class IotLaunch {
       return result;
     }
     //check template
-    const template = templates.FindbyId(this.IdTemplate ?? "non");
+    const template = templates.FindById(this.IdTemplate ?? "non");
     if (!template) {
       result= new IotResult(StatusResult.Error,`Missing template: ${this.IdTemplate}`);
       result.AddMessage(errorMsg);

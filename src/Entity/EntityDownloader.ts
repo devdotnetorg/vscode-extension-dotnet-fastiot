@@ -3,9 +3,9 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import YAML from 'yaml';
 import axios from 'axios';
-import {IotResult,StatusResult} from '../IotResult';
-import {IoTHelper} from '../Helper/IoTHelper';
-import {networkHelper} from '../Helper/networkHelper';
+import { IotResult,StatusResult } from '../IotResult';
+import { IoTHelper } from '../Helper/IoTHelper';
+import { networkHelper } from '../Helper/networkHelper';
 
 export abstract class EntityDownloader {
   constructor(
@@ -55,13 +55,13 @@ export abstract class EntityDownloader {
       }
       //parse templatelist.fastiot.yaml
       const obj=YAML.parse(response.data); 
-      //template download
+      //entity download
       let index=0; 
       do { 				
             let item=obj.entitys[index];
             if(item) {
-              const downloadTemplate=this.ParseEntityDownload(item,url);
-              listDownload.push(downloadTemplate);
+              const downloadEntity=this.ParseEntityDownload(item,url);
+              listDownload.push(downloadEntity);
               //next position
               index=index+1;
             }else break;
@@ -99,9 +99,9 @@ export abstract class EntityDownloader {
           }else break;      
     } 
     while(true)
-    const downloadTemplate=new EntityDownload(objId,objVersion,objUrl,
+    const downloadEntity=new EntityDownload(objId,objVersion,objUrl,
         objforVersionExt,platform);
-    return downloadTemplate;
+    return downloadEntity;
   }
 }
 

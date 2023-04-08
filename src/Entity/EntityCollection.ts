@@ -1,18 +1,15 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {compare} from 'compare-versions';
-import {EntityBase} from './EntityBase';
-import {EntityBaseAttribute} from './EntityBaseAttribute';
-import {EntityType} from './EntityType';
-import {IotResult,StatusResult } from '../IotResult';
-import {IContexUI} from '../ui/IContexUI';
+import { compare } from 'compare-versions';
+import { EntityBase } from './EntityBase';
+import { EntityBaseAttribute } from './EntityBaseAttribute';
+import { EntityType } from './EntityType';
+import { IotResult,StatusResult } from '../IotResult';
 
 export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> {
-  protected ContextUI:IContexUI;
   
-  private _data:Map<string,T>;
-  protected _pathFolderSchemas: string;
+  private _items:Map<string,T>;
 
   private _versionExt:string;  
   public get VersionExt(): string {
@@ -26,15 +23,12 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return this._recoverySourcePath;}
 
   public get Count(): number {
-      return this._data.size;}
+      return this._items.size;}
 
   constructor(
-    basePath: string, recoverySourcePath:string,versionExt:string,
-    pathFolderSchemas: string,contextUI:IContexUI
+    basePath: string, recoverySourcePath:string,versionExt:string
     ){
-      this.ContextUI=contextUI;
-      this._pathFolderSchemas=pathFolderSchemas;
-      this._data = new Map<string,T>(); 
+      this._items = new Map<string,T>(); 
       this._basePath=basePath;
       this._recoverySourcePath=recoverySourcePath;
       this._versionExt = versionExt;
@@ -43,7 +37,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public Add(id:string,value:T):boolean
   {
     try {
-      this._data.set(id,value);
+      this._items.set(id,value);
       return true;
     } catch (err: any){
       return false;
@@ -53,7 +47,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public Remove(id:string):boolean
   {
     try {
-      this._data.delete(id);
+      this._items.delete(id);
       return true;
     } catch (err: any){
       return false;
@@ -68,17 +62,17 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
   public Clear()
   {
-    this._data.clear();
+    this._items.clear();
   }
 
-  public IsCompatible1(value:T):boolean
+  public IsCompatibleByVersionExtAndPlatform(value:T):boolean
   {
     const forVersionExt=value.Attributes.ForVersionExt;
     const platform = value.Attributes.platform;
-    return this.IsCompatible2(forVersionExt,platform);
+    return this.IsCompatibleByVersionExtAndPlatform2(forVersionExt,platform);
   }
 
-  public IsCompatible2(forVersionExt:string,platform:Array<string>):boolean
+  public IsCompatibleByVersionExtAndPlatform2(forVersionExt:string,platform:Array<string>):boolean
   {
     const currentVersionExt=this.VersionExt;
     const isCompatibleVersion=compare(`${currentVersionExt}`,`${forVersionExt}`, '>=');
@@ -90,7 +84,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     //if(isCompatibleVersion&&isCompatiblePlatform) return true; else return false;
   }
 
-  public Contains1(value:T):ContainsType
+  public Contains(value:T):ContainsType
   {
     return this.Contains2(value.Attributes.Id,value.Type,value.Attributes.Version);
   }
@@ -98,23 +92,23 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public Contains2(id:string,type:EntityType,version:string):ContainsType
   {
     // type:EntityType, version:string
-    if(!this._data.has(id)) return ContainsType.no;
-    let element=this._data.get(id);
-    const result=element?.Compare2(type,version);
+    if(!this._items.has(id)) return ContainsType.no;
+    let element=this._items.get(id);
+    const result=element?.CompareByVersion2(type,version);
     //0 - equal, 1 - entityBase up, -1 - entityBase down
-    if(result==0)
-    {
+    if(result==0) {
       return ContainsType.yesSameVersion;
-    }else if (result==1) return ContainsType.yesVersionSmaller;
+    } else if (result==1) return ContainsType.yesVersionSmaller;
     return ContainsType.yesMoreVersion;
   }
 
-  protected abstract LoadFromFolder(path:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
+  protected abstract LoadFromFolder(path:string, type:EntityType,recoverySourcePath?:string):Promise<IotResult>
 
-  public Select(endDeviceArchitecture:string|undefined):Array<T>
+  public SelectByEndDeviceArchitecture(endDeviceArchitecture?:string):Array<T>
   {
     let listEntitys:Array<T>=[];
-    this._data.forEach(entiny => {
+    if(!endDeviceArchitecture) return listEntitys;
+    this._items.forEach(entiny => {
       //Entiny
       let found=entiny.Attributes.EndDeviceArchitecture.find(value=>value==endDeviceArchitecture);
       if(found) listEntitys.push(entiny);
@@ -122,9 +116,9 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return listEntitys;
   }
 
-  public FindbyId(idEntity:string):T|undefined
+  public FindById(idEntity:string):T|undefined
   {
-    return this._data.get(idEntity);
+    return this._items.get(idEntity);
   }
 
 }

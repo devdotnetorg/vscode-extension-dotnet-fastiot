@@ -1,56 +1,60 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import {EntityType} from '../Entity/EntityType';
-import {EntityCollection,ContainsType} from '../Entity/EntityCollection';
-import {IotTemplate} from './IotTemplate';
-import {IotTemplateAttribute} from './IotTemplateAttribute';
-import {IotResult,StatusResult } from '../IotResult';
-import {IoTHelper} from '../Helper/IoTHelper';
-import {IotTemplateRecovery} from './IotTemplateRecovery';
-import {IotTemplateDownloader} from './IotTemplateDownloader';
-import {EntityDownload} from '../Entity/EntityDownloader';
-import {IContexUI} from '../ui/IContexUI';
-import {IotConfiguration} from '../Configuration/IotConfiguration';
+import { EntityType } from '../Entity/EntityType';
+import { EntityCollection,ContainsType } from '../Entity/EntityCollection';
+import { IotTemplate } from './IotTemplate';
+import { IotTemplateAttribute } from './IotTemplateAttribute';
+import { IotResult,StatusResult } from '../IotResult';
+import { IoTHelper } from '../Helper/IoTHelper';
+import { IotTemplateRecovery } from './IotTemplateRecovery';
+import { IotTemplateDownloader } from './IotTemplateDownloader';
+import { EntityDownload } from '../Entity/EntityDownloader';
+import { IContexUI } from '../ui/IContexUI';
+import { IotConfiguration } from '../Configuration/IotConfiguration';
 
 export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute,IotTemplate> {
-  
+  private _contextUI:IContexUI;
+  private _pathFolderSchemas: string;
+
   private _config:IotConfiguration;
 
   constructor(config:IotConfiguration, contextUI:IContexUI){
       super(config.Folder.Templates,
         path.join(config.Folder.Extension, "templates", "system"),
-        config.ExtVersion,config.Folder.Schemas,contextUI);
+        config.ExtVersion);
+      this._contextUI=contextUI;
       this._config=config;
+      this._pathFolderSchemas=config.Folder.Schemas;
   }
 
   public async LoadTemplatesSystem():Promise<void>
   {
-    this.ContextUI.Output("☑️ Loading system templates");
+    this._contextUI.Output("☑️ Loading system templates");
     const type=EntityType.system;
     const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,this.RecoverySourcePath);
-    this.ContextUI.Output(result);
+    this._contextUI.Output(result);
   }
 
   public async LoadTemplatesUser():Promise<void>
   {
-    this.ContextUI.Output("☑️ Loading custom templates");
+    this._contextUI.Output("☑️ Loading custom templates");
     const type=EntityType.user;
     //
     const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,undefined);
-    this.ContextUI.Output(result);
+    this._contextUI.Output(result);
   }
 
   public async LoadTemplatesCommunity():Promise<void>
   {
-    this.ContextUI.Output("☑️ Loading community templates");
+    this._contextUI.Output("☑️ Loading community templates");
     const type=EntityType.community;
     //
     const path=`${this.BasePath}\\${type}`;
     const result = await this.LoadFromFolder(path,type,undefined);
-    this.ContextUI.Output(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
+    this._contextUI.Output(`${result.Status}. ${result.Message}. ${result.SystemMessage}`);
   }
 
   protected async LoadFromFolder(pathFolder:string, type:EntityType,recoverySourcePath:string|undefined):Promise<IotResult>
@@ -81,11 +85,11 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       if(!template.IsValid&&type==EntityType.system)
       {
         //Recovery
-        this.ContextUI.Output(`Template recovery: ${path.dirname(filePath)}`);
+        this._contextUI.Output(`Template recovery: ${path.dirname(filePath)}`);
         result= template.Recovery();
         if(result.Status==StatusResult.Ok)
           template.Init(type,filePath,recoverySourcePath);
-          else this.ContextUI.Output(result);
+          else this._contextUI.Output(result);
       }
       //main
       if(template.IsValid)
@@ -98,30 +102,30 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
           switch(isContains) { 
             case ContainsType.no: {
               this.Add(template.Attributes.Id,template);
-              this.ContextUI.Output(`Template added: [${template.Attributes.Id}] ${template.ParentDir}`);
+              this._contextUI.Output(`Template added: [${template.Attributes.Id}] ${template.ParentDir}`);
               break; 
             } 
             case ContainsType.yesVersionSmaller: {
               this.Update(template.Attributes.Id,template);
-              this.ContextUI.Output(`Template updated: [${template.Attributes.Id}] ${template.ParentDir}`);
+              this._contextUI.Output(`Template updated: [${template.Attributes.Id}] ${template.ParentDir}`);
               break; 
             }
             default: {
-              this.ContextUI.Output(`Adding a  template was skipped because already in the collection: [${template.Attributes.Id}] ${template.ParentDir}`);
+              this._contextUI.Output(`Adding a  template was skipped because already in the collection: [${template.Attributes.Id}] ${template.ParentDir}`);
               break; 
             } 
           }
         }else{
-          this.ContextUI.Output(`[ERROR] The template ${template.ParentDir} is for a newer version of the extension. ` +
+          this._contextUI.Output(`[ERROR] The template ${template.ParentDir} is for a newer version of the extension. ` +
             `Update the extension.`);
         }
       }else{
-        this.ContextUI.Output(`[ERROR] The template ${template.ParentDir} has not been validated.`);
-        this.ContextUI.Output(template.ValidationErrorsToString);
+        this._contextUI.Output(`[ERROR] The template ${template.ParentDir} has not been validated.`);
+        this._contextUI.Output(template.ValidationErrorsToString);
         //delete system template
         if(type==EntityType.system) {
           result= template.Remove();
-          this.ContextUI.Output(result);
+          this._contextUI.Output(result);
         }
       }
     });
@@ -159,7 +163,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
         //update
         result = await this.UpdateTemplate(url,type,tempPath);
         if(result.Status==StatusResult.Error)
-          this.ContextUI.Output(result);
+          this._contextUI.Output(result);
         //
       }else break;
       index++;
@@ -174,10 +178,10 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
     const destPath=`${this.BasePath}\\${type}`;
     let downloader = new IotTemplateDownloader();
     let result:IotResult;
-    this.ContextUI.Output(`🔗 Downloading a list of templates to update: ${url}`);
+    this._contextUI.Output(`🔗 Downloading a list of templates to update: ${url}`);
     result= await downloader.GetDownloadListTemplate(url);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
-    this.ContextUI.Output(`🔗 List of templates loaded ${url}`);
+    this._contextUI.Output(`🔗 List of templates loaded ${url}`);
     let listDownload:Array<EntityDownload>=result.returnObject;
     if(listDownload.length==0)
     {
@@ -207,14 +211,14 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
                   {
                     result=template.Move(path.join(destPath, template.Attributes.Id));
                     if(result.Status==StatusResult.Error) {
-                      this.ContextUI.Output(result);
+                      this._contextUI.Output(result);
                       break;
                     } 
                     this.Add(template.Attributes.Id,template);
-                    this.ContextUI.Output(`Template added/updated: [${template.Attributes.Id}] ${template.ParentDir}`);
+                    this._contextUI.Output(`Template added/updated: [${template.Attributes.Id}] ${template.ParentDir}`);
                   } else {
-                    this.ContextUI.Output(`[ERROR] The template ${template.DescriptionFilePath} has not been validated`);
-                    this.ContextUI.Output(template.ValidationErrorsToString);
+                    this._contextUI.Output(`[ERROR] The template ${template.DescriptionFilePath} has not been validated`);
+                    this._contextUI.Output(template.ValidationErrorsToString);
                   }
                 }
                 break; 
@@ -231,14 +235,14 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
                   {
                     result=template.Move(path.join(destPath, template.Attributes.Id));
                     if(result.Status==StatusResult.Error) {
-                      this.ContextUI.Output(result);
+                      this._contextUI.Output(result);
                       break;
                     } 
                     this.Update(template.Attributes.Id,template);
-                    this.ContextUI.Output(`Template added/updated: [${template.Attributes.Id}] ${template.ParentDir}`);
+                    this._contextUI.Output(`Template added/updated: [${template.Attributes.Id}] ${template.ParentDir}`);
                   } else {
-                    this.ContextUI.Output(`[ERROR] The template ${template.DescriptionFilePath} has not been validated`);
-                    this.ContextUI.Output(template.ValidationErrorsToString);
+                    this._contextUI.Output(`[ERROR] The template ${template.DescriptionFilePath} has not been validated`);
+                    this._contextUI.Output(template.ValidationErrorsToString);
                   }
                 }
               }
@@ -248,7 +252,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
               } 
             }
         }else{
-          this.ContextUI.Output(`Error. The template ${item.Url} is for a newer version of the extension. ` +
+          this._contextUI.Output(`Error. The template ${item.Url} is for a newer version of the extension. ` +
               `Update the extension.`);
         }
         //
@@ -284,7 +288,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
           //for test
           url="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/templates/system/templatelist.fastiot.yaml";
         }
-        this.ContextUI.Output("-------- Loading templates -------");
+        this._contextUI.Output("-------- Loading templates -------");
         //Loading system templates
         progress.report({ message: "Loading system templates",increment: 20 }); //40
         await this.LoadTemplatesSystem();
@@ -293,28 +297,28 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
         //To get the number of hours since Unix epoch, i.e. Unix timestamp:
         const dateNow=Math.floor(Date.now() / 1000/ 3600);
         const TimeHasPassedHours=dateNow-this._config.BuiltInConfig.LastUpdateTemplatesHours;
-        this.ContextUI.Output("📥 Updating templates:");
+        this._contextUI.Output("📥 Updating templates:");
         if(force||(this._config.IsUpdateTemplates&&(TimeHasPassedHours>=this._config.UpdateIntervalTemplatesHours))){
           //system
-          this.ContextUI.Output("☑️ Updating system templates");
+          this._contextUI.Output("☑️ Updating system templates");
           result=await this.UpdateSystemTemplate(url,this._config.Folder.Temp);
-          this.ContextUI.Output(result);
+          this._contextUI.Output(result);
           //timestamp of last update
           if(result.Status==StatusResult.Ok){
             this._config.BuiltInConfig.LastUpdateTemplatesHours=<number>dateNow;
             this._config.BuiltInConfig.Save();
           }
           //community
-          this.ContextUI.Output("☑️ Updating community templates");
+          this._contextUI.Output("☑️ Updating community templates");
           result=await this.UpdateCommunityTemplate(this._config.ListSourceUpdateTemplateCommunity,this._config.Folder.Temp);
-          this.ContextUI.Output(result);
-        } else this.ContextUI.Output(`Disabled or less than ${this._config.UpdateIntervalTemplatesHours} hour(s) have passed since the last update.`);
+          this._contextUI.Output(result);
+        } else this._contextUI.Output(`Disabled or less than ${this._config.UpdateIntervalTemplatesHours} hour(s) have passed since the last update.`);
         //Loading custom templates
         progress.report({ message: "Loading custom templates",increment: 20 }); //80
         await this.LoadTemplatesUser();
         const endMsg=`📚 ${this.Count} template(s) available.`;
-        this.ContextUI.Output(endMsg);
-        this.ContextUI.Output("----------------------------------");
+        this._contextUI.Output(endMsg);
+        this._contextUI.Output("----------------------------------");
         progress.report({ message: "Templates loaded" , increment: 20 }); //100
         resolve(endMsg);
         //end

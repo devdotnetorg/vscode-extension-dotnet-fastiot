@@ -2,9 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import YAML from 'yaml';
-
-import {FilesValidator} from '../Validator/FilesValidator';
-import {YamlSchemaValidator} from '../Validator/YamlSchemaValidator';
+import { YamlSchemaValidator } from '../Validator/YamlSchemaValidator';
 
 export class EntityBaseAttribute {
   private _id:string="";  
@@ -40,10 +38,6 @@ export class EntityBaseAttribute {
   private _endDeviceArchitecture:Array<string>=[]; 
   public get EndDeviceArchitecture(): Array<string> {
     return this._endDeviceArchitecture;}
-  //private _dependOn:Array<string>=[]; 
-  //public get DependOn(): Array<string> {
-  //  return this._dependOn;}
-  //private _typeProj:string="";  
   private _tags:Array<string>=[]; 
   public get Tags(): Array<string> {
     return this._tags;}
@@ -121,12 +115,12 @@ export class EntityBaseAttribute {
     }
   }
 
-  private ValidateBaseAttribute(pathFileYml:string)
+  private ValidateBaseAttribute(yamlFilePath:string)
   {
     this._validationErrors=[];
     //YamlSchemaValidator
     let yamlSchemaValidator=new YamlSchemaValidator(this._pathFolderSchemas);
-    let result = yamlSchemaValidator.ValidateSchema(pathFileYml,"entitybase.schema.yaml");
+    let result = yamlSchemaValidator.ValidateSchema(yamlFilePath,"entitybase.schema.yaml");
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();
   }
