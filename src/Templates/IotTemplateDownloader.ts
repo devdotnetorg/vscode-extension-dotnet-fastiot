@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {EntityDownloader,EntityDownload} from '../Entity/EntityDownloader';
-import {IotResult,StatusResult} from '../IotResult';
+import { EntityDownloader,EntityDownload } from '../Entity/EntityDownloader';
+import { IotResult,StatusResult } from '../IotResult';
 
 export class IotTemplateDownloader extends EntityDownloader {
 

@@ -10,7 +10,7 @@ export class YamlSchemaValidator {
       this._pathFolderSchemas=PathFolderSchemas;
   }
 
-  public ValidateSchema (pathFileYml:string, schemaFileName:string):IotResult
+  public ValidateSchema (yamlFilePath:string, schemaFileName:string):IotResult
   {
     let result:IotResult;
     let validationErrors:Array<string>=[];
@@ -20,7 +20,7 @@ export class YamlSchemaValidator {
       const validateSchema = require('yaml-schema-validator-fork');
       // validate a yml file
       const schemaPath=`${this._pathFolderSchemas}\\${schemaFileName}`;
-      var schemaErrors = validateSchema(pathFileYml,
+      var schemaErrors = validateSchema(yamlFilePath,
         {
           schemaPath: schemaPath,
           logLevel: 'verbose'
@@ -39,7 +39,7 @@ export class YamlSchemaValidator {
       result = new IotResult(StatusResult.Ok,undefined,undefined);
     } catch (err: any){
       //result
-      result = new IotResult(StatusResult.Error,`VaidateSchema: pathFileYml = ${pathFileYml}, schemaFileName = ${schemaFileName}`,err);
+      result = new IotResult(StatusResult.Error,`VaidateSchema: pathFileYml = ${yamlFilePath}, schemaFileName = ${schemaFileName}`,err);
       validationErrors.push(result.toString());
     }
     result.returnObject=validationErrors;

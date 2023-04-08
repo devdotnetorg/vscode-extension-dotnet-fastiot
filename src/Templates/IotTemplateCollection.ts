@@ -95,32 +95,32 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       if(template.IsValid)
       {
         //this.LogCallback(`Template isValid: ${filePath}`);
-        if(this.IsCompatible1(template))
+        if(this.IsCompatibleByVersionExtAndPlatform(template))
         {
-          const isContains=this.Contains1(template);
+          const isContains=this.Contains(template);
           //
           switch(isContains) { 
             case ContainsType.no: {
               this.Add(template.Attributes.Id,template);
-              this._contextUI.Output(`Template added: [${template.Attributes.Id}] ${template.ParentDir}`);
+              this._contextUI.Output(`Template added: [${template.Attributes.Id}] ${template.RootDir}`);
               break; 
             } 
             case ContainsType.yesVersionSmaller: {
               this.Update(template.Attributes.Id,template);
-              this._contextUI.Output(`Template updated: [${template.Attributes.Id}] ${template.ParentDir}`);
+              this._contextUI.Output(`Template updated: [${template.Attributes.Id}] ${template.RootDir}`);
               break; 
             }
             default: {
-              this._contextUI.Output(`Adding a  template was skipped because already in the collection: [${template.Attributes.Id}] ${template.ParentDir}`);
+              this._contextUI.Output(`Adding a  template was skipped because already in the collection: [${template.Attributes.Id}] ${template.RootDir}`);
               break; 
             } 
           }
         }else{
-          this._contextUI.Output(`[ERROR] The template ${template.ParentDir} is for a newer version of the extension. ` +
+          this._contextUI.Output(`[ERROR] The template ${template.RootDir} is for a newer version of the extension. ` +
             `Update the extension.`);
         }
       }else{
-        this._contextUI.Output(`[ERROR] The template ${template.ParentDir} has not been validated.`);
+        this._contextUI.Output(`[ERROR] The template ${template.RootDir} has not been validated.`);
         this._contextUI.Output(template.ValidationErrorsToString);
         //delete system template
         if(type==EntityType.system) {
@@ -195,7 +195,7 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
       if(item)
         {
           //parse
-          if(this.IsCompatible2(item.ForVersionExt,item.platform))
+          if(this.IsCompatibleByVersionExtAndPlatform2(item.ForVersionExt,item.platform))
           {
             const isContains=this.Contains2(item.Id,EntityType.system,item.Version);
             switch(isContains) { 
@@ -215,9 +215,9 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
                       break;
                     } 
                     this.Add(template.Attributes.Id,template);
-                    this._contextUI.Output(`Template added/updated: [${template.Attributes.Id}] ${template.ParentDir}`);
+                    this._contextUI.Output(`Template added/updated: [${template.Attributes.Id}] ${template.RootDir}`);
                   } else {
-                    this._contextUI.Output(`[ERROR] The template ${template.DescriptionFilePath} has not been validated`);
+                    this._contextUI.Output(`[ERROR] The template ${template.YAMLFilePath} has not been validated`);
                     this._contextUI.Output(template.ValidationErrorsToString);
                   }
                 }
@@ -239,9 +239,9 @@ export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute
                       break;
                     } 
                     this.Update(template.Attributes.Id,template);
-                    this._contextUI.Output(`Template added/updated: [${template.Attributes.Id}] ${template.ParentDir}`);
+                    this._contextUI.Output(`Template added/updated: [${template.Attributes.Id}] ${template.RootDir}`);
                   } else {
-                    this._contextUI.Output(`[ERROR] The template ${template.DescriptionFilePath} has not been validated`);
+                    this._contextUI.Output(`[ERROR] The template ${template.YAMLFilePath} has not been validated`);
                     this._contextUI.Output(template.ValidationErrorsToString);
                   }
                 }

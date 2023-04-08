@@ -3,10 +3,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import YAML from 'yaml';
 
-import {EntityBaseAttribute} from '../Entity/EntityBaseAttribute';
-import {IoTHelper} from '../Helper/IoTHelper';
-import {FilesValidator} from '../Validator/FilesValidator';
-import {YamlSchemaValidator} from '../Validator/YamlSchemaValidator';
+import { EntityBaseAttribute } from '../Entity/EntityBaseAttribute';
+import { IoTHelper } from '../Helper/IoTHelper';
+import { YamlSchemaValidator } from '../Validator/YamlSchemaValidator';
 
 export class IotTemplateAttribute extends EntityBaseAttribute {
   private _typeProj:string="";  
@@ -47,11 +46,11 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
     if(this.IsValid) this.Parse(filePath);
   }
 
-  protected Validate(pathFileYml:string){
+  protected Validate(yamlFilePath:string){
     this._validationErrors=[];
     //YamlSchemaValidator
     let yamlSchemaValidator=new YamlSchemaValidator(this._pathFolderSchemas);
-    let result = yamlSchemaValidator.ValidateSchema(pathFileYml,"template.schema.yaml");
+    let result = yamlSchemaValidator.ValidateSchema(yamlFilePath,"template.schema.yaml");
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();
   }

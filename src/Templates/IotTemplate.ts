@@ -28,9 +28,9 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       super("Template",new IotTemplateAttribute(pathFolderSchemas),pathFolderSchemas);
   }
 
-  public Init(type:EntityType,filePath:string,recoverySourcePath:string|undefined)
+  public Init(type:EntityType,yamlFilePath:string,recoverySourcePath:string|undefined=undefined)
   {
-    super.Init(type,filePath,recoverySourcePath);
+    super.Init(type,yamlFilePath,recoverySourcePath);
     if(!this.IsValid) return;
     //next
     this.Validate();
@@ -217,7 +217,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         }
       });
       //result
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,"Unable to merge for filesToProcess",err);
@@ -280,7 +280,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       fs.writeFileSync(fileEntityPath, data,undefined);
       //result
       fs.removeSync(debugFilePath);
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,`Unable to create ${entity} for /.vscode. File ${entity}.json or insert_${entity}_*.json. See file ${debugFilePath}`,err);
@@ -301,7 +301,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       if (fs.existsSync(file)) fs.removeSync(file);
       //copy template.fastiot.yaml
       fs.copyFileSync(this.YAMLFilePath,dstPath+"\\template.fastiot.yaml");
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,`Error copying template to ${dstPath} folder`,err);
@@ -333,12 +333,54 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
           }
         }
       });
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,`Error copying .vscode files from ${this.TemplatePath}\.vscode to ${dstPath} folder`,err);
     }
     return result;
+  }
+
+  private CreateDictionaryStep1CopyValues (values:Map<string,string>) {
+    this._mergeDictionary.clear();
+    //copy values to _mergeDictionary
+    values.forEach((value,key) => this._mergeDictionary.set(key,value));
+  }
+
+  private CreateDictionaryStep2AddDeviceInfo (device:IotDevice, config:IotConfiguration) {
+      //device
+      this._mergeDictionary.set("%{device.id}",<string>device.IdDevice); 
+      let ssh_key= config.Folder.DeviceKeys+"\\"+<string>device?.Account.Identity;
+      ssh_key=IoTHelper.ReverseSeparatorReplacement(ssh_key);
+      this._mergeDictionary.set("%{device.ssh.key.path.full.aswindows}",ssh_key);
+      this._mergeDictionary.set("%{device.ssh.port}",<string>device?.Account.Port);
+      this._mergeDictionary.set("%{device.user.debug}",<string>device?.Account.UserName);
+      this._mergeDictionary.set("%{device.host}",<string>device?.Account.Host);
+      this._mergeDictionary.set("%{device.label}",<string>device?.label);
+      this._mergeDictionary.set("%{device.board.name}",<string>device?.Information.BoardName);
+      //app folder
+      const appsBuiltInPath=IoTHelper.ReverseSeparatorReplacement(config.Folder.AppsBuiltIn);
+      this._mergeDictionary.set("%{extension.apps.builtin.aswindows}",<string>appsBuiltInPath);
+  }
+
+  private CreateDictionaryStep3Additional() {
+     
+  
+  }
+
+  private CreateDictionaryStep4DefinePathToProject() {
+     
+  
+  }
+
+  private CreateDictionaryStep5DependencyProjectPath() {
+     
+  
+  }
+
+  private CreateDictionaryStep6DependencyProjectType() {
+     
+  
   }
 
   private CreatingMergeDictionary (device:IotDevice, config:IotConfiguration,
