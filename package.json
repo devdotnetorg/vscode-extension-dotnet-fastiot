@@ -38,7 +38,16 @@
 		"email": "fastiot@devdotnet.org"
 	},
 	"activationEvents": [
-		"onView:viewDevices"
+		"onView:viewDevices",
+		"onView:viewLaunchs",
+		"onView:viewTemplates",
+		"onCommand:viewDevices.AddDevice",
+		"onCommand:viewDevices.OpenFolderSshKeys",
+		"onCommand:viewLaunchs.Add",
+		"onCommand:viewTemplates.ReloadTemplates",
+		"onCommand:viewTemplates.OpenTemplateFolder",
+		"onCommand:viewTemplates.RestoreSystemTemplates",
+		"onCommand:viewTemplates.CreateProject"
 	],
 	"os": [
 		"win32"
@@ -162,6 +171,7 @@
 			{
 				"command": "viewDevices.AddDevice",
 				"title": "Add Device",
+				"category": "FastIoT",
 				"icon": {
 					"light": "resources/light/add.svg",
 					"dark": "resources/dark/add.svg"
@@ -281,11 +291,13 @@
 			},
 			{
 				"command": "viewDevices.OpenFolderSshKeys",
-				"title": "Open folder with ssh keys"
+				"title": "Open folder with ssh keys",
+				"category": "FastIoT"
 			},
 			{
 				"command": "viewLaunchs.Add",
 				"title": "Add Launch",
+				"category": "FastIoT",
 				"icon": {
 					"light": "resources/light/add.svg",
 					"dark": "resources/dark/add.svg"
@@ -338,17 +350,37 @@
 			},
 			{
 				"command": "viewTemplates.ReloadTemplates",
-				"title": "Reload templates"
+				"title": "Reload templates",
+				"category": "FastIoT"
 			},
 			{
 				"command": "viewTemplates.OpenTemplateFolder",
-				"title": "Open template folder"
+				"title": "Open template folder",
+				"category": "FastIoT"
 			},
 			{
 				"command": "viewTemplates.RestoreSystemTemplates",
-				"title": "Restore/upgrade system templates (offline)"
+				"title": "Restore/upgrade system templates (offline)",
+				"category": "FastIoT"
+			},
+			{
+				"command": "viewTemplates.CreateProject",
+				"title": "Create project",
+				"category": "FastIoT"
 			}
 		],
+		"keybindings": [
+			{
+			  "command": "viewDevices.AddDevice",
+			  "key": "ctrl+f1",
+			  "mac": "cmd+f1"
+			},
+			{
+				"command": "viewTemplates.CreateProject",
+				"key": "ctrl+f2",
+				"mac": "cmd+f2"
+			  }
+		  ],
 		"viewsContainers": {
 			"activitybar": [
 				{
