@@ -50,8 +50,8 @@ export class IotDeviceGpiochip extends BaseTreeItem {
     this.contextValue="iotgpios";
     //
     this.iconPath = {
-      light: path.join(__filename, '..', '..', 'resources', 'light', 'gpio.svg'),
-      dark: path.join(__filename, '..', '..', 'resources', 'dark', 'gpio.svg')
+      light: path.join(__filename, '..', '..', 'resources', 'light', 'gpio_20.svg'),
+      dark: path.join(__filename, '..', '..', 'resources', 'dark', 'gpio_20.svg')
     };
   }
 

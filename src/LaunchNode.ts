@@ -35,13 +35,11 @@ export class LaunchNode extends LaunchTreeItemNode {
     //Configuration
     this.Configuration = new LaunchTreeItemNode("Configuration",undefined,"Configuration",
       vscode.TreeItemCollapsibleState.Collapsed,this);
-      /*
       this.Configuration.iconPath = {
-        light: path.join(__filename, '..', '..', 'resources', 'light', 'info.svg'),
-        dark: path.join(__filename, '..', '..', 'resources', 'dark', 'info.svg')
+        light: path.join(__filename, '..', '..', 'resources', 'light', 'launcher_config_20.svg'),
+        dark: path.join(__filename, '..', '..', 'resources', 'dark', 'launcher_config_20.svg')
       };
-      */
-    this.Configuration.iconPath = new vscode.ThemeIcon("gear");
+    //this.Configuration.iconPath = new vscode.ThemeIcon("gear");
     //Environments
     this.Environment=new LaunchTreeItemNode("Environment",undefined,"Environment",
       vscode.TreeItemCollapsibleState.Collapsed,this);

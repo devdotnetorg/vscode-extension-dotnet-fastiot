@@ -195,8 +195,8 @@ export class IotDeviceInformation extends BaseTreeItem{
   }
 
   iconPath = {
-   light: path.join(__filename, '..', '..', 'resources', 'light', 'info.svg'),
-   dark: path.join(__filename, '..', '..', 'resources', 'dark', 'info.svg')
+   light: path.join(__filename, '..', '..', 'resources', 'light', 'info_20.svg'),
+   dark: path.join(__filename, '..', '..', 'resources', 'dark', 'info_20.svg')
  };
 }
 

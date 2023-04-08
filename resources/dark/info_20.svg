@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   fill="none"
+   version="1.1"
+   id="svg304"
+   sodipodi:docname="info_20.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs308" />
+  <sodipodi:namedview
+     id="namedview306"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="30.75"
+     inkscape:cx="8"
+     inkscape:cy="8"
+     inkscape:window-width="1366"
+     inkscape:window-height="701"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg304" />
+  <path
+     d="m 5.1707318,4.5691056 c -0.3143058,0 -0.5691059,0.2548002 -0.5691059,0.5691059 0,0.3143055 0.2548001,0.5691056 0.5691059,0.5691056 h 5.6910572 c 0.314259,0 0.569106,-0.2548001 0.569106,-0.5691056 0,-0.3143057 -0.254847,-0.5691059 -0.569106,-0.5691059 z m 0,2.2764229 c -0.3143058,0 -0.5691059,0.2548 -0.5691059,0.5691057 0,0.3143057 0.2548001,0.5691056 0.5691059,0.5691056 h 3.4146341 c 0.3143056,0 0.5691056,-0.2547999 0.5691056,-0.5691056 0,-0.3143057 -0.2548,-0.5691057 -0.5691056,-0.5691057 z m 0,2.2764228 c -0.3143058,0 -0.5691059,0.2548 -0.5691059,0.5691056 0,0.3143061 0.2548001,0.5691051 0.5691059,0.5691051 h 5.6910572 c 0.314259,0 0.569106,-0.254799 0.569106,-0.5691051 0,-0.3143056 -0.254847,-0.5691056 -0.569106,-0.5691056 z M 4.0325203,1.1544715 C 2.4609804,1.1544715 1.1869918,2.4284601 1.1869918,4 v 7.96748 c 0,1.571528 1.2739886,2.845528 2.8455285,2.845528 H 12 c 1.571529,0 2.845528,-1.274 2.845528,-2.845528 V 4 C 14.845528,2.4284601 13.571529,1.1544715 12,1.1544715 Z M 2.3252032,4 c 0,-0.9429285 0.7643886,-1.7073169 1.7073171,-1.7073169 H 12 c 0.942895,0 1.707318,0.7643884 1.707318,1.7073169 v 7.96748 c 0,0.942894 -0.764423,1.707317 -1.707318,1.707317 H 4.0325203 c -0.9429285,0 -1.7073171,-0.764423 -1.7073171,-1.707317 z"
+     fill="#212121"
+     id="path302"
+     style="stroke-width:1.13821;fill:#cccccc" />
+</svg>
