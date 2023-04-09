@@ -98,12 +98,12 @@
 					"fastiot.device.ssh.key.customtype": {
 						"type": "string",
 						"default": "",
-						"markdownDescription": "Custom type of key generation algorithm for ssh. Replaces `#fastiot.device.ssh.keytype#`. For example `ed25519`."
+						"markdownDescription": "Custom type of key generation algorithm for ssh. Replaces `#fastiot.device.ssh.keytype#`. For example `ed25519`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.ssh.key.custombits": {
 						"type": "number",
 						"default": 0,
-						"markdownDescription": "Custom key length in bits. Replaces `#fastiot.device.ssh.keytype#`. For example `256`."
+						"markdownDescription": "Custom key length in bits. Replaces `#fastiot.device.ssh.keytype#`. For example `256`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.launch.templatetitle": {
 						"type": "string",
@@ -140,14 +140,13 @@
 					"fastiot.template.loadonstart": {
 						"type": "boolean",
 						"default": true,
-						"description": "Load templates on extension start (false, speeds up the start of the extension)."
+						"markdownDescription": "Load templates on extension start (false, speeds up the start of the extension). See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.template.defaultprojectfolder": {
 						"type": "string",
 						"default": "",
 						"markdownDescription": "Default folder for storing projects. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-
 					"fastiot.template.community.updatesource": {
 						"type": "string",
 						"default": "",
@@ -157,6 +156,11 @@
 						"type": "object",
 						"default": {},
 						"description": "Technical built-in config."
+					},
+					"fastiot.debug": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Debug mode. Used to debug templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"conf.resource.insertEmptyLastLine": {
 						"type": "object",

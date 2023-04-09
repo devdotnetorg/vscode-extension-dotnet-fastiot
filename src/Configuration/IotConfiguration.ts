@@ -45,7 +45,7 @@ export class IotConfiguration {
   public get LoadTemplatesOnStart():boolean {
     return <boolean>vscode.workspace.getConfiguration().get('fastiot.template.loadonstart');}
   public get DebugMode():boolean {
-      return true;}
+    return <boolean>vscode.workspace.getConfiguration().get('fastiot.debug');}
 
   constructor(
     context: vscode.ExtensionContext
