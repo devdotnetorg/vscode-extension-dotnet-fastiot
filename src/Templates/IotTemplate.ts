@@ -62,10 +62,16 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         result.AddMessage(errorMsg);
         return result;
       }
-      //Create MergeDictionary
-      this.CreatingMergeDictionary(device,config,dstPath,values);
-      //PostCreatingMergeDictionary
-      this.PostCreatingMergeDictionary(device,config,dstPath);
+      //Create MergeDictionary---------------------------------
+      //IoTHelper.MakeDirSync(dstPath);
+      this.CreateDictionaryStep1CopyValues(values);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step1CopyValues");
+      this.CreateDictionaryStep2AddDeviceInfo(device,config);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step2AddDeviceInfo");
+      this.CreateDictionaryStep3DependencyProjectType(device);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step3DependencyProjectType");
+      this.CreateDictionaryStep4Additional();
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step4Additional");
       //File Name Replacement
       result=this.FileNameReplacement(dstPath);
       if(result.Status==StatusResult.Error) {
@@ -73,9 +79,14 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         return result;
       }
       //Set new name project
-      this.SetNewNameProject();
-      //PostCreatingMergeDictionary V2
-      this.PostCreatingMergeDictionary(device,config,dstPath);
+      this.CreateDictionaryStep5DefinePathToProject(dstPath);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step5DefinePathToProject");
+      this.CreateDictionaryStep6DependencyProjectPath(dstPath);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step6DependencyProjectPath");
+      //last
+      this.CreateDictionaryStep7Launch(config);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step7Launch");
+      //End MergeDictionary---------------------------------
       //FilesToProcess
       result=this.FilesToProcess(dstPath);
       if(result.Status==StatusResult.Error) {
@@ -122,10 +133,23 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         result.AddMessage(errorMsg);
         return result;
       }
-      //Create MergeDictionary
-      this.CreatingMergeDictionary(device,config,dstPath,values);
-      //PostCreatingMergeDictionary
-      this.PostCreatingMergeDictionary(device,config,dstPath);
+      //Create MergeDictionary---------------------------------
+      this.CreateDictionaryStep1CopyValues(values);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step1CopyValues");
+      this.CreateDictionaryStep2AddDeviceInfo(device,config);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step2AddDeviceInfo");
+      this.CreateDictionaryStep3DependencyProjectType(device);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step3DependencyProjectType");
+      this.CreateDictionaryStep4Additional();
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step4Additional");
+      this.CreateDictionaryStep5DefinePathToProject(dstPath);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step5DefinePathToProject");
+      this.CreateDictionaryStep6DependencyProjectPath(dstPath);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step6DependencyProjectPath");
+      //last
+      this.CreateDictionaryStep7Launch(config);
+      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step7Launch");
+      //End MergeDictionary---------------------------------
       //Insert Launch
       result=this.InsertLaunchOrTask(dstPath,"launch");
       if(result.Status==StatusResult.Error) {
@@ -170,7 +194,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         fs.writeFileSync(filePath, text,undefined);
       });
       //result
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,"Unable to merge for filesToProcess",err);
@@ -193,27 +217,9 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         //tracking the renaming of the main project file
         if(IoTHelper.GetFileExtensions(newPath)==this.Attributes.ExtMainFileProj)
         {
-          const projectMainfilePathFullWin = newPath;
-          //newPath - new path of new5.csproj file
-          let projectMainfilePathRelativeWin=projectMainfilePathFullWin.substring(dstPath.length);
-          let projectMainfilePathRelativeLinux=IoTHelper.ReverseSeparatorWinToLinux(projectMainfilePathRelativeWin);
-          projectMainfilePathRelativeWin=IoTHelper.ReverseSeparatorReplacement(projectMainfilePathRelativeWin);
-          this._mergeDictionary.set("%{project.mainfile.path.relative.aslinux}",<string>projectMainfilePathRelativeLinux);
-          this._mergeDictionary.set("%{project.mainfile.path.relative.aswindows}",<string>projectMainfilePathRelativeWin);
-          const projectMainfilePathFullLinux=IoTHelper.ReverseSeparatorWinToLinux(projectMainfilePathFullWin);
-          const projectMainfilePathFullWin4=IoTHelper.ReverseSeparatorReplacement(projectMainfilePathFullWin);
-          this._mergeDictionary.set("%{project.mainfile.path.full.aslinux}",<string>projectMainfilePathFullLinux);
-          this._mergeDictionary.set("%{project.mainfile.path.full.aswindows}",<string>projectMainfilePathFullWin4);
-          // => /new5/dotnetapp.csproj
-          const lastIndex=projectMainfilePathRelativeLinux.lastIndexOf('/');
-          let projectPathRelativeLinux=projectMainfilePathRelativeLinux.substring(0,lastIndex);
-          this._mergeDictionary.set("%{project.path.relative.aslinux}",<string>projectPathRelativeLinux);
-          let projectPathRelativeWin=IoTHelper.ReverseSeparatorLinuxToWin(projectPathRelativeLinux);
-          projectPathRelativeWin=IoTHelper.ReverseSeparatorReplacement(projectPathRelativeWin);
-          this._mergeDictionary.set("%{project.path.relative.aswindows}",<string>projectPathRelativeWin);
-          //
-          const dirProjectWin = path.dirname(projectMainfilePathFullWin);
-          this._mergeDictionary.set("%{project.path.full.ascygdrive}",<string>IoTHelper.GetPathAsCygdrive(dirProjectWin));
+          let projectMainfilePathFullWin = newPath;
+          projectMainfilePathFullWin=IoTHelper.ReverseSeparatorReplacement(projectMainfilePathFullWin);
+          this._mergeDictionary.set("%{project.mainfile.path.full.aswindows}",<string>projectMainfilePathFullWin);
         }
       });
       //result
@@ -225,7 +231,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     return result;
   }
 
-  private SetNewNameProject() {
+  private OLD_SetNewNameProject() {
+    //OK
     //The project name may change after the FileNameReplacement
     //The project name is the file name of the project file
     //new5.csproj => new5
@@ -363,28 +370,115 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       this._mergeDictionary.set("%{extension.apps.builtin.aswindows}",<string>appsBuiltInPath);
   }
 
-  private CreateDictionaryStep3Additional() {
-     
-  
+  private CreateDictionaryStep3DependencyProjectType(device:IotDevice) {
+    this._mergeDictionary.set("%{project.type}",<string>this.Attributes.TypeProj);
+    //dotnet
+    if(this.Attributes.TypeProj=="dotnet"){
+      //namespace
+      const projectName=this._mergeDictionary.get("%{project.name}");
+      if(projectName)
+        this._mergeDictionary.set("%{project.dotnet.namespace}",<string>dotnetHelper.GetDotNetValidNamespace(projectName));
+      //RID Catalog
+      const rid=dotnetHelper.GetDotNetRID(<string>device?.Information.OsName,<string>device?.Information.Architecture);
+      this._mergeDictionary.set("%{device.dotnet.rid}",<string>rid);
+      //target
+      let targetFramework=this._mergeDictionary.get("%{project.dotnet.targetframework}");
+      if(!targetFramework){
+        //Read from dstPath
+        const filePath= this._mergeDictionary.get("%{project.mainfile.path.full.aswindows}");
+        if (filePath) targetFramework=dotnetHelper.GetTargetFrameworkFromCsprojFile(filePath);
+        if(targetFramework) 
+          this._mergeDictionary.set("%{project.dotnet.targetframework}",<string>targetFramework);
+      }
+    }
   }
 
-  private CreateDictionaryStep4DefinePathToProject() {
-     
-  
+  private CreateDictionaryStep4Additional() {
+    //fastiot
+    this._mergeDictionary.set("%{launch.id}", IoTHelper.CreateGuid());
+    this._mergeDictionary.set("%{template.id}", this.Attributes.Id);
+    //app folder
+    const storagePath=IoTHelper.ReverseSeparatorReplacement(this.StoragePath);
+    this._mergeDictionary.set("%{template.storage.path.aswindows}",<string>storagePath);
+    const userName=os.userInfo().username;
+    this._mergeDictionary.set("%{os.userinfo.username}",<string>userName);
   }
 
-  private CreateDictionaryStep5DependencyProjectPath() {
-     
-  
+  private CreateDictionaryStep5DefinePathToProject(dstPath:string) {
+    //NEW or ADD
+    let projMainfilePathFullWin=this._mergeDictionary.get("%{project.mainfile.path.full.aswindows}");
+    let projMainfilePathFullLinux=this._mergeDictionary.get("%{project.mainfile.path.full.aslinux}");
+    //in <= project.mainfile.path.full.aswindows
+    //--------------------ADD--------------------
+    if(projMainfilePathFullWin) {
+      //win=>linux
+      let regex = /\\\\/g;
+      projMainfilePathFullWin = projMainfilePathFullWin.replace(regex, "\\");
+      projMainfilePathFullLinux=IoTHelper.ReverseSeparatorWinToLinux(projMainfilePathFullWin);
+      this._mergeDictionary.set("%{project.mainfile.path.full.aslinux}",projMainfilePathFullLinux);
+    }else if(projMainfilePathFullLinux) {
+      //linux=>win
+      projMainfilePathFullWin=IoTHelper.ReverseSeparatorLinuxToWin(projMainfilePathFullLinux);
+      projMainfilePathFullWin=IoTHelper.ReverseSeparatorReplacement(projMainfilePathFullWin);
+      this._mergeDictionary.set("%{project.mainfile.path.full.aswindows}",projMainfilePathFullWin);
+    }else {
+      //--------------------NEW--------------------
+      //in <= project.name, project.dotnet.targetframework,dstPath
+      const dstPathLinux=IoTHelper.ReverseSeparatorWinToLinux(dstPath);
+      const projectMainfilePathFullLinux=`${dstPathLinux}/${this.Attributes.MainFileProj}`;
+      this._mergeDictionary.set("%{project.mainfile.path.full.aslinux}",<string>projectMainfilePathFullLinux);
+      let projectMainfilePathFullWin=IoTHelper.ReverseSeparatorLinuxToWin(projectMainfilePathFullLinux);
+      projectMainfilePathFullWin=IoTHelper.ReverseSeparatorReplacement(projectMainfilePathFullWin);
+      this._mergeDictionary.set("%{project.mainfile.path.full.aswindows}",<string>projectMainfilePathFullWin);
+    }
   }
 
-  private CreateDictionaryStep6DependencyProjectType() {
-     
-  
+  private CreateDictionaryStep6DependencyProjectPath(dstPath:string) {
+    //in
+    let projMainfilePathFullWin=this._mergeDictionary.get("%{project.mainfile.path.full.aswindows}");
+    if(!projMainfilePathFullWin) return;
+    //main
+    let regex = /\\\\/g;
+    projMainfilePathFullWin = projMainfilePathFullWin.replace(regex, "\\");
+    //
+    let dirProjectWin = path.dirname(projMainfilePathFullWin);
+    let projectPathRelativeWin= dirProjectWin.substring(dstPath.length);
+    //if(projectPathRelativeWin=="\\\\") projectPathRelativeWin="";
+    this._mergeDictionary.set("%{project.path.relative.aswindows}",projectPathRelativeWin);
+    let projectPathRelativeLinux=IoTHelper.ReverseSeparatorWinToLinux(projectPathRelativeWin);
+    //if(projectPathRelativeLinux=="/") projectPathRelativeLinux="";
+    this._mergeDictionary.set("%{project.path.relative.aslinux}",<string>projectPathRelativeLinux);
+    let mainFilePathRelativeWin=projMainfilePathFullWin.substring(dstPath.length);
+    let mainFilePathRelativeLinux=IoTHelper.ReverseSeparatorWinToLinux(mainFilePathRelativeWin);
+    this._mergeDictionary.set("%{project.mainfile.path.relative.aslinux}",<string>mainFilePathRelativeLinux);
+    mainFilePathRelativeWin=IoTHelper.ReverseSeparatorReplacement(mainFilePathRelativeWin);
+    this._mergeDictionary.set("%{project.mainfile.path.relative.aswindows}",<string>mainFilePathRelativeWin);
+    //cygdrive
+    this._mergeDictionary.set("%{project.path.full.ascygdrive}",<string>IoTHelper.GetPathAsCygdrive(dirProjectWin));
+    //The project name may change after the FileNameReplacement
+    //The project name is the file name of the project file
+    //new5.csproj => new5
+    // => d:/new5/dotnetapp.csproj
+    let projectName=this._mergeDictionary.get("%{project.name}");
+    if(!projectName) {
+      const lastIndex=projMainfilePathFullWin.lastIndexOf('\\');
+      let str=projMainfilePathFullWin.substring(lastIndex+1);
+      // => dotnetapp.csproj
+      str=str.substring(0,str.length-this.Attributes.ExtMainFileProj.length);
+      // => dotnetapp
+      this._mergeDictionary.set("%{project.name}",<string>str);
+    } 
   }
 
-  private CreatingMergeDictionary (device:IotDevice, config:IotConfiguration,
+  private CreateDictionaryStep7Launch(config:IotConfiguration) {
+    //launch. Always last
+    const label=IoTHelper.MergeWithDictionary(this._mergeDictionary,config.TemplateTitleLaunch);
+    this._mergeDictionary.set("%{launch.label}",<string>label);
+  }
+
+  private OLD_CreatingMergeDictionary (device:IotDevice, config:IotConfiguration,
     dstPath:string, values:Map<string,string>) {
+      //OK
     this._mergeDictionary.clear();
     //copy values to _mergeDictionary
     values.forEach((value,key) => this._mergeDictionary.set(key,value));
@@ -463,8 +557,9 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     this._mergeDictionary.set("%{os.userinfo.username}",<string>userName);
   }
 
-  private PostCreatingMergeDictionary(device:IotDevice, config:IotConfiguration,
+  private OLD_PostCreatingMergeDictionary(device:IotDevice, config:IotConfiguration,
     dstPath:string){
+      //OK
     //dotnet
     if(this.Attributes.TypeProj=="dotnet"){
       //namespace
@@ -493,6 +588,24 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     //search for projects in depth on three levels
     const projects = IoTHelper.GetAllFilesByExt(dir,this.Attributes.ExtMainFileProj);    
     return projects;
+  }
+
+  private CreateDumpDictionary(dstPath:string, name:string="dump") {
+    try {
+      const currentDate: Date = new Date();
+      const dateString: string = `${currentDate.getHours()}-${currentDate.getMinutes()}-${currentDate.getSeconds()}_${currentDate.getMilliseconds()}`;
+      const filePath=`${dstPath}\\${dateString}-${name}.txt`;
+      //save in file
+      let data="";
+      let line="";
+      this._mergeDictionary.forEach((value,key) => {
+        line=`"${key}" => "${value}"\n`;
+        data=data+line;
+      });
+      fs.writeFileSync(filePath, data,undefined);
+    } catch (err: any){
+      console.log(err);
+    }
   }
 
 }
