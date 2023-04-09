@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../IotResult';
 
 export class YamlSchemaValidator {  
   private _pathFolderSchemas: string;
@@ -36,7 +36,7 @@ export class YamlSchemaValidator {
           validationErrors.push(msg);
         });
       } 
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,`VaidateSchema: pathFileYml = ${yamlFilePath}, schemaFileName = ${schemaFileName}`,err);

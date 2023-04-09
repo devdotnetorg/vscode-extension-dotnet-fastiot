@@ -96,6 +96,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     const projectName=baseName.substring(0,baseName.length-selectTemplate.Attributes.ExtMainFileProj.length);
     //values
     let values:Map<string,string>= new Map<string,string>();
+    selectProject=IoTHelper.ReverseSeparatorReplacement(selectProject);
     values.set("%{project.mainfile.path.full.aswindows}",selectProject);
     values.set("%{project.name}",projectName);
     //Main process

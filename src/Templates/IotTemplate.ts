@@ -425,7 +425,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     //
     let dirProjectWin = path.dirname(projMainfilePathFullWin);
     let projectPathRelativeWin= dirProjectWin.substring(dstPath.length);
-    this._mergeDictionary.set("%{project.path.relative.aswindows}",projectPathRelativeWin);
+    const projectPathRelativeWin_With4=IoTHelper.ReverseSeparatorReplacement(projectPathRelativeWin);
+    this._mergeDictionary.set("%{project.path.relative.aswindows}",projectPathRelativeWin_With4);
     let projectPathRelativeLinux=IoTHelper.ReverseSeparatorWinToLinux(projectPathRelativeWin);
     this._mergeDictionary.set("%{project.path.relative.aslinux}",<string>projectPathRelativeLinux);
     let mainFilePathRelativeWin=projMainfilePathFullWin.substring(dstPath.length);

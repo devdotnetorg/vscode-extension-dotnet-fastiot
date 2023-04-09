@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IotResult,StatusResult } from '../IotResult';
-import {IoTHelper} from '../Helper/IoTHelper';
+import { IotResult,StatusResult } from '../IotResult';
+import { IoTHelper } from '../Helper/IoTHelper';
 
 export class FilesValidator {
   private _pathFolderSchemas: string;
@@ -29,14 +29,13 @@ export class FilesValidator {
         //check
         let fullCheckPath=`${pathFolder}${path}`;
         fullCheckPath=IoTHelper.ReverseSeparatorLinuxToWin(fullCheckPath);
-        if (!fs.existsSync(fullCheckPath))
-        {
+        if (!fs.existsSync(fullCheckPath)) {
           //not found
           msg=`The ${type} does not exist. Path: ${fullCheckPath}. This ${type} is required: ${description}`;
           validationErrors.push(msg);
         }
       });
-      result= new IotResult(StatusResult.Ok,undefined,undefined);
+      result= new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,`VaidateFiles: pathFolder = ${pathFolder}, schemaFileName = ${schemaFileName}`,err);
