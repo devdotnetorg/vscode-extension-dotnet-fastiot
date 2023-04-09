@@ -169,10 +169,10 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       }
       //Not necessary. Time setting
       IoTHelper.SetCurrentTimeToFiles(`${dstPath}\\.vscode`);
-      //launch.id
-      result.tag=this._mergeDictionary.get("%{launch.id}");
       //
       result= new IotResult(StatusResult.Ok, `Launch and tasks added successfully`);
+      //launch.id
+      result.tag=this._mergeDictionary.get("%{launch.id}");
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,`Launch and tasks not added! Path is ${dstPath} project`,err);
@@ -249,10 +249,20 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //insert entitys
       let index=0;    
       do {
-        const jsonInsertDataEntity=jsonInsertDataEntitys.values[index];
+        let jsonInsertDataEntity=jsonInsertDataEntitys.values[index];
         if(jsonInsertDataEntity)
         {
-          if(entity=="launch") jsonDataEntity.configurations.push(<never>jsonInsertDataEntity);
+          if(entity=="launch") {
+            //check - fastiotIdLaunch, fastiotIdDevice, fastiotProject, fastiotIdTemplate
+            //suffix
+            let suffix=""; if(index>0) suffix=`-n${index}`;
+            if(!jsonInsertDataEntity.fastiotIdLaunch) jsonInsertDataEntity["fastiotIdLaunch"] = `%{launch.id}${suffix}`;
+            if(!jsonInsertDataEntity.fastiotIdDevice) jsonInsertDataEntity["fastiotIdDevice"]=`%{device.id}`;
+            if(!jsonInsertDataEntity.fastiotProject) jsonInsertDataEntity["fastiotProject"]=`%{project.mainfile.path.relative.aslinux}`;
+            if(!jsonInsertDataEntity.fastiotIdTemplate) jsonInsertDataEntity["fastiotIdTemplate"]=`%{template.id}`;
+            //push
+            jsonDataEntity.configurations.push(<never>jsonInsertDataEntity);
+          } 
           if(entity=="tasks") jsonDataEntity.tasks.push(<never>jsonInsertDataEntity);
           //next position
           index=index+1;
