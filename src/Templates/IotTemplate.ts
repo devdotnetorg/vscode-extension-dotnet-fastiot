@@ -276,7 +276,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //save in file
       fs.writeFileSync(fileEntityPath, data,undefined);
       //result
-      fs.removeSync(debugFilePath);
+      if (fs.existsSync(debugFilePath)) fs.removeSync(debugFilePath);
       result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
