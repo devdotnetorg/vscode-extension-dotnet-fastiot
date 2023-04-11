@@ -399,10 +399,10 @@ const debounce = (fn: Function, ms = 200) => {
 
 function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 {
-	//UI
-	let contextUI:IContexUI= new IoTUI();
 	//Config
 	let config=new IotConfiguration(context);
+	//UI
+	let contextUI:IContexUI= new IoTUI(config.Loglevel);
 	//Templates
 	let templates= new IotTemplateCollection(config,contextUI);
 	//Build

@@ -4,9 +4,11 @@ import * as path from 'path';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { IotTemplate } from '../Templates/IotTemplate';
+import { LogLevel } from '../LogLevel';
 
 export interface IContexUI {
   Output(value:string|IotResult): void;
+  Output(value:string|IotResult,logLevel:LogLevel): void;
   ShowBackgroundNotification(text:string, tooltip?:string | vscode.MarkdownString| undefined):void;
   HideBackgroundNotification():void;
   ShowNotification(value:IotResult):void;

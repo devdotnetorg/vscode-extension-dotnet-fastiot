@@ -162,6 +162,32 @@
 						"default": false,
 						"markdownDescription": "Debug mode. Used to debug templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
+					"fastiot.loglevel": {
+						"type": "number",
+						"default": 2,
+						"enum": [
+							0,
+							1,
+							2,
+							3,
+							4
+						],
+						"enumItemLabels": [
+							"Trace",
+							"Debug",
+							"Information",
+							"Warning",
+							"Error"
+						],
+						"enumDescriptions": [
+							"Logs that contain the most detailed messages.",
+							"Logs that are used for interactive investigation during development.",
+							"Logs that track the general flow of the application.",
+							"Logs that highlight an abnormal or unexpected event in the application flow, but do not otherwise cause the application execution to stop.",
+							"Logs that highlight when the current flow of execution is stopped due to a failure."
+						],
+						"markdownDescription": "Defines logging severity levels. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+					},
 					"conf.resource.insertEmptyLastLine": {
 						"type": "object",
 						"default": {},

@@ -7,6 +7,7 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IotConfigurationFolder } from './IotConfigurationFolder';
 import { IotBuiltInConfig } from './IotBuiltInConfig';
 import { IoTHelper } from '../Helper/IoTHelper';
+import { LogLevel } from '../LogLevel';
 
 export class IotConfiguration {
 
@@ -46,7 +47,9 @@ export class IotConfiguration {
     return <boolean>vscode.workspace.getConfiguration().get('fastiot.template.loadonstart');}
   public get DebugMode():boolean {
     return <boolean>vscode.workspace.getConfiguration().get('fastiot.debug');}
-
+  public get Loglevel():LogLevel {
+    return <LogLevel>vscode.workspace.getConfiguration().get('fastiot.loglevel');}
+  
   constructor(
     context: vscode.ExtensionContext
     ){
