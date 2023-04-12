@@ -31,7 +31,9 @@ export class IotConfiguration {
   public get IsUpdateTemplates():boolean { //Template update
     return <boolean>vscode.workspace.getConfiguration().get('fastiot.template.isupdate');}
   public get UpdateIntervalTemplatesHours():number { //Template update
-    return <number>vscode.workspace.getConfiguration().get('fastiot.template.updateinterval');}
+    return <number>vscode.workspace.getConfiguration().get('fastiot.template.updateinterval');
+    //return 0;
+  }
   private _extVersion:string;
   public get ExtVersion(): string {
     return this._extVersion;}

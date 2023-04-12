@@ -7,11 +7,11 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { networkHelper } from '../Helper/networkHelper';
 
-export abstract class EntityDownloader {
+export class EntityDownloader {
   constructor(
     ){}
 
-  protected async DownloadEntity(item:EntityDownload,destPath:string):Promise<IotResult>
+  public async DownloadEntity(item:EntityDownload,destPath:string):Promise<IotResult>
   {
     let result:IotResult;
     try {
@@ -42,7 +42,7 @@ export abstract class EntityDownloader {
     return Promise.resolve(result);
   }
 
-  protected async GetDownloadListEntity(url:string):Promise<IotResult>
+  public async GetDownloadListEntity(url:string):Promise<IotResult>
   {
     let result:IotResult;
     let listDownload:Array<EntityDownload>=[];

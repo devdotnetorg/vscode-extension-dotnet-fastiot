@@ -39,10 +39,12 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
 
   protected _pathFolderSchemas: string;
 
-  constructor(entityIntLabel:string, attribute:T,pathFolderSchemas: string
+  constructor(entityIntLabel:string,
+    TCreator: new(pathFolderSchemas: string|undefined) => T,
+    pathFolderSchemas: string
     ){
       this._entityIntLabel=entityIntLabel;
-      this.Attributes=attribute;
+      this.Attributes=new TCreator(pathFolderSchemas);
       //
       this._pathFolderSchemas=pathFolderSchemas;
       this._validationErrors.push("non");

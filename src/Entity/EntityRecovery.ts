@@ -4,7 +4,7 @@ import * as path from 'path';
 import { IotResult,StatusResult } from '../IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 
-export abstract class EntityRecovery {
+export class EntityRecovery {
   constructor(
     ){}
 

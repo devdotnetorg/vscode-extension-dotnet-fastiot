@@ -11,6 +11,7 @@ import { IotConfiguration } from './Configuration/IotConfiguration';
 import { IotItemTree } from './IotItemTree';
 import { IotResult,StatusResult } from './IotResult';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
+import { EntityCollection,ContainsType,IConfigEntityCollection } from './Entity/EntityCollection';
 //UI
 import { IoTUI } from './ui/IoTUI';
 import { IContexUI } from './ui/IContexUI';
@@ -62,7 +63,7 @@ import { rebuildLaunch } from './actionsLaunch/rebuildLaunch';
 import { changeOption } from './actionsLaunch/changeOption';
 //Template.actions
 import { createProject } from './actionsTemplates/createProject';
-import { reloadTemplates } from './actionsTemplates/reloadTemplates';
+import { loadTemplates } from './actionsTemplates/loadTemplates';
 import { openTemplateFolder } from './actionsTemplates/openTemplateFolder';
 
 // this method is called when your extension is activated
@@ -82,17 +83,17 @@ export async function activate(context: vscode.ExtensionContext) {
 	app.UI.Output("----------------------------------");
 
 	//Templates
-	const loadTemplates = async () => {
+	const loadTemplatesExt = async () => {
 		//Checking if templates need to be updated after updating an extension
 		const isNeedUpgrade=compare(`${app.Config.ExtVersion}`,`${app.Config.BuiltInConfig.PreviousVerExt}`, '>');
 		if(isNeedUpgrade) {
-			app.Templates.RestoreSystemTemplates(true);
+			app.Templates.RestoreSystemEntities(true);
 			app.Config.BuiltInConfig.PreviousVerExt=app.Config.ExtVersion;
 			app.Config.BuiltInConfig.Save();
 		  }
-		if(app.Config.LoadTemplatesOnStart&&(!isNeedUpgrade)) app.Templates.LoadTemplatesAsync();
+		if(app.Config.LoadTemplatesOnStart&&(!isNeedUpgrade)) loadTemplates(app);
 	};
-	loadTemplates();
+	loadTemplatesExt();
 	//TreeView Devices
     let treeDataDevicesProvider = new TreeDataDevicesProvider(app);
     let vscodeTreeViewDevices=vscode.window.createTreeView('viewDevices', {
@@ -286,7 +287,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Reload templates
 	let commandReloadTemplates = vscode.commands.registerCommand('viewTemplates.ReloadTemplates', () => {	
-			reloadTemplates(app.Templates);	
+			loadTemplates(app);	
 	});
 	//Open template folder
 	let commandOpenTemplateFolder = vscode.commands.registerCommand('viewTemplates.OpenTemplateFolder', () => {	
@@ -294,7 +295,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Restore/upgrade system templates
 	let commandRestoreSystemTemplates = vscode.commands.registerCommand('viewTemplates.RestoreSystemTemplates', async () => {
-		app.Templates.RestoreSystemTemplates();
+		app.Templates.RestoreSystemEntities();
 		vscode.window.showInformationMessage("Restore/upgrade system templates completed successfully");
 	});
 	//Events
@@ -404,7 +405,20 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 	//UI
 	let contextUI:IContexUI= new IoTUI(config.Loglevel);
 	//Templates
-	let templates= new IotTemplateCollection(config,contextUI);
+	//Templates config
+    const configTemplateCollection:IConfigEntityCollection = {
+		baseStoragePath:config.Folder.Templates,
+		extVersion: config.ExtVersion,
+		extMode: config.ExtMode,
+		recoverySourcePath: path.join(config.Folder.Extension, "templates", "system"),
+		schemasFolderPath: config.Folder.Schemas,
+		tempFolderPath:config.Folder.Temp,
+  		builtInConfig:config.BuiltInConfig,
+		isUpdate:config.IsUpdateTemplates,
+		updateIntervalHours:config.UpdateIntervalTemplatesHours,
+		listSourceUpdateEntitiesCommunity:config.ListSourceUpdateTemplateCommunity
+	};
+	let templates= new IotTemplateCollection(configTemplateCollection);
 	//Build
 	let app = new IoTApplication(contextUI,config,templates);
 	//result

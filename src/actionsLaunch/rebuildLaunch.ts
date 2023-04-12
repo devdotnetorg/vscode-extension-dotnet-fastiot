@@ -7,12 +7,13 @@ import { IotResult,StatusResult } from '../IotResult';
 import { LaunchNode } from '../LaunchNode';
 import { IoTApplication } from '../IoTApplication';
 import { IotDevice } from '../IotDevice';
+import { loadTemplates } from '../actionsTemplates/loadTemplates';
 
 export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,devices: Array<IotDevice>,item:LaunchNode,app:IoTApplication): Promise<void> {
    let result:IotResult;
    //Load template
    if(app.Templates.Count==0)
-      await app.Templates.LoadTemplatesAsync();
+      await loadTemplates(app);
    //repeat
    if(app.Templates.Count==0) {
       result=new IotResult(StatusResult.No,`No templates available`);

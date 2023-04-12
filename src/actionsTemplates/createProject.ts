@@ -13,12 +13,13 @@ import { IotConfiguration } from '../Configuration/IotConfiguration';
 import { IContexUI } from '../ui/IContexUI';
 import { stringify } from 'querystring';
 import { IoTApplication } from '../IoTApplication';
+import { loadTemplates } from '../actionsTemplates/loadTemplates';
 
 export async function createProject(app:IoTApplication,devices:Array<IotDevice>): Promise<void> {
     let result:IotResult;
     //Load template
     if(app.Templates.Count==0)
-        await app.Templates.LoadTemplatesAsync();
+        await loadTemplates(app);
     //repeat
     if(app.Templates.Count==0) {
         result=new IotResult(StatusResult.No,`No templates available`);

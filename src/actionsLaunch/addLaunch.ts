@@ -10,6 +10,7 @@ import { ItemQuickPick } from '../Helper/actionHelper';
 import { IotTemplate } from '../Templates/IotTemplate';
 import { IotTemplateAttribute } from '../Templates/IotTemplateAttribute';
 import { IoTApplication } from '../IoTApplication';
+import { loadTemplates } from '../actionsTemplates/loadTemplates';
 
 export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,app:IoTApplication): Promise<void> {
     let result:IotResult;
@@ -21,7 +22,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     }
     //Load template
     if(app.Templates.Count==0)
-        await app.Templates.LoadTemplatesAsync();
+        await loadTemplates(app);
     //repeat
     if(app.Templates.Count==0) {
         result=new IotResult(StatusResult.No,`No templates available`);
