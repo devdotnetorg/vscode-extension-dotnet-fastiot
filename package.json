@@ -115,12 +115,12 @@
 						"default": {},
 						"description": "Configuration of all devices in JSON format."
 					},
-					"fastiot.template.isupdate": {
+					"fastiot.isupdate": {
 						"type": "boolean",
 						"default": true,
 						"markdownDescription": "Update templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-					"fastiot.template.updateinterval": {
+					"fastiot.updateinterval": {
 						"type": "number",
 						"default": 24,
 						"enum": [

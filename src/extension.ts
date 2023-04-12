@@ -414,8 +414,8 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 		schemasFolderPath: config.Folder.Schemas,
 		tempFolderPath:config.Folder.Temp,
   		builtInConfig:config.BuiltInConfig,
-		isUpdate:config.IsUpdateTemplates,
-		updateIntervalHours:config.UpdateIntervalTemplatesHours,
+		isUpdate:config.IsUpdateEntities,
+		updateIntervalHours:config.UpdateIntervalEntitiesHours,
 		listSourceUpdateEntitiesCommunity:config.ListSourceUpdateTemplateCommunity
 	};
 	let templates= new IotTemplateCollection(configTemplateCollection);

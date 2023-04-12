@@ -28,10 +28,10 @@ export class IotConfiguration {
   public get TemplateTitleLaunch():string {
     return <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');}
   public Folder: IotConfigurationFolder;
-  public get IsUpdateTemplates():boolean { //Template update
-    return <boolean>vscode.workspace.getConfiguration().get('fastiot.template.isupdate');}
-  public get UpdateIntervalTemplatesHours():number { //Template update
-    return <number>vscode.workspace.getConfiguration().get('fastiot.template.updateinterval');
+  public get IsUpdateEntities():boolean { //Template update
+    return <boolean>vscode.workspace.getConfiguration().get('fastiot.isupdate');}
+  public get UpdateIntervalEntitiesHours():number { //Template update
+    return <number>vscode.workspace.getConfiguration().get('fastiot.updateinterval');
     //return 0;
   }
   private _extVersion:string;
