@@ -30,9 +30,9 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
     //dotnetapp.csproj => .csproj
     return IoTHelper.GetFileExtensions(this.MainFileProj);}
   
-  constructor(pathFolderSchemas: string|undefined = undefined
+  constructor(schemasFolderPath: string|undefined = undefined
     ){
-      super(pathFolderSchemas);
+      super(schemasFolderPath);
   }
 
   public Init(filePath:string)
@@ -49,7 +49,7 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
   protected Validate(yamlFilePath:string){
     this._validationErrors=[];
     //YamlSchemaValidator
-    let yamlSchemaValidator=new YamlSchemaValidator(this._pathFolderSchemas);
+    let yamlSchemaValidator=new YamlSchemaValidator(this._schemasFolderPath);
     let result = yamlSchemaValidator.ValidateSchema(yamlFilePath,"template.schema.yaml");
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();

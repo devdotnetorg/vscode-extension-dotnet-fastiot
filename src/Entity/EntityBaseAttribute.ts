@@ -48,12 +48,12 @@ export class EntityBaseAttribute {
   public get ValidationErrors(): Array<string> {
       return this._validationErrors;}
 
-  protected _pathFolderSchemas: string;
+  protected _schemasFolderPath: string;
 
-  constructor(pathFolderSchemas: string|undefined
+  constructor(schemasFolderPath: string|undefined
     ){
       this._validationErrors.push("non");
-      this._pathFolderSchemas=pathFolderSchemas ?? "non";
+      this._schemasFolderPath=schemasFolderPath ?? "non";
     }
 
   protected Parse(filePath:string){
@@ -119,7 +119,7 @@ export class EntityBaseAttribute {
   {
     this._validationErrors=[];
     //YamlSchemaValidator
-    let yamlSchemaValidator=new YamlSchemaValidator(this._pathFolderSchemas);
+    let yamlSchemaValidator=new YamlSchemaValidator(this._schemasFolderPath);
     let result = yamlSchemaValidator.ValidateSchema(yamlFilePath,"entitybase.schema.yaml");
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();

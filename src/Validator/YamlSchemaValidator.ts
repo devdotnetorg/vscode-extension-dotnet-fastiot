@@ -4,10 +4,10 @@ import * as path from 'path';
 import { IotResult,StatusResult } from '../IotResult';
 
 export class YamlSchemaValidator {  
-  private _pathFolderSchemas: string;
+  private _schemasFolderPath: string;
   
-  constructor(PathFolderSchemas: string){
-      this._pathFolderSchemas=PathFolderSchemas;
+  constructor(schemasFolderPath: string){
+      this._schemasFolderPath=schemasFolderPath;
   }
 
   public ValidateSchema (yamlFilePath:string, schemaFileName:string):IotResult
@@ -19,7 +19,7 @@ export class YamlSchemaValidator {
       //source - https://www.npmjs.com/package/yaml-schema-validator-fork
       const validateSchema = require('yaml-schema-validator-fork');
       // validate a yml file
-      const schemaPath=`${this._pathFolderSchemas}\\${schemaFileName}`;
+      const schemaPath=`${this._schemasFolderPath}\\${schemaFileName}`;
       var schemaErrors = validateSchema(yamlFilePath,
         {
           schemaPath: schemaPath,
