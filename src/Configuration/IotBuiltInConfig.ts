@@ -14,11 +14,16 @@ import { basename } from 'path';
 
 export class IotBuiltInConfig implements IBuiltInConfig {
 
+  private readonly _nameKeySetting:string='fastiot.config.JSON';
+
   public PreviousVerExt: string;
   public LastUpdateTemplatesHours:number;
   
-  constructor(configJson:any)
+  constructor()
   {
+    //read key
+    const configJson:any=vscode.workspace.getConfiguration().get(this._nameKeySetting);
+    //parse
     if(configJson.PreviousVerExt)
       this.PreviousVerExt=configJson.PreviousVerExt;
       else this.PreviousVerExt="0.1";
@@ -37,7 +42,7 @@ export class IotBuiltInConfig implements IBuiltInConfig {
       LastUpdateTemplatesHours: this.LastUpdateTemplatesHours
     };
     //write
-    vscode.workspace.getConfiguration().update('fastiot.config.JSON',data,true);
+    vscode.workspace.getConfiguration().update(this._nameKeySetting,data,true);
   }
 
 }

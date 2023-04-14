@@ -60,8 +60,7 @@ export class IotConfiguration {
       this._extMode=context.extensionMode;
       const extensionPath=context.extensionUri.fsPath;
       //Built-in config
-      const configJson:any=vscode.workspace.getConfiguration().get('fastiot.config.JSON');
-      this.BuiltInConfig=new IotBuiltInConfig(configJson);
+      this.BuiltInConfig=new IotBuiltInConfig();
       //Folders
       this.Folder = new IotConfigurationFolder(extensionPath);
       }
