@@ -8,6 +8,7 @@ import { IotConfigurationFolder } from './IotConfigurationFolder';
 import { IotBuiltInConfig } from './IotBuiltInConfig';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { LogLevel } from '../LogLevel';
+import { Constants } from "../Constants"
 
 export class IotConfiguration {
 
@@ -94,7 +95,7 @@ export class IotConfiguration {
      //default project folder definition
      if(defaultProjectFolder == null||defaultProjectFolder == undefined||defaultProjectFolder == "") 
      {
-       defaultProjectFolder=path.join(platformFolders.getDocumentsFolder(), "Projects");
+       defaultProjectFolder=path.join(platformFolders.getDocumentsFolder(), Constants.nameFolderProjects);
        //check folder
        IoTHelper.MakeDirSync(defaultProjectFolder);
        //Saving settings

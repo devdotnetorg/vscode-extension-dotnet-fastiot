@@ -12,6 +12,7 @@ import { IotItemTree } from './IotItemTree';
 import { IotResult,StatusResult } from './IotResult';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 import { EntityCollection,ContainsType,IConfigEntityCollection } from './Entity/EntityCollection';
+import { Constants } from "./Constants"
 //UI
 import { IoTUI } from './ui/IoTUI';
 import { IContexUI } from './ui/IContexUI';
@@ -408,10 +409,10 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 	//Templates config
 	let urlUpdateTemplatesSystem:string="";
 	if(config.ExtMode==vscode.ExtensionMode.Production) {
-		urlUpdateTemplatesSystem="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
+		urlUpdateTemplatesSystem=Constants.urlUpdateTemplatesSystemRelease;
     }else {
 		//for test
-      	urlUpdateTemplatesSystem="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/templates/system/templatelist.fastiot.yaml";
+      	urlUpdateTemplatesSystem=Constants.urlUpdateTemplatesSystemDebug;
     }
 	//
     const configTemplateCollection:IConfigEntityCollection = {

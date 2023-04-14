@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../IotResult';
+import { Constants } from "../Constants"
 
 export class IotConfigurationFolder {
   //from https://learn.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=net-7.0
@@ -57,7 +58,7 @@ export class IotConfigurationFolder {
       /* Get home directory of the user in Node.js */
       // check the available memory
       const userHomeDir = os.homedir();
-      applicationDataPath=path.join(userHomeDir, "fastiot");
+      applicationDataPath=path.join(userHomeDir, Constants.nameFolderSettings);
       //Saving settings
       vscode.workspace.getConfiguration().update('fastiot.device.applicationdatafolder',applicationDataPath,true);
     }
