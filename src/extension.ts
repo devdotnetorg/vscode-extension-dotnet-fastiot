@@ -406,6 +406,14 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 	let contextUI:IContexUI= new IoTUI(config.Loglevel);
 	//Templates
 	//Templates config
+	let urlUpdateTemplatesSystem:string="";
+	if(config.ExtMode==vscode.ExtensionMode.Production) {
+		urlUpdateTemplatesSystem="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/master/templates/system/templatelist.fastiot.yaml";
+    }else {
+		//for test
+      	urlUpdateTemplatesSystem="https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/templates/system/templatelist.fastiot.yaml";
+    }
+	//
     const configTemplateCollection:IConfigEntityCollection = {
 		baseStoragePath:config.Folder.Templates,
 		extVersion: config.ExtVersion,
@@ -416,7 +424,8 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
   		builtInConfig:config.BuiltInConfig,
 		isUpdate:config.IsUpdateEntities,
 		updateIntervalHours:config.UpdateIntervalEntitiesHours,
-		listSourceUpdateEntitiesCommunity:config.ListSourceUpdateTemplateCommunity
+		urlsUpdateEntitiesCommunity:config.ListSourceUpdateTemplateCommunity,
+		urlUpdateEntitiesSystem:urlUpdateTemplatesSystem
 	};
 	let templates= new IotTemplateCollection(configTemplateCollection);
 	//Build
