@@ -647,7 +647,15 @@
 			{
 				"view": "viewTemplates",
 				"contents": "[Create project](command:viewTemplates.CreateProject)\n About [Project Templates](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Project-templates.md)."
-			}
+			},
+			{
+                "view": "workbench.explorer.emptyView",
+                "contents": ".NET FastIoT\n[Create project](command:viewTemplates.CreateProject)"
+            },
+            {
+                "view": "workbench.explorer.emptyView",
+                "contents": "[Add device](command:viewDevices.AddDevice)"
+            }
 		]
 	},
 	"scripts": {
