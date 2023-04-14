@@ -30,8 +30,7 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
     //dotnetapp.csproj => .csproj
     return IoTHelper.GetFileExtensions(this.MainFileProj);}
   
-  constructor(schemasFolderPath: string|undefined = undefined
-    ){
+  constructor(schemasFolderPath?: string){
       super(schemasFolderPath);
   }
 

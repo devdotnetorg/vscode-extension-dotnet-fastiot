@@ -23,10 +23,8 @@ export class IotResult {
   public logLevel?:LogLevel;
 
   constructor(
-    status:StatusResult,
-    message:string|undefined=undefined,
-    systemMessage:string|undefined=undefined,
-    logLevel:LogLevel|undefined=undefined,
+    status:StatusResult, message?:string,
+    systemMessage?:string, logLevel?:LogLevel,
     ){
       this._status=status;
       this._message=message;
@@ -34,10 +32,10 @@ export class IotResult {
       this.logLevel=logLevel;
     }
 
-  public AddMessage = (value: string|undefined) =>
+  public AddMessage = (value?: string) =>
     {if(value) this._message=`${this._message}\n${value}`};
 
-  public AddSystemMessage= (value: string|undefined) =>
+  public AddSystemMessage= (value?: string) =>
     {if(value) this._systemMessage=`${this._systemMessage}\n${value}`};
 
   public toString():string{
@@ -51,7 +49,7 @@ export class IotResult {
     return msg;
   }
 
-  public toStringWithHead(head:string|undefined=undefined):string{
+  public toStringWithHead(head?:string):string{
     if(!head) head="------------- Result -------------";
     //Msg
     let msg=`${head}\n`;

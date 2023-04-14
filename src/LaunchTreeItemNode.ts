@@ -5,7 +5,7 @@ import { BaseTreeItemNode } from './BaseTreeItemNode';
 import { LaunchOptionNode } from './LaunchOptionNode';
 
 export class LaunchTreeItemNode extends BaseTreeItemNode { 
-  public Parent: LaunchTreeItemNode| undefined;
+  public Parent?: LaunchTreeItemNode;
   public Childs: Array<LaunchTreeItemNode| LaunchOptionNode>=[];
   
   constructor(

@@ -47,7 +47,7 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
     //Merge
     const dtosArray=this.MergeDTOs(enabledDTOs,result.SystemMessage);
     //output
-    result= new IotResult(StatusResult.Ok,undefined,undefined);
+    result= new IotResult(StatusResult.Ok);
     result.returnObject=dtosArray;
     return Promise.resolve(result);
   }
@@ -102,7 +102,7 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
   };
 
   //---------
-  private GetOverlayDir(msg:string|undefined): string{    
+  private GetOverlayDir(msg?:string): string{    
     const linuxFamily = msg;
     let overlayDir:string;
     switch(linuxFamily) { 

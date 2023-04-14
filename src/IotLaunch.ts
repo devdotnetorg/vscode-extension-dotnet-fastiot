@@ -18,15 +18,15 @@ export class IotLaunch {
   public get WorkspaceDirectory(): string {
     return this._workspaceDirectory;}
 
-  private _idLaunch:string| undefined;
+  private _idLaunch?:string;
   public get IdLaunch(): string| undefined {
     return this._idLaunch;}
 
-  private _label:string| undefined;
+  private _label?:string;
   public get Label(): string| undefined {
     return this._label;}
 
-  private _description:string| undefined;
+  private _description?:string;
   public get Description(): string| undefined {
     return this._description;}
 
@@ -38,15 +38,15 @@ export class IotLaunch {
   public get TasksFilePath(): string {
     return this._tasksFilePath;}
 
-  private _device:IotDevice|string| undefined;
+  private _device?:IotDevice|string;
   public get Device(): IotDevice|string| undefined {
     return this._device;}
 
-  private _pathProject:string| undefined;
+  private _pathProject?:string;
   public get PathProject(): string| undefined {
     return this._pathProject;}
 
-  private _idTemplate:string| undefined;
+  private _idTemplate?:string;
   public get IdTemplate(): string| undefined {
     return this._idTemplate;}
 

@@ -28,7 +28,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       super("template",IotTemplateAttribute,pathFolderSchemas);
   }
 
-  public Init(type:EntityType,yamlFilePath:string,recoverySourcePath:string|undefined=undefined)
+  public Init(type:EntityType,yamlFilePath:string,recoverySourcePath?:string)
   {
     super.Init(type,yamlFilePath,recoverySourcePath);
     if(!this.IsValid) return;

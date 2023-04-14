@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export abstract class BaseTreeItemNode extends vscode.TreeItem {
-  public abstract Parent: BaseTreeItemNode| any| undefined;
+  public abstract Parent?: BaseTreeItemNode| any;
   public abstract Childs: Array<BaseTreeItemNode| any>;
   
   constructor(

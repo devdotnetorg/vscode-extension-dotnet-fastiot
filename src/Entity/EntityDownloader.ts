@@ -33,7 +33,7 @@ export class EntityDownloader {
       zip.extractAllTo(/*target path*/ unpackPath, /*overwrite*/ true);
       //delete zip
       fs.removeSync(fileZipPath);
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
       result.returnObject=unpackPath;
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Unable to download file ${item.Url}.`,err);
@@ -72,7 +72,7 @@ export class EntityDownloader {
         return Promise.resolve(result);
     }
     //result
-    result = new IotResult(StatusResult.Ok,undefined,undefined);
+    result = new IotResult(StatusResult.Ok);
     result.returnObject=listDownload;
     return Promise.resolve(result);
   }

@@ -40,7 +40,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   protected _pathFolderSchemas: string;
 
   constructor(entityIntLabel:string,
-    TCreator: new(pathFolderSchemas: string|undefined) => T,
+    TCreator: new(pathFolderSchemas?: string) => T,
     pathFolderSchemas: string
     ){
       this._entityIntLabel=entityIntLabel;

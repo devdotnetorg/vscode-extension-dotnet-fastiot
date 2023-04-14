@@ -156,7 +156,7 @@ export class IoTHelper {
       console.log(`Extracted ${count} entries`);
       await zip.close();
       */
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
       result.returnObject=unpackDir;
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Error while unpacking file ${fileZipPath}`,err);

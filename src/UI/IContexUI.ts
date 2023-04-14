@@ -9,7 +9,7 @@ import { LogLevel } from '../LogLevel';
 export interface IContexUI {
   Output(value:string|IotResult): void;
   Output(value:string|IotResult,logLevel:LogLevel): void;
-  ShowBackgroundNotification(text:string, tooltip?:string | vscode.MarkdownString| undefined):void;
+  ShowBackgroundNotification(text:string, tooltip?:string | vscode.MarkdownString):void;
   HideBackgroundNotification():void;
   ShowNotification(value:IotResult):void;
   ShowDeviceDialog(devices:Array<IotDevice>,title?:string):Promise<IotDevice | undefined>;

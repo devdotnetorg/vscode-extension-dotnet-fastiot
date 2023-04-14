@@ -8,7 +8,7 @@ import { IotLaunchOption } from './IotLaunchOption';
 export class LaunchOptionNode extends LaunchTreeItemNode {
   private _iotLaunchOption:IotLaunchOption;
   public Values:Map<any,string>;
-  public Headtooltip:string| vscode.MarkdownString| undefined;
+  public Headtooltip?:string| vscode.MarkdownString;
 
   constructor(
     label: string,

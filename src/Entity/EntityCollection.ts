@@ -267,7 +267,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
                   const unpackPath= <string> result.returnObject;
                   const filePath = path.join(unpackPath, ` ${this._entityIntLabel.toLowerCase()}.fastiot.yaml`);
                   let entity= new this.TCreator(this.Config.schemasFolderPath);
-                  entity.Init(EntityType.system,filePath,undefined);
+                  entity.Init(EntityType.system,filePath);
                   if(entity.IsValid) {
                     result=entity.Move(path.join(destPath, entity.Attributes.Id));
                     if(result.Status==StatusResult.Error) {

@@ -59,7 +59,7 @@ export class IoTUI implements IContexUI {
     if(logLevel>=this._currentLogLevel) this._outputChannel.appendLine(msg);
   }
 
-  public ShowBackgroundNotification(text:string, tooltip:string | vscode.MarkdownString| undefined=undefined) {
+  public ShowBackgroundNotification(text:string, tooltip?:string | vscode.MarkdownString) {
     this._statusBarBackground.showAnimation(text,tooltip);
   }
 
