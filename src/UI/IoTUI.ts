@@ -12,7 +12,7 @@ import { LogLevel } from '../LogLevel';
 export class IoTUI implements IContexUI {
   private _outputChannel:vscode.OutputChannel;
   private _statusBarBackground: StatusBarBackground;
-  private _currentLogLevel:LogLevel;
+  private readonly _currentLogLevel:LogLevel;
   
   constructor(logLevel:LogLevel){
     //OutputChannel

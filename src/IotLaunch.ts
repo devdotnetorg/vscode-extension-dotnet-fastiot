@@ -14,7 +14,7 @@ import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 
 export class IotLaunch {
 
-  private _workspaceDirectory:string;
+  private readonly _workspaceDirectory:string;
   public get WorkspaceDirectory(): string {
     return this._workspaceDirectory;}
 

@@ -6,7 +6,7 @@ import { LogLevel } from './LogLevel';
 export enum StatusResult { None="None", Ok="Ok", No ="No", Error="Error" };
 
 export class IotResult {  
-  private _status: StatusResult;  
+  private readonly _status: StatusResult;  
   public get Status(): StatusResult {
     return this._status;}
 

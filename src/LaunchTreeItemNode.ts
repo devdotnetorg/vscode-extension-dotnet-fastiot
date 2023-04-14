@@ -10,10 +10,10 @@ export class LaunchTreeItemNode extends BaseTreeItemNode {
   
   constructor(
     label: string,  
-    description: string|  undefined,
-    tooltip: string | vscode.MarkdownString | undefined,
-    collapsibleState: vscode.TreeItemCollapsibleState,
-    parent: LaunchTreeItemNode| undefined
+    description?: string,
+    tooltip?: string | vscode.MarkdownString,
+    collapsibleState?: vscode.TreeItemCollapsibleState,
+    parent?: LaunchTreeItemNode
     ){
       super(label,description,tooltip,collapsibleState);
       this.Parent=parent;

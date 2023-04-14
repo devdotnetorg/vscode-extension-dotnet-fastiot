@@ -13,14 +13,14 @@ import { IotLaunch } from './IotLaunch';
 export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTreeItemNode> {    
   public RootItems:Array<LaunchNode>=[];
 
-  private _config: IotConfiguration;
+  private readonly _config: IotConfiguration;
     
   private _onDidChangeTreeData: vscode.EventEmitter<LaunchTreeItemNode| undefined | null | void> = 
     new vscode.EventEmitter<LaunchTreeItemNode| undefined | null | void>();
   public readonly onDidChangeTreeData: vscode.Event<LaunchTreeItemNode| undefined | null | void> = 
     this._onDidChangeTreeData.event;
 
-  private _devices: Array<IotDevice>;
+  private readonly _devices: Array<IotDevice>;
 
   constructor(
     config:IotConfiguration,

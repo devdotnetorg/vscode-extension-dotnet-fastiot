@@ -8,9 +8,9 @@ export abstract class BaseTreeItemNode extends vscode.TreeItem {
   
   constructor(
     label: string,
-    description: string|  undefined,
-    tooltip: string | vscode.MarkdownString | undefined,
-    collapsibleState: vscode.TreeItemCollapsibleState,
+    description?: string,
+    tooltip?: string| vscode.MarkdownString,
+    collapsibleState?: vscode.TreeItemCollapsibleState,
   ){
     super(label, collapsibleState);
     this.description = description;

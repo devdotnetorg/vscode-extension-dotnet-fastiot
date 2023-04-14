@@ -4,7 +4,7 @@ import * as path from 'path';
 
 export class StatusBarBackground {
   private _statusBarItem: vscode.StatusBarItem;
-  private _animationText: string;
+  private readonly _animationText: string;
 
   public get text(): string {
     return this._statusBarItem.text;};

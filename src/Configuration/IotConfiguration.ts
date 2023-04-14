@@ -34,10 +34,10 @@ export class IotConfiguration {
     return <number>vscode.workspace.getConfiguration().get('fastiot.updateinterval');
     //return 0;
   }
-  private _extVersion:string;
+  private readonly _extVersion:string;
   public get ExtVersion(): string {
     return this._extVersion;}
-  private _extMode:vscode.ExtensionMode;
+  private readonly _extMode:vscode.ExtensionMode;
   public get ExtMode(): vscode.ExtensionMode {
     return this._extMode;}
   public BuiltInConfig: IotBuiltInConfig;

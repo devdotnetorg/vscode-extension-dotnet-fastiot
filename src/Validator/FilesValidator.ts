@@ -5,7 +5,7 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 
 export class FilesValidator {
-  private _schemasFolderPath: string;
+  private readonly _schemasFolderPath: string;
   
   constructor(schemasFolderPath: string){
       this._schemasFolderPath=schemasFolderPath;

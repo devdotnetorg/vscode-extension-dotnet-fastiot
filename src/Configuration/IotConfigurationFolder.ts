@@ -14,7 +14,7 @@ export class IotConfigurationFolder {
     const dir= path.join(this.ApplicationData, "settings", "keys");
     IoTHelper.MakeDirSync(dir);
     return dir;}
-  private _extension: string;
+  private readonly _extension: string;
   public get Extension(): string {
       return this._extension;}
   public get Templates(): string {

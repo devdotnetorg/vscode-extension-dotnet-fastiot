@@ -4,7 +4,7 @@ import * as path from 'path';
 import { IotResult,StatusResult } from '../IotResult';
 
 export class YamlSchemaValidator {  
-  private _schemasFolderPath: string;
+  private readonly _schemasFolderPath: string;
   
   constructor(schemasFolderPath: string){
       this._schemasFolderPath=schemasFolderPath;
