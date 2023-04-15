@@ -19,5 +19,6 @@
 ## Install steps
 
 - Clone repository and `cd` into it
+- Execute command: npm install
 - Open in Visual Studio Code (`code .`)
 - Press <kbd>F5</kbd> to debug.
