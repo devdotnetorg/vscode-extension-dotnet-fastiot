@@ -12,7 +12,15 @@
 
 ## Понятие шаблона
 
-Шаблоны используются для создания проектов и добавления фалов `launch.json` и `tasks.json` к существующему проекту. Располагаются по пути `%userprofile%\fastiot\templates`, например `C:\Users\Anton\fastiot\templates\`. Шаблоны разделяются на два типа, это системные - `system` и пользовательские - `user`. Если системный шаблон не пройдет проверку, то он автоматически будет удален и заменен на валидный. Если системный шаблон удалить, то он тоже будет автоматически восстановлен. Системные шаблоны автоматически обновляются при запуске расширения с ресурса [Github devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system). Далее, все будет рассмотрено на примере шаблона [dotnet-console-runtime-info](/templates/system/dotnet-console-runtime-info).
+Шаблоны используются для создания проектов и добавления фалов `launch.json` и `tasks.json` к существующему проекту. Располагаются по пути `%userprofile%\fastiot\templates`, например `C:\Users\Anton\fastiot\templates\`. Шаблоны разделяются на следующие типы:
+
+- `system` - системные;
+- `community` - сообщества. Загружаются со сторонних ресурсов;
+- `user` - пользовательские. Пользователь может самостоятельно сформировать свой произвольный шаблон.
+
+Шаблоны перечислены в порядке загрузки в расширении. Например, если у шаблона типа `user` будет совпадать идентификатор `id` шаблона с типом `system`, то шаблон типа `user` будет игнорирован по причине уже загруженного шаблона типа `system`.
+
+Если системный шаблон не пройдет проверку, то он автоматически будет удален и заменен на валидный. Если системный шаблон удалить, то он тоже будет автоматически восстановлен. Системные шаблоны автоматически обновляются при запуске расширения с ресурса [Github devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system). Далее, все будет рассмотрено на примере шаблона [dotnet-console-runtime-info](/templates/system/dotnet-console-runtime-info).
 
 ## Структура шаблона
 
@@ -84,6 +92,8 @@
 ### Дополнительные ключи в Launch
 
 В Launch были добавлены дополнительные ключи, с приставкой `fastiotId*`, ключи: `fastiotIdLaunch`, `fastiotIdDevice`, `fastiotProject`, `fastiotIdTemplate`. Не рекомендуется их изменять т.к. некоторые функции расширения из-за этого могут быть недоступны.
+
+Начиная с версии v0.3.3 указанные выше ключи добавляются автоматически, если они отсутствуют в шаблоне. Т.е. теперь эти ключи для шаблона проекта являются необязательными.
 
 Ключи:
 - `fastiotIdLaunch` - уникальный идентификатор Launch;
@@ -199,7 +209,7 @@
 21. "%{project.dotnet.namespace}" => "DotnetConsoleAppRuntimeInfo".
 22. "%{device.dotnet.rid}" => "linux-arm".
 23. "%{launch.label}" => "Launch on cubieboard (DotnetConsoleAppRuntimeInfo, Cubieboard, debugvscode)".
-24. "%{extension.apps.builtin.aswindows}" => "d:\\\\Anton\\\\GitHub\\\\vscode-extension-dotnet-fastiot\\\\windows\\\\apps\\\\cwrsync\\\\ssh.exe".
+24. "%{extension.apps.builtin.aswindows}" => "d:\\\\Anton\\\\GitHub\\\\vscode-extension-dotnet-fastiot\\\\windows\\\\apps".
 25. "%{os.userinfo.username}" => "Anton".
 
 **Значения при наличии каталогов в пути**
@@ -223,3 +233,7 @@
 Все ошибки связанные с проверкой шаблона будут отображены в окне OUTPUT.
 
 Если возникнет ошибка валидации структуры JSON, то в окне OUTPUT отобразится позиция в файле, которая вызвала ошибку. В этом случае исходный файл останется неизменным, и будет создан новый с именем `debug_launch_json.txt` или `debug_tasks_json.txt` в каталоге проекта.
+
+Параметр **Fastiot: Debug** в настройках расширения включает режим отладки шаблона. В этом режим выводится и сохраняется дополнительная информация при создании проекта из шаблона или добавление Launch к существующему проекту. Так сохраняется следующая информация:
+
+- в папке проекта сохраняются текстовые файлы с полным содержанием всех значений переменных для слияния. Слияние с шаблоном выполняется в несколько шагов. Например, на первом шаге сохраняется файл с названием `Step1CopyValues`. В файле содержатся все значения переменных полученных при интерактивном взаимодействии с пользователем в режим вопрос-ответ. Всего 5 шагов: `Step1CopyValues`, `Step2AddDeviceInfo`, `Step3DependencyProjectType`, `Step4Additional`, `Step5DefinePathToProject`.
