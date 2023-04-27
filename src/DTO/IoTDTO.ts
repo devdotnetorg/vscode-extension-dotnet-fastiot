@@ -8,7 +8,7 @@ import { IotResult,StatusResult } from '../IotResult';
 
 export class IoTDTO {  
   private _device: IotDevice;
-  private _adapterDTO:IDtoAdapter| undefined;
+  private _adapterDTO?:IDtoAdapter;
 
   private _compatible:boolean=false;
   public get Compatible(): boolean { 
@@ -17,10 +17,10 @@ export class IoTDTO {
   private _isEnabled:boolean=false;
   public get IsEnabled(): boolean { 
     return this._isEnabled;};      
-  private _name: string| undefined; 
+  private _name?: string; 
   public get Name(): string| undefined {
     return this._name;};
-  private _fsPath: string| undefined;
+  private _fsPath?: string;
   public get FsPath(): string| undefined {
     return this._fsPath;};  
   
@@ -67,7 +67,7 @@ export class IoTDTO {
       return Promise.resolve(result);
     }
     //
-    return Promise.resolve(new IotResult(StatusResult.Error,"DTO adapter not initialized",undefined));
+    return Promise.resolve(new IotResult(StatusResult.Error,"DTO adapter not initialized"));
   }
 
   public async Put(fileName:string, fileData:string,fileType:string):Promise<IotResult>{
@@ -79,7 +79,7 @@ export class IoTDTO {
       const result = await this._adapterDTO.Put(fileName,fileData,fileType);      
       return Promise.resolve(result);
     }
-    return Promise.resolve(new IotResult(StatusResult.Error,"DTO object not initialized",undefined));
+    return Promise.resolve(new IotResult(StatusResult.Error,"DTO object not initialized"));
   }
 
   public async Delete():Promise<IotResult>{
@@ -89,7 +89,7 @@ export class IoTDTO {
       const result = await this._adapterDTO.Delete(this._fsPath);      
       return Promise.resolve(result);
     }
-    return Promise.resolve(new IotResult(StatusResult.Error,"DTO object not initialized",undefined));
+    return Promise.resolve(new IotResult(StatusResult.Error,"DTO object not initialized"));
   }
 
   public async Enable():Promise<IotResult>{
@@ -98,7 +98,7 @@ export class IoTDTO {
       const result = await this._adapterDTO.Enable(this._fsPath);      
       return Promise.resolve(result);
     }
-    return Promise.resolve(new IotResult(StatusResult.Error,"DTO object not initialized or no fsPath",undefined));
+    return Promise.resolve(new IotResult(StatusResult.Error,"DTO object not initialized or no fsPath"));
   }
 
 	public async Disable():Promise<IotResult>{
@@ -107,7 +107,7 @@ export class IoTDTO {
       const result = await this._adapterDTO.Disable(this._fsPath);      
       return Promise.resolve(result);
     }
-    return Promise.resolve(new IotResult(StatusResult.Error,"DTO object not initialized or no fsPath",undefined));
+    return Promise.resolve(new IotResult(StatusResult.Error,"DTO object not initialized or no fsPath"));
   };
 
   public ToJSON():any{    

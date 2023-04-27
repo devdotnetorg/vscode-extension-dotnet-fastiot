@@ -5,7 +5,7 @@ import {StatusResult,IotResult} from './IotResult';
 import {SshClient} from './SshClient';
 
 export abstract class BaseTreeItem extends vscode.TreeItem {
-  public abstract Parent: BaseTreeItem| any| undefined;
+  public abstract Parent?: BaseTreeItem| any;
   public abstract Childs: Array<BaseTreeItem| any>;
   public Client:SshClient;
   

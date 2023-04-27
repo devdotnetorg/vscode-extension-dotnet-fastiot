@@ -40,7 +40,7 @@ export async function importDevices(treeData: TreeDataDevicesProvider,contextUI:
        }
     };    
     const file = await vscode.window.showOpenDialog(options);
-    let result = new IotResult(StatusResult.None,undefined,undefined);
+    let result = new IotResult(StatusResult.None);
     if(file)
     {        
         contextUI.Output(`Action: Import devices from file ${file[0].fsPath}`);        
@@ -49,7 +49,7 @@ export async function importDevices(treeData: TreeDataDevicesProvider,contextUI:
             const jsonObj = JSON.parse(fs.readFileSync(file[0].fsPath, 'utf-8'));
             result = await treeData.FromJSON(jsonObj);
         } catch (err:any) {
-            result = new IotResult(StatusResult.Error,err,undefined);
+            result = new IotResult(StatusResult.Error,err);
         }     
         //Output       
         contextUI.Output(result.toStringWithHead());

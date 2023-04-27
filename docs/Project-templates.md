@@ -12,7 +12,15 @@
 
 ## Template concept
 
-Templates are used to create projects and add `launch.json` and `tasks.json` files to an existing project. They are located along the path `%userprofile%\fastiot\templates`, for example `C:\Users\Anton\fastiot\templates\`. Templates are divided into two types, these are system - `system` and user - `user`. If the system template does not pass the check, it will be automatically deleted and replaced with a valid one. If the system template is deleted, it will also be automatically restored. System templates are automatically updated when you run an extension from [Github devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system). Further, everything will be discussed using the example of the template [dotnet-console-runtime-info](/templates/system/dotnet-console-runtime-info).
+Templates are used to create projects and add `launch.json` and `tasks.json` files to an existing project. They are located along the path `%userprofile%\fastiot\templates`, for example `C:\Users\Anton\fastiot\templates\`. Templates are divided into the following types:
+
+- `system` - system;
+- `community` - communities. Downloaded from third party resources;
+- `user` - user. The user can independently create his own custom template.
+
+Templates are listed in load order in the extension. For example, if a template of type `user` has the same identifier `id` of the template with type `system`, then the template of type `user` will be ignored because the template of type `system` is already loaded.
+
+If the system template does not pass the check, it will be automatically deleted and replaced with a valid one. If the system template is deleted, it will also be automatically restored. System templates are automatically updated when you run an extension from [Github devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/ master/templates/system). Further, everything will be discussed using the example of the template [dotnet-console-runtime-info](/templates/system/dotnet-console-runtime-info).
 
 ## Template structure
 
@@ -83,6 +91,8 @@ If the value of the `name` key, e.g. `Launch on cubieboard (DotnetApp, Cubieboar
 ### Additional keys in Launch
 
 Additional keys have been added to Launch, prefixed with `fastiotId*`, keys: `fastiotIdLaunch`, `fastiotIdDevice`, `fastiotProject`, `fastiotIdTemplate`. It is not recommended to change them. some extension functions may not be available because of this.
+
+Starting from version v0.3.3, the above keys are added automatically if they are not present in the template. Those. these keys for the project template are now optional.
 
 Keys:
 - `fastiotIdLaunch` - unique Launch identifier;
@@ -198,7 +208,7 @@ Variables:
 21. "%{project.dotnet.namespace}" => "DotnetConsoleAppRuntimeInfo".
 22. "%{device.dotnet.rid}" => "linux-arm".
 23. "%{launch.label}" => "Launch on cubieboard (DotnetConsoleAppRuntimeInfo, Cubieboard, debugvscode)".
-24. "%{extension.apps.builtin.aswindows}" => "d:\\\\Anton\\\\GitHub\\\\vscode-extension-dotnet-fastiot\\\\windows\\\\apps\\\\cwrsync\\\\ssh.exe".
+24. "%{extension.apps.builtin.aswindows}" => "c:\\\\Users\\\\Anton\\\\.vscode\\\\extensions\\\\devdotnetorg.vscode-extension-dotnet-fastiot-0.3.3\\\\windows\\\\apps".
 25. "%{os.userinfo.username}" => "Anton".
 
 **Values when there are directories in the path**
@@ -222,3 +232,7 @@ If you need additional variables, please create an [ISSUE](https://github.com/de
 All errors related to template validation will be displayed in the OUTPUT window.
 
 If a JSON structure validation error occurs, the OUTPUT window will display the position in the file that caused the error. In this case, the original file will remain unchanged and a new one named `debug_launch_json.txt` or `debug_tasks_json.txt` will be created in the project directory.
+
+The **Fastiot: Debug** parameter in the extension settings enables template debugging mode. This mode displays and saves additional information when creating a project from a template or adding Launch to an existing project. This saves the following information:
+
+- Text files containing the values of the variables to be merged are saved in the project folder. Merging with a template is done in several steps. For example, the first step of a merge saves a file called `Step1CopyValues`. This file contains the values of variables obtained during interactive interaction with the user, in the question-answer mode. Only 5 steps: `Step1CopyValues`, `Step2AddDeviceInfo`, `Step3DependencyProjectType`, `Step4Additional`, `Step5DefinePathToProject`.

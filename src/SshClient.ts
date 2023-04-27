@@ -5,9 +5,9 @@ import * as path from 'path';
 import SSH2Promise from 'ssh2-promise';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import SFTP from 'ssh2-promise';
-import {EventDispatcher,Handler} from './EventDispatcher';
-import {StatusResult,IotResult} from './IotResult';
-import {IoTHelper} from './Helper/IoTHelper';
+import { EventDispatcher,Handler } from './EventDispatcher';
+import { StatusResult,IotResult } from './IotResult';
+import { IoTHelper } from './Helper/IoTHelper';
 import { stderr } from 'process';
 
 export class SshClient {
@@ -314,7 +314,7 @@ export class SshClient {
     const identity=sshConfig.identity;
     let msg:string;
     if(identity){
-      msg = `Login "${sshConfig.username}" and key ${identity} were used to enter.`;
+      msg = `Login "${sshConfig.username}" and key 🔑 ${identity} were used to enter.`;
     } else {
       msg = `The login was "${sshConfig.username}" and the password was ******.`;
     }

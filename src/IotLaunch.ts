@@ -1,30 +1,32 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
-import {BaseTreeItem} from './BaseTreeItem';
-import {IotResult,StatusResult } from './IotResult';
-import {IotDevice} from './IotDevice';
-import {IotLaunchEnvironment} from './IotLaunchEnvironment';
-import {IotOption} from './IotOption';
-import {IoTHelper} from './Helper/IoTHelper';
-import {launchHelper} from './Helper/launchHelper';
-import {IotConfiguration} from './Configuration/IotConfiguration';
+import { BaseTreeItem } from './BaseTreeItem';
+import { IotResult,StatusResult } from './IotResult';
+import { IotDevice } from './IotDevice';
+import { IotLaunchEnvironment } from './IotLaunchEnvironment';
+import { IotTreeItem } from './IotTreeItem';
+import { IoTHelper } from './Helper/IoTHelper';
+import { launchHelper } from './Helper/launchHelper';
+import { IotConfiguration } from './Configuration/IotConfiguration';
+import { IotLaunchOption } from './IotLaunchOption';
+import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 
 export class IotLaunch {
 
-  private _workspaceDirectory:string;
+  private readonly _workspaceDirectory:string;
   public get WorkspaceDirectory(): string {
     return this._workspaceDirectory;}
 
-  private _idLaunch:string| undefined;
+  private _idLaunch?:string;
   public get IdLaunch(): string| undefined {
     return this._idLaunch;}
 
-  private _label:string| undefined;
+  private _label?:string;
   public get Label(): string| undefined {
     return this._label;}
 
-  private _description:string| undefined;
+  private _description?:string;
   public get Description(): string| undefined {
     return this._description;}
 
@@ -36,21 +38,17 @@ export class IotLaunch {
   public get TasksFilePath(): string {
     return this._tasksFilePath;}
 
-  private _device:IotDevice|string| undefined;
+  private _device?:IotDevice|string;
   public get Device(): IotDevice|string| undefined {
     return this._device;}
 
-  private _pathProject:string| undefined;
+  private _pathProject?:string;
   public get PathProject(): string| undefined {
     return this._pathProject;}
 
-  private _idTemplate:string| undefined;
+  private _idTemplate?:string;
   public get IdTemplate(): string| undefined {
     return this._idTemplate;}
-
-  private _options:IotOption[];
-  public get Options(): IotOption[] {
-    return this._options;}
 
   private _environment:IotLaunchEnvironment;
   public get Environment(): IotLaunchEnvironment {
@@ -60,7 +58,6 @@ export class IotLaunch {
     this._workspaceDirectory=workspaceDirectory;
     this._launchFilePath=<string>this.WorkspaceDirectory+"\\.vscode\\launch.json";
     this._tasksFilePath=<string>this.WorkspaceDirectory+"\\.vscode\\tasks.json";
-    this._options = [];
     this._environment = new IotLaunchEnvironment();  
   }
 
@@ -163,62 +160,62 @@ export class IotLaunch {
     return result;
   }
 
-  public GetOptions():IotResult{
+  public GetConfigurationItems():IotResult{
     let result:IotResult;
-    let options:IotOption[]=[];
+    let items:IotTreeItem[]=[];
     try {
-      let option:IotOption;
+      let item:IotTreeItem;
       //IdLaunch
-      option=new IotOption("ID Launch",this.IdLaunch);
-      options.push(option);
+      item=new IotTreeItem("ID Launch",this.IdLaunch);
+      items.push(item);
       //Project
       if(this.PathProject) {
         const fullPathProject= IoTHelper.ReverseSeparatorLinuxToWin(this.WorkspaceDirectory+this.PathProject);
-        option=new IotOption("Project",this.PathProject);
+        item=new IotTreeItem("Project",this.PathProject);
         if(fs.existsSync(fullPathProject)) {
           //OK
-          option.Tooltip=fullPathProject;
+          item.Tooltip=fullPathProject;
         } else{
           //not found
-          option.Status=StatusResult.Error;
-          option.Tooltip=`Not found: ${fullPathProject}`;
+          item.Status=StatusResult.Error;
+          item.Tooltip=`Not found: ${fullPathProject}`;
         }
-        options.push(option);
+        items.push(item);
       } else{
-        option=new IotOption("Project","not found","Project not found",StatusResult.Error);
-        options.push(option);
+        item=new IotTreeItem("Project","not found","Project not found",StatusResult.Error);
+        items.push(item);
       }
       //IdTemplate
       if(this.IdTemplate) {
-        option=new IotOption("Template",this.IdTemplate);
-        options.push(option);
+        item=new IotTreeItem("Template",this.IdTemplate);
+        items.push(item);
       } else{
-        option=new IotOption("Template","not found","Template not found",StatusResult.Error);
-        options.push(option);
+        item=new IotTreeItem("Template","not found","Template not found",StatusResult.Error);
+        items.push(item);
       }
       //IdDevice - IotDevice|string| undefined
       if(this.Device) {
         //IotDevice or string
         if(typeof this.Device === "string") {
           //string - device not found
-          option=new IotOption("Device",this.Device,`${this.Device} not found`,StatusResult.Error);
-          options.push(option);
+          item=new IotTreeItem("Device",this.Device,`${this.Device} not found`,StatusResult.Error);
+          items.push(item);
         } else{
           //IotDevice
           const description=`${this.Device?.label} ${this.Device?.Information.Architecture}`;
           const tooltip=`label: ${this.Device?.label}. Id device: ${this.Device?.IdDevice}`;
-          option=new IotOption("Device",description,tooltip);
-          options.push(option);
+          item=new IotTreeItem("Device",description,tooltip);
+          items.push(item);
           //Username
-          option=new IotOption("Username",this.Device?.Account.UserName);
-          options.push(option);
+          //option=new IotOption("Username",this.Device?.Account.UserName);
+          //options.push(option);
         }
       } else {
-        option=new IotOption("Device","not found","Device not found",StatusResult.Error);
-        options.push(option);
+        item=new IotTreeItem("Device","not found","Device not found",StatusResult.Error);
+        items.push(item);
       }
       result= new IotResult(StatusResult.Ok, "GetOptions");
-      result.returnObject=options;
+      result.returnObject=items;
     } catch (err: any){
       result= new IotResult(StatusResult.Error,"Error. GetOptions",err);
     }
@@ -356,13 +353,29 @@ export class IotLaunch {
     let result:IotResult;
     try {
       const datafile = JSON.stringify(json,null,2);
+      //create lock file
+      const fileLockPath = path.join(path.dirname(filePath), ".lockreadlaunch");
+      fs.writeFileSync(fileLockPath,``);
       //write file
       fs.writeFileSync(filePath,datafile);
+      //wait unlock read launch
+      this.WaitUnlockReadLaunch(fileLockPath);
+      //result
       result=new IotResult(StatusResult.Ok,`File saved. filePath: ${filePath}`);
     } catch (err: any){
       result= new IotResult(StatusResult.Error,`SaveFile. filePath: ${filePath}, json: ${json}`,err); 
     }
     return result; 
+  }
+
+  private async WaitUnlockReadLaunch(fileLockPath:string, time:number=500)
+  {
+    try {
+      //wait
+      await IoTHelper.Sleep(time);
+      //delete file
+      if (fs.existsSync(fileLockPath)) fs.removeSync(fileLockPath);
+    } catch (err: any){ }
   }
 
   private DeleteTaskChaine(jsonLaunch:any,jsonTasks:any):IotResult
@@ -488,7 +501,70 @@ export class IotLaunch {
     return result;
   }
 
-  public WriteEnvironments(): IotResult {  
+  public WriteValueofKey(key:string,value:any,labelKey:string=key): IotResult {
+    let result:IotResult;
+    const errorMsg=`Error writing key: ${key} value: ${value} for Launch. IdLaunch: ${this.IdLaunch}`;
+    try {
+      result = this.GetJsonLaunch();
+      if(result.Status!=StatusResult.Ok) {
+        result.AddMessage(errorMsg);
+        return result;
+      } 
+      let jsonLaunch = result.returnObject;
+      const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.IdLaunch);
+      if (launch) {
+        launch[key] = value;
+        //write file
+        result=this.SaveLaunch(jsonLaunch);
+        if(result.Status==StatusResult.Error) {
+          result.AddMessage(errorMsg);
+          return result;
+        } 
+      } else {
+        result= new IotResult(StatusResult.Error,`Launch not found. IdLaunch: ${this.IdLaunch}`);
+        return result;
+      }
+      result= new IotResult(StatusResult.Ok,`"${labelKey}" updated successfully`);
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,errorMsg,err);
+    }
+    return result;
+  }
+
+  public ReadValueofKey(key:string,labelKey:string=key): IotResult {
+    let result:IotResult;
+    const errorMsg=`Error getting value for key: ${key} for Launch. IdLaunch: ${this.IdLaunch}`;
+    try {
+      result = this.GetJsonLaunch();
+      if(result.Status!=StatusResult.Ok) {
+        result.AddMessage(errorMsg);
+        return result;
+      } 
+      let jsonLaunch = result.returnObject;
+      const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==this.IdLaunch);
+      if (launch) {
+        if(launch.hasOwnProperty(key)) {
+          const value:any= launch[key];
+          result= new IotResult(StatusResult.Ok,`Key: "${labelKey}", Value: ${value}"`);
+          result.returnObject=value;
+        } else {
+          result= new IotResult(StatusResult.No,`Key: "${labelKey}" is not found`);
+        }
+      } else {
+        result= new IotResult(StatusResult.Error,`Launch not found. IdLaunch: ${this.IdLaunch}`);
+        return result;
+      }
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,errorMsg,err);
+    }
+    return result;
+  }
+
+  public WriteEnvironments(): IotResult {
+    const result = this.WriteValueofKey('env',this.Environment.ToJSON(),`Environment`);
+    return result;
+    
+    /*
     let result:IotResult;
     const errorMsg=`Error writing Environments for Launch. IdLaunch: ${this.IdLaunch}`;
     try {
@@ -516,9 +592,10 @@ export class IotLaunch {
       result= new IotResult(StatusResult.Error,`Write Environment IdLaunch: ${this.IdLaunch}`,err);
     }
     return result;
+    */
   }
 
-  public RebuildLaunch(config:IotConfiguration, devices: Array<IotDevice>): IotResult {
+  public RebuildLaunch(config:IotConfiguration, templates:IotTemplateCollection, devices: Array<IotDevice>): IotResult {
     const errorMsg=`Unable to execute RebuildLaunch. IdLaunch: ${this.IdLaunch}`;
     let result:IotResult;
     //--------------Checks--------------
@@ -541,7 +618,7 @@ export class IotLaunch {
       return result;
     }
     //check template
-    const template = config.Templates.FindbyId(this.IdTemplate ?? "non");
+    const template = templates.FindById(this.IdTemplate ?? "non");
     if (!template) {
       result= new IotResult(StatusResult.Error,`Missing template: ${this.IdTemplate}`);
       result.AddMessage(errorMsg);

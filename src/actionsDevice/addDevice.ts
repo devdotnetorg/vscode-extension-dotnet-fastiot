@@ -9,9 +9,9 @@ import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IContexUI } from '../ui/IContexUI';
+import { IoTApplication } from '../IoTApplication';
 
-export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,contextUI:IContexUI): Promise<void> {
+export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication): Promise<void> {
     
     let hostName = await vscode.window.showInputBox({
         prompt: 'Enter the hostname of the developer board',
@@ -42,7 +42,7 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
     if(!password) return;
     //select account: debugvscode or root
     let itemAccounts:Array<ItemQuickPick>=[];
-    let item = new ItemQuickPick(treeData.Config.UsernameAccountDevice,"(default)",treeData.Config.UsernameAccountDevice);
+    let item = new ItemQuickPick(app.Config.UsernameAccountDevice,"(default)", app.Config.UsernameAccountDevice);
     itemAccounts.push(item);
     item = new ItemQuickPick("root","Select if you have problems accessing /dev/* and /sys/* devices","root");
     itemAccounts.push(item);
@@ -53,20 +53,20 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
     //Info
     vscode.window.showInformationMessage('⌛ It may take 2 to 7 minutes to initialize and configure the device.');
     //Main process
-    contextUI.Output("Action: adding a device");
+    app.UI.Output("Action: adding a device");
     //Adding a device is the main process
-    contextUI.ShowBackgroundNotification("Adding a device");
+    app.UI.ShowBackgroundNotification("Adding a device");
     const result = await treeData.AddDevice(hostName,port,userName,password,accountNameDebug);
-    contextUI.HideBackgroundNotification();
+    app.UI.HideBackgroundNotification();
     //Output
-    contextUI.Output(result.toStringWithHead());
+    app.UI.Output(result.toStringWithHead());
     //Message
-    contextUI.ShowNotification(result);
+    app.UI.ShowNotification(result);
     if(result.Status==StatusResult.Ok) {
         //get device
         const newDevice=<IotDevice>result.returnObject;
         //Connection test
-        connectionTestDevice(treeData,newDevice,contextUI);
+        connectionTestDevice(treeData,newDevice, app.UI);
         //Set focus
         treeView.reveal(newDevice, {focus: true});
     }

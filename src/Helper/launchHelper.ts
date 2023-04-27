@@ -65,7 +65,7 @@ export class launchHelper {
         dataLaunch=JSON.stringify(jsonDataLaunch,null,2);
         fs.writeFileSync(fileLaunchPath, dataLaunch,undefined);
       }
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
       result = new IotResult(StatusResult.Error,`Unable to set unique names for Launch in ${fileLaunchPath} file`,err);

@@ -9,43 +9,44 @@ import { IotDevice } from '../IotDevice';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IotTemplate } from '../Templates/IotTemplate';
 import { IotTemplateAttribute } from '../Templates/IotTemplateAttribute';
-import { IContexUI } from '../ui/IContexUI';
+import { IoTApplication } from '../IoTApplication';
+import { loadTemplates } from '../actionsTemplates/loadTemplates';
 
-export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,contextUI:IContexUI): Promise<void> {
+export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,app:IoTApplication): Promise<void> {
     let result:IotResult;
-    const workspaceDirectory=treeData.Config.Folder.WorkspaceDirectory;
+    const workspaceDirectory=app.Config.Folder.WorkspaceDirectory;
     if(!workspaceDirectory) {
         result=new IotResult(StatusResult.No,`No Workspace. Open the menu: File -> Open Folder ... or create a project`);
-        contextUI.ShowNotification(result);
+        app.UI.ShowNotification(result);
         return;
     }
     //Load template
-    if(treeData.Config.Templates.Count==0)
-        await treeData.Config.LoadTemplatesAsync();
+    if(app.Templates.Count==0)
+        await loadTemplates(app);
     //repeat
-    if(treeData.Config.Templates.Count==0) {
+    if(app.Templates.Count==0) {
         result=new IotResult(StatusResult.No,`No templates available`);
-        contextUI.ShowNotification(result);
+        app.UI.ShowNotification(result);
         return;
     }
     //Devices
     if(devices.length==0) {
         result=new IotResult(StatusResult.No,`No devices. Add device`);
-        contextUI.ShowNotification(result);
+        app.UI.ShowNotification(result);
         return;
     }
     //Select Device
-    const selectDevice = await contextUI.ShowDeviceDialog(devices,'Choose a device (1/4)');
+    const selectDevice = await app.UI.ShowDeviceDialog(devices,'Choose a device (1/4)');
     if(!selectDevice) return;
     //Select template
     //get id template
     let idTemplate=new IotTemplateAttribute().ForceGetID(workspaceDirectory+"\\template.fastiot.yaml");
     let selectTemplate:IotTemplate|undefined;
     if(idTemplate)
-        selectTemplate=treeData.Config.Templates.FindbyId(idTemplate);
+        selectTemplate=app.Templates.FindById(idTemplate);
     if(selectTemplate) {
         //check platform
-        const isCompatible=selectTemplate.IsCompatible1(selectDevice.Information.Architecture);
+        const isCompatible=selectTemplate.IsCompatibleByEndDeviceArchitecture(selectDevice.Information.Architecture);
         if(!isCompatible) selectTemplate=undefined;
     }
     if(selectTemplate) {
@@ -62,20 +63,20 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     }
     if(!selectTemplate) {
         //select template
-        const listTemplates= treeData.Config.Templates.Select(selectDevice.Information.Architecture);
+        const listTemplates= app.Templates.SelectByEndDeviceArchitecture(selectDevice.Information.Architecture);
         if(listTemplates.length==0) {
             result=new IotResult(StatusResult.No,`No templates compatible with ${selectDevice.label} ${selectDevice.Information.Architecture} device`);
-            contextUI.ShowNotification(result);
+            app.UI.ShowNotification(result);
             return;
         }
-        selectTemplate = await contextUI.ShowTemplateDialog(listTemplates,'Choose a template (3/4)');
+        selectTemplate = await app.UI.ShowTemplateDialog(listTemplates,'Choose a template (3/4)');
         if(!selectTemplate) return;
     }
     //Find projects
     const projects=selectTemplate.FindProjects(workspaceDirectory);
     if (projects.length==0) {
         result=new IotResult(StatusResult.No,`There are no projects in the folder ${workspaceDirectory} compatible with ${selectTemplate.Attributes.Id}`);
-        contextUI.ShowNotification(result);
+        app.UI.ShowNotification(result);
         return;
     }
     //Select Project
@@ -96,19 +97,20 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     const projectName=baseName.substring(0,baseName.length-selectTemplate.Attributes.ExtMainFileProj.length);
     //values
     let values:Map<string,string>= new Map<string,string>();
+    selectProject=IoTHelper.ReverseSeparatorReplacement(selectProject);
     values.set("%{project.mainfile.path.full.aswindows}",selectProject);
     values.set("%{project.name}",projectName);
     //Main process
-    contextUI.Output(`Action: adding Launch to the ${selectProject} project, template ${selectTemplate.Attributes.Id}, device ${selectDevice.Information.BoardName} ${selectDevice.Information.Architecture}`);
-    contextUI.ShowBackgroundNotification(`Adding Launch to the ${selectProject} project`);
+    app.UI.Output(`Action: adding Launch to the ${selectProject} project, template ${selectTemplate.Attributes.Id}, device ${selectDevice.Information.BoardName} ${selectDevice.Information.Architecture}`);
+    app.UI.ShowBackgroundNotification(`Adding Launch to the ${selectProject} project`);
     result = 
-        selectTemplate.AddConfigurationVscode(selectDevice,treeData.Config,
+        selectTemplate.AddConfigurationVscode(selectDevice,app.Config,
             workspaceDirectory,values);
-    contextUI.HideBackgroundNotification();
+            app.UI.HideBackgroundNotification();
     //Output
-    contextUI.Output(result.toStringWithHead());
+    app.UI.Output(result.toStringWithHead());
     //Message
-    contextUI.ShowNotification(result);
+    app.UI.ShowNotification(result);
     //Refresh
-    treeData.RefreshsFull();
+    treeData.LoadLaunches();
 }

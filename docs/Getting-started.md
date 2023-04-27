@@ -125,3 +125,10 @@ Launch (`/.vscode/launch.json`) and Tasks (`/.vscode/tasks.json`) configurations
 *Invoking the Rebuild command*
 
 ![.NET FastIoT Launch Rebuild"](vscode-dotnet-fastiot-rebuild.png "Launch Rebuild")
+
+## Launch Options
+
+Some Launch options can be changed from the LAUCHS window. The following options are changed:
+
+- **Console (terminal)** - controls what console (terminal) window the target app is launched into. Default value: `internalConsole`. More details [Console (terminal) window](https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window);
+- **Just My Code** - debug just my code. Default value: `true`. Learn more [How to disable the “Just My Code” setting on the VS Code debugger](https://medium.com/@thiagoalves/how-to-disable-the-just-my-code-setting-on-the -vs-code-debugger-f5fd774e0af8);

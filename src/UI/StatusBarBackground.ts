@@ -4,7 +4,7 @@ import * as path from 'path';
 
 export class StatusBarBackground {
   private _statusBarItem: vscode.StatusBarItem;
-  private _animationText: string;
+  private readonly _animationText: string;
 
   public get text(): string {
     return this._statusBarItem.text;};
@@ -29,7 +29,7 @@ export class StatusBarBackground {
   public show = () => this._statusBarItem.show();
   public hide = () => this._statusBarItem.hide();
 
-  public showAnimation(text:string,tooltip:string | vscode.MarkdownString | undefined=undefined) {
+  public showAnimation(text:string,tooltip:string | vscode.MarkdownString | undefined) {
     if(!tooltip) tooltip=text;
     this._statusBarItem.text=`${this._animationText} ${text}`;
     this._statusBarItem.tooltip=tooltip;

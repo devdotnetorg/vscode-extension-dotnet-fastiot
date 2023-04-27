@@ -1,16 +1,16 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../IotResult';
 
 export class YamlSchemaValidator {  
-  private _pathFolderSchemas: string;
+  private readonly _schemasFolderPath: string;
   
-  constructor(PathFolderSchemas: string){
-      this._pathFolderSchemas=PathFolderSchemas;
+  constructor(schemasFolderPath: string){
+      this._schemasFolderPath=schemasFolderPath;
   }
 
-  public ValidateSchema (pathFileYml:string, schemaFileName:string):IotResult
+  public ValidateSchema (yamlFilePath:string, schemaFileName:string):IotResult
   {
     let result:IotResult;
     let validationErrors:Array<string>=[];
@@ -19,8 +19,8 @@ export class YamlSchemaValidator {
       //source - https://www.npmjs.com/package/yaml-schema-validator-fork
       const validateSchema = require('yaml-schema-validator-fork');
       // validate a yml file
-      const schemaPath=`${this._pathFolderSchemas}\\${schemaFileName}`;
-      var schemaErrors = validateSchema(pathFileYml,
+      const schemaPath=`${this._schemasFolderPath}\\${schemaFileName}`;
+      var schemaErrors = validateSchema(yamlFilePath,
         {
           schemaPath: schemaPath,
           logLevel: 'verbose'
@@ -36,10 +36,10 @@ export class YamlSchemaValidator {
           validationErrors.push(msg);
         });
       } 
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
-      result = new IotResult(StatusResult.Error,`VaidateSchema: pathFileYml = ${pathFileYml}, schemaFileName = ${schemaFileName}`,err);
+      result = new IotResult(StatusResult.Error,`VaidateSchema: pathFileYml = ${yamlFilePath}, schemaFileName = ${schemaFileName}`,err);
       validationErrors.push(result.toString());
     }
     result.returnObject=validationErrors;

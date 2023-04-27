@@ -32,7 +32,7 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
             let itemNetSDK:Array<ItemQuickPick>=[];
             //Select SDK
             dotnetHelper.GetDotNetTargets().forEach((value, key) => {
-                const item = new ItemQuickPick(value[1] +" SDK","",key);
+                const item = new ItemQuickPick(value[1],"",key);
                 itemNetSDK.push(item);
             });
             let SELECTED_ITEM = await vscode.window.showQuickPick(itemNetSDK,{title: 'Choose a .NET SDK version:',});
@@ -58,7 +58,7 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
             let itemNetRuntimeVersion:Array<ItemQuickPick>=[];
             //Select Runtime version
             dotnetHelper.GetDotNetTargets().forEach((value, key) => {
-                const item = new ItemQuickPick(value[1] +" Runtime","",key);
+                const item = new ItemQuickPick(value[1],"",key);
                 itemNetRuntimeVersion.push(item);
             });
             SELECTED_ITEM = await vscode.window.showQuickPick(itemNetRuntimeVersion,{title: 'Choose a .NET Runtime version:',});
@@ -80,7 +80,7 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
              //Shows a selection list allowing multiple selections.
              //Select task
              let itemLibgpiodTasks:Array<ItemQuickPick>=[];
-             let item = new ItemQuickPick('Check the version of Libgpiod in the repository','Latest version 1.6.3','checkinrepository');
+             let item = new ItemQuickPick('Check the version of Libgpiod in the repository','Latest version 1.6.4','checkinrepository');
              itemLibgpiodTasks.push(item);
              item = new ItemQuickPick('Install Libgpiod from repository','(recommended)','installfromrepository');
              itemLibgpiodTasks.push(item);

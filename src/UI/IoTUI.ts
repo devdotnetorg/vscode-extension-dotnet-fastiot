@@ -7,30 +7,59 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { IotTemplate } from '../Templates/IotTemplate';
 import { ItemQuickPick } from '../Helper/actionHelper';
+import { LogLevel } from '../LogLevel';
 
 export class IoTUI implements IContexUI {
   private _outputChannel:vscode.OutputChannel;
   private _statusBarBackground: StatusBarBackground;
+  private readonly _currentLogLevel:LogLevel;
   
-  constructor(
-    outputChannel:vscode.OutputChannel,
-    statusBarBackground: StatusBarBackground
-  ){
-    this._outputChannel=outputChannel;
-    this._statusBarBackground=statusBarBackground;
+  constructor(logLevel:LogLevel){
+    //OutputChannel
+	  this._outputChannel = vscode.window.createOutputChannel(".NET FastIoT");
+	  //StatusBar
+	  this._statusBarBackground= new StatusBarBackground(
+		  vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000));
+    //LogLevel
+    this._currentLogLevel=logLevel;
   }
 
-  public Output(value:string|IotResult) {
+  public Output(value:string|IotResult,logLevel:LogLevel=LogLevel.Information) {
     let msg="";
     if (typeof value === 'string') {
+      //string
       msg=value;
     } else {
+      //IotResult
+      if(value.logLevel) {
+        logLevel=value.logLevel;
+      }else {
+        switch(value.Status) { 
+          case StatusResult.Error: {
+            logLevel=LogLevel.Error;
+            break; 
+          } 
+          case StatusResult.No: { 
+            logLevel=LogLevel.Warning;
+            break; 
+          }
+          case StatusResult.Ok: {
+            logLevel=LogLevel.Information;
+            break; 
+          } 
+          default: {
+            logLevel=LogLevel.Information;
+            break; 
+          } 
+        }
+      }
       msg=value.toString();
     }
-    this._outputChannel.appendLine(msg);
+    //Output
+    if(logLevel>=this._currentLogLevel) this._outputChannel.appendLine(msg);
   }
 
-  public ShowBackgroundNotification(text:string, tooltip:string | vscode.MarkdownString| undefined=undefined) {
+  public ShowBackgroundNotification(text:string, tooltip?:string | vscode.MarkdownString) {
     this._statusBarBackground.showAnimation(text,tooltip);
   }
 

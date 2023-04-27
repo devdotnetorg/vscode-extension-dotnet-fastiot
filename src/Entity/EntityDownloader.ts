@@ -3,15 +3,15 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import YAML from 'yaml';
 import axios from 'axios';
-import {IotResult,StatusResult} from '../IotResult';
-import {IoTHelper} from '../Helper/IoTHelper';
-import {networkHelper} from '../Helper/networkHelper';
+import { IotResult,StatusResult } from '../IotResult';
+import { IoTHelper } from '../Helper/IoTHelper';
+import { networkHelper } from '../Helper/networkHelper';
 
-export abstract class EntityDownloader {
+export class EntityDownloader {
   constructor(
     ){}
 
-  protected async DownloadEntity(item:EntityDownload,destPath:string):Promise<IotResult>
+  public async DownloadEntity(item:EntityDownload,destPath:string):Promise<IotResult>
   {
     let result:IotResult;
     try {
@@ -33,7 +33,7 @@ export abstract class EntityDownloader {
       zip.extractAllTo(/*target path*/ unpackPath, /*overwrite*/ true);
       //delete zip
       fs.removeSync(fileZipPath);
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
       result.returnObject=unpackPath;
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Unable to download file ${item.Url}.`,err);
@@ -42,7 +42,7 @@ export abstract class EntityDownloader {
     return Promise.resolve(result);
   }
 
-  protected async GetDownloadListEntity(url:string):Promise<IotResult>
+  public async GetDownloadListEntity(url:string):Promise<IotResult>
   {
     let result:IotResult;
     let listDownload:Array<EntityDownload>=[];
@@ -55,13 +55,13 @@ export abstract class EntityDownloader {
       }
       //parse templatelist.fastiot.yaml
       const obj=YAML.parse(response.data); 
-      //template download
+      //entity download
       let index=0; 
       do { 				
             let item=obj.entitys[index];
             if(item) {
-              const downloadTemplate=this.ParseEntityDownload(item,url);
-              listDownload.push(downloadTemplate);
+              const downloadEntity=this.ParseEntityDownload(item,url);
+              listDownload.push(downloadEntity);
               //next position
               index=index+1;
             }else break;
@@ -72,7 +72,7 @@ export abstract class EntityDownloader {
         return Promise.resolve(result);
     }
     //result
-    result = new IotResult(StatusResult.Ok,undefined,undefined);
+    result = new IotResult(StatusResult.Ok);
     result.returnObject=listDownload;
     return Promise.resolve(result);
   }
@@ -99,9 +99,9 @@ export abstract class EntityDownloader {
           }else break;      
     } 
     while(true)
-    const downloadTemplate=new EntityDownload(objId,objVersion,objUrl,
+    const downloadEntity=new EntityDownload(objId,objVersion,objUrl,
         objforVersionExt,platform);
-    return downloadTemplate;
+    return downloadEntity;
   }
 }
 

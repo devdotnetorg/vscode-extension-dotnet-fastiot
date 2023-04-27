@@ -68,6 +68,8 @@ export class IotDevicePackage extends BaseTreeItem {
     super("label",undefined,undefined,collapsibleState);   
     this.Parent=parent;
     this.Device=device;
+    //
+    this.iconPath = new vscode.ThemeIcon("extensions");
   };
 
   public InitRoot(
@@ -291,11 +293,13 @@ export class IotDevicePackage extends BaseTreeItem {
     return params;
   }
 
+  /*
   iconPath? = {
     light: path.join(__filename, '..', '..', 'resources', 'light', 'package.svg'),
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'package.svg')
   };
-    
+  */
+
 }
 
 export enum TypePackage {

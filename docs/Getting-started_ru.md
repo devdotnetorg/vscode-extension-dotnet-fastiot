@@ -125,3 +125,10 @@ sudo systemctl status ssh
 *Вызов команды Rebuild*
 
 ![.NET FastIoT Launch Rebuild"](vscode-dotnet-fastiot-rebuild.png "Launch Rebuild")
+
+## Опции Launch
+
+Некоторые опции Launch можно изменить из окна LAUCHS. Изменяются следующие опции:
+
+- **Console (terminal)** - параметр определяет, в каком окне консоли (терминала) запускается конечное приложение. Значение по умолчанию: `internalConsole`. Более подробно [Console (terminal) window](https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window);
+- **Just My Code** - отладка только моего кода. Значение по умолчанию: `true`. Более подробно [How to disable the “Just My Code” setting on the VS Code debugger](https://medium.com/@thiagoalves/how-to-disable-the-just-my-code-setting-on-the-vs-code-debugger-f5fd774e0af8);

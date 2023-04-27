@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {LaunchTreeItemNode} from './LaunchTreeItemNode';
-import {LaunchNode} from './LaunchNode';
-import {IotResult,StatusResult} from './IotResult';
+import { LaunchTreeItemNode } from './LaunchTreeItemNode';
+import { LaunchNode } from './LaunchNode';
+import { IotResult,StatusResult } from './IotResult';
 
 export class TreeDataTemplatesProvider implements vscode.TreeDataProvider<LaunchTreeItemNode> {
 

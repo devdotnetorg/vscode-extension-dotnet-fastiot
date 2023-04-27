@@ -10,16 +10,21 @@ import { utimesSync } from 'utimes';
 
 export class IoTHelper {
 
-  static Sleep (time:number) {
+  static Sleep (time:number=1000) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-  static MakeDirSync(dir: string) {
-    if (fs.existsSync(dir)) return;
-    if (!fs.existsSync(path.dirname(dir))) {
-      IoTHelper.MakeDirSync(path.dirname(dir));
+  static MakeDirSync(dir: string):IotResult {
+    try {
+      if (fs.existsSync(dir)) return new IotResult(StatusResult.Ok,`Directory ${dir} created successfully`);
+      if (!fs.existsSync(path.dirname(dir))) {
+        IoTHelper.MakeDirSync(path.dirname(dir));
+      }
+      fs.mkdirSync(dir);
+    } catch (err: any){
+      return new IotResult(StatusResult.Error,`Failed to create directory ${dir}`,err);
     }
-    fs.mkdirSync(dir);
+    return new IotResult(StatusResult.Ok,`Directory ${dir} created successfully`);
   }
 
   static GetWorkspaceDirectory(): string| undefined {
@@ -151,7 +156,7 @@ export class IoTHelper {
       console.log(`Extracted ${count} entries`);
       await zip.close();
       */
-      result = new IotResult(StatusResult.Ok,undefined,undefined);
+      result = new IotResult(StatusResult.Ok);
       result.returnObject=unpackDir;
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Error while unpacking file ${fileZipPath}`,err);

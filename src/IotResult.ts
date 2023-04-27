@@ -1,48 +1,42 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { LogLevel } from './LogLevel';
    
-export enum StatusResult { None="None", Ok="Ok", No ="No", Error="Error"};
+export enum StatusResult { None="None", Ok="Ok", No ="No", Error="Error" };
 
 export class IotResult {  
-  private _status: StatusResult;  
+  private readonly _status: StatusResult;  
   public get Status(): StatusResult {
     return this._status;}
 
-  private _message: string|undefined;  
+  private _message?: string;  
   public get Message(): string|undefined {
     return this._message;}
 
-  private _systemMessage: string|undefined;  
+  private _systemMessage?: string;  
   public get SystemMessage(): string|undefined {
     return this._systemMessage;}
 
-  public returnObject:any|undefined;
-  public tag: string|undefined;
+  public returnObject?:any;
+  public tag?: string;
+  public logLevel?:LogLevel;
 
   constructor(
-    status:StatusResult,
-    message:string|undefined=undefined,
-    systemMessage:string|undefined=undefined,
+    status:StatusResult, message?:string,
+    systemMessage?:string, logLevel?:LogLevel,
     ){
       this._status=status;
       this._message=message;
       this._systemMessage=systemMessage;
+      this.logLevel=logLevel;
     }
 
-  public AddMessage = (value: string|undefined) =>
+  public AddMessage = (value?: string) =>
     {if(value) this._message=`${this._message}\n${value}`};
 
-  public AddSystemMessage= (value: string|undefined) =>
+  public AddSystemMessage= (value?: string) =>
     {if(value) this._systemMessage=`${this._systemMessage}\n${value}`};
-
-  /*
-  public AppendResult(value: IotResult): void{
-    this._status=value.Status;
-    this.AddMessage(value.Message);
-    this.AddSystemMessage(value.SystemMessage);
-  }
-  */
 
   public toString():string{
     let msg=``;
@@ -55,7 +49,7 @@ export class IotResult {
     return msg;
   }
 
-  public toStringWithHead(head:string|undefined=undefined):string{
+  public toStringWithHead(head?:string):string{
     if(!head) head="------------- Result -------------";
     //Msg
     let msg=`${head}\n`;

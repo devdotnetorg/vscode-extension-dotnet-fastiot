@@ -37,6 +37,28 @@ sudo ln -s $INSTALLPATH/dotnet /usr/bin/dotnet
 
 rm dotnet-install.sh
 
+#Disabled telemetry in .NET
+#Telemetry is collected when using any of the .NET CLI commands, such as:
+#    dotnet build
+#    dotnet pack
+#    dotnet run
+
+filename="/etc/environment"
+
+#add
+if sudo grep -Fxq "DOTNET_CLI_TELEMETRY_OPTOUT=true" $filename
+then
+    echo "String exists: DOTNET_CLI_TELEMETRY_OPTOUT=true"
+else
+	echo "Adding a line: DOTNET_CLI_TELEMETRY_OPTOUT=true in $filename"
+	#newline
+	sudo sh -c "echo '\n' >> $filename"
+	sudo sh -c "echo 'DOTNET_CLI_TELEMETRY_OPTOUT=true' >> $filename"
+fi
+
+echo "Disabled telemetry in .NET CLI"
+echo "Read more about .NET CLI Tools telemetry: https://aka.ms/dotnet-cli-telemetry"
+
 dotnet --info
 
 echo "Successfully"

@@ -6,7 +6,6 @@ import {IotDevice} from './IotDevice';
 import {IotItemTree} from './IotItemTree';
 import {StatusResult,IotResult} from './IotResult';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
-//
 
 export class IotDeviceAccount extends BaseTreeItem{  
   public Parent: IotDevice| undefined;
@@ -92,7 +91,7 @@ export class IotDeviceAccount extends BaseTreeItem{
       //if debugvscode
       if(accountNameDebug!="root"){
         nameScript="createaccount";
-        paramsScript=`${accountNameDebug} ${this.Device.Config.GroupsAccountDevice} ${paramsScript}`;
+        paramsScript=`${accountNameDebug} ${this.Device.Config.GroupAccountDevice} ${paramsScript}`;
       }
       //event
       this.Client.FireChangedState({
@@ -140,7 +139,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         this.Port=sshconfig.port?.toString();
         this.UserName=accountNameDebug;
         this.Identity=fileName;
-        this.Groups.push(this.Device.Config.GroupsAccountDevice);	        
+        this.Groups.push(this.Device.Config.GroupAccountDevice);	        
       }
       //-------------------------------
       //udev rules
@@ -224,7 +223,7 @@ export class IotDeviceAccount extends BaseTreeItem{
     //Key availability check
     if(this.PathKey&&!fs.existsSync(this.PathKey)){
       //Not found
-      const msg=`Error. SSH key not found: ${this.PathKey}`;
+      const msg=`Error. SSH key not found: ${this.PathKey}. Device: ${this.Device.label}`;
       element.tooltip=msg;          
       element.iconPath = {
         light: path.join(__filename, '..', '..', 'resources', 'light', 'error.svg'),

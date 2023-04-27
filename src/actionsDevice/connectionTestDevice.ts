@@ -20,10 +20,10 @@ export async function connectionTestDevice(treeData: TreeDataDevicesProvider,ite
         //Message          
         if(result.Status==StatusResult.Ok) {
             vscode.window.showInformationMessage(`Connection to host ${device.Account.Host} via ssh 
-            with ${device.Account.Identity} key completed successfully.`);
+            with 🔑 ${device.Account.Identity} key completed successfully.`);
         } else {         
             vscode.window.showErrorMessage(`Unable to connect to host ${device.Account.Host} via ssh 
-            with ${device.Account.Identity} key.`);            
+            with 🔑 ${device.Account.Identity} key.`);            
         }
     } else {
         vscode.window.showErrorMessage(`Device ${item.IdDevice} not found`);

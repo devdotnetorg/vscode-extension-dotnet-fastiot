@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.3.3 (28-04-2023)
+
+- Added parameter `fastiot.template.community.updatesource`, update source for community project templates. Adds the ability to download templates from third-party resources.
+- Added the default selection of the "Projects" folder for placing projects, the parameter `fastiot.template.defaultprojectfolder`.
+- Added support for .NET Runtime and SDK 8.0.
+- Turns off telemetry in CLI .NET on the device.
+- Added automatic addition of keys `fastiotIdLaunch`, `fastiotIdDevice`, `fastiotProject`, `fastiotIdTemplate` for Launch if they are not in the template. Those. these fields are now optional for the template.
+- Added parameter `fastiot.loglevel`, logging level. The default value is `Information`, displays only the main events, the value `Debug` - displays detailed information about the events.
+- Added parameter `fastiot.debug`, debug. Designed for debugging entities such as templates. When enabled, saves additional debugging information.
+- Added choice of key encryption algorithm for a device from the list, instead of entering values, parameter `fastiot.device.ssh.keytype`. Additionally, custom arbitrary values are available.
+- Added selection options to Launch.
+- Added command to launch SSH terminal in TERMINAL window.
+- Added commands and hotkeys to launch the extension.
+- Added FileSystemWatcher function to monitor Launch changes outside of the extension.
+- Added project creation buttons to the Welcome Panel.
+- Improved UI.
+
 ## v0.3.2 (24-03-2023)
 
 - Added output of diagnostic information when connecting via ssh protocol.
