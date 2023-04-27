@@ -313,6 +313,8 @@ export class IotDevice extends BaseTreeItem {
         };
     }else{
       sshconfig=this.Account.SshConfig;
+      if(this.Account.SshConfig.port) 
+        port=this.Account.SshConfig.port;
     }
     //Trubleshooting text
     const trubleshootingText=
@@ -327,7 +329,7 @@ export class IotDevice extends BaseTreeItem {
         `Checklist:\n`+
         `❌ IP-Address defined;\n`+
         `❌ Host availability. Command: "ping";\n`+
-        `❌ Port 22 availability;\n`+
+        `❌ Port ${port} availability;\n`+
         `❌ Authorization via ssh protocol.\n`+
         `${trubleshootingText}`);
       return Promise.resolve(result);}
@@ -339,18 +341,18 @@ export class IotDevice extends BaseTreeItem {
         `Checklist:\n`+
         `✔️ IP-Address defined;\n`+
         `❌ Host availability. Command: "ping";\n`+
-        `❌ Port 22 availability;\n`+
+        `❌ Port ${port} availability;\n`+
         `❌ Authorization via ssh protocol.\n`+
         `${trubleshootingText}`);
       return Promise.resolve(result);}
     //Check port
-    result=await networkHelper.CheckTcpPortUsed(ipAddress,sshconfig.port ?? 22);
+    result=await networkHelper.CheckTcpPortUsed(ipAddress,sshconfig.port ?? port);
     if(result.Status==StatusResult.Error) {
       result.AddMessage(
         `Checklist:\n`+
         `✔️ IP-Address defined;\n`+
         `✔️ Host availability. Command: "ping";\n`+
-        `❌ Port 22 availability;\n`+
+        `❌ Port ${port} availability;\n`+
         `❌ Authorization via ssh protocol.\n`+
         `${trubleshootingText}`);
       return Promise.resolve(result);}
@@ -362,7 +364,7 @@ export class IotDevice extends BaseTreeItem {
         `Checklist:\n`+
         `✔️ IP-Address defined;\n`+
         `✔️ Host availability. Command: "ping";\n`+
-        `✔️ Port 22 availability;\n`+
+        `✔️ Port ${port} availability;\n`+
         `❌ Authorization via ssh protocol.\n`+
         `${trubleshootingText}`);
     } else {
@@ -371,7 +373,7 @@ export class IotDevice extends BaseTreeItem {
         `Checklist:\n`+
         `✔️ IP-Address defined;\n`+
         `✔️ Host availability. Command: "ping";\n`+
-        `✔️ Port 22 availability;\n`+
+        `✔️ Port ${port} availability;\n`+
         `✔️ Authorization via ssh protocol.`);
     }
     return Promise.resolve(result);

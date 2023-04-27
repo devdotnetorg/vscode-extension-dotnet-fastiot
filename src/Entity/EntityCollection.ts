@@ -207,7 +207,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     if((this.Count-entitysCountBegin)>0) {
       result= new IotResult(StatusResult.Ok,`Loading ${type} ${this._entityIntLabel}s from ${pathFolder} folder successfully completed`);
     }else{
-      result= new IotResult(StatusResult.None,`No ${type} ${this._entityIntLabel} was loaded from the ${pathFolder} folder`);
+      result= new IotResult(StatusResult.Ok,`No ${type} ${this._entityIntLabel} was loaded from the ${pathFolder} folder`);
     }
     return Promise.resolve(result);
   }

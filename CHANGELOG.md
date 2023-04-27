@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.3.3 (24-04-2023)
+## v0.3.3 (28-04-2023)
 
 - Added parameter `fastiot.template.community.updatesource`, update source for community project templates. Adds the ability to download templates from third-party resources.
 - Added the default selection of the "Projects" folder for placing projects, the parameter `fastiot.template.defaultprojectfolder`.

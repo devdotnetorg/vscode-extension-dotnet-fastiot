@@ -209,7 +209,7 @@
 21. "%{project.dotnet.namespace}" => "DotnetConsoleAppRuntimeInfo".
 22. "%{device.dotnet.rid}" => "linux-arm".
 23. "%{launch.label}" => "Launch on cubieboard (DotnetConsoleAppRuntimeInfo, Cubieboard, debugvscode)".
-24. "%{extension.apps.builtin.aswindows}" => "d:\\\\Anton\\\\GitHub\\\\vscode-extension-dotnet-fastiot\\\\windows\\\\apps".
+24. "%{extension.apps.builtin.aswindows}" => "c:\\\\Users\\\\Anton\\\\.vscode\\\\extensions\\\\devdotnetorg.vscode-extension-dotnet-fastiot-0.3.3\\\\windows\\\\apps".
 25. "%{os.userinfo.username}" => "Anton".
 
 **Значения при наличии каталогов в пути**

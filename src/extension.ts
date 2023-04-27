@@ -288,7 +288,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Reload templates
 	let commandReloadTemplates = vscode.commands.registerCommand('viewTemplates.ReloadTemplates', () => {	
-			loadTemplates(app);	
+			loadTemplates(app,true);	
 	});
 	//Open template folder
 	let commandOpenTemplateFolder = vscode.commands.registerCommand('viewTemplates.OpenTemplateFolder', () => {	
