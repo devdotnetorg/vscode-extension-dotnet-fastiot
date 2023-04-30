@@ -11,23 +11,28 @@ import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoTApplication } from '../IoTApplication';
 
-export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication): Promise<void> {
-    
-    let hostName = await vscode.window.showInputBox({
-        prompt: 'Enter the hostname of the developer board',
-        title: 'Add Device (1/5)',
-        value:'192.168.50.75'
-    });
-    if(!hostName) return;
+export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication,
+    hostName?:string,portAnswer?:string): Promise<void> {
+
+    if(!hostName) {
+        hostName = await vscode.window.showInputBox({
+            prompt: 'Enter the hostname of the developer board',
+            title: 'Add Device (1/5)',
+            value:'192.168.50.75'
+        });
+        if(!hostName) return;
+    }
     hostName=IoTHelper.StringTrim(hostName);
-    let portAnswer = await vscode.window.showInputBox({
-        prompt: 'Enter a number port ssh',
-        title: 'Add Device (2/5)',
-        value:'22'
-    });
-    if(!portAnswer) return;
+    if(!portAnswer) {
+        portAnswer = await vscode.window.showInputBox({
+            prompt: 'Enter a number port ssh',
+            title: 'Add Device (2/5)',
+            value:'22'
+        });
+        if(!portAnswer) return;
+    }
     portAnswer=IoTHelper.StringTrim(portAnswer);
-    const port=+portAnswer;
+    const hostPort=+portAnswer;
     let userName = await vscode.window.showInputBox({
         prompt: 'Enter username with sudo rights (usually root)',
         title: 'Add Device (3/5)',
@@ -56,7 +61,7 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
     app.UI.Output("Action: adding a device");
     //Adding a device is the main process
     app.UI.ShowBackgroundNotification("Adding a device");
-    const result = await treeData.AddDevice(hostName,port,userName,password,accountNameDebug);
+    const result = await treeData.AddDevice(hostName,hostPort,userName,password,accountNameDebug);
     app.UI.HideBackgroundNotification();
     //Output
     app.UI.Output(result.toStringWithHead());

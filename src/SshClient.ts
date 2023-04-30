@@ -307,8 +307,10 @@ export class SshClient {
       if(returnSSH2Promise) result.returnObject=ssh; else await ssh.close();
     }
     catch (err: any) {
-      const msg = `Unable to connect via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}.`;
-      result=new IotResult(StatusResult.Error,msg,err);
+      let msg = `Unable to connect via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}.`;
+      const sysMsg=`level: ${err.level}. message: ${err.message}.`;
+      if (err.level&&err.level==`protocol`) msg=msg +` There is no ssh server running on port ${sshConfig.port}.`;
+      result=new IotResult(StatusResult.Error,msg,sysMsg);
     }
     //type input - identity (key) or password
     const identity=sshConfig.identity;

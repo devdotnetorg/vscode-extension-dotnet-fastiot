@@ -25,6 +25,7 @@ import { IotDeviceDTO } from './IotDeviceDTO';
 import { IotDeviceGpiochip } from './IotDeviceGpiochip';
 //Devices.actions
 import { addDevice } from './actionsDevice/addDevice';
+import { discoveryDevice } from './actionsDevice/discoveryDevice';
 import { refreshDevices } from './actionsDevice/refreshDevices';
 import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
 import { deleteDevice } from './actionsDevice/deleteDevice';
@@ -143,6 +144,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Add new device		  
 	let commandAddDevice = vscode.commands.registerCommand('viewDevices.AddDevice', () => {	
 		addDevice(treeDataDevicesProvider,vscodeTreeViewDevices,app);	
+	});
+	//Add new device		  
+	let commandDiscoveryDevice = vscode.commands.registerCommand('viewDevices.DiscoveryDevice', () => {
+		discoveryDevice(treeDataDevicesProvider,vscodeTreeViewDevices,app);	
 	});
 	//Refresh Devices
 	let commandRefreshDevices = vscode.commands.registerCommand('viewDevices.RefreshDevices', () => {
@@ -344,6 +349,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	//devices
 	//context.subscriptions.push(commandHelloWorld);
 	context.subscriptions.push(commandAddDevice);
+	context.subscriptions.push(commandDiscoveryDevice);
 	context.subscriptions.push(commandRefreshDevices);
 	context.subscriptions.push(commandExportDevices);
 	context.subscriptions.push(commandImportDevices);

@@ -7,7 +7,8 @@ export class ItemQuickPick implements vscode.QuickPickItem {
         public label:string,
         public description: string,
         public value: any,
-        public detail?: string
+        public detail?: string,
+        public tag?:any
 	) {
 
         }  	
