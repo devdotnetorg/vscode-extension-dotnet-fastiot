@@ -5,7 +5,7 @@
 	"icon": "assets/fastiot-logo-256.png",
 	"license": "LGPL-3.0-only",
 	"preview": true,
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"publisher": "devdotnetorg",
 	"private": "false",
 	"identity": {
@@ -442,7 +442,7 @@
 				},
 				{
 					"command": "viewDevices.DiscoveryDevice",
-					"when": "view == viewDevices",
+					"when": "view == viewDevices__",
 					"group": "navigation"
 				},
 				{
