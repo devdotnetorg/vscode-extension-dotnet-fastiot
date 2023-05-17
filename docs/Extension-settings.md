@@ -2,6 +2,8 @@
 
 To change the extension settings, open the menu item `File > Preferences > Settings`. Then go to the `User` tab and select `Extensions`.
 
+⚠️ After changing the settings, it is advisable to restart the extension.
+
 ![VSCode dotnet FastIoT](vscode-dotnet-fastiot-settings-1.png)
 
 Settings:

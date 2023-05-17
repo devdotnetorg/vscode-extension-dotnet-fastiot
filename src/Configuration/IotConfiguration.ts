@@ -106,20 +106,22 @@ export class IotConfiguration {
 
   private InitListSourceUpdateTemplateCommunity(): string[] {
     let listSourceUpdateTemplateCommunity:string[]=[];
-    //Get url line for update community template
-    let urlLine: string=<string>vscode.workspace.getConfiguration().get('fastiot.template.community.updatesource');
-    if(urlLine != null && urlLine != undefined && urlLine != "") 
-    {
-      //Get urls
-      let urls=urlLine.split(`;`);
-      urls.forEach((url) => {
-        url=IoTHelper.StringTrim(url);
-        if(url != "") listSourceUpdateTemplateCommunity.push(url);
-      });
-      urlLine=listSourceUpdateTemplateCommunity.join(`;`);
-      //Saving settings
-      vscode.workspace.getConfiguration().update('fastiot.template.community.updatesource',urlLine,true);
-    }
+    try {
+      //Get url line for update community template
+      let urlLine: string=<string>vscode.workspace.getConfiguration().get('fastiot.template.community.updatesource');
+      if(urlLine != null && urlLine != undefined && urlLine != "")
+      {
+        //Get urls
+        let urls=urlLine.split(`;`);
+        urls.forEach((url) => {
+          url=IoTHelper.StringTrim(url);
+          if(url != "") listSourceUpdateTemplateCommunity.push(url);
+        });
+        urlLine=listSourceUpdateTemplateCommunity.join(`;`);
+        //Saving settings
+        vscode.workspace.getConfiguration().update('fastiot.template.community.updatesource',urlLine,true);
+      }
+    } catch (err: any){}
     return listSourceUpdateTemplateCommunity;
   }
 

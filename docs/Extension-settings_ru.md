@@ -2,6 +2,8 @@
 
 Для изменения настроек расширения необходимо открыть пункт меню `File > Preferences > Settings`. Затем перейти на закладку `User` и выбрать `Extensions`.
 
+⚠️ После изменения настроек желательно перезапустить расширение.
+
 ![VSCode dotnet FastIoT](vscode-dotnet-fastiot-settings-1.png)
 
 Настройки:

@@ -2,10 +2,15 @@
 
 **Content:**
 
-1. [Troubleshoot adding a device](#troubleshoot-adding-a-device)
-2. [Troubleshooting running bash scripts on the device](#troubleshooting-running-bash-scripts-on-the-device)
-3. [Trouble launching/running the extension](#trouble-launchingrunning-the-extension)
-4. [Problem loading system templates](#problem-loading-system-templates)
+1. [Show debug information](#show-debug-information)
+2. [Troubleshoot adding a device](#troubleshoot-adding-a-device)
+3. [Troubleshooting running bash scripts on the device](#troubleshooting-running-bash-scripts-on-the-device)
+4. [Trouble launching/running the extension](#trouble-launchingrunning-the-extension)
+5. [Problem loading system templates](#problem-loading-system-templates)
+
+## Show debug information
+
+By default, `Information` level messages are displayed in the OUTPUT window. To display debugging information, you need to change the **Fastiot: Loglevel** parameter to the `Debug` value in the extension settings.
 
 ## Troubleshoot adding a device
 

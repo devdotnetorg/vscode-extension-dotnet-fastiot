@@ -168,6 +168,8 @@ export class IoTHelper {
   static GetListDir(path:string):string[]
   {
     let listFolders:Array<string>=[];
+    //check path 
+    if (!fs.existsSync(path)) return listFolders;
     //getting a list of entity directories
     const files = fs.readdirSync(path);
     //getting a list of folders

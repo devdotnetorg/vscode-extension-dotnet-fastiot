@@ -40,7 +40,7 @@ export class IoTUI implements IContexUI {
             break; 
           } 
           case StatusResult.No: { 
-            logLevel=LogLevel.Warning;
+            logLevel=LogLevel.Debug;
             break; 
           }
           case StatusResult.Ok: {

@@ -5,14 +5,13 @@
 	"icon": "assets/fastiot-logo-256.png",
 	"license": "LGPL-3.0-only",
 	"preview": true,
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"publisher": "devdotnetorg",
 	"private": "false",
 	"identity": {
 		"internalName": "vscode-extension-dotnet-fastiot"
 	},
 	"categories": [
-		"Programming Languages",
 		"Other"
 	],
 	"keywords": [
@@ -23,7 +22,7 @@
 		"Embedded",
 		"Raspberry",
 		"Remote",
-		"Debugging"
+		"Debug"
 	],
 	"engines": {
 		"vscode": "^1.70.3"
@@ -42,6 +41,7 @@
 		"onView:viewLaunchs",
 		"onView:viewTemplates",
 		"onCommand:viewDevices.AddDevice",
+		"onCommand:viewDevices.DiscoveryDevice",
 		"onCommand:viewDevices.OpenFolderSshKeys",
 		"onCommand:viewLaunchs.Add",
 		"onCommand:viewTemplates.ReloadTemplates",
@@ -201,10 +201,13 @@
 				"command": "viewDevices.AddDevice",
 				"title": "Add Device",
 				"category": "FastIoT",
-				"icon": {
-					"light": "resources/light/add.svg",
-					"dark": "resources/dark/add.svg"
-				}
+				"icon": "$(add)"
+			},
+			{
+				"command": "viewDevices.DiscoveryDevice",
+				"title": "Device Discovery",
+				"category": "FastIoT",
+				"icon": "$(search)"
 			},
 			{
 				"command": "viewDevices.RefreshDevices",
@@ -285,10 +288,7 @@
 			{
 				"command": "viewDevices.AddDTO",
 				"title": "Add DTO",
-				"icon": {
-					"light": "resources/light/add.svg",
-					"dark": "resources/dark/add.svg"
-				}
+				"icon": "$(add)"
 			},
 			{
 				"command": "viewDevices.DeleteDTO",
@@ -327,10 +327,7 @@
 				"command": "viewLaunchs.Add",
 				"title": "Add Launch",
 				"category": "FastIoT",
-				"icon": {
-					"light": "resources/light/add.svg",
-					"dark": "resources/dark/add.svg"
-				}
+				"icon": "$(add)"
 			},
 			{
 				"command": "viewLaunchs.Refresh",
@@ -355,10 +352,7 @@
 			{
 				"command": "viewLaunchs.AddEnviroment",
 				"title": "Add Enviroment",
-				"icon": {
-					"light": "resources/light/add.svg",
-					"dark": "resources/dark/add.svg"
-				}
+				"icon": "$(add)"
 			},
 			{
 				"command": "viewLaunchs.RenameEnviroment",
@@ -400,16 +394,16 @@
 		],
 		"keybindings": [
 			{
-			  "command": "viewDevices.AddDevice",
-			  "key": "ctrl+f1",
-			  "mac": "cmd+f1"
+				"command": "viewDevices.AddDevice",
+				"key": "ctrl+f1",
+				"mac": "cmd+f1"
 			},
 			{
 				"command": "viewTemplates.CreateProject",
 				"key": "ctrl+f2",
 				"mac": "cmd+f2"
-			  }
-		  ],
+			}
+		],
 		"viewsContainers": {
 			"activitybar": [
 				{
@@ -444,6 +438,11 @@
 				{
 					"command": "viewDevices.AddDevice",
 					"when": "view == viewDevices",
+					"group": "navigation"
+				},
+				{
+					"command": "viewDevices.DiscoveryDevice",
+					"when": "view == viewDevices__",
 					"group": "navigation"
 				},
 				{
@@ -648,13 +647,13 @@
 				"contents": "[Create project](command:viewTemplates.CreateProject)\n About [Project Templates](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Project-templates.md)."
 			},
 			{
-                "view": "workbench.explorer.emptyView",
-                "contents": ".NET FastIoT\n[Create project](command:viewTemplates.CreateProject)"
-            },
-            {
-                "view": "workbench.explorer.emptyView",
-                "contents": "[Add device](command:viewDevices.AddDevice)"
-            }
+				"view": "workbench.explorer.emptyView",
+				"contents": ".NET FastIoT\n[Create project](command:viewTemplates.CreateProject)"
+			},
+			{
+				"view": "workbench.explorer.emptyView",
+				"contents": "[Add device](command:viewDevices.AddDevice)"
+			}
 		]
 	},
 	"scripts": {
@@ -691,6 +690,7 @@
 		"compare-versions": "^6.0.0-rc.1",
 		"fs-extra": "^11.1.0",
 		"ip": "^1.1.8",
+		"local-devices": "^4.0.0",
 		"pingman": "^1.1.5",
 		"platform-folders": "^0.6.0",
 		"ssh2": "^1.9.0",
@@ -700,7 +700,7 @@
 		"uuid": "^8.3.2",
 		"xmldom": "^0.6.0",
 		"xpath": "0.0.32",
-		"yaml": "^2.2.0",
+		"yaml": "^2.2.2",
 		"yaml-schema-validator-fork": "^0.2.0"
 	}
 }

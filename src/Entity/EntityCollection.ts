@@ -19,6 +19,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   protected readonly _entityIntLabel:string; //for understandable log
   private readonly TCreator: new(pathFolderSchemas: string) => T;
   protected readonly Config:IConfigEntityCollection;
+  protected GetDirEntitiesCallback:(type:EntityType) =>string;
 
   public get Count(): number {
       return this._items.size;}
@@ -42,11 +43,12 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
   constructor(
     entityIntLabel:string, TCreator: new(pathFolderSchemas: string) => T,
-    config:IConfigEntityCollection
+    getDirEntitiesCallback:(type:EntityType) =>string, config:IConfigEntityCollection
     ){
       this._items = new Map<string,T>(); 
       this._entityIntLabel=entityIntLabel;
       this.TCreator=TCreator;
+      this.GetDirEntitiesCallback=getDirEntitiesCallback;
       this.Config=config;
     }
 
@@ -138,83 +140,89 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   protected async LoadFromFolder(pathFolder:string, type:EntityType):Promise<IotResult>
   {
     let result:IotResult;
-    const entitysCountBegin=this.Count;
-    //Recovery
-    let recovery = new EntityRecovery(); 
-    if(type==EntityType.system) {
-      result=recovery.RestoryDirStructure(this.Config.recoverySourcePath,pathFolder);
-      if(result.Status==StatusResult.Error) return Promise.resolve(result);
-    }
-    const listFolders=IoTHelper.GetListDir(pathFolder);
-    //ckeck
-    if (listFolders.length==0) {
-      result=new IotResult(StatusResult.Ok,`No ${type} ${this._entityIntLabel}s to load. ${pathFolder} folder is empty`);
-      return Promise.resolve(result);
-    }
-    //checking all folders
-    listFolders.forEach(dir => {
-      const filePath=`${dir}\\${this._entityIntLabel.toLowerCase()}.fastiot.yaml`;
-      let entity = new this.TCreator(this.Config.schemasFolderPath);
-      entity.Init(type,filePath,this.Config.recoverySourcePath);
-      if(!entity.IsValid&&type==EntityType.system) {
-        //Recovery
-        this.CreateEvent(`${this._entityIntLabel} recovery: ${path.dirname(filePath)}`,LogLevel.Debug);
-        result= entity.Recovery();
-        if(result.Status==StatusResult.Ok) {
-          entity.Init(type,filePath,this.Config.recoverySourcePath);}
-          else {
-            this.CreateEvent(result,LogLevel.Debug);
-          }
+    try {
+      const entitysCountBegin=this.Count;
+      //Recovery
+      let recovery = new EntityRecovery(); 
+      if(type==EntityType.system) {
+        result=recovery.RestoryDirStructure(this.Config.recoverySourcePath,pathFolder);
+        if(result.Status==StatusResult.Error) return Promise.resolve(result);
       }
-      //main
-      if(entity.IsValid) {
-        this.CreateEvent(`${this._entityIntLabel} is valid: [${entity.Attributes.Id}]`,LogLevel.Debug);
-        if(this.IsCompatibleByVersionExtAndPlatform(entity)) {
-          const isContains=this.Contains(entity);
-          switch(isContains) { 
-            case ContainsType.no: {
-              this.Add(entity);
-              this.CreateEvent(`${this._entityIntLabel} added: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
-              break; 
-            } 
-            case ContainsType.yesVersionSmaller: {
-              this.Update(entity);
-              this.CreateEvent(`${this._entityIntLabel} updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
-              break; 
+      const listFolders=IoTHelper.GetListDir(pathFolder);
+      //ckeck
+      if (listFolders.length==0) {
+        result=new IotResult(StatusResult.Ok,`No ${type} ${this._entityIntLabel}s to load. ${pathFolder} folder is empty`,undefined,LogLevel.Debug);
+        return Promise.resolve(result);
+      }
+      //checking all folders
+      listFolders.forEach(dir => {
+        const filePath=`${dir}\\${this._entityIntLabel.toLowerCase()}.fastiot.yaml`;
+        let entity = new this.TCreator(this.Config.schemasFolderPath);
+        entity.Init(type,filePath,this.Config.recoverySourcePath);
+        if(!entity.IsValid&&type==EntityType.system) {
+          //Recovery
+          this.CreateEvent(`${this._entityIntLabel} recovery: ${path.dirname(filePath)}`,LogLevel.Debug);
+          result= entity.Recovery();
+          if(result.Status==StatusResult.Ok) {
+            entity.Init(type,filePath,this.Config.recoverySourcePath);}
+            else {
+              this.CreateEvent(result,LogLevel.Debug);
             }
-            default: {
-              this.CreateEvent(`Adding a ${this._entityIntLabel} was skipped because already in the collection: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
-              break; 
-            } 
+        }
+        //main
+        if(entity.IsValid) {
+          this.CreateEvent(`${this._entityIntLabel} is valid: [${entity.Attributes.Id}]`,LogLevel.Debug);
+          if(this.IsCompatibleByVersionExtAndPlatform(entity)) {
+            const isContains=this.Contains(entity);
+            switch(isContains) { 
+              case ContainsType.no: {
+                this.Add(entity);
+                this.CreateEvent(`${this._entityIntLabel} added: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+                break; 
+              } 
+              case ContainsType.yesVersionSmaller: {
+                this.Update(entity);
+                this.CreateEvent(`${this._entityIntLabel} updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+                break; 
+              }
+              default: {
+                this.CreateEvent(`Adding a ${this._entityIntLabel} was skipped because already in the collection: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+                break; 
+              } 
+            }
+          }else{
+            result = new IotResult(StatusResult.Error,`The ${this._entityIntLabel} ${entity.RootDir} is for a newer version of the extension. ` +
+              `Update the extension.`);
+            this.CreateEvent(result);
           }
         }else{
-          result = new IotResult(StatusResult.Error,`The ${this._entityIntLabel} ${entity.RootDir} is for a newer version of the extension. ` +
-            `Update the extension.`);
+          result = new IotResult(StatusResult.Error,`The ${this._entityIntLabel} ${entity.RootDir} has not been validated.`);
           this.CreateEvent(result);
+          this.CreateEvent(entity.ValidationErrorsToString,LogLevel.Debug);
+          //delete system entity
+          if(type==EntityType.system) {
+            result= entity.Remove();
+            this.CreateEvent(result,LogLevel.Debug);
+          }
         }
+      });
+      //result
+      if((this.Count-entitysCountBegin)>0) {
+        result= new IotResult(StatusResult.Ok,`Loading ${type} ${this._entityIntLabel}s from ${pathFolder} folder successfully completed`);
+        result.logLevel=LogLevel.Debug;
       }else{
-        result = new IotResult(StatusResult.Error,`The ${this._entityIntLabel} ${entity.RootDir} has not been validated.`);
-        this.CreateEvent(result);
-        this.CreateEvent(entity.ValidationErrorsToString,LogLevel.Debug);
-        //delete system entity
-        if(type==EntityType.system) {
-          result= entity.Remove();
-          this.CreateEvent(result,LogLevel.Debug);
-        }
+        result= new IotResult(StatusResult.Ok,`No ${type} ${this._entityIntLabel} was loaded from the ${pathFolder} folder`);
+        result.logLevel=LogLevel.Debug;
       }
-    });
-    //result
-    if((this.Count-entitysCountBegin)>0) {
-      result= new IotResult(StatusResult.Ok,`Loading ${type} ${this._entityIntLabel}s from ${pathFolder} folder successfully completed`);
-    }else{
-      result= new IotResult(StatusResult.Ok,`No ${type} ${this._entityIntLabel} was loaded from the ${pathFolder} folder`);
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`Error loading ${type} ${this._entityIntLabel}s`,err);
     }
     return Promise.resolve(result);
   }
 
   protected async UpdateEntitiesFromUrl(url:string,type:EntityType):Promise<IotResult>
   {
-    const destPath=`${this.Config.baseStoragePath}\\${type}`;
+    const destPath= this.GetDirEntitiesCallback(type);
     let downloader = new EntityDownloader();
     let result:IotResult;
     this.CreateEvent(`🔗 Downloading a list of ${this._entityIntLabel}s to update: ${url}`,LogLevel.Debug);
@@ -298,7 +306,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       index++;
     }while(true)
     //result
-    result= new IotResult(StatusResult.Ok,`Update of ${type} ${this._entityIntLabel}s completed successfully`);
+    result= new IotResult(StatusResult.Ok,`Update of ${type} ${this._entityIntLabel}s completed successfully`,undefined,LogLevel.Debug);
     return Promise.resolve(result);
   }
 
@@ -323,81 +331,86 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       index++;
     }while(true)
     //result
-    result= new IotResult(StatusResult.Ok,`Update of ${type} ${this._entityIntLabel}s completed successfully`);
+    result= new IotResult(StatusResult.Ok,`Update of ${type} ${this._entityIntLabel}s completed successfully`,undefined,LogLevel.Debug);
     return Promise.resolve(result);
   }
 
   protected async LoadEntities(type:EntityType):Promise<void>
   {
     this.CreateEvent(`☑️ Loading ${type} ${this._entityIntLabel}s`,LogLevel.Debug);
-    const path=`${this.Config.baseStoragePath}\\${type}`;
+    const path=this.GetDirEntitiesCallback(type);
     const result = await this.LoadFromFolder(path,type);
     this.CreateEvent(result,LogLevel.Debug);
   }
 
   public async LoadEntitiesAll(force:boolean=false)
   {
-    //Preparing
-    let result= new IotResult(StatusResult.None);
-    this.Clear();
-    //To get the number of hours since Unix epoch, i.e. Unix timestamp:
-    const dateNow=Math.floor(Date.now() / 1000/ 3600);
-    const TimeHasPassedHours=dateNow-this.Config.builtInConfig.LastUpdateTemplatesHours;
-    const isNeedUpdate = ()=>this.Config.isUpdate&&(TimeHasPassedHours>=this.Config.updateIntervalHours);
-    //main code
-    this.CreateEvent(`-------- Loading ${this._entityIntLabel}s -------`,
-      LogLevel.Information);
-    //Loading system entities
-    this.CreateEvent(`Loading system ${this._entityIntLabel}s`,undefined,15); //15
-    await this.LoadEntities(EntityType.system);
-    //Updating system entities
-    this.CreateEvent(`Updating system ${this._entityIntLabel}s`,undefined,15); //30
-    if(force||isNeedUpdate()){
-      //system
-      this.CreateEvent(`☑️ Updating system ${this._entityIntLabel}s`,LogLevel.Debug);
-      result=await this.UpdateEntitiesFromUrl(this.Config.urlUpdateEntitiesSystem,EntityType.system);
-      this.CreateEvent(result,LogLevel.Debug);
-      //timestamp of last update
-      if(result.Status==StatusResult.Ok){
-        this.Config.builtInConfig.LastUpdateTemplatesHours=<number>dateNow;
-        this.Config.builtInConfig.Save();
+    let result:IotResult;
+    try {
+      //Preparing
+      result= new IotResult(StatusResult.None);
+      this.Clear();
+      //To get the number of hours since Unix epoch, i.e. Unix timestamp:
+      const dateNow=Math.floor(Date.now() / 1000/ 3600);
+      const TimeHasPassedHours=dateNow-this.Config.builtInConfig.LastUpdateTemplatesHours;
+      const isNeedUpdate = ()=>this.Config.isUpdate&&(TimeHasPassedHours>=this.Config.updateIntervalHours);
+      //main code
+      this.CreateEvent(`-------- Loading ${this._entityIntLabel}s -------`,
+        LogLevel.Information);
+      //Loading system entities
+      this.CreateEvent(`Loading system ${this._entityIntLabel}s`,undefined,15); //15
+      await this.LoadEntities(EntityType.system);
+      //Updating system entities
+      this.CreateEvent(`Updating system ${this._entityIntLabel}s`,undefined,15); //30
+      if(force||isNeedUpdate()){
+        //system
+        this.CreateEvent(`☑️ Updating system ${this._entityIntLabel}s`,LogLevel.Debug);
+        result=await this.UpdateEntitiesFromUrl(this.Config.urlUpdateEntitiesSystem,EntityType.system);
+        this.CreateEvent(result,LogLevel.Debug);
+        //timestamp of last update
+        if(result.Status==StatusResult.Ok){
+          this.Config.builtInConfig.LastUpdateTemplatesHours=<number>dateNow;
+          this.Config.builtInConfig.Save();
+        }
+      } else {
+        this.CreateEvent(`📥 ${this._entityIntLabel} update: disabled or less than ${this.Config.updateIntervalHours} hour(s) have passed since the last update.`,LogLevel.Debug);
       }
-    } else {
-      this.CreateEvent(`📥 ${this._entityIntLabel} update: disabled or less than ${this.Config.updateIntervalHours} hour(s) have passed since the last update.`,LogLevel.Debug);
-    }
-    //Loading community entities
-    this.CreateEvent(`Loading community ${this._entityIntLabel}s`,undefined,15); //45
-    await this.LoadEntities(EntityType.community);
-    //Updating community entities
-    this.CreateEvent(`Updating community ${this._entityIntLabel}s`,undefined,15); //60
-    if(force||isNeedUpdate()){
-      //community
-      this.CreateEvent(`☑️ Updating community ${this._entityIntLabel}s`,LogLevel.Debug);
-      result=await this.UpdateEntitiesFromUrls(this.Config.urlsUpdateEntitiesCommunity,EntityType.community);
-      this.CreateEvent(result,LogLevel.Debug);
-      //timestamp of last update
-      if(result.Status==StatusResult.Ok){
-        this.Config.builtInConfig.LastUpdateTemplatesHours=<number>dateNow;
-        this.Config.builtInConfig.Save();
+      //Loading community entities
+      this.CreateEvent(`Loading community ${this._entityIntLabel}s`,undefined,15); //45
+      await this.LoadEntities(EntityType.community);
+      //Updating community entities
+      this.CreateEvent(`Updating community ${this._entityIntLabel}s`,undefined,15); //60
+      if(force||isNeedUpdate()){
+        //community
+        this.CreateEvent(`☑️ Updating community ${this._entityIntLabel}s`,LogLevel.Debug);
+        result=await this.UpdateEntitiesFromUrls(this.Config.urlsUpdateEntitiesCommunity,EntityType.community);
+        this.CreateEvent(result,LogLevel.Debug);
+        //timestamp of last update
+        if(result.Status==StatusResult.Ok){
+          this.Config.builtInConfig.LastUpdateTemplatesHours=<number>dateNow;
+          this.Config.builtInConfig.Save();
+        }
       }
+      //Loading custom entities
+      this.CreateEvent(`Loading custom ${this._entityIntLabel}s  templates loaded `,undefined,15); //75
+      await this.LoadEntities(EntityType.user);
+      //result
+      this.CreateEvent(new IotResult(StatusResult.Ok, `${this._entityIntLabel}s loaded`));
+      const endMsg=`📚 ${this.Count} ${this._entityIntLabel}(s) available.`;
+      this.CreateEvent(endMsg,LogLevel.Information);
+      this.CreateEvent(`----------------------------------`,LogLevel.Information);
+      this.CreateEvent(`${this._entityIntLabel}s loaded`,undefined,15); //90
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error, `Error loading ${this._entityIntLabel} collection`,err); 
+      this.CreateEvent(result,LogLevel.Information);
     }
-    //Loading custom entities
-    this.CreateEvent(`Loading custom ${this._entityIntLabel}s`,undefined,15); //75
-    await this.LoadEntities(EntityType.user);
-    //result
-    const endMsg=`📚 ${this.Count} ${this._entityIntLabel}(s) available.`;
-    this.CreateEvent(endMsg,LogLevel.Information);
-    this.CreateEvent(`----------------------------------`,LogLevel.Information);
-    this.CreateEvent(`${this._entityIntLabel}s loaded`,undefined,15); //90
   }
 
-  public RestoreSystemEntities(force=false)
+  public DeletingSystemEntities()
   {
     //clear
-    const dir=`${this.Config.baseStoragePath}\\${EntityType.system}`;
-    if (fs.existsSync(dir))
-      fs.emptyDirSync(dir);
-    this.LoadEntitiesAll(force);
+    const dir=this.GetDirEntitiesCallback(EntityType.system);
+    if (fs.existsSync(dir)) fs.emptyDirSync(dir);
   }
 
   protected CreateEvent(message?:string|IotResult,logLevel?:LogLevel,increment?:number)
@@ -419,7 +432,6 @@ export interface IChangedStateEvent {
 }
 
 export interface IConfigEntityCollection {
-  baseStoragePath:string;
   extVersion: string;
   extMode: vscode.ExtensionMode;
   recoverySourcePath: string;
