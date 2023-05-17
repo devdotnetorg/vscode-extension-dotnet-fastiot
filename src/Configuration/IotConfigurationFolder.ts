@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../IotResult';
+import { EntityType } from '..//Entity/EntityType';
 import { Constants } from "../Constants"
 
 export class IotConfigurationFolder {
@@ -12,32 +13,14 @@ export class IotConfigurationFolder {
   public get ApplicationData(): string {
     return this.InitApplicationData();}
   public get DeviceKeys(): string {
-    const dir= path.join(this.ApplicationData, "settings", "keys");
-    IoTHelper.MakeDirSync(dir);
-    return dir;}
+    return path.join(this.ApplicationData, "settings", "keys");}
   private readonly _extension: string;
   public get Extension(): string {
       return this._extension;}
-  public get Templates(): string {
-    return path.join(this.ApplicationData, "templates");}
-  public get TemplatesSystem(): string {
-    const dir= path.join(this.Templates, "system");
-    IoTHelper.MakeDirSync(dir);
-    return dir;}
-  public get TemplatesUser(): string {
-    const dir= path.join(this.Templates, "user");
-    IoTHelper.MakeDirSync(dir);
-    return dir;}
-  public get TemplatesCommunity(): string {
-    const dir= path.join(this.Templates, "community");
-    IoTHelper.MakeDirSync(dir);
-    return dir;}
   public get AppsBuiltIn(): string {
     return path.join(this.Extension, "windows", "apps");}
   public get Temp(): string {
-    const dir= path.join(this.ApplicationData, "tmp");
-    IoTHelper.MakeDirSync(dir);
-    return dir;}
+    return path.join(this.ApplicationData, "tmp");}
   public get Schemas(): string {
     return path.join(this.Extension, "schemas");}
   public get WorkspaceDirectory(): string| undefined {
@@ -45,8 +28,23 @@ export class IotConfigurationFolder {
 
   constructor(extensionPath: string) {
     this._extension=extensionPath;
+    this.CreateDirs();
     //Clear
     this.ClearTmp();
+  }
+
+  private CreateDirs() {
+    try {
+      IoTHelper.MakeDirSync(this.ApplicationData);
+      IoTHelper.MakeDirSync(this.DeviceKeys);
+      IoTHelper.MakeDirSync(this.Temp);
+      //Templates
+      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.none));
+      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.system));
+      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.webapi));
+      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.community));
+      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.user));
+    } catch (err: any){}
   }
 
   private InitApplicationData():string {
@@ -64,11 +62,21 @@ export class IotConfigurationFolder {
     }
     return applicationDataPath;
   }
+
+  public GetDirTemplates(type:EntityType):string {
+    let result:string;
+    const dirEntities= path.join(this.ApplicationData, "templates");
+    if(type!=EntityType.none) {
+      result= path.join(dirEntities, type.toString());
+    }else {
+      result= dirEntities;
+    }
+    return result;
+  }
   
   //clearing temporary files
   public ClearTmp() {
-    const dir=this.Temp;
-	  if (!fs.existsSync(dir)) return;
-    fs.emptyDirSync(dir);
+	  if (fs.existsSync(this.Temp)) fs.emptyDirSync(this.Temp);
   }
+
 }

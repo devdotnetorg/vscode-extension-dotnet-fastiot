@@ -67,6 +67,7 @@ import { changeOption } from './actionsLaunch/changeOption';
 import { createProject } from './actionsTemplates/createProject';
 import { loadTemplates } from './actionsTemplates/loadTemplates';
 import { openTemplateFolder } from './actionsTemplates/openTemplateFolder';
+import { EntityType } from './Entity/EntityType';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -89,11 +90,14 @@ export async function activate(context: vscode.ExtensionContext) {
 		//Checking if templates need to be updated after updating an extension
 		const isNeedUpgrade=compare(`${app.Config.ExtVersion}`,`${app.Config.BuiltInConfig.PreviousVerExt}`, '>');
 		if(isNeedUpgrade) {
-			app.Templates.RestoreSystemEntities(true);
+			app.Templates.DeletingSystemEntities();
+			loadTemplates(app,true);
+			//BuiltInConfig
 			app.Config.BuiltInConfig.PreviousVerExt=app.Config.ExtVersion;
 			app.Config.BuiltInConfig.Save();
-		  }
-		if(app.Config.LoadTemplatesOnStart&&(!isNeedUpgrade)) loadTemplates(app);
+		}else {
+			if(app.Config.LoadTemplatesOnStart) loadTemplates(app);
+		}
 	};
 	loadTemplatesExt();
 	//TreeView Devices
@@ -297,11 +301,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Open template folder
 	let commandOpenTemplateFolder = vscode.commands.registerCommand('viewTemplates.OpenTemplateFolder', () => {	
-			openTemplateFolder(app.Config.Folder.Templates);
+			openTemplateFolder(app.Config.Folder.GetDirTemplates(EntityType.none));
 	});
 	//Restore/upgrade system templates
 	let commandRestoreSystemTemplates = vscode.commands.registerCommand('viewTemplates.RestoreSystemTemplates', async () => {
-		app.Templates.RestoreSystemEntities();
+		app.Templates.DeletingSystemEntities();
+		loadTemplates(app);
 		vscode.window.showInformationMessage("Restore/upgrade system templates completed successfully");
 	});
 	//Events
@@ -422,7 +427,6 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
     }
 	//
     const configTemplateCollection:IConfigEntityCollection = {
-		baseStoragePath:config.Folder.Templates,
 		extVersion: config.ExtVersion,
 		extMode: config.ExtMode,
 		recoverySourcePath: path.join(config.Folder.Extension, "templates", "system"),
@@ -434,7 +438,10 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 		urlsUpdateEntitiesCommunity:config.ListSourceUpdateTemplateCommunity,
 		urlUpdateEntitiesSystem:urlUpdateTemplatesSystem
 	};
-	let templates= new IotTemplateCollection(configTemplateCollection);
+	const getDirTemplatesCallback = (type:EntityType):string => {
+		return config.Folder.GetDirTemplates(type);
+	};
+	let templates= new IotTemplateCollection(getDirTemplatesCallback,configTemplateCollection);
 	//Build
 	let app = new IoTApplication(contextUI,config,templates);
 	//result

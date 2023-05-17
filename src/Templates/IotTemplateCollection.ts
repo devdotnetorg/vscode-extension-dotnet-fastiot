@@ -8,8 +8,8 @@ import { IotTemplateAttribute } from './IotTemplateAttribute';
 
 export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute,IotTemplate> {
 
-  constructor(config:IConfigEntityCollection){
-      super("template",IotTemplate,config);
+  constructor(getDirEntitiesCallback:(type:EntityType) =>string,config:IConfigEntityCollection){
+      super("template",IotTemplate,getDirEntitiesCallback,config);
   }
 
 }

@@ -28,7 +28,7 @@ export async function loadTemplates(app:IoTApplication,force:boolean=false): Pro
                 }
             });
             //run
-            await app.Templates.LoadEntitiesAll();
+            await app.Templates.LoadEntitiesAll(force);
             //event unsubscription    
             app.Templates.OnChangedStateUnsubscribe(handler);
             resolve();
