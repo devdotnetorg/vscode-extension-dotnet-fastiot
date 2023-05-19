@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import find from 'local-devices'
+import ip from 'ip';
 import { IDevice } from 'local-devices'
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
@@ -16,8 +17,35 @@ import { networkHelper } from '../Helper/networkHelper';
 import { addDevice } from './addDevice';
 
 export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication): Promise<void> {
+    
     const labelTask="Device discovery";
     const checkPort=22;
+    //device discovery or subnet scan
+    //Choice of two options
+    let items:Array<ItemQuickPick>=[];
+    let item = new ItemQuickPick("1. Fast device discovery (recommended)","Fast","discovery","Some devices may not be found");
+    items.push(item);
+    item = new ItemQuickPick("2. Subnet scan","Takes 3-5 minutes","scan","Checking every IP-Address in a subnet");
+    items.push(item);
+    let SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Choose a device discovery method'});
+    if(!SELECTED_ITEM) return;
+    let answerAction=SELECTED_ITEM.value as string;
+    if (answerAction=="scan") {
+        //get all local IP
+        const ipLocal=networkHelper.GetLocalIPaddress();
+        //Subnet selection
+        items=[];
+        ipLocal.forEach((ipA,label) => {
+            const subnetInfo=ip.subnet(ipA, '255.255.255.0');
+            const detail=`Scan range: ${subnetInfo.firstAddress}-${subnetInfo.lastAddress}`;
+            let item = new ItemQuickPick(label,`local IP: ${ipA}`,ipA,detail);
+            items.push(item);
+        });
+        SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Select network adapter and subnet to scan'});
+        if(!SELECTED_ITEM) return;
+        answerAction=SELECTED_ITEM.value as string;
+    }
+    //main
     const guidBadge=app.UI.BadgeAddItem(labelTask);
     //progress
     const itemDevices:ItemQuickPick[]|undefined = await vscode.window.withProgress({
@@ -33,14 +61,35 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
 
             let itemDevices:Array<ItemQuickPick>=[];
             //get list devices
-            const devices:IDevice[] = await find({ skipNameResolution: false });
+            let devices:IDevice[]=[];
+            if (answerAction=="discovery") {
+                devices = await find({ skipNameResolution: false });
+                //Filter mac
+                devices=FilterMac(devices);
+            }else {
+                //ip - answerAction
+                const subnetInfo=ip.subnet(answerAction, '255.255.255.0');
+                const stateCallback = (state:string):void => {
+                    progress.report({ message: state });
+                };
+                const rangeIP=await networkHelper.ScanRangeIPaddresses(subnetInfo.firstAddress,subnetInfo.lastAddress,token,stateCallback);
+                if(token.isCancellationRequested) {
+                    resolve(undefined);
+                    return;
+                }
+                rangeIP.forEach((ipA) => {
+                    const device:IDevice = {
+                        name:'',
+                        ip: ipA,
+                        mac: ''
+                    }
+                    devices.push(device);
+                });
+            }
             if(token.isCancellationRequested) {
                 resolve(undefined);
                 return;
             }
-            //TODO Filter mac 
-            // mac: '20:16:d8:0f:26:60'
-
             //check 22 port and create ItemQuickPick
             const checkPortAsync = async (item:ItemQuickPick) => {
                 let result = await networkHelper.CheckTcpPortUsed(item.value,checkPort);
@@ -71,7 +120,7 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
                     const msg=`${i+1} of ${devices.length+1}. Checking port ${checkPort} for host ${devices[i].ip}.`;
                     progress.report({ message: msg });  
                     await checkPortAsync(item);
-                }  
+                }
             }
             //result
             resolve(itemDevices);
@@ -85,9 +134,22 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
         return;
     }
     //show list
-    const SELECTED_ITEM = await vscode.window.showQuickPick(
+    SELECTED_ITEM = await vscode.window.showQuickPick(
         itemDevices,{title: 'Discovered Devices',placeHolder:`Choose a device to add`});
     if(!SELECTED_ITEM) return;
     //add device
     addDevice(treeData,treeView,app,SELECTED_ITEM.value,SELECTED_ITEM.tag);
+}
+
+function FilterMac (devices:IDevice[]):IDevice[]
+{
+    let regex: RegExp = /^[0-9a-f]{1,2}([\.:-])(?:[0-9a-f]{1,2}\1){4}[0-9a-f]{1,2}$/;
+    let resultDevices:IDevice[]=[];
+    for (let i = 0; i < devices.length; i++) {
+        //check
+        if(regex.test(devices[i].mac))
+            resultDevices.push(devices[i]);     
+    }
+    //result
+    return resultDevices;
 }

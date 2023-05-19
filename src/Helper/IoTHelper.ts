@@ -249,7 +249,7 @@ export class IoTHelper {
     const re = new RegExp("\r\n", 'g');
     //LF: '\n',
     const value='\n';
-    content=content.replace(re,value);    
+    content=content.replace(re,value);
     return content;
   }
 

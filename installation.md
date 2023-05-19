@@ -44,7 +44,7 @@ Only up to extension version v0.3.4 (17-05-2023).
 
 ### Software installation
 
-- Download [vscode 1.70.3](https://update.code.visualstudio.com/1.70.3/win32-x64-archive/stable "1.70.3")
+- Download [vscode 1.70.3](https://az764295.vo.msecnd.net/stable/a21a160d630530476218b85db95b0fd2a8cd1230/VSCodeSetup-x64-1.70.3.exe "1.70.3")
 - Unpack to any folder
 - Download [python v3.8.0](https://www.python.org/downloads/release/python-380/ "3.8.0")
 - Install python
