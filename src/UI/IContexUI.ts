@@ -14,4 +14,7 @@ export interface IContexUI {
   ShowNotification(value:IotResult):void;
   ShowDeviceDialog(devices:Array<IotDevice>,title?:string):Promise<IotDevice | undefined>;
   ShowTemplateDialog(templates:Array<IotTemplate>,title?:string):Promise<IotTemplate | undefined>;
+  BadgeInit(label:string, treeView:vscode.TreeView<any>):void;
+  BadgeAddItem(label:string):string|undefined;
+  BadgeDeleteItem(guid:string):boolean|undefined;
 }

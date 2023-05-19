@@ -8,11 +8,13 @@ import { IotDevice } from '../IotDevice';
 import { IotTemplate } from '../Templates/IotTemplate';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { LogLevel } from '../LogLevel';
+import { BadgeActivityBar  } from './BadgeActivityBar';
 
 export class IoTUI implements IContexUI {
   private _outputChannel:vscode.OutputChannel;
   private _statusBarBackground: StatusBarBackground;
   private readonly _currentLogLevel:LogLevel;
+  private _badgeActivityBar?:BadgeActivityBar;
   
   constructor(logLevel:LogLevel){
     //OutputChannel
@@ -103,10 +105,10 @@ export class IoTUI implements IContexUI {
       return 0;
     });
     //create a list
-    let itemDevices:Array<ItemQuickPick|any>=[];
+    let itemDevices:Array<ItemQuickPick|vscode.QuickPickItem>=[];
     architectures.forEach((architecture) => {
       //make a separator
-      const architectureSeparator = {
+      const architectureSeparator:vscode.QuickPickItem = {
         label: architecture,
         kind: vscode.QuickPickItemKind.Separator
       };
@@ -139,7 +141,7 @@ export class IoTUI implements IContexUI {
     //Select
     const SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: title,placeHolder:`Developer board`});
     if(SELECTED_ITEM)
-      return Promise.resolve(<IotDevice>SELECTED_ITEM.value);
+      return Promise.resolve(<IotDevice>(SELECTED_ITEM as ItemQuickPick).value);
       else Promise.resolve(undefined);
   }
 
@@ -154,5 +156,15 @@ export class IoTUI implements IContexUI {
     if(SELECTED_ITEM)
       return Promise.resolve(<IotTemplate>SELECTED_ITEM.value);
       else Promise.resolve(undefined);
+  }
+
+  //Badge
+  public BadgeInit = (label:string, treeView:vscode.TreeView<any>) => 
+    this._badgeActivityBar = new BadgeActivityBar(label,treeView);
+  public BadgeAddItem(label:string):string|undefined {
+    return this._badgeActivityBar?.AddItem(label);
+  } 
+  public BadgeDeleteItem(guid:string):boolean|undefined {
+    return this._badgeActivityBar?.DeleteItem(guid);
   }
 }

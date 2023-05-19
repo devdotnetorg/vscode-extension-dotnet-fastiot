@@ -442,7 +442,7 @@
 				},
 				{
 					"command": "viewDevices.DiscoveryDevice",
-					"when": "view == viewDevices__",
+					"when": "view == viewDevices",
 					"group": "navigation"
 				},
 				{

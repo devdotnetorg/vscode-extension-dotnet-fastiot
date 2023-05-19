@@ -105,6 +105,8 @@ export async function activate(context: vscode.ExtensionContext) {
     let vscodeTreeViewDevices=vscode.window.createTreeView('viewDevices', {
 		treeDataProvider: treeDataDevicesProvider
 	});
+	//ViewBadge
+	app.UI.BadgeInit("Active tasks", vscodeTreeViewDevices);
 	//TreeView Launchs
     let treeDataLaunchsProvider = new TreeDataLaunchsProvider(app.Config,treeDataDevicesProvider.RootItems);
 	const loadLaunchs = async () => {

@@ -16,12 +16,13 @@ import { networkHelper } from '../Helper/networkHelper';
 import { addDevice } from './addDevice';
 
 export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication): Promise<void> {
-    
+    const labelTask="Device discovery";
     const checkPort=22;
+    const guidBadge=app.UI.BadgeAddItem(labelTask);
     //progress
     const itemDevices:ItemQuickPick[]|undefined = await vscode.window.withProgress({
         location: vscode.ProgressLocation.Window,
-        title: "Device discovery",
+        title: labelTask,
         cancellable: true
       }, (progress, token) => {
         token.onCancellationRequested(() => {
@@ -29,6 +30,7 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
             return;
         });
         return new Promise(async (resolve, reject) => {
+
             let itemDevices:Array<ItemQuickPick>=[];
             //get list devices
             const devices:IDevice[] = await find({ skipNameResolution: false });
@@ -36,6 +38,9 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
                 resolve(undefined);
                 return;
             }
+            //TODO Filter mac 
+            // mac: '20:16:d8:0f:26:60'
+
             //check 22 port and create ItemQuickPick
             const checkPortAsync = async (item:ItemQuickPick) => {
                 let result = await networkHelper.CheckTcpPortUsed(item.value,checkPort);
@@ -73,9 +78,10 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
             //end
         });
     });
+    if(guidBadge) app.UI.BadgeDeleteItem(guidBadge);
     //check canceled
     if(!itemDevices) {
-        vscode.window.showInformationMessage('⚠️ Device discovery canceled.');
+        vscode.window.showInformationMessage(`⚠️ ${labelTask} canceled.`);
         return;
     }
     //show list
