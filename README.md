@@ -26,8 +26,8 @@ Devices supported: Raspberry Pi, Banana Pi, Orange Pi, Radxa, Tinkerboard, Odroi
 
 ## System requirements
 
-- **OS version.** Windows 7-10 (x64). A Linux version will come later. Note: The next version of the extension above v0.3 will not support Windows 7;
-- **Visual Studio Code.** version not lower than [1.70.3](https://code.visualstudio.com/ "1.70.3"). This is the latest version of VSCode with Windows 7 support, more details on this on [support page](https://code.visualstudio.com/docs/supporting/faq#_can-i-run-vs-code-on-windows-7 "Can I run VS Code on Windows 7?");
+- **OS version.** Windows 10 (x64). A Linux version will come later;
+- **Visual Studio Code.** version not lower than [1.78.0](https://code.visualstudio.com/ "1.78.0");
 - **.NET.** Compiling a C# project requires [.NET SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks ".NET SDK") depending on the version of your project you are using (the extension itself is not required to work);
 
 Additional extensions required for developing .NET applications:
