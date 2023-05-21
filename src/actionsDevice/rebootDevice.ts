@@ -22,8 +22,11 @@ export async function rebootDevice(treeData: TreeDataDevicesProvider,item:IotDev
         const device = treeData.FindbyIdDevice(<string>item.IdDevice);    
         if(device) {
             contextUI.Output("Action: reboot device");
-            contextUI.ShowBackgroundNotification("Reboot device");
+            const labelTask="Reboot device";
+            contextUI.ShowBackgroundNotification(labelTask);
+            const guidBadge=contextUI.BadgeAddItem(labelTask);
             const result = await device.Reboot();
+            if(guidBadge) contextUI.BadgeDeleteItem(guidBadge);
             contextUI.HideBackgroundNotification();
             //Output       
             contextUI.Output(result.toStringWithHead());

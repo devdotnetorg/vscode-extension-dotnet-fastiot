@@ -12,8 +12,11 @@ export async function connectionTestDevice(treeData: TreeDataDevicesProvider,ite
     const device= treeData.FindbyIdDevice(<string>item.IdDevice);
     if(device) {
         contextUI.Output("Action: connection test device");
-        contextUI.ShowBackgroundNotification("Checking the network connection");
+        const labelTask="Checking the network connection";
+        contextUI.ShowBackgroundNotification(labelTask);
+        const guidBadge=contextUI.BadgeAddItem(labelTask);
         const result = await device.ConnectionTest();
+        if(guidBadge) contextUI.BadgeDeleteItem(guidBadge);
         contextUI.HideBackgroundNotification();
         //Output
         contextUI.Output(result.toStringWithHead());

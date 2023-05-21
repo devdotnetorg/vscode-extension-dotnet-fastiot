@@ -9,9 +9,12 @@ import {IContexUI} from '../ui/IContexUI';
 
 export async function testPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage,contextUI:IContexUI): Promise<void> {      
     //main process
-    contextUI.Output(`Action: ${item.NamePackage} package test`);
-    contextUI.ShowBackgroundNotification(`${item.NamePackage} package test`);
+    const labelTask=`${item.NamePackage} package test`;
+    contextUI.Output(`Action: ${labelTask}`);
+    contextUI.ShowBackgroundNotification(labelTask);
+    const guidBadge=contextUI.BadgeAddItem(labelTask);
     const result = await treeData.TestPackage(<string>item.Device.IdDevice,item.NamePackage);
+    if(guidBadge) contextUI.BadgeDeleteItem(guidBadge);
     contextUI.HideBackgroundNotification();
     //Output       
     contextUI.Output(result.toStringWithHead());

@@ -60,8 +60,11 @@ export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscod
     //Main process
     app.UI.Output("Action: adding a device");
     //Adding a device is the main process
-    app.UI.ShowBackgroundNotification("Adding a device");
+    const labelTask="Adding a device";
+    app.UI.ShowBackgroundNotification(labelTask);
+    const guidBadge=app.UI.BadgeAddItem(labelTask);
     const result = await treeData.AddDevice(hostName,hostPort,userName,password,accountNameDebug);
+    if(guidBadge) app.UI.BadgeDeleteItem(guidBadge);
     app.UI.HideBackgroundNotification();
     //Output
     app.UI.Output(result.toStringWithHead());
