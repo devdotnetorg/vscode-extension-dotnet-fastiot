@@ -16,23 +16,27 @@ export class BadgeActivityBar {
   
   private ChangeState()
   {
-    if(this._items.size<1) {
+    try {
+      if(this._items.size<1) {
+        this._treeView.badge = undefined;
+        return;
+      }
+      //change
+      let tooltip="";
+      this._items.forEach(item => {
+        tooltip=`${item}, ${tooltip}`;
+      });
+      tooltip=tooltip.substring(0,tooltip.length-2);
+      tooltip=`${this._mainLabel} ${tooltip}`;
+      //badge
+      const badge:vscode.ViewBadge={
+        tooltip:tooltip,
+        value:this._items.size
+      };
+      this._treeView.badge = badge;
+    } catch (err: any){
       this._treeView.badge = undefined;
-      return;
     }
-    //change
-    let tooltip="";
-    this._items.forEach(item => {
-      tooltip=`${item}, ${tooltip}`;
-    });
-    tooltip=tooltip.substring(0,tooltip.length-2);
-    tooltip=`${this._mainLabel} ${tooltip}`;
-    //badge
-    const badge:vscode.ViewBadge={
-      tooltip:tooltip,
-      value:this._items.size
-    };
-    this._treeView.badge = badge;
   }
 
   public AddItem(label:string):string {

@@ -115,7 +115,7 @@ export class networkHelper {
         break;
       }
       IpAddress=ip.fromLong(i);
-      console.log(IpAddress);
+      //console.log(IpAddress);
       if(stateCallback) stateCallback(`IP-Address check ${IpAddress}`);
       result = await networkHelper.PingHost(IpAddress, 1);
       if(result.Status==StatusResult.Ok) rangeIP.push(IpAddress);
