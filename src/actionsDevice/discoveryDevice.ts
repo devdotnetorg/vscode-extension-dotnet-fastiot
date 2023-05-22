@@ -102,7 +102,7 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
                 }
                 //check 22 port and create ItemQuickPick
                 const checkPortAsync = async (item:ItemQuickPick) => {
-                    let result = await networkHelper.CheckTcpPortUsed(item.value,checkPort);
+                    let result = await networkHelper.CheckTcpPortUsed(item.value,checkPort,150,700);
                     if(result.Status==StatusResult.Ok) {
                         item.description=`port ${checkPort} available`;
                         item.tag=`${checkPort}`;
@@ -116,12 +116,18 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
                     //ip availability check
                     const msg=`${i+1} of ${devices.length+1}. Checking host ${devices[i].ip}.`;
                     progress.report({ message: msg });
-                    let result = await networkHelper.PingHost(devices[i].ip);
+                    let result = await networkHelper.PingHost(devices[i].ip,3,1,true);
                     if(result.Status==StatusResult.Ok) {
+                        //label
+                        let labelHostname:string=devices[i].ip;
+                        if (devices[i].name!='?') labelHostname=devices[i].name;
+                        if (result.returnObject) labelHostname=result.returnObject;
                         let label:string;
-                        if (devices[i].name=='?')
-                            label=devices[i].ip;
-                            else label=`${devices[i].name} ${devices[i].ip}`;
+                        if(labelHostname!=devices[i].ip) {
+                            label=`Hostname: ${labelHostname} IP: ${devices[i].ip}`;
+                        }else {
+                            label=`IP: ${devices[i].ip}`;
+                        }
                         //create item and push
                         let item = new ItemQuickPick(label,"", devices[i].ip);
                         itemDevices.push(item);

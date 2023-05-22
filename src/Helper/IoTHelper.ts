@@ -99,30 +99,25 @@ export class IoTHelper {
   private GetAllFilesByExtRecurc(pathFolder:string, fileExtension:string, depthLevel=1,currenDepthLevel=1): Array<string> {
     let result:Array<string>=[];
     if(currenDepthLevel>depthLevel) return result;
-    //    
-    let files=fs.readdirSync(pathFolder);
-    files.forEach((name) => {
-      const filename=`${pathFolder}\\${name}`;      
-      if(fs.lstatSync(filename).isDirectory())
-        {          
-          //if(!currenDepthLevel) currenDepthLevel=0;
-          //currenDepthLevel++
+    try {
+      let files=fs.readdirSync(pathFolder);
+      files.forEach((name) => {
+        const filename=`${pathFolder}\\${name}`;      
+        if(fs.lstatSync(filename).isDirectory()) {
           const helper= new IoTHelper();
           const result2=helper.GetAllFilesByExtRecurc(filename, fileExtension, depthLevel,currenDepthLevel+1);
           result2.forEach((element) => {
             result.push(element);
           });          
-        } 
-      if(fs.lstatSync(filename).isFile())
-        {
-          if(`.${filename.split('.').pop()}`==fileExtension)
-          {
-            console.log(filename);
+        }
+        if(fs.lstatSync(filename).isFile()) {
+          if(`.${filename.split('.').pop()}`==fileExtension) {
+            //console.log(filename);
             result.push(filename);
           }          
         }       
-    });
-    //
+      });
+    } catch (err: any){}
     return result;
   }
 
@@ -170,14 +165,16 @@ export class IoTHelper {
     let listFolders:Array<string>=[];
     //check path 
     if (!fs.existsSync(path)) return listFolders;
-    //getting a list of entity directories
-    const files = fs.readdirSync(path);
-    //getting a list of folders
-    files.forEach(name => {
-      //directory
-      const dir=`${path}\\${name}`;
-      if(fs.lstatSync(dir).isDirectory()) listFolders.push(dir);
+    try {
+      //getting a list of entity directories
+      const files = fs.readdirSync(path);
+      //getting a list of folders
+      files.forEach(name => {
+        //directory
+        const dir=`${path}\\${name}`;
+        if(fs.lstatSync(dir).isDirectory()) listFolders.push(dir);
       });
+    } catch (err: any){}   
     return listFolders;
   }
 

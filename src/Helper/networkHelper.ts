@@ -37,34 +37,53 @@ export class networkHelper {
     return Promise.resolve(result);
   }
 
-  static async PingHost(hostName:string, numberOfEchos = 3, timeout = 1): Promise<IotResult>{
+  static async PingHost(hostName:string, numberOfEchos = 3, timeout = 1,getHostname:boolean=false): Promise<IotResult>{
     let result:IotResult;
     result=await this.GetIpAddress(hostName);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     const ipAddress=<string>result.returnObject;
     const msg=`The host is unavailable. Host: ${hostName} IP-Address: ${ipAddress}.`;
+    const option:pingOptions = {
+      numberOfEchos: numberOfEchos,
+      timeout: timeout,
+      logToFile: false,
+      IPV4: true,
+      numeric: getHostname
+    };
     try
     {
-      const response = await ping(ipAddress,{logToFile:false, numberOfEchos: numberOfEchos, timeout: timeout, IPV4: true});
+      const response = await ping(ipAddress,option);
       const packetLoss =+(response.packetLoss ?? "100");
-      if(packetLoss>50)
-        result=new IotResult(StatusResult.Error, msg); else result=new IotResult(StatusResult.Ok,`Host ${ipAddress} is available.`); 
+      if(packetLoss>50) {
+        result=new IotResult(StatusResult.Error, msg);
+      }else {
+        result=new IotResult(StatusResult.Ok,`Host ${ipAddress} is available.`);
+        if (getHostname&&response.host&&response.host!=``) result.returnObject=response.host;
+      }
     } catch (err:any) {
       result=new IotResult(StatusResult.Error, msg,err);  
     }
     return Promise.resolve(result);
   }
 
-  static async CheckTcpPortUsed(hostName:string, port: number): Promise<IotResult>{
+  static async CheckTcpPortUsed(hostName:string, port: number,retryTimeMs:number=200,timeOutMs:number=1000): Promise<IotResult>{
+    //[retryTimeMs] the retry interval in milliseconds - defaultis is 200ms
+    //[timeOutMs] the amount of time to wait until port is free default is 1000ms
     let result:IotResult;
     result=await this.GetIpAddress(hostName);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     const ipAddress=<string>result.returnObject;
     //next
     const msg=`${port} port unavailable. Host: ${hostName} IP-Address: ${ipAddress}.`;
+    const tcpPortUsedOptions:tcpPortUsed.TcpPortUsedOptions = {
+      port: port,
+      host: ipAddress,
+      retryTimeMs: retryTimeMs,
+      timeOutMs: timeOutMs
+    };
     try
     {
-      const inUse = await tcpPortUsed.check(port,ipAddress);
+      const inUse = await tcpPortUsed.check(tcpPortUsedOptions);
       if(inUse)
         result=new IotResult(StatusResult.Ok,`Network port ${port} host ${ipAddress} available.`); else result=new IotResult(StatusResult.Error,msg); 
     } catch (err:any) {
@@ -88,19 +107,22 @@ export class networkHelper {
   }
 
   static GetLocalIPaddress(): Map<string,string> {
+    //otput: 1. wireless => 192.168.10.24
     let results:Map<string,string> = new Map<string,string>(); 
-    const { networkInterfaces } = require('os');
-    const nets = networkInterfaces();
-    for (const name of Object.keys(nets)) {
-      for (const net of nets[name]) {
-        // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
-        // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
-        const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
-        if (net.family === familyV4Value && !net.internal) {
-          results.set(name,net.address);
+    try {
+      const { networkInterfaces } = require('os');
+      const nets = networkInterfaces();
+      for (const name of Object.keys(nets)) {
+        for (const net of nets[name]) {
+          // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+          // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
+          const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+          if (net.family === familyV4Value && !net.internal) {
+            results.set(name,net.address);
+          }
         }
       }
-    }
+    } catch (err: any){}
     return results;
   }
 
@@ -122,6 +144,5 @@ export class networkHelper {
     }
     return Promise.resolve(rangeIP);
   }
-
 
 }
