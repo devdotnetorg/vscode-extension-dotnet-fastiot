@@ -27,7 +27,7 @@
 ## Системные требования
 
 - **Версия ОС.** Windows 10 (x64). Версия для Linux появится позже;
-- **Visual Studio Code.** Версия не ниже [1.78.0](https://code.visualstudio.com/ "1.78.0");
+- **Visual Studio Code.** Версия [1.78.0](https://code.visualstudio.com/ "1.78.0") или выше;
 - **.NET.** Для компиляции проекта на C# требуется [.NET SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks ".NET SDK") в зависимости от используемой версии вашего проекта (для работы самого расширения не требуется);
 
 Дополнительные расширения необходимые для разработки .NET приложений:

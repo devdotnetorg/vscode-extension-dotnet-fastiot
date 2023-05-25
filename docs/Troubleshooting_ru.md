@@ -176,6 +176,32 @@ chmod +x vscode-dotnetfastiot.sh
 - `C:\RemoteCode\`;
 - `%userprofile%\fastiot`, например `C:\Users\Anton\fastiot`.
 
+После запуска расширения, должна быть следующая структура папок по пути `%userprofile%\fastiot`:
+
+```bash
+.
+└── fastiot
+    ├── settings
+    │   └── keys
+    ├── templates
+    │   ├── community
+    │   ├── system
+    │   │   ├── dotnet-console
+    │   │   │   ├── storage
+    │   │   │   ├── template
+    │   │   │   │   ├── dotnetapp.csproj
+    │   │   │   │   └── Program.cs
+    │   │   │   ├── template.fastiot.png
+    │   │   │   └── template.fastiot.yaml
+    │   │   ├── dotnet-console-runtime-info
+    │   │   │   └── ...
+    │   │   └── dotnet-iot-blink-led
+    │   │       └── ...
+    │   ├── user
+    │   └── webapi
+    └── tmp
+```
+
 Если после перезапуска расширения проблемы остались, то возможно проблемы связаны с предоставлением прав доступа к выше указанным папкам.
 
 Исполняемые файлы расширения располагаются в папке `%USERPROFILE%\.vscode\extensions`, например `C:\Users\Anton\.vscode\extensions`. Вы можете удалить расширение из указанной папки и заново его установить.

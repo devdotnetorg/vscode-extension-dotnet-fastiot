@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.4.0 (30-05-2023)
+
+- Added command to discover devices on the local network.
+- Updated npm component packages.
+- Improved UI.
+
 ## v0.3.4 (17-05-2023)
 
 - Bugs fixed.
