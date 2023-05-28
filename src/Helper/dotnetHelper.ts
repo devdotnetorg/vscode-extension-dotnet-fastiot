@@ -77,6 +77,7 @@ export class dotnetHelper {
   static GetTargetFrameworkFromCsprojFile(filePath:string): string|undefined {
     try {
       //read *.csproj for get TargetFramework
+      if (!fs.existsSync(filePath)) return undefined;
       const xmlFile:string= fs.readFileSync(filePath, 'utf8');
       let xpath = require('xpath');
       let dom = require('xmldom').DOMParser;
@@ -85,7 +86,8 @@ export class dotnetHelper {
       const targetFramework=nodes[0].firstChild.data;
       return targetFramework;
     } catch (err: any){
-      return undefined;
-    } 
+      
+    }
+    return undefined;
   }
 }

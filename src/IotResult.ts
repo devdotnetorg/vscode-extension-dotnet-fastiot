@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { LogLevel } from './LogLevel';
+import { LogLevel } from './shared/LogLevel';
    
 export enum StatusResult { None="None", Ok="Ok", No ="No", Error="Error" };
 

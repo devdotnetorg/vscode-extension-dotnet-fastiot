@@ -7,13 +7,14 @@ import { EntityBaseAttribute } from './EntityBaseAttribute';
 import { EntityType } from './EntityType';
 import { EntityRecovery } from './EntityRecovery';
 import { IotResult,StatusResult } from '../IotResult';
-import { EventDispatcher,Handler } from '../EventDispatcher';
-import { LogLevel } from '../LogLevel';
+import { LogLevel } from '../shared/LogLevel';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { EntityDownload, EntityDownloader } from './EntityDownloader';
 import { IotBuiltInConfig } from '../Configuration/IotBuiltInConfig';
+import { ClassWithEvent } from '../Shared/ClassWithEvent';
+import { ContainsType } from '../Shared/ContainsType';
 
-export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> {
+export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> extends ClassWithEvent {
   
   protected _items:Map<string,T>;
   protected readonly _entityLabel:string; //for understandable log
@@ -25,26 +26,11 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public get Count(): number {
       return this._items.size;}
 
-  //Event--------------------------------------
-  protected ChangedStateDispatcher = new EventDispatcher<IChangedStateEvent>();
-
-  public OnChangedStateSubscribe(handler: Handler<IChangedStateEvent>):Handler<IChangedStateEvent> {
-        this.ChangedStateDispatcher.Register(handler);
-        return handler;
-  }
-
-  public OnChangedStateUnsubscribe (handler: Handler<IChangedStateEvent>) {
-    this.ChangedStateDispatcher.Unregister(handler);
-  }
-
-  protected FireChangedState(event: IChangedStateEvent) { 
-      this.ChangedStateDispatcher.Fire(event);
-  }
-  //-------------------------------------------
   constructor(
     entityLabel:string, entitiesLabel:string, TCreator: new(pathFolderSchemas: string) => T,
     getDirEntitiesCallback:(type:EntityType) =>string, config:IConfigEntityCollection
     ){
+      super();
       this._items = new Map<string,T>(); 
       this._entityLabel=entityLabel;
       this._entitiesLabel=entitiesLabel;
@@ -65,12 +51,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
   public Remove(id:string):boolean
   {
-    try {
-      this._items.delete(id);
-      return true;
-    } catch (err: any){
-      return false;
-    }
+    return this._items.delete(id);
   }
 
   public Update(newValue:T):boolean
@@ -414,23 +395,9 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     if (fs.existsSync(dir)) fs.emptyDirSync(dir);
   }
 
-  protected CreateEvent(message?:string|IotResult,logLevel?:LogLevel,increment?:number)
-  {
-    //Event
-    this.FireChangedState({
-      message:message,
-      logLevel:logLevel,
-      increment:increment
-    });
-  }
-
 }
 
-export interface IChangedStateEvent {
-  message?:string|IotResult,
-  logLevel?:LogLevel,
-  increment?:number
-}
+//TODO убрать, заменить на Interface IConfig
 
 export interface IConfigEntityCollection {
   extVersion: string;
@@ -443,11 +410,4 @@ export interface IConfigEntityCollection {
   updateIntervalHours:number;
   urlsUpdateEntitiesCommunity:string[];
   urlUpdateEntitiesSystem:string;
-}
-
-export enum ContainsType {
-	no = "no",
-	yesSameVersion  = "yes same version",
-	yesMoreVersion = "yes more version",
-	yesVersionSmaller = "yes version smaller"
 }

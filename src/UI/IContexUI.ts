@@ -4,7 +4,7 @@ import * as path from 'path';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { IotTemplate } from '../Templates/IotTemplate';
-import { LogLevel } from '../LogLevel';
+import { LogLevel } from '../shared/LogLevel';
 
 export interface IContexUI {
   Output(value:string|IotResult): void;

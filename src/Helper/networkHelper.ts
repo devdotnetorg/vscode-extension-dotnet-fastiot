@@ -128,20 +128,22 @@ export class networkHelper {
 
   static async ScanRangeIPaddresses(firstAddress:string, lastAddress:string, token:vscode.CancellationToken|undefined=undefined,stateCallback:((state:string) =>void)|undefined=undefined): Promise<string[]> {
     let rangeIP:string[]=[];
-    const firstIP=ip.toLong(firstAddress);
-    const lastIP=ip.toLong(lastAddress);
-    let IpAddress:string;
-    let result:IotResult;
-    for (let i = firstIP; i <= lastIP; i++) {
-      if(token&&token.isCancellationRequested) {
-        break;
+    try {
+      const firstIP=ip.toLong(firstAddress);
+      const lastIP=ip.toLong(lastAddress);
+      let IpAddress:string;
+      let result:IotResult;
+      for (let i = firstIP; i <= lastIP; i++) {
+        if(token&&token.isCancellationRequested) {
+          break;
+        }
+        IpAddress=ip.fromLong(i);
+        //console.log(IpAddress);
+        if(stateCallback) stateCallback(`IP-Address check ${IpAddress}`);
+        result = await networkHelper.PingHost(IpAddress, 1);
+        if(result.Status==StatusResult.Ok) rangeIP.push(IpAddress);
       }
-      IpAddress=ip.fromLong(i);
-      //console.log(IpAddress);
-      if(stateCallback) stateCallback(`IP-Address check ${IpAddress}`);
-      result = await networkHelper.PingHost(IpAddress, 1);
-      if(result.Status==StatusResult.Ok) rangeIP.push(IpAddress);
-    }
+    } catch (err: any){}
     return Promise.resolve(rangeIP);
   }
 

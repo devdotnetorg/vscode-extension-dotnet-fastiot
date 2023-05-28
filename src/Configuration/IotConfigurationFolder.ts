@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../IotResult';
-import { EntityType } from '..//Entity/EntityType';
+import { EntityType } from '../Entity/EntityType';
 import { Constants } from "../Constants"
 
 export class IotConfigurationFolder {

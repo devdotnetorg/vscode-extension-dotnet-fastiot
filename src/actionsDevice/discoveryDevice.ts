@@ -9,7 +9,7 @@ import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { connectionTestDevice } from './connectionTestDevice';
 import { IotDevice } from '../IotDevice';
-import { BaseTreeItem } from '../BaseTreeItem';
+import { BaseTreeItem } from '../shared/BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoTApplication } from '../IoTApplication';

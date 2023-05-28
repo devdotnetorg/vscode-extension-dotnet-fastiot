@@ -8,10 +8,10 @@ import { compare } from 'compare-versions';
 import { IoTApplication } from './IoTApplication';
 import { IoTHelper } from './Helper/IoTHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
-import { IotItemTree } from './IotItemTree';
+import { IotItemTree } from './shared/IotItemTree';
 import { IotResult,StatusResult } from './IotResult';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
-import { EntityCollection,ContainsType,IConfigEntityCollection } from './Entity/EntityCollection';
+import { IConfigEntityCollection } from './Entity/EntityCollection';
 import { Constants } from "./Constants"
 //UI
 import { IoTUI } from './ui/IoTUI';

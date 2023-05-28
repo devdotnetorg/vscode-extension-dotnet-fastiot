@@ -215,7 +215,8 @@ export class IoTHelper {
     return listFiles;
   }
 
-  static SetTimeFiles(filesPath:string[],timestamp:number):IotResult
+  static SetTimeFiles(filesPath:string[],
+    timestamp:number=Date.now() /*Unix epoch, i.e. Unix timestamp*/):IotResult
   {
     let result:IotResult;
     let lastFile:string|undefined;
@@ -230,13 +231,6 @@ export class IoTHelper {
     }
     //result
     return result;
-  }
-
-  static SetCurrentTimeToFiles(dirPath:string)
-  {
-    //Unix epoch, i.e. Unix timestamp:
-    const dateNow=Date.now();
-    this.SetTimeFiles(this.GetAllFile(dirPath),dateNow);
   }
 
   static SetLineEnding(content:string):string

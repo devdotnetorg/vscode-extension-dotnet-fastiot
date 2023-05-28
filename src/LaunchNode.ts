@@ -4,7 +4,7 @@ import * as path from 'path';
 import { LaunchTreeItemNode } from './LaunchTreeItemNode';
 import { IotResult,StatusResult } from './IotResult';
 import { IotLaunch } from './IotLaunch';
-import { IotTreeItem } from './IotTreeItem';
+import { IotTreeItem } from './shared/IotTreeItem';
 import { LaunchOptionNode } from './LaunchOptionNode';
 import { IotLaunchOption } from './IotLaunchOption';
 

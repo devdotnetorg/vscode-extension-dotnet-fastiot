@@ -2,11 +2,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem} from './BaseTreeItem';
-import {IotDevice} from './IotDevice';
-import {IotDeviceAccount} from './IotDeviceAccount';
-import {IotDeviceInformation} from './IotDeviceInformation';
-import {IotDevicePackage} from './IotDevicePackage';
-import {LaunchNode} from './LaunchNode';
+import {IotDevice} from '../IotDevice';
+import {IotDeviceAccount} from '../IotDeviceAccount';
+import {IotDeviceInformation} from '../IotDeviceInformation';
+import {IotDevicePackage} from '../IotDevicePackage';
+import {LaunchNode} from '../LaunchNode';
 
 export class IotItemTree extends BaseTreeItem { 
   public Parent: IotDevice| IotDeviceAccount| IotDeviceInformation| IotItemTree| 

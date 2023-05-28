@@ -7,7 +7,7 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { IotTemplate } from '../Templates/IotTemplate';
 import { ItemQuickPick } from '../Helper/actionHelper';
-import { LogLevel } from '../LogLevel';
+import { LogLevel } from '../shared/LogLevel';
 import { BadgeActivityBar  } from './BadgeActivityBar';
 
 export class IoTUI implements IContexUI {
