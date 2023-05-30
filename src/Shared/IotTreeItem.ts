@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {StatusResult,IotResult} from './IotResult';
+import {StatusResult,IotResult} from '../IotResult';
 
 export class IotTreeItem {  
   public Status: StatusResult;

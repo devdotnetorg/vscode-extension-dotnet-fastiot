@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './BaseTreeItem';
+import {BaseTreeItem} from './shared/BaseTreeItem';
 import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation, Existences} from './IotDeviceInformation';
 import {TypePackage,IotDevicePackage} from './IotDevicePackage';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IotResult,StatusResult} from './IotResult';
-import {IotItemTree} from './IotItemTree';
+import {IotItemTree} from './shared/IotItemTree';
 import {IotDeviceDTO} from './IotDeviceDTO';
 import {IotDeviceGpiochip} from './IotDeviceGpiochip';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';

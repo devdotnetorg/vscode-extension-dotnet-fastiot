@@ -176,6 +176,32 @@ If the problems persist, then you should delete/rename the extension folder wher
 - `C:\RemoteCode\`;
 - `%userprofile%\fastiot`, for example `C:\Users\Anton\fastiot`.
 
+After running the extension, there should be the following folder structure along the path `%userprofile%\fastiot`:
+
+```bash
+.
+└── fastiot
+    ├── settings
+    │   └── keys
+    ├── templates
+    │   ├── community
+    │   ├── system
+    │   │   ├── dotnet-console
+    │   │   │   ├── storage
+    │   │   │   ├── template
+    │   │   │   │   ├── dotnetapp.csproj
+    │   │   │   │   └── Program.cs
+    │   │   │   ├── template.fastiot.png
+    │   │   │   └── template.fastiot.yaml
+    │   │   ├── dotnet-console-runtime-info
+    │   │   │   └── ...
+    │   │   └── dotnet-iot-blink-led
+    │   │       └── ...
+    │   ├── user
+    │   └── webapi
+    └── tmp
+```
+
 If problems persist after restarting the extension, then the problems may be related to granting access rights to the above folders.
 
 The executable extension files are located in the `%USERPROFILE%\.vscode\extensions` folder, for example `C:\Users\Anton\.vscode\extensions`. You can remove the extension from the specified folder and reinstall it.

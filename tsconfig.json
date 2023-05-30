@@ -1,5 +1,6 @@
 {
 	"compilerOptions": {
+		"forceConsistentCasingInFileNames": false,
 		"module": "commonjs",
 		"target": "es6",
 		"outDir": "out",

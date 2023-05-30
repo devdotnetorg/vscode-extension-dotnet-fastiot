@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { BaseTreeItem } from '../BaseTreeItem';
+import { BaseTreeItem } from '../shared/BaseTreeItem';
 import { LaunchNode } from '../LaunchNode';
 import { LaunchTreeItemNode } from '../LaunchTreeItemNode';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';

@@ -25,7 +25,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
 
   constructor(pathFolderSchemas: string
     ){
-      super("template",IotTemplateAttribute,pathFolderSchemas);
+      super("template","templates",IotTemplateAttribute,pathFolderSchemas);
   }
 
   public Init(type:EntityType,yamlFilePath:string,recoverySourcePath?:string)
@@ -111,7 +111,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         return result;
       }
       //Not necessary. Time setting
-      IoTHelper.SetCurrentTimeToFiles(dstPath);
+      IoTHelper.SetTimeFiles(IoTHelper.GetAllFile(dstPath));
       //
       result= new IotResult(StatusResult.Ok, `Project successfully created!`);
     } catch (err: any){
@@ -168,7 +168,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         return result;
       }
       //Not necessary. Time setting
-      IoTHelper.SetCurrentTimeToFiles(`${dstPath}\\.vscode`);
+      IoTHelper.SetTimeFiles(IoTHelper.GetAllFile(`${dstPath}\\.vscode`));
       //
       result= new IotResult(StatusResult.Ok, `Launch and tasks added successfully`);
       //launch.id

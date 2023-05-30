@@ -23,8 +23,11 @@ export async function shutdownDevice(treeData: TreeDataDevicesProvider,item:IotD
         const device = treeData.FindbyIdDevice(<string>item.IdDevice);    
         if(device) {
             contextUI.Output("Action: shutdown device");
-            contextUI.ShowBackgroundNotification("Shutdown device");
+            const labelTask="Shutdown device";
+            contextUI.ShowBackgroundNotification(labelTask);
+            const guidBadge=contextUI.BadgeAddItem(labelTask);
             const result = await device.Shutdown();
+            if(guidBadge) contextUI.BadgeDeleteItem(guidBadge);
             contextUI.HideBackgroundNotification();
             //Output       
             contextUI.Output(result.toStringWithHead());

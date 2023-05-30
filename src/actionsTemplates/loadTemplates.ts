@@ -6,11 +6,13 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IoTApplication } from '../IoTApplication';
 
 export async function loadTemplates(app:IoTApplication,force:boolean=false): Promise<void> {
-    return vscode.window.withProgress({
+
+    const guidBadge=app.UI.BadgeAddItem("Loading templates");
+    await vscode.window.withProgress({
         location: vscode.ProgressLocation.Notification,
         title: "Loading ... ",
         cancellable: false
-      }, (progress, token) => {
+    }, (progress, token) => {
         //token.onCancellationRequested(() => {
         //console.log("User canceled the long running operation");
         //});
@@ -31,8 +33,9 @@ export async function loadTemplates(app:IoTApplication,force:boolean=false): Pro
             await app.Templates.LoadEntitiesAll(force);
             //event unsubscription    
             app.Templates.OnChangedStateUnsubscribe(handler);
-            resolve();
+            resolve(undefined);
             //end
         });
-      });
+    });
+    if(guidBadge) app.UI.BadgeDeleteItem(guidBadge);
 }

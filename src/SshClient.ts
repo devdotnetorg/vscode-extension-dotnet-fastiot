@@ -5,7 +5,7 @@ import * as path from 'path';
 import SSH2Promise from 'ssh2-promise';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import SFTP from 'ssh2-promise';
-import { EventDispatcher,Handler } from './EventDispatcher';
+import { EventDispatcher,Handler } from './shared/ClassWithEvent';
 import { StatusResult,IotResult } from './IotResult';
 import { IoTHelper } from './Helper/IoTHelper';
 import { stderr } from 'process';

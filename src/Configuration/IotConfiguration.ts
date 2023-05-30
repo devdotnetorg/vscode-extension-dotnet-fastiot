@@ -7,7 +7,7 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IotConfigurationFolder } from './IotConfigurationFolder';
 import { IotBuiltInConfig } from './IotBuiltInConfig';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { LogLevel } from '../LogLevel';
+import { LogLevel } from '../shared/LogLevel';
 import { Constants } from "../Constants"
 
 export class IotConfiguration {

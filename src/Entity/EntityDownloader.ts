@@ -22,8 +22,7 @@ export class EntityDownloader {
       //unpack
       let unpackPath=`${destPath}\\${item.Id}`;
       //delete
-      if (fs.existsSync(unpackPath))
-      {
+      if (fs.existsSync(unpackPath)) {
         fs.emptyDirSync(unpackPath);
         fs.removeSync(unpackPath);
       }
@@ -61,7 +60,7 @@ export class EntityDownloader {
             let item=obj.entitys[index];
             if(item) {
               const downloadEntity=this.ParseEntityDownload(item,url);
-              listDownload.push(downloadEntity);
+              if (downloadEntity) listDownload.push(downloadEntity);
               //next position
               index=index+1;
             }else break;
@@ -77,30 +76,34 @@ export class EntityDownloader {
     return Promise.resolve(result);
   }
 
-  protected ParseEntityDownload(obj:any,url:string):EntityDownload
+  protected ParseEntityDownload(obj:any,url:string):EntityDownload|undefined
   {
-    const objId=obj.id;
-    const objVersion=obj.version;
-    const objforVersionExt=obj.forVersionExt;
-    const objUrl=url.substring(0,url.lastIndexOf('/'))+"/"+objId+".zip";
-    //const filename = uri.split('/').pop()?.substring(0,uri.split('/').pop()?.lastIndexOf('.'));
-    //const fileZipPath=this._config.Folder.Temp+"\\"+filename+".zip";
-    //arrays
-    let platform:Array<string>=[];  
-    let index=0; 
-    //platform
-    index=0;
-    do { 				
-          let item=obj.platform[index];
-          if(item) {
-            platform.push(<string>item);            
-            //next position
-            index=index+1;
-          }else break;      
-    } 
-    while(true)
-    const downloadEntity=new EntityDownload(objId,objVersion,objUrl,
-        objforVersionExt,platform);
+    let downloadEntity:EntityDownload|undefined;
+    try {
+      const objId=obj.id;
+      const objVersion=obj.version;
+      const objforVersionExt=obj.forVersionExt;
+      const objUrl=url.substring(0,url.lastIndexOf('/'))+"/"+objId+".zip";
+      //const filename = uri.split('/').pop()?.substring(0,uri.split('/').pop()?.lastIndexOf('.'));
+      //const fileZipPath=this._config.Folder.Temp+"\\"+filename+".zip";
+      //arrays
+      let platform:Array<string>=[];  
+      let index=0; 
+      //platform
+      index=0;
+      do { 				
+            let item=obj.platform[index];
+            if(item) {
+              platform.push(<string>item);            
+              //next position
+              index=index+1;
+            }else break;      
+      } 
+      while(true)
+      downloadEntity=new EntityDownload(objId,objVersion,objUrl,
+          objforVersionExt,platform);
+    } catch (err: any){}
+    //result
     return downloadEntity;
   }
 }

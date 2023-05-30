@@ -58,9 +58,9 @@ export class dotnetHelper {
   static GetDotNetTargets(): Map<string,string[]> {
     //from https://learn.microsoft.com/en-us/dotnet/standard/frameworks
     let dictionary = new Map<string,string[]>();
-    dictionary.set("8.0",["net8.0",".NET 8"]);
+    dictionary.set("8.0",["net8.0",".NET 8 (preview)"]);
     dictionary.set("7.0",["net7.0",".NET 7"]);
-    dictionary.set("6.0",["net6.0",".NET 6"]);
+    dictionary.set("6.0",["net6.0",".NET 6 (LTS)"]);
     dictionary.set("5.0",["net5.0",".NET 5 (support ended)"]);
     dictionary.set("3.1",["netcoreapp3.1",".NET Core 3.1 (support ended)"]);
     return dictionary;
@@ -77,6 +77,7 @@ export class dotnetHelper {
   static GetTargetFrameworkFromCsprojFile(filePath:string): string|undefined {
     try {
       //read *.csproj for get TargetFramework
+      if (!fs.existsSync(filePath)) return undefined;
       const xmlFile:string= fs.readFileSync(filePath, 'utf8');
       let xpath = require('xpath');
       let dom = require('xmldom').DOMParser;
@@ -85,7 +86,8 @@ export class dotnetHelper {
       const targetFramework=nodes[0].firstChild.data;
       return targetFramework;
     } catch (err: any){
-      return undefined;
-    } 
+      
+    }
+    return undefined;
   }
 }

@@ -7,16 +7,18 @@ import { EntityBaseAttribute } from './EntityBaseAttribute';
 import { EntityType } from './EntityType';
 import { EntityRecovery } from './EntityRecovery';
 import { IotResult,StatusResult } from '../IotResult';
-import { EventDispatcher,Handler } from '../EventDispatcher';
-import { LogLevel } from '../LogLevel';
+import { LogLevel } from '../shared/LogLevel';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { EntityDownload, EntityDownloader } from './EntityDownloader';
 import { IotBuiltInConfig } from '../Configuration/IotBuiltInConfig';
+import { ClassWithEvent } from '../Shared/ClassWithEvent';
+import { ContainsType } from '../Shared/ContainsType';
 
-export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> {
+export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> extends ClassWithEvent {
   
   protected _items:Map<string,T>;
-  protected readonly _entityIntLabel:string; //for understandable log
+  protected readonly _entityLabel:string; //for understandable log
+  protected readonly _entitiesLabel:string; //for understandable log
   private readonly TCreator: new(pathFolderSchemas: string) => T;
   protected readonly Config:IConfigEntityCollection;
   protected GetDirEntitiesCallback:(type:EntityType) =>string;
@@ -24,29 +26,14 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public get Count(): number {
       return this._items.size;}
 
-  //Event--------------------------------------
-  protected ChangedStateDispatcher = new EventDispatcher<IChangedStateEvent>();
-
-  public OnChangedStateSubscribe(handler: Handler<IChangedStateEvent>):Handler<IChangedStateEvent> {
-        this.ChangedStateDispatcher.Register(handler);
-        return handler;
-  }
-
-  public OnChangedStateUnsubscribe (handler: Handler<IChangedStateEvent>) {
-    this.ChangedStateDispatcher.Unregister(handler);
-  }
-
-  protected FireChangedState(event: IChangedStateEvent) { 
-      this.ChangedStateDispatcher.Fire(event);
-  }
-  //-------------------------------------------
-
   constructor(
-    entityIntLabel:string, TCreator: new(pathFolderSchemas: string) => T,
+    entityLabel:string, entitiesLabel:string, TCreator: new(pathFolderSchemas: string) => T,
     getDirEntitiesCallback:(type:EntityType) =>string, config:IConfigEntityCollection
     ){
+      super();
       this._items = new Map<string,T>(); 
-      this._entityIntLabel=entityIntLabel;
+      this._entityLabel=entityLabel;
+      this._entitiesLabel=entitiesLabel;
       this.TCreator=TCreator;
       this.GetDirEntitiesCallback=getDirEntitiesCallback;
       this.Config=config;
@@ -64,12 +51,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
   public Remove(id:string):boolean
   {
-    try {
-      this._items.delete(id);
-      return true;
-    } catch (err: any){
-      return false;
-    }
+    return this._items.delete(id);
   }
 
   public Update(newValue:T):boolean
@@ -151,17 +133,17 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       const listFolders=IoTHelper.GetListDir(pathFolder);
       //ckeck
       if (listFolders.length==0) {
-        result=new IotResult(StatusResult.Ok,`No ${type} ${this._entityIntLabel}s to load. ${pathFolder} folder is empty`,undefined,LogLevel.Debug);
+        result=new IotResult(StatusResult.Ok,`No ${type} ${this._entitiesLabel} to load. ${pathFolder} folder is empty`,undefined,LogLevel.Debug);
         return Promise.resolve(result);
       }
       //checking all folders
       listFolders.forEach(dir => {
-        const filePath=`${dir}\\${this._entityIntLabel.toLowerCase()}.fastiot.yaml`;
+        const filePath=`${dir}\\${this._entityLabel.toLowerCase()}.fastiot.yaml`;
         let entity = new this.TCreator(this.Config.schemasFolderPath);
         entity.Init(type,filePath,this.Config.recoverySourcePath);
         if(!entity.IsValid&&type==EntityType.system) {
           //Recovery
-          this.CreateEvent(`${this._entityIntLabel} recovery: ${path.dirname(filePath)}`,LogLevel.Debug);
+          this.CreateEvent(`${this._entityLabel} recovery: ${path.dirname(filePath)}`,LogLevel.Debug);
           result= entity.Recovery();
           if(result.Status==StatusResult.Ok) {
             entity.Init(type,filePath,this.Config.recoverySourcePath);}
@@ -171,32 +153,32 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         }
         //main
         if(entity.IsValid) {
-          this.CreateEvent(`${this._entityIntLabel} is valid: [${entity.Attributes.Id}]`,LogLevel.Debug);
+          this.CreateEvent(`${this._entityLabel} is valid: [${entity.Attributes.Id}]`,LogLevel.Debug);
           if(this.IsCompatibleByVersionExtAndPlatform(entity)) {
             const isContains=this.Contains(entity);
             switch(isContains) { 
               case ContainsType.no: {
                 this.Add(entity);
-                this.CreateEvent(`${this._entityIntLabel} added: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+                this.CreateEvent(`${this._entityLabel} added: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
                 break; 
               } 
               case ContainsType.yesVersionSmaller: {
                 this.Update(entity);
-                this.CreateEvent(`${this._entityIntLabel} updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+                this.CreateEvent(`${this._entityLabel} updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
                 break; 
               }
               default: {
-                this.CreateEvent(`Adding a ${this._entityIntLabel} was skipped because already in the collection: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+                this.CreateEvent(`Adding a ${this._entityLabel} was skipped because already in the collection: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
                 break; 
               } 
             }
           }else{
-            result = new IotResult(StatusResult.Error,`The ${this._entityIntLabel} ${entity.RootDir} is for a newer version of the extension. ` +
+            result = new IotResult(StatusResult.Error,`The ${this._entityLabel} ${entity.RootDir} is for a newer version of the extension. ` +
               `Update the extension.`);
             this.CreateEvent(result);
           }
         }else{
-          result = new IotResult(StatusResult.Error,`The ${this._entityIntLabel} ${entity.RootDir} has not been validated.`);
+          result = new IotResult(StatusResult.Error,`The ${this._entityLabel} ${entity.RootDir} has not been validated.`);
           this.CreateEvent(result);
           this.CreateEvent(entity.ValidationErrorsToString,LogLevel.Debug);
           //delete system entity
@@ -208,14 +190,14 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       });
       //result
       if((this.Count-entitysCountBegin)>0) {
-        result= new IotResult(StatusResult.Ok,`Loading ${type} ${this._entityIntLabel}s from ${pathFolder} folder successfully completed`);
+        result= new IotResult(StatusResult.Ok,`Loading ${type} ${this._entitiesLabel} from ${pathFolder} folder successfully completed`);
         result.logLevel=LogLevel.Debug;
       }else{
-        result= new IotResult(StatusResult.Ok,`No ${type} ${this._entityIntLabel} was loaded from the ${pathFolder} folder`);
+        result= new IotResult(StatusResult.Ok,`No ${type} ${this._entityLabel} was loaded from the ${pathFolder} folder`);
         result.logLevel=LogLevel.Debug;
       }
     } catch (err: any){
-      result= new IotResult(StatusResult.Error,`Error loading ${type} ${this._entityIntLabel}s`,err);
+      result= new IotResult(StatusResult.Error,`Error loading ${type} ${this._entitiesLabel}`,err);
     }
     return Promise.resolve(result);
   }
@@ -225,16 +207,16 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     const destPath= this.GetDirEntitiesCallback(type);
     let downloader = new EntityDownloader();
     let result:IotResult;
-    this.CreateEvent(`🔗 Downloading a list of ${this._entityIntLabel}s to update: ${url}`,LogLevel.Debug);
+    this.CreateEvent(`🔗 Downloading a list of ${this._entitiesLabel} to update: ${url}`,LogLevel.Debug);
     result= await downloader.GetDownloadListEntity(url);
     if(result.Status==StatusResult.Error) {
-      result.AddMessage(`Error updating ${type} ${this._entityIntLabel}s`);
+      result.AddMessage(`Error updating ${type} ${this._entitiesLabel}`);
       return Promise.resolve(result);
     }
-    this.CreateEvent(`🔗 List of ${this._entityIntLabel}s loaded ${url}`,LogLevel.Debug);
+    this.CreateEvent(`🔗 List of ${this._entitiesLabel} loaded ${url}`,LogLevel.Debug);
     let listDownload:Array<EntityDownload>=result.returnObject;
     if(listDownload.length==0) {
-      result= new IotResult(StatusResult.Ok,`Url: ${url}. No ${this._entityIntLabel}s to download`);
+      result= new IotResult(StatusResult.Ok,`Url: ${url}. No ${this._entitiesLabel} to download`);
       return Promise.resolve(result);
     }
     //next
@@ -250,7 +232,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
                 result= await downloader.DownloadEntity(item,this.Config.tempFolderPath);
                 if(result.Status==StatusResult.Ok) {
                   const unpackPath= <string> result.returnObject;
-                  const filePath = path.join(unpackPath, `${this._entityIntLabel.toLowerCase()}.fastiot.yaml`);
+                  const filePath = path.join(unpackPath, `${this._entityLabel.toLowerCase()}.fastiot.yaml`);
                   let entity= new this.TCreator(this.Config.schemasFolderPath);
                   entity.Init(EntityType.system,filePath);
                   if(entity.IsValid) {
@@ -260,9 +242,9 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
                       break;
                     } 
                     this.Add(entity);
-                    this.CreateEvent(`${this._entityIntLabel} added/updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+                    this.CreateEvent(`${this._entityLabel} added/updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
                   } else {
-                    result = new IotResult(StatusResult.Error,`The  ${this._entityIntLabel} ${entity.YAMLFilePath} has not been validated`)
+                    result = new IotResult(StatusResult.Error,`The  ${this._entityLabel} ${entity.YAMLFilePath} has not been validated`)
                     this.CreateEvent(result,LogLevel.Debug);
                     this.CreateEvent(entity.ValidationErrorsToString,LogLevel.Debug);
                   }
@@ -273,7 +255,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
                 result= await downloader.DownloadEntity(item,this.Config.tempFolderPath);
                 if(result.Status==StatusResult.Ok) {
                   const unpackPath= <string> result.returnObject;
-                  const filePath = path.join(unpackPath, ` ${this._entityIntLabel.toLowerCase()}.fastiot.yaml`);
+                  const filePath = path.join(unpackPath, ` ${this._entityLabel.toLowerCase()}.fastiot.yaml`);
                   let entity= new this.TCreator(this.Config.schemasFolderPath);
                   entity.Init(EntityType.system,filePath);
                   if(entity.IsValid) {
@@ -283,9 +265,9 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
                       break;
                     } 
                     this.Update(entity);
-                    this.CreateEvent(`${this._entityIntLabel} added/updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+                    this.CreateEvent(`${this._entityLabel} added/updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
                   } else {
-                    result = new IotResult(StatusResult.Error,`The  ${this._entityIntLabel} ${entity.YAMLFilePath} has not been validated`)
+                    result = new IotResult(StatusResult.Error,`The  ${this._entityLabel} ${entity.YAMLFilePath} has not been validated`)
                     this.CreateEvent(result,LogLevel.Debug);
                     this.CreateEvent(entity.ValidationErrorsToString,LogLevel.Debug);
                   }
@@ -297,7 +279,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
               } 
             }
         }else{
-          result = new IotResult(StatusResult.Error,`Error. The ${this._entityIntLabel} ${item.Url} is for a newer version of the extension. ` +
+          result = new IotResult(StatusResult.Error,`Error. The ${this._entityLabel} ${item.Url} is for a newer version of the extension. ` +
           `Update the extension.`);
           this.CreateEvent(result,LogLevel.Debug);
         }
@@ -306,7 +288,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       index++;
     }while(true)
     //result
-    result= new IotResult(StatusResult.Ok,`Update of ${type} ${this._entityIntLabel}s completed successfully`,undefined,LogLevel.Debug);
+    result= new IotResult(StatusResult.Ok,`Update of ${type} ${this._entitiesLabel} completed successfully`,undefined,LogLevel.Debug);
     return Promise.resolve(result);
   }
 
@@ -315,7 +297,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     let result:IotResult;
     //Check urls
     if(urls.length==0) {
-      result= new IotResult(StatusResult.No,`No update sources for community  ${this._entityIntLabel}s`);
+      result= new IotResult(StatusResult.No,`No update sources for community  ${this._entitiesLabel}`);
       return Promise.resolve(result);
     }
     //list
@@ -331,13 +313,13 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       index++;
     }while(true)
     //result
-    result= new IotResult(StatusResult.Ok,`Update of ${type} ${this._entityIntLabel}s completed successfully`,undefined,LogLevel.Debug);
+    result= new IotResult(StatusResult.Ok,`Update of ${type} ${this._entitiesLabel} completed successfully`,undefined,LogLevel.Debug);
     return Promise.resolve(result);
   }
 
   protected async LoadEntities(type:EntityType):Promise<void>
   {
-    this.CreateEvent(`☑️ Loading ${type} ${this._entityIntLabel}s`,LogLevel.Debug);
+    this.CreateEvent(`☑️ Loading ${type} ${this._entitiesLabel}`,LogLevel.Debug);
     const path=this.GetDirEntitiesCallback(type);
     const result = await this.LoadFromFolder(path,type);
     this.CreateEvent(result,LogLevel.Debug);
@@ -355,16 +337,16 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       const TimeHasPassedHours=dateNow-this.Config.builtInConfig.LastUpdateTemplatesHours;
       const isNeedUpdate = ()=>this.Config.isUpdate&&(TimeHasPassedHours>=this.Config.updateIntervalHours);
       //main code
-      this.CreateEvent(`-------- Loading ${this._entityIntLabel}s -------`,
+      this.CreateEvent(`-------- Loading ${this._entitiesLabel} -------`,
         LogLevel.Information);
       //Loading system entities
-      this.CreateEvent(`Loading system ${this._entityIntLabel}s`,undefined,15); //15
+      this.CreateEvent(`Loading system ${this._entitiesLabel}`,undefined,15); //15
       await this.LoadEntities(EntityType.system);
       //Updating system entities
-      this.CreateEvent(`Updating system ${this._entityIntLabel}s`,undefined,15); //30
+      this.CreateEvent(`Updating system ${this._entitiesLabel}`,undefined,15); //30
       if(force||isNeedUpdate()){
         //system
-        this.CreateEvent(`☑️ Updating system ${this._entityIntLabel}s`,LogLevel.Debug);
+        this.CreateEvent(`☑️ Updating system ${this._entitiesLabel}`,LogLevel.Debug);
         result=await this.UpdateEntitiesFromUrl(this.Config.urlUpdateEntitiesSystem,EntityType.system);
         this.CreateEvent(result,LogLevel.Debug);
         //timestamp of last update
@@ -373,16 +355,16 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
           this.Config.builtInConfig.Save();
         }
       } else {
-        this.CreateEvent(`📥 ${this._entityIntLabel} update: disabled or less than ${this.Config.updateIntervalHours} hour(s) have passed since the last update.`,LogLevel.Debug);
+        this.CreateEvent(`📥 ${this._entityLabel} update: disabled or less than ${this.Config.updateIntervalHours} hour(s) have passed since the last update.`,LogLevel.Debug);
       }
       //Loading community entities
-      this.CreateEvent(`Loading community ${this._entityIntLabel}s`,undefined,15); //45
+      this.CreateEvent(`Loading community ${this._entitiesLabel}`,undefined,15); //45
       await this.LoadEntities(EntityType.community);
       //Updating community entities
-      this.CreateEvent(`Updating community ${this._entityIntLabel}s`,undefined,15); //60
+      this.CreateEvent(`Updating community ${this._entitiesLabel}`,undefined,15); //60
       if(force||isNeedUpdate()){
         //community
-        this.CreateEvent(`☑️ Updating community ${this._entityIntLabel}s`,LogLevel.Debug);
+        this.CreateEvent(`☑️ Updating community ${this._entitiesLabel}`,LogLevel.Debug);
         result=await this.UpdateEntitiesFromUrls(this.Config.urlsUpdateEntitiesCommunity,EntityType.community);
         this.CreateEvent(result,LogLevel.Debug);
         //timestamp of last update
@@ -392,16 +374,16 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         }
       }
       //Loading custom entities
-      this.CreateEvent(`Loading custom ${this._entityIntLabel}s  templates loaded `,undefined,15); //75
+      this.CreateEvent(`Loading custom ${this._entitiesLabel}  templates loaded `,undefined,15); //75
       await this.LoadEntities(EntityType.user);
       //result
-      this.CreateEvent(new IotResult(StatusResult.Ok, `${this._entityIntLabel}s loaded`));
-      const endMsg=`📚 ${this.Count} ${this._entityIntLabel}(s) available.`;
+      this.CreateEvent(new IotResult(StatusResult.Ok, `${this._entitiesLabel} loaded`));
+      const endMsg=`📚 ${this.Count} ${this._entityLabel}(s) available.`;
       this.CreateEvent(endMsg,LogLevel.Information);
       this.CreateEvent(`----------------------------------`,LogLevel.Information);
-      this.CreateEvent(`${this._entityIntLabel}s loaded`,undefined,15); //90
+      this.CreateEvent(`${this._entitiesLabel} loaded`,undefined,15); //90
     } catch (err: any){
-      result= new IotResult(StatusResult.Error, `Error loading ${this._entityIntLabel} collection`,err); 
+      result= new IotResult(StatusResult.Error, `Error loading ${this._entityLabel} collection`,err); 
       this.CreateEvent(result,LogLevel.Information);
     }
   }
@@ -413,23 +395,9 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     if (fs.existsSync(dir)) fs.emptyDirSync(dir);
   }
 
-  protected CreateEvent(message?:string|IotResult,logLevel?:LogLevel,increment?:number)
-  {
-    //Event
-    this.FireChangedState({
-      message:message,
-      logLevel:logLevel,
-      increment:increment
-    });
-  }
-
 }
 
-export interface IChangedStateEvent {
-  message?:string|IotResult,
-  logLevel?:LogLevel,
-  increment?:number
-}
+//TODO убрать, заменить на Interface IConfig
 
 export interface IConfigEntityCollection {
   extVersion: string;
@@ -442,11 +410,4 @@ export interface IConfigEntityCollection {
   updateIntervalHours:number;
   urlsUpdateEntitiesCommunity:string[];
   urlUpdateEntitiesSystem:string;
-}
-
-export enum ContainsType {
-	no = "no",
-	yesSameVersion  = "yes same version",
-	yesMoreVersion = "yes more version",
-	yesVersionSmaller = "yes version smaller"
 }

@@ -53,8 +53,11 @@ export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:Io
         }
         //main process 
         contextUI.Output(`Action: package uninstallation ${item.NamePackage}`);
-        contextUI.ShowBackgroundNotification(`Package uninstallation ${item.NamePackage}`);
+        const labelTask=`Package uninstallation ${item.NamePackage}`;
+        contextUI.ShowBackgroundNotification(labelTask);
+        const guidBadge=contextUI.BadgeAddItem(labelTask);
         const result = await treeData.UnInstallPackage(<string>item.Device.IdDevice,item.NamePackage,jsonObj);
+        if(guidBadge) contextUI.BadgeDeleteItem(guidBadge);
         contextUI.HideBackgroundNotification();
         //Output       
         contextUI.Output(result.toStringWithHead());

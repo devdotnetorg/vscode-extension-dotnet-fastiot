@@ -46,7 +46,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         selectTemplate=app.Templates.FindById(idTemplate);
     if(selectTemplate) {
         //check platform
-        const isCompatible=selectTemplate.IsCompatibleByEndDeviceArchitecture(selectDevice.Information.Architecture);
+        const isCompatible=selectTemplate.IsCompatibleByEndDeviceArchitecture(`${selectDevice.Information.Architecture}`);
         if(!isCompatible) selectTemplate=undefined;
     }
     if(selectTemplate) {

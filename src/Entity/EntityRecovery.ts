@@ -29,6 +29,7 @@ export class EntityRecovery {
   {
     let listNames:Array<string>=[];
     //getting a list of entity files
+    if (!fs.existsSync(sourceDir)) return listNames;
     const files = fs.readdirSync(sourceDir);
     files.forEach(name => {
       //file

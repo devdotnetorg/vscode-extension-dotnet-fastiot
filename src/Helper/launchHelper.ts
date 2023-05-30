@@ -77,8 +77,7 @@ export class launchHelper {
     let checklabel=newLabel;
     if(increment) checklabel=`${newLabel} ${suffix}${increment}`;    
     const item = arrayName.find(x=>x==checklabel);
-    if(item)
-    {
+    if(item) {
       if(!increment) increment=0; 
       increment++;      
       checklabel=launchHelper.GetUniqueLabel(newLabel,suffix,increment,arrayName);

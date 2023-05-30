@@ -99,30 +99,25 @@ export class IoTHelper {
   private GetAllFilesByExtRecurc(pathFolder:string, fileExtension:string, depthLevel=1,currenDepthLevel=1): Array<string> {
     let result:Array<string>=[];
     if(currenDepthLevel>depthLevel) return result;
-    //    
-    let files=fs.readdirSync(pathFolder);
-    files.forEach((name) => {
-      const filename=`${pathFolder}\\${name}`;      
-      if(fs.lstatSync(filename).isDirectory())
-        {          
-          //if(!currenDepthLevel) currenDepthLevel=0;
-          //currenDepthLevel++
+    try {
+      let files=fs.readdirSync(pathFolder);
+      files.forEach((name) => {
+        const filename=`${pathFolder}\\${name}`;      
+        if(fs.lstatSync(filename).isDirectory()) {
           const helper= new IoTHelper();
           const result2=helper.GetAllFilesByExtRecurc(filename, fileExtension, depthLevel,currenDepthLevel+1);
           result2.forEach((element) => {
             result.push(element);
           });          
-        } 
-      if(fs.lstatSync(filename).isFile())
-        {
-          if(`.${filename.split('.').pop()}`==fileExtension)
-          {
-            console.log(filename);
+        }
+        if(fs.lstatSync(filename).isFile()) {
+          if(`.${filename.split('.').pop()}`==fileExtension) {
+            //console.log(filename);
             result.push(filename);
           }          
         }       
-    });
-    //
+      });
+    } catch (err: any){}
     return result;
   }
 
@@ -170,14 +165,16 @@ export class IoTHelper {
     let listFolders:Array<string>=[];
     //check path 
     if (!fs.existsSync(path)) return listFolders;
-    //getting a list of entity directories
-    const files = fs.readdirSync(path);
-    //getting a list of folders
-    files.forEach(name => {
-      //directory
-      const dir=`${path}\\${name}`;
-      if(fs.lstatSync(dir).isDirectory()) listFolders.push(dir);
+    try {
+      //getting a list of entity directories
+      const files = fs.readdirSync(path);
+      //getting a list of folders
+      files.forEach(name => {
+        //directory
+        const dir=`${path}\\${name}`;
+        if(fs.lstatSync(dir).isDirectory()) listFolders.push(dir);
       });
+    } catch (err: any){}   
     return listFolders;
   }
 
@@ -218,7 +215,8 @@ export class IoTHelper {
     return listFiles;
   }
 
-  static SetTimeFiles(filesPath:string[],timestamp:number):IotResult
+  static SetTimeFiles(filesPath:string[],
+    timestamp:number=Date.now() /*Unix epoch, i.e. Unix timestamp*/):IotResult
   {
     let result:IotResult;
     let lastFile:string|undefined;
@@ -235,13 +233,6 @@ export class IoTHelper {
     return result;
   }
 
-  static SetCurrentTimeToFiles(dirPath:string)
-  {
-    //Unix epoch, i.e. Unix timestamp:
-    const dateNow=Date.now();
-    this.SetTimeFiles(this.GetAllFile(dirPath),dateNow);
-  }
-
   static SetLineEnding(content:string):string
   {
     //https://github.com/Neoklosch/crlf-helper/
@@ -249,7 +240,7 @@ export class IoTHelper {
     const re = new RegExp("\r\n", 'g');
     //LF: '\n',
     const value='\n';
-    content=content.replace(re,value);    
+    content=content.replace(re,value);
     return content;
   }
 
