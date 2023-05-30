@@ -26,8 +26,8 @@
 
 ## Системные требования
 
-- **Версия ОС.** Windows 7-10 (x64). Версия для Linux появится позже. Примечание: следующая версия расширения выше v0.3 не будет поддерживать Windows 7;
-- **Visual Studio Code.** версия не ниже [1.70.3](https://code.visualstudio.com/ "1.70.3"). Это последняя версия VSCode с поддержкой Windows 7, подробнее об этом на [странице поддержки](https://code.visualstudio.com/docs/supporting/faq#_can-i-run-vs-code-on-windows-7 "Can I run VS Code on Windows 7?");
+- **Версия ОС.** Windows 10 (x64). Версия для Linux появится позже;
+- **Visual Studio Code.** Версия [1.78.0](https://code.visualstudio.com/ "1.78.0") или выше;
 - **.NET.** Для компиляции проекта на C# требуется [.NET SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks ".NET SDK") в зависимости от используемой версии вашего проекта (для работы самого расширения не требуется);
 
 Дополнительные расширения необходимые для разработки .NET приложений:

@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './BaseTreeItem';
+import {BaseTreeItem} from './shared/BaseTreeItem';
 import {IotDevice} from './IotDevice';
-import {IotItemTree} from './IotItemTree';
+import {IotItemTree} from './shared/IotItemTree';
 import {StatusResult,IotResult} from './IotResult';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 

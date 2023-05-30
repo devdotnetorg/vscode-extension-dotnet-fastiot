@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './BaseTreeItem';
+import {BaseTreeItem} from './shared/BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import { IotResult,StatusResult } from './IotResult';
 import { IoTDTO } from './Dto/IoTDTO';

@@ -7,12 +7,14 @@ import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { IotTemplate } from '../Templates/IotTemplate';
 import { ItemQuickPick } from '../Helper/actionHelper';
-import { LogLevel } from '../LogLevel';
+import { LogLevel } from '../shared/LogLevel';
+import { BadgeActivityBar  } from './BadgeActivityBar';
 
 export class IoTUI implements IContexUI {
   private _outputChannel:vscode.OutputChannel;
   private _statusBarBackground: StatusBarBackground;
   private readonly _currentLogLevel:LogLevel;
+  private _badgeActivityBar?:BadgeActivityBar;
   
   constructor(logLevel:LogLevel){
     //OutputChannel
@@ -88,8 +90,6 @@ export class IoTUI implements IContexUI {
   }
 
   public async ShowDeviceDialog(devices:Array<IotDevice>,title = 'Choose a device'):Promise<IotDevice | undefined> {
-    //for next version
-    /*
     //Get all architectures
     let architectures:string[]=[];
     devices.forEach((device) => {
@@ -105,17 +105,31 @@ export class IoTUI implements IContexUI {
       return 0;
     });
     //create a list
-    let itemDevices:Array<ItemQuickPick>=[];
+    let itemDevices:Array<ItemQuickPick|vscode.QuickPickItem>=[];
     architectures.forEach((architecture) => {
-      const devicesA=devices.filter((e:IotDevice) => e.Information.Architecture==architecture);
       //make a separator
-
-      //add
-
+      const architectureSeparator:vscode.QuickPickItem = {
+        label: architecture,
+        kind: vscode.QuickPickItemKind.Separator
+      };
+      //get devices for only one architecture
+      const devicesA=devices.filter((e:IotDevice) => e.Information.Architecture==architecture);
+      //create block
+      itemDevices.push(architectureSeparator);
+      //create a list
+      //let itemDevices:Array<ItemQuickPick>=[];
+      devicesA.forEach((device) => {
+        const label=`${device.label}`;
+        const description=`${device.Information.Architecture}`;
+        const detail=`$(circuit-board) ${device.Information.BoardName} $(terminal-linux) ${device.Information.OsDescription} $(circle-filled) ${device.Information.OsKernel} $(account) ${device.Account.UserName}`;
+        const item = new ItemQuickPick(label,description,device,detail);
+        itemDevices.push(item);
+      });
     });
-    */
+
+    /*
     //create a list
-    let itemDevices:Array<ItemQuickPick>=[];
+    //let itemDevices:Array<ItemQuickPick>=[];
     devices.forEach((device) => {
         const label=`${device.label}`;
         const description=`${device.Information.Architecture}`;
@@ -123,10 +137,11 @@ export class IoTUI implements IContexUI {
         const item = new ItemQuickPick(label,description,device,detail);
         itemDevices.push(item);
     });
+    */
     //Select
     const SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: title,placeHolder:`Developer board`});
     if(SELECTED_ITEM)
-      return Promise.resolve(<IotDevice>SELECTED_ITEM.value);
+      return Promise.resolve(<IotDevice>(SELECTED_ITEM as ItemQuickPick).value);
       else Promise.resolve(undefined);
   }
 
@@ -141,5 +156,15 @@ export class IoTUI implements IContexUI {
     if(SELECTED_ITEM)
       return Promise.resolve(<IotTemplate>SELECTED_ITEM.value);
       else Promise.resolve(undefined);
+  }
+
+  //Badge
+  public BadgeInit = (label:string, treeView:vscode.TreeView<any>) => 
+    this._badgeActivityBar = new BadgeActivityBar(label,treeView);
+  public BadgeAddItem(label:string):string|undefined {
+    return this._badgeActivityBar?.AddItem(label);
+  } 
+  public BadgeDeleteItem(guid:string):boolean|undefined {
+    return this._badgeActivityBar?.DeleteItem(guid);
   }
 }

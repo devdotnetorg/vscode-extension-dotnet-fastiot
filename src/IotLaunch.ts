@@ -1,11 +1,10 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { BaseTreeItem } from './BaseTreeItem';
 import { IotResult,StatusResult } from './IotResult';
 import { IotDevice } from './IotDevice';
 import { IotLaunchEnvironment } from './IotLaunchEnvironment';
-import { IotTreeItem } from './IotTreeItem';
+import { IotTreeItem } from './shared/IotTreeItem';
 import { IoTHelper } from './Helper/IoTHelper';
 import { launchHelper } from './Helper/launchHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';

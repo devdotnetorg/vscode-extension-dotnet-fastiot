@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { IotItemTree } from '../IotItemTree';
+import { IotItemTree } from '../shared/IotItemTree';
 
 export async function copyTexttoClipboard(item:IotItemTree): Promise<void> {                    
         let text="";

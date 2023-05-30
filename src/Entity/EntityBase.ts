@@ -8,7 +8,8 @@ import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../IotResult';
 
 export abstract class EntityBase<T extends EntityBaseAttribute> {
-  protected _entityIntLabel:string; //for understandable log
+  protected readonly _entityLabel:string; //for understandable log
+  protected readonly _entitiesLabel:string; //for understandable log
   private _yamlFilePath:string=""; //YAML file
   public get YAMLFilePath(): string {
     return this._yamlFilePath;}
@@ -39,11 +40,12 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
 
   protected _pathFolderSchemas: string;
 
-  constructor(entityIntLabel:string,
+  constructor( entityLabel:string, entitiesLabel:string,
     TCreator: new(pathFolderSchemas?: string) => T,
     pathFolderSchemas: string
     ){
-      this._entityIntLabel=entityIntLabel;
+      this._entityLabel=entityLabel;
+      this._entitiesLabel=entitiesLabel;
       this.Attributes=new TCreator(pathFolderSchemas);
       //
       this._pathFolderSchemas=pathFolderSchemas;
@@ -52,24 +54,28 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
 
   public Init(type:EntityType,yamlFilePath:string,recoverySourcePath?:string)
   {
-    this.Type= type;
-    this._recoverySourcePath=recoverySourcePath;
-    this._yamlFilePath=yamlFilePath;
-    this.ValidateEntityBase();
-    if(!this.IsValid) return;
-    //if(this.IsValid) this.Parse(path);
-    let attributes = this.Attributes as any; 
-    attributes.Init(this.YAMLFilePath);
-    if(attributes.IsValid) {
-      //ok
-      //check if folder matches entity and id
-      if(this.RootNameDir!=attributes.Id)
-        this._validationErrors.push(`${this._entityIntLabel} folder name ${this.RootNameDir} `+
-          `does not match id value ${attributes.Id}.`+
-          `You need to rename the folder or change the ${this._entityIntLabel} id.`);
-    }else{
-      //error
-      this._validationErrors = attributes.ValidationErrors.slice();
+    try {
+      this.Type= type;
+      this._recoverySourcePath=recoverySourcePath;
+      this._yamlFilePath=yamlFilePath;
+      this.ValidateEntityBase();
+      if(!this.IsValid) return;
+      //if(this.IsValid) this.Parse(path);
+      let attributes = this.Attributes as any; 
+      attributes.Init(this.YAMLFilePath);
+      if(attributes.IsValid) {
+        //ok
+        //check if folder matches entity and id
+        if(this.RootNameDir!=attributes.Id)
+          this._validationErrors.push(`${this._entityLabel} folder name ${this.RootNameDir} `+
+            `does not match id value ${attributes.Id}.`+
+            `You need to rename the folder or change the ${this._entityLabel} id.`);
+      }else{
+        //error
+        this._validationErrors = attributes.ValidationErrors.slice();
+      }
+    } catch (err: any){
+      this._validationErrors.push(`Error Init ${this._entitiesLabel}. Error: ${err}`);
     }
   }
   
@@ -92,9 +98,9 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       //replace fields
       const fileName=this.YAMLFilePath.substring(this.RootDir.length+1);
       this._yamlFilePath= path.join(destDir, fileName);
-      result = new IotResult(StatusResult.Ok,`${this._entityIntLabel}. ${this.RootDir} folder successfully moved to ${destDir} folder`);
+      result = new IotResult(StatusResult.Ok,`${this._entityLabel}. ${this.RootDir} folder successfully moved to ${destDir} folder`);
     } catch (err: any){
-      result = new IotResult(StatusResult.Error,`Unable to move ${this._entityIntLabel} from folder ${this.RootDir} to folder ${destDir}`,err);
+      result = new IotResult(StatusResult.Error,`Unable to move ${this._entityLabel} from folder ${this.RootDir} to folder ${destDir}`,err);
     }
     //result
     return result;
@@ -104,14 +110,13 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
     let result:IotResult;
     try {
       //delete
-      if (fs.existsSync(this.RootDir))
-      {
+      if (fs.existsSync(this.RootDir)) {
         fs.emptyDirSync(this.RootDir);
         fs.removeSync(this.RootDir);
       } 
       result = new IotResult(StatusResult.Ok,`Folder has been deleted: ${this.RootDir}`);
     } catch (err: any){
-      result = new IotResult(StatusResult.Error,`Unable to delete ${this._entityIntLabel} folder: ${this.RootDir}`,err);
+      result = new IotResult(StatusResult.Error,`Unable to delete ${this._entityLabel} folder: ${this.RootDir}`,err);
     }
     //result
     return result;
@@ -136,14 +141,13 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
     let result:IotResult;
     const fileZipPath=`${this.RecoverySourcePath}\\${this.RootNameDir}.zip`;
     result= IoTHelper.UnpackFromZip(fileZipPath,path.dirname(this.RootDir));
-    if(result.Status==StatusResult.Error) result.AddMessage(`${this._entityIntLabel} restore error`);
+    if(result.Status==StatusResult.Error) result.AddMessage(`${this._entityLabel} restore error`);
     //result
     return result;
   }
 
-  public IsCompatibleByEndDeviceArchitecture(endDeviceArchitecture?:string):boolean
+  public IsCompatibleByEndDeviceArchitecture(endDeviceArchitecture:string):boolean
   {
-    if(!endDeviceArchitecture) return false;
     const result=this.Attributes.EndDeviceArchitecture.find(x=>x==endDeviceArchitecture);
     if(result) return true; else  return false;
   }

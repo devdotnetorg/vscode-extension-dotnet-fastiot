@@ -123,8 +123,11 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
     vscode.window.showInformationMessage('Package installation/upgrade may take 2 to 7 minutes.');
     //main process
     contextUI.Output(`Action: package installation/upgrade ${item.NamePackage}`);
-    contextUI.ShowBackgroundNotification(`Package installation/upgrade ${item.NamePackage}`);
+    const labelTask=`Package installation/upgrade ${item.NamePackage}`;
+    contextUI.ShowBackgroundNotification(labelTask);
+    const guidBadge=contextUI.BadgeAddItem(labelTask);
     const result = await treeData.InstallPackage(<string>item.Device.IdDevice,item.NamePackage,jsonObj);
+    if(guidBadge) contextUI.BadgeDeleteItem(guidBadge);
     contextUI.HideBackgroundNotification();
     //Output       
     contextUI.Output(result.toStringWithHead());

@@ -1,10 +1,8 @@
 # Create extension
 
-1. npm install -g yo
+1. npm install -g yo generator-code
 
-2. npm install -g yo generator-code
-
-3. Create App: yo code
+2. Create App: yo code
 
 Links:
 
