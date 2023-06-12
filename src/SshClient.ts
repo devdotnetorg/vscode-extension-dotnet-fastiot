@@ -304,7 +304,11 @@ export class SshClient {
       //main 
       await ssh.connect();
       result=new IotResult(StatusResult.Ok,`Connection established via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}.`);
-      if(returnSSH2Promise) result.returnObject=ssh; else await ssh.close();
+      if(returnSSH2Promise) {
+        result.returnObject=ssh;
+       }else {
+        await ssh.close();
+       }
     }
     catch (err: any) {
       let msg = `Unable to connect via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}.`;
