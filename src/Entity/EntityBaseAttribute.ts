@@ -23,9 +23,7 @@ export class EntityBaseAttribute {
   private _author:string="";  
   public get Author(): string {
     return this._author;}
-  private _label:string="";  
-  public get Label(): string {
-    return this._label;}
+  public Label: string="";
   private _detail:string="";  
   public get Detail(): string {
     return this._detail;}
@@ -70,7 +68,7 @@ export class EntityBaseAttribute {
       this._releaseDate=new Date(obj.releaseDate);
       this._forVersionExt=obj.forVersionExt;
       this._author=obj.author;
-      this._label=obj.label;
+      this.Label=obj.label;
       this._detail=obj.detail;
       this._description=obj.description;
       this._language=obj.language;

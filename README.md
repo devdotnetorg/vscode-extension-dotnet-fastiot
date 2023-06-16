@@ -44,6 +44,7 @@ Recommended additional extensions that improve the development process and inter
 
 - **Processor.** ARMv7 or ARMv8;
 - **OS version.** Linux distribution based on Ubuntu 20.04 LTS or later (Focal Fossa), or Debian 10.11 or later (Buster). It is recommended to use the distribution kit [Armbian](https://www.armbian.com/ "Armbian - Linux for ARM development boards").
+- **Software.** OpenSSH SSH server.
 
 ## Getting started
 

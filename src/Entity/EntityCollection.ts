@@ -42,6 +42,10 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public Add(value:T):boolean
   {
     try {
+      //unique label
+      if(!this.isUniqueLabel(value.Attributes.Label)) {
+        value.Attributes.Label=`[${value.Attributes.Id}] ${value.Attributes.Label}`;
+      }
       this._items.set(value.Attributes.Id,value);
       return true;
     } catch (err: any){
@@ -393,6 +397,16 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     //clear
     const dir=this.GetDirEntitiesCallback(EntityType.system);
     if (fs.existsSync(dir)) fs.emptyDirSync(dir);
+  }
+
+  private isUniqueLabel(searchLabel:string):boolean
+  {
+    searchLabel=searchLabel.toLocaleLowerCase();
+    for (let [key, value] of this._items.entries()) {
+      if (value.Attributes.Label.toLocaleLowerCase() === searchLabel)
+        return false;
+    }
+    return true;
   }
 
 }
