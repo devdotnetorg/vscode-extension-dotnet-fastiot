@@ -2,8 +2,9 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { IotResult,StatusResult } from '../IotResult';
+import { IYamlValidator } from './IYamlValidator';
 
-export class YamlSchemaValidator {  
+export class YamlValidatorRedHat implements IYamlValidator {  
   private readonly _schemasFolderPath: string;
   
   constructor(schemasFolderPath: string){

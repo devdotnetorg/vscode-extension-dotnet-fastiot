@@ -411,7 +411,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
 }
 
-//TODO убрать, заменить на Interface IConfig
+//TODO убрать, заменить на Interface IConfig. Все еще под ???
 
 export interface IConfigEntityCollection {
   extVersion: string;

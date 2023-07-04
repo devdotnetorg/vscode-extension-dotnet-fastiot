@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import YAML from 'yaml';
-import { YamlSchemaValidator } from '../Validator/YamlSchemaValidator';
+import { YamlValidatorRedHat } from '../Validator/YamlValidatorRedHat';
+import { IYamlValidator } from '../Validator/IYamlValidator';
 
 export class EntityBaseAttribute {
   private _id:string="";  
@@ -40,27 +41,39 @@ export class EntityBaseAttribute {
   public get Tags(): Array<string> {
     return this._tags;}
   //Validation
-  public get IsValid(): boolean {
+  protected get IsValid(): boolean {
     if(this._validationErrors.length==0) return true;else return false;}
   protected _validationErrors:Array<string>=[]; 
   public get ValidationErrors(): Array<string> {
       return this._validationErrors;}
 
-  protected _schemasFolderPath: string;
+  protected readonly _pathFolderSchema: string;
+  protected readonly _fileNameSchemaRootYaml: string;
 
-  constructor(schemasFolderPath: string|undefined
+  constructor(pathFolderSchema:string,fileNameSchemaRootYaml:string
     ){
+      this._pathFolderSchema=pathFolderSchema;
+      this._fileNameSchemaRootYaml=fileNameSchemaRootYaml;
       this._validationErrors.push("non");
-      this._schemasFolderPath=schemasFolderPath ?? "non";
     }
 
-  protected Parse(filePath:string){
+  public InitBaseAttribute(yamlFilePath:string):boolean
+  {
+    let result:boolean;
+    result=this.ParseBaseAttribute(yamlFilePath);
+    if(!result) false;
+    result=this.PostCheckAfterParse(yamlFilePath);
+    //
+    return  result;
+  }
+
+  private ParseBaseAttribute(yamlFilePath:string):boolean{
     try {
       //validate
-      this.ValidateBaseAttribute(filePath);
-      if(!this.IsValid) return;
+      this.ValidateBaseAttribute(yamlFilePath);
+      if(!this.IsValid) return false;
       //
-      const file = fs.readFileSync(filePath, 'utf8');
+      const file = fs.readFileSync(yamlFilePath, 'utf8');
       const obj=YAML.parse(file);
       //one value
       this._id=obj.id;
@@ -109,16 +122,33 @@ export class EntityBaseAttribute {
       while(true)
       //next
     } catch (err: any){
-      this._validationErrors.push(`File: ${filePath} Error parsing attributes: ${err}`);
+      this._validationErrors.push(`File: ${yamlFilePath} Error parsing attributes: ${err}`);
     }
+    return this.IsValid;
+  }
+
+  private PostCheckAfterParse(yamlFilePath:string):boolean{
+    try {
+      //check id=""
+      if (this.Id=="") this._validationErrors.push("id cannot be empty");
+    } catch (err: any){
+      this._validationErrors.push(`File: ${yamlFilePath} Error PostCheckAfterParce: ${err}`);
+    }
+    return this.IsValid;
   }
 
   private ValidateBaseAttribute(yamlFilePath:string)
   {
     this._validationErrors=[];
-    //YamlSchemaValidator
-    let yamlSchemaValidator=new YamlSchemaValidator(this._schemasFolderPath);
-    let result = yamlSchemaValidator.ValidateSchema(yamlFilePath,"entitybase.schema.yaml");
+    //exist
+    if (!fs.existsSync(yamlFilePath))
+    {
+      this._validationErrors.push(`${yamlFilePath} file does not exist`);
+      return;
+    }
+    //YamlValidator
+    let yamlValidator:IYamlValidator=new YamlValidatorRedHat(this._pathFolderSchema);
+    let result = yamlValidator.ValidateSchema(yamlFilePath,this._fileNameSchemaRootYaml);
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();
   }

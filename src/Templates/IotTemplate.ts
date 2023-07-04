@@ -13,6 +13,27 @@ import { IotDevice } from '../IotDevice';
 import { IotConfiguration } from '../Configuration/IotConfiguration';
 import { FilesValidator } from '../Validator/FilesValidator';
 
+/*
+load order:
+Create:
+1) IotTemplate - constructor
+2) EntityBase - constructor
+3) IotTemplateAttribute - constructor
+4) EntityBaseAttribute - constructor
+Init:
+1) IotTemplate - Init
+2) EntityBase - Init
+3) EntityBaseAttribute - InitBaseAttribute
+4) EntityBaseAttribute - ParseBaseAttribute
+5) EntityBaseAttribute - ValidateBaseAttribute
+6) EntityBaseAttribute - PostCheckAfterParse
+7) EntityBase - ValidateBase
+8) IotTemplateAttribute - Init
+9) IotTemplateAttribute - Parse
+10) IotTemplateAttribute - Validate
+11) IotTemplate - Validate
+*/
+
 export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   public get StoragePath(): string {
     return this.RootDir+"\\storage";}
@@ -23,30 +44,27 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
 
   private _mergeDictionary:Map<string,string>= new Map<string,string>();
 
-  constructor(pathFolderSchemas: string
+  constructor(pathFolderSchema: string
     ){
-      super("template","templates",IotTemplateAttribute,pathFolderSchemas);
+      super("template","templates",IotTemplateAttribute,
+      pathFolderSchema,"template.fastiot.schema.yaml","template.fastiot.files.schema.json");
   }
 
   public Init(type:EntityType,yamlFilePath:string,recoverySourcePath?:string)
   {
     super.Init(type,yamlFilePath,recoverySourcePath);
     if(!this.IsValid) return;
-    //next
+    //Attributes
+    const isValidAttributes = this.Attributes.Init(yamlFilePath);
+    if(!isValidAttributes)
+        //error
+        this._validationErrors = this.Attributes.ValidationErrors.slice();
+    if(!this.IsValid) return;
     this.Validate();
-    //if(this.IsValid) this.Parse(filePath);
   }
 
   protected Validate(){
     this._validationErrors=[];
-    //checking folder structure
-    //FilesValidator
-    let filesValidator=new FilesValidator(this._pathFolderSchemas);
-    let result = filesValidator.ValidateFiles(this.RootDir,"template.files.schema.json");
-    const validationErrors=<Array<string>>result.returnObject;
-    this._validationErrors = validationErrors.slice();
-    //check id=""
-    if (this.Attributes.Id=="") this._validationErrors.push("id cannot be empty");
     // TODO: проверка наличия файлов для dotnetapp.csproj которые внутри
   }
 

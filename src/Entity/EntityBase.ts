@@ -6,6 +6,7 @@ import { EntityType } from './EntityType';
 import { EntityBaseAttribute } from './EntityBaseAttribute';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../IotResult';
+import { FilesValidator } from '../Validator/FilesValidator';
 
 export abstract class EntityBase<T extends EntityBaseAttribute> {
   protected readonly _entityLabel:string; //for understandable log
@@ -38,17 +39,23 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   public Attributes: T;
   public Type:EntityType=EntityType.none;
 
-  protected _pathFolderSchemas: string;
+  protected readonly _pathFolderSchema: string;
+  protected readonly _fileNameSchemaRootYaml: string;
+  protected readonly _fileNameSchemaDirStructure: string;
 
-  constructor( entityLabel:string, entitiesLabel:string,
-    TCreator: new(pathFolderSchemas?: string) => T,
-    pathFolderSchemas: string
+  constructor(entityLabel:string, entitiesLabel:string,
+    TCreator: new(pathFolderSchema:string,fileNameSchemaRootYaml:string) => T,
+    pathFolderSchema: string,
+    fileNameSchemaRootYaml: string, fileNameSchemaDirStructure: string
     ){
       this._entityLabel=entityLabel;
       this._entitiesLabel=entitiesLabel;
-      this.Attributes=new TCreator(pathFolderSchemas);
+      this.Attributes=new TCreator(pathFolderSchema,fileNameSchemaRootYaml);
       //
-      this._pathFolderSchemas=pathFolderSchemas;
+      this._pathFolderSchema=pathFolderSchema;
+      this._fileNameSchemaRootYaml=fileNameSchemaRootYaml;
+      this._fileNameSchemaDirStructure=fileNameSchemaDirStructure;
+      //
       this._validationErrors.push("non");
   }
 
@@ -58,31 +65,36 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       this.Type= type;
       this._recoverySourcePath=recoverySourcePath;
       this._yamlFilePath=yamlFilePath;
-      this.ValidateEntityBase();
-      if(!this.IsValid) return;
-      //if(this.IsValid) this.Parse(path);
-      let attributes = this.Attributes as any; 
-      attributes.Init(this.YAMLFilePath);
-      if(attributes.IsValid) {
-        //ok
-        //check if folder matches entity and id
-        if(this.RootNameDir!=attributes.Id)
-          this._validationErrors.push(`${this._entityLabel} folder name ${this.RootNameDir} `+
-            `does not match id value ${attributes.Id}.`+
-            `You need to rename the folder or change the ${this._entityLabel} id.`);
-      }else{
+      //Attributes
+      //let attributes = this.Attributes as any;
+      this._validationErrors=[];
+      const isValidAttributes = this.Attributes.InitBaseAttribute(this.YAMLFilePath);
+      if(!isValidAttributes)
         //error
-        this._validationErrors = attributes.ValidationErrors.slice();
-      }
+        this._validationErrors = this.Attributes.ValidationErrors.slice();
+      if(!this.IsValid) return;
+      //Base
+      this.ValidateBase();
+      if(!this.IsValid) return;
     } catch (err: any){
       this._validationErrors.push(`Error Init ${this._entitiesLabel}. Error: ${err}`);
     }
   }
   
-  private ValidateEntityBase(){
+  private ValidateBase(){
     this._validationErrors=[];
-    if (!fs.existsSync(this.YAMLFilePath)) 
-      this._validationErrors.push(`${this.YAMLFilePath} file does not exist`);
+    //checking folder structure
+    //FilesValidator
+    let filesValidator=new FilesValidator(this._pathFolderSchema);
+    let result = filesValidator.ValidateFiles(this.RootDir,this._fileNameSchemaDirStructure);
+    const validationErrors=<Array<string>>result.returnObject;
+    this._validationErrors = validationErrors.slice();
+    //check if folder matches entity and id
+        if(this.RootNameDir!=this.Attributes.Id)
+          this._validationErrors.push(`${this._entityLabel} folder name ${this.RootNameDir} `+
+            `does not match id value ${this.Attributes.Id}.`+
+            `You need to rename the folder or change the ${this._entityLabel} id.`);
+    //
   }
 
   public Move(destDir:string):IotResult {
