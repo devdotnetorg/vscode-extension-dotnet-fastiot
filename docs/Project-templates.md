@@ -20,7 +20,7 @@ Templates are used to create projects and add `launch.json` and `tasks.json` fil
 
 Templates are listed in load order in the extension. For example, if a template of type `user` has the same identifier `id` of the template with type `system`, then the template of type `user` will be ignored because the template of type `system` is already loaded.
 
-If the system template does not pass the check, it will be automatically deleted and replaced with a valid one. If the system template is deleted, it will also be automatically restored. System templates are automatically updated when you run an extension from [Github devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/ master/templates/system). Further, everything will be discussed using the example of the template [dotnet-console-runtime-info](/templates/system/dotnet-console-runtime-info).
+If the system template does not pass the check, it will be automatically deleted and replaced with a valid one. If the system template is deleted, it will also be automatically restored. System templates are automatically updated when you run an extension from [Github devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/tree/master/templates/system). Further, everything will be discussed using the example of the template [dotnet-console-runtime-info](/templates/system/dotnet-console-runtime-info).
 
 ## Template structure
 

@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IotResult,StatusResult } from '../IotResult';
 import { IYamlValidator } from './IYamlValidator';
+import { YamlRedHatServiceSingleton } from './YamlRedHatServiceSingleton';
 
 export class YamlValidatorRedHat implements IYamlValidator {  
   private readonly _schemasFolderPath: string;
@@ -11,12 +12,17 @@ export class YamlValidatorRedHat implements IYamlValidator {
       this._schemasFolderPath=schemasFolderPath;
   }
 
-  public ValidateSchema (yamlFilePath:string, schemaFileName:string):IotResult
+  public async ValidateSchema(yamlFilePath:string, schemaFileName:string):Promise<IotResult>
   {
     let result:IotResult;
     let validationErrors:Array<string>=[];
     let msg="";
     try {
+      const instanceExtension = YamlRedHatServiceSingleton.getInstance();
+      result=await instanceExtension.Activate();
+      if(result.Status==StatusResult.Error) 
+      return Promise.resolve(result);
+
       //source - https://www.npmjs.com/package/yaml-schema-validator-fork
       const validateSchema = require('yaml-schema-validator-fork');
       // validate a yml file
@@ -44,7 +50,8 @@ export class YamlValidatorRedHat implements IYamlValidator {
       validationErrors.push(result.toString());
     }
     result.returnObject=validationErrors;
-    return result;
+    
+    return Promise.resolve(result);
   }
  }
   
