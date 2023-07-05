@@ -330,7 +330,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
     }, undefined, context.subscriptions);
 	//FileSystemWatcher
-	//- "**/.vscode/*.json"
+	//- "**/.vscode/launch.json"
 	const reloadLaunchs = debounce( () => {
 		if(app.Config.Folder.WorkspaceDirectory) {
 			const lockFilePath=path.join(app.Config.Folder.WorkspaceDirectory,".vscode",".lockreadlaunch");
@@ -338,7 +338,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	});
 	const watcher: vscode.FileSystemWatcher =
-		vscode.workspace.createFileSystemWatcher("**/.vscode/launch.json", false, false, false);
+		vscode.workspace.createFileSystemWatcher("**/{.vscode,.vscode/launch.json}", false, false, false);
 	watcher.onDidChange((uri: vscode.Uri) => {
 		reloadLaunchs();
 	});
