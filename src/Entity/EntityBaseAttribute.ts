@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import YAML from 'yaml';
-import { YamlValidatorRedHat } from '../Validator/YamlValidatorRedHat';
+import { YamlValidatorFork } from '../Validator/YamlValidatorFork';
 import { IYamlValidator } from '../Validator/IYamlValidator';
 
 export class EntityBaseAttribute {
@@ -64,7 +64,7 @@ export class EntityBaseAttribute {
     if(!result) false;
     result=this.PostCheckAfterParse(yamlFilePath);
     //
-    return  result;
+    return result;
   }
 
   private ParseBaseAttribute(yamlFilePath:string):boolean{
@@ -147,7 +147,7 @@ export class EntityBaseAttribute {
       return;
     }
     //YamlValidator
-    let yamlValidator:IYamlValidator=new YamlValidatorRedHat(this._pathFolderSchema);
+    let yamlValidator:IYamlValidator=new YamlValidatorFork(this._pathFolderSchema);
     let result = yamlValidator.ValidateSchema(yamlFilePath,this._fileNameSchemaRootYaml);
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();

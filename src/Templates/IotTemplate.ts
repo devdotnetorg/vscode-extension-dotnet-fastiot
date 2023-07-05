@@ -47,12 +47,13 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   constructor(pathFolderSchema: string
     ){
       super("template","templates",IotTemplateAttribute,
-      pathFolderSchema,"template.fastiot.schema.yaml","template.fastiot.files.schema.json");
+      pathFolderSchema,"template.fastiot.schema.validator-fork.yaml","template.fastiot.files.schema.json");
   }
 
   public Init(type:EntityType,yamlFilePath:string,recoverySourcePath?:string)
   {
     super.Init(type,yamlFilePath,recoverySourcePath);
+    //
     if(!this.IsValid) return;
     //Attributes
     const isValidAttributes = this.Attributes.Init(yamlFilePath);

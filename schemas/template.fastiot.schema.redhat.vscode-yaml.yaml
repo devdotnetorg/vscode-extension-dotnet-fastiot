@@ -5,5 +5,9 @@ properties:
   id:
     type: string
     description: "Entity unique identifier"
+  id2:
+    type: string
+    description: "Id2 Entity unique identifier"
 required:
   - id
+  - id2

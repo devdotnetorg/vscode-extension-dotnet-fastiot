@@ -1,11 +1,25 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../IotResult';
 import { IYamlValidator } from './IYamlValidator';
 import { YamlRedHatServiceSingleton } from './YamlRedHatServiceSingleton';
+import { SSH2Stream } from 'ssh2-streams';
 
-export class YamlValidatorRedHat implements IYamlValidator {  
+/*
+Sample:
+  /init Extensin YamlRedHat
+	let instanceExtension = YamlRedHatServiceSingleton.getInstance();
+	let rez = await instanceExtension.ActivateAsync();
+  console.log(rez.toString());
+  const yamlFilePath="d:\\template.fastiot.yaml";
+  const schemaFilePath="d:\\template.fastiot.schema.redhat.vscode-yaml.yaml";
+  rez = await instanceExtension.ValidateSchemaAsync(yamlFilePath,schemaFilePath);
+  console.log(rez.toString());
+*/
+
+export class YamlValidatorRedHat {  
   private readonly _schemasFolderPath: string;
   
   constructor(schemasFolderPath: string){
@@ -16,42 +30,33 @@ export class YamlValidatorRedHat implements IYamlValidator {
   {
     let result:IotResult;
     let validationErrors:Array<string>=[];
-    let msg="";
     try {
+      //init
       const instanceExtension = YamlRedHatServiceSingleton.getInstance();
-      result=await instanceExtension.Activate();
-      if(result.Status==StatusResult.Error) 
-      return Promise.resolve(result);
-
-      //source - https://www.npmjs.com/package/yaml-schema-validator-fork
-      const validateSchema = require('yaml-schema-validator-fork');
-      // validate a yml file
-      const schemaPath=`${this._schemasFolderPath}\\${schemaFileName}`;
-      var schemaErrors = validateSchema(yamlFilePath,
-        {
-          schemaPath: schemaPath,
-          logLevel: 'verbose'
-        }
-      );
-      //convert
-      //schemaErrors = [{path: 'person.id', message: 'person.id must be a String'}]
-      if(schemaErrors) {
-        schemaErrors.forEach((element:any) => {
-          const path=element.path;
-          const message=element.message;
-          msg=`path: ${path}, message: ${message}`;
-          validationErrors.push(msg);
-        });
-      } 
-      result = new IotResult(StatusResult.Ok);
+      result= await instanceExtension.ActivateAsync();
+      if(result.Status==StatusResult.Error) {
+        validationErrors.push(result.toString());
+        result.returnObject=validationErrors;
+        return Promise.resolve(result);
+      }
+      //process
+      const schemaFilePath=path.join(this._schemasFolderPath, schemaFileName);
+      result= await instanceExtension.ValidateSchemaAsync(yamlFilePath,schemaFilePath);
+      if(result.Status==StatusResult.Error) {
+        validationErrors.push(result.toString());
+        result.returnObject=validationErrors;
+        return Promise.resolve(result);
+      }
+      //result
+      result.AddMessage(`${yamlFilePath} file has been validated`);
     } catch (err: any){
       //result
-      result = new IotResult(StatusResult.Error,`VaidateSchema: pathFileYml = ${yamlFilePath}, schemaFileName = ${schemaFileName}`,err);
+      const errorMsg=`Error ValidateSchema. pathFileYml = ${yamlFilePath}, schemaFileName = ${schemaFileName}`;
+      result = new IotResult(StatusResult.Error,errorMsg,err);
       validationErrors.push(result.toString());
+      result.returnObject=validationErrors;
     }
-    result.returnObject=validationErrors;
-    
-    return Promise.resolve(result);
+    return result;
   }
- }
+}
   
