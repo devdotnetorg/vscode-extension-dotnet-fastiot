@@ -130,31 +130,22 @@ export class IoTHelper {
   static UnpackFromZip(fileZipPath:string, unpackDir:string):IotResult {
     let result:IotResult;
     try {
-      let filename = path.basename(fileZipPath);
-      filename=filename.substring(0,filename.length-4);
-      unpackDir=unpackDir+"\\"+filename;
       //clear
-      if (fs.existsSync(unpackDir)) fs.emptyDirSync(unpackDir);
-      //mkdir
-      IoTHelper.MakeDirSync(unpackDir);
+      if (fs.existsSync(unpackDir)) {
+        fs.emptyDirSync(unpackDir);
+        fs.removeSync(unpackDir);
+      }
+      //create root dir
+      const rootDir = path.dirname(unpackDir);
+      IoTHelper.MakeDirSync(rootDir);
       //unpack
       var AdmZip = require("adm-zip");
       var zip = new AdmZip(fileZipPath);
       // extracts everything
       zip.extractAllTo(/*target path*/ unpackDir, /*overwrite*/ true);
-      /*
-      const zip = new StreamZip.async({ file: fileZipPath });
-      const entriesCount = await zip.entriesCount;
-      console.log(`Entries read: ${entriesCount}`);
-
-      const count = await zip.extract(null, unpackDir);
-      console.log(`Extracted ${count} entries`);
-      await zip.close();
-      */
       result = new IotResult(StatusResult.Ok);
-      result.returnObject=unpackDir;
     } catch (err: any){
-      result = new IotResult(StatusResult.Error,`Error while unpacking file ${fileZipPath}`,err);
+      result = new IotResult(StatusResult.Error,`Error while unpacking file ${fileZipPath} to dir ${unpackDir}`,err);
     }
     //result
     return result;

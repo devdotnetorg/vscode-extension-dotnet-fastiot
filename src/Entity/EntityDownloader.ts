@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import YAML from 'yaml';
-import axios from 'axios';
 import { IotResult,StatusResult } from '../IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { networkHelper } from '../Helper/networkHelper';
@@ -16,24 +15,17 @@ export class EntityDownloader {
     let result:IotResult;
     try {
       //download *.zip
-      const fileZipPath=`${destPath}\\${item.Id}.zip`;
-      if (fs.existsSync(fileZipPath)) fs.removeSync(fileZipPath);
-      await networkHelper.DownloadFileHttp(item.Url,fileZipPath);
+      const fileZipPath = path.join(destPath, `${item.Id}.zip`);
+      result=await networkHelper.DownloadFileHttp(item.Url,fileZipPath);
+      if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
       //unpack
-      let unpackPath=`${destPath}\\${item.Id}`;
-      //delete
-      if (fs.existsSync(unpackPath)) {
-        fs.emptyDirSync(unpackPath);
-        fs.removeSync(unpackPath);
-      }
-      var AdmZip = require("adm-zip");
-      var zip = new AdmZip(fileZipPath);
-      // extracts everything
-      zip.extractAllTo(/*target path*/ unpackPath, /*overwrite*/ true);
+      const unpackDir = path.join(destPath, item.Id);
+      result=IoTHelper.UnpackFromZip(fileZipPath,unpackDir);
+      if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
       //delete zip
       fs.removeSync(fileZipPath);
       result = new IotResult(StatusResult.Ok);
-      result.returnObject=unpackPath;
+      result.returnObject=unpackDir;
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Unable to download file ${item.Url}.`,err);
     }
@@ -47,13 +39,10 @@ export class EntityDownloader {
     let listDownload:Array<EntityDownload>=[];
     try {
       //download templatelist.fastiot.yaml
-      const response = await axios.get(url);
-      if(response.status!=200){
-        result = new IotResult(StatusResult.Error,`Unable to download file ${url}. Server response http code ${response.status}`,`${response.statusText}`);
-        return Promise.resolve(result);
-      }
+      result=await networkHelper.DownloadFileHttp(url);
+      if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
       //parse templatelist.fastiot.yaml
-      const obj=YAML.parse(response.data); 
+      const obj=YAML.parse(result.returnObject); 
       //entity download
       let index=0; 
       do { 				

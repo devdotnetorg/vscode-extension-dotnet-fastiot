@@ -151,8 +151,8 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   public Recovery():IotResult
   {
     let result:IotResult;
-    const fileZipPath=`${this.RecoverySourcePath}\\${this.RootNameDir}.zip`;
-    result= IoTHelper.UnpackFromZip(fileZipPath,path.dirname(this.RootDir));
+    const fileZipPath= path.join(this.RecoverySourcePath ?? "non", `${this.RootNameDir}.zip`);
+    result= IoTHelper.UnpackFromZip(fileZipPath,this.RootDir);
     if(result.Status==StatusResult.Error) result.AddMessage(`${this._entityLabel} restore error`);
     //result
     return result;
