@@ -114,7 +114,7 @@ export class networkHelper {
         outputLocationPath=path.join(outputLocationPath, fileName);
       }
       const finishedDownload = promisify(stream.finished);
-      result = new IotResult(StatusResult.Ok,"File downloaded");
+      result = new IotResult(StatusResult.Ok,`File downloaded Url ${fileUrl}`);
       if(outputLocationPath) {
         const response = await axios({
           method: 'GET',

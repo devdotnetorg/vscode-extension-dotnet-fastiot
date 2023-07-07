@@ -11,7 +11,11 @@ import { FilesValidator } from '../Validator/FilesValidator';
 export abstract class EntityBase<T extends EntityBaseAttribute> {
   protected readonly _entityLabel:string; //for understandable log
   protected readonly _entitiesLabel:string; //for understandable log
-  private _yamlFilePath:string=""; //YAML file
+  private _yamlFilePath:string=""; 
+  /**
+   * YAML main file *.fastiot.yaml. Ex: ..\dotnet-console\template.fastiot.yaml
+   *
+   */
   public get YAMLFilePath(): string {
     return this._yamlFilePath;}
   public get RootDir(): string {
@@ -100,6 +104,8 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   public Move(destDir:string):IotResult {
     let result:IotResult;
     try {
+      //dir
+      destDir=path.join(destDir, this.Attributes.Id);
       //delete
       if (fs.existsSync(destDir)) {
         fs.emptyDirSync(destDir);
@@ -111,6 +117,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       const fileName=this.YAMLFilePath.substring(this.RootDir.length+1);
       this._yamlFilePath= path.join(destDir, fileName);
       result = new IotResult(StatusResult.Ok,`${this._entityLabel}. ${this.RootDir} folder successfully moved to ${destDir} folder`);
+      result.returnObject=destDir;
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Unable to move ${this._entityLabel} from folder ${this.RootDir} to folder ${destDir}`,err);
     }

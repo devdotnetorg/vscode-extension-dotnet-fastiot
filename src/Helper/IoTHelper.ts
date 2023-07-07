@@ -130,6 +130,11 @@ export class IoTHelper {
   static UnpackFromZip(fileZipPath:string, unpackDir:string):IotResult {
     let result:IotResult;
     try {
+      //no file
+      if (!fs.existsSync(fileZipPath)) {
+        result = new IotResult(StatusResult.Error,`Unpack file not found ${fileZipPath}`);
+        return result;
+      }
       //clear
       if (fs.existsSync(unpackDir)) {
         fs.emptyDirSync(unpackDir);
@@ -143,7 +148,7 @@ export class IoTHelper {
       var zip = new AdmZip(fileZipPath);
       // extracts everything
       zip.extractAllTo(/*target path*/ unpackDir, /*overwrite*/ true);
-      result = new IotResult(StatusResult.Ok);
+      result = new IotResult(StatusResult.Ok, `The archive was successfully unpacked, path ${unpackDir}`);
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Error while unpacking file ${fileZipPath} to dir ${unpackDir}`,err);
     }

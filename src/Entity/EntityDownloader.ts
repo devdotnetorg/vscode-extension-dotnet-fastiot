@@ -18,14 +18,7 @@ export class EntityDownloader {
       const fileZipPath = path.join(destPath, `${item.Id}.zip`);
       result=await networkHelper.DownloadFileHttp(item.Url,fileZipPath);
       if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
-      //unpack
-      const unpackDir = path.join(destPath, item.Id);
-      result=IoTHelper.UnpackFromZip(fileZipPath,unpackDir);
-      if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
-      //delete zip
-      fs.removeSync(fileZipPath);
-      result = new IotResult(StatusResult.Ok);
-      result.returnObject=unpackDir;
+      result.returnObject=fileZipPath;
     } catch (err: any){
       result = new IotResult(StatusResult.Error,`Unable to download file ${item.Url}.`,err);
     }

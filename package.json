@@ -382,6 +382,11 @@
 				"category": "FastIoT"
 			},
 			{
+				"command": "viewTemplates.ImportTemplate",
+				"title": "Import template",
+				"category": "FastIoT"
+			},
+			{
 				"command": "viewTemplates.RestoreSystemTemplates",
 				"title": "Restore/upgrade system templates (offline)",
 				"category": "FastIoT"
@@ -476,15 +481,23 @@
 				},
 				{
 					"command": "viewTemplates.ReloadTemplates",
-					"when": "view == viewTemplates"
-				},
-				{
-					"command": "viewTemplates.OpenTemplateFolder",
-					"when": "view == viewTemplates"
+					"when": "view == viewTemplates",
+					"group": "2_workspace"
 				},
 				{
 					"command": "viewTemplates.RestoreSystemTemplates",
-					"when": "view == viewTemplates"
+					"when": "view == viewTemplates",
+					"group": "2_workspace"
+				},
+				{
+					"command": "viewTemplates.ImportTemplate",
+					"when": "view == viewTemplates",
+					"group": "7_modification"
+				},
+				{
+					"command": "viewTemplates.OpenTemplateFolder",
+					"when": "view == viewTemplates",
+					"group": "7_modification"
 				}
 			],
 			"view/item/context": [
