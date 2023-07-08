@@ -26,6 +26,8 @@ export class IotConfiguration {
   public get BitsKeySshDevice():number {
     const KeySsh = this.InitTypeAndBitsKeySshDevice();
     return KeySsh.BitsKey;}
+  public get DebugAppFolderDevice():string {
+    return <string>vscode.workspace.getConfiguration().get('fastiot.device.debug.app.folder');}
   public get TemplateTitleLaunch():string {
     return <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');}
   public Folder: IotConfigurationFolder;

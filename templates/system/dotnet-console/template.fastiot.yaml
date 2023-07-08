@@ -4,9 +4,9 @@ id: dotnet-console # unique
 #isVisible: yes # yes,no. Related to the dependsOn parameter. Coming in one of the next version
 platform: # win32, linux. Only Windows is currently supported
   - win32
-version: "0.2"
-releaseDate: "2023-03-12" # YYYY-MM-DD
-forVersionExt: 0.3.2
+version: "0.3"
+releaseDate: "2023-07-08" # YYYY-MM-DD
+forVersionExt: 0.4.1
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT

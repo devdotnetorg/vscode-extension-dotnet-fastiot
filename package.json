@@ -5,7 +5,7 @@
 	"icon": "assets/fastiot-logo-256.png",
 	"license": "LGPL-3.0-only",
 	"preview": true,
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"publisher": "devdotnetorg",
 	"private": "false",
 	"identity": {
@@ -103,6 +103,11 @@
 						"type": "number",
 						"default": 0,
 						"markdownDescription": "Custom key length in bits. Replaces `#fastiot.device.ssh.keytype#`. For example `256`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+					},
+					"fastiot.device.debug.app.folder": {
+						"type": "string",
+						"default": "~/fastiot/debugapps",
+						"markdownDescription": "Folder to put debug apps on the device. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.launch.templatetitle": {
 						"type": "string",

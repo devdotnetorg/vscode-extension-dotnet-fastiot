@@ -410,6 +410,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     this._mergeDictionary.set("%{template.storage.path.aswindows}",<string>storagePath);
     const userName=os.userInfo().username;
     this._mergeDictionary.set("%{os.userinfo.username}",<string>userName);
+    this._mergeDictionary.set("%{debug.app.folder}",<string>config.DebugAppFolderDevice);
   }
 
   private CreateDictionaryStep5DefinePathToProject(dstPath:string) {
