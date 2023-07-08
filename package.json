@@ -36,25 +36,12 @@
 		"url": "https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues",
 		"email": "fastiot@devdotnet.org"
 	},
-	"activationEvents": [
-		"onView:viewDevices",
-		"onView:viewLaunchs",
-		"onView:viewTemplates",
-		"onCommand:viewDevices.AddDevice",
-		"onCommand:viewDevices.DiscoveryDevice",
-		"onCommand:viewDevices.OpenFolderSshKeys",
-		"onCommand:viewLaunchs.Add",
-		"onCommand:viewTemplates.ReloadTemplates",
-		"onCommand:viewTemplates.OpenTemplateFolder",
-		"onCommand:viewTemplates.RestoreSystemTemplates",
-		"onCommand:viewTemplates.CreateProject"
-	],
 	"os": [
 		"win32"
 	],
 	"recommendations": [
 		"ms-dotnettools.csharp",
-		"jmrog.vscode-nuget-package-manager",
+		"aliasadidev.nugetpackagemanagergui",
 		"plorefice.devicetree",
 		"IBM.output-colorizer"
 	],
@@ -119,12 +106,12 @@
 						"default": {},
 						"description": "Configuration of all devices in JSON format."
 					},
-					"fastiot.isupdate": {
+					"fastiot.entities.isupdate": {
 						"type": "boolean",
 						"default": true,
 						"markdownDescription": "Update templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-					"fastiot.updateinterval": {
+					"fastiot.entities.updateinterval": {
 						"type": "number",
 						"default": 24,
 						"enum": [
@@ -161,7 +148,7 @@
 						"default": {},
 						"description": "Technical built-in config."
 					},
-					"fastiot.debug": {
+					"fastiot.entities.debug": {
 						"type": "boolean",
 						"default": false,
 						"markdownDescription": "Debug mode. Used to debug templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
@@ -706,20 +693,20 @@
 		"@types/ssh2-streams": "^0.1.9",
 		"adm-zip": "^0.5.10",
 		"axios": "^1.4.0",
-		"compare-versions": "^6.0.0-rc.1",
+		"compare-versions": "^6.0.0",
 		"fs-extra": "^11.1.1",
 		"ip": "^1.1.8",
-		"local-devices": "^4.0.0",
+		"local-devices": "^3.0.0",
 		"pingman": "^2.0.0",
 		"platform-folders": "^0.6.0",
 		"ssh2": "^1.13.0",
 		"ssh2-promise": "^1.0.3",
 		"tcp-port-used": "^1.0.2",
-		"utimes": "^5.1.1",
+		"utimes": "^4.0.4",
 		"uuid": "^9.0.0",
 		"xmldom": "^0.6.0",
 		"xpath": "0.0.32",
-		"yaml": "^2.2.2",
+		"yaml": "^2.3.1",
 		"yaml-schema-validator-fork": "^0.2.0"
 	}
 }

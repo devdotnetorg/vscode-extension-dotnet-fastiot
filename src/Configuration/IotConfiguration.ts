@@ -32,9 +32,9 @@ export class IotConfiguration {
     return <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');}
   public Folder: IotConfigurationFolder;
   public get IsUpdateEntities():boolean { //Template update
-    return <boolean>vscode.workspace.getConfiguration().get('fastiot.isupdate');}
+    return <boolean>vscode.workspace.getConfiguration().get('fastiot.entities.isupdate');}
   public get UpdateIntervalEntitiesHours():number { //Template update
-    return <number>vscode.workspace.getConfiguration().get('fastiot.updateinterval');
+    return <number>vscode.workspace.getConfiguration().get('fastiot.entities.updateinterval');
     //return 0;
   }
   private readonly _extVersion:string;
@@ -51,7 +51,7 @@ export class IotConfiguration {
   public get LoadTemplatesOnStart():boolean {
     return <boolean>vscode.workspace.getConfiguration().get('fastiot.template.loadonstart');}
   public get DebugMode():boolean {
-    return <boolean>vscode.workspace.getConfiguration().get('fastiot.debug');}
+    return <boolean>vscode.workspace.getConfiguration().get('fastiot.entities.debug');}
   public get Loglevel():LogLevel {
     return <LogLevel>vscode.workspace.getConfiguration().get('fastiot.loglevel');}
   
