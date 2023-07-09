@@ -81,7 +81,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
     //checking folder structure
     //FilesValidator
     let filesValidator=new FilesValidator(this._pathFolderSchema);
-    let result = filesValidator.ValidateDirStructureBySchema(this.RootDir,this._fileNameSchemaDirStructure);
+    let result = filesValidator.ValidateFiles(this.RootDir,this._fileNameSchemaDirStructure);
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();
     //check if folder matches entity and id
