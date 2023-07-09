@@ -12,15 +12,9 @@ export class EntityBaseAttribute {
   private _version:string="";  
   public get Version(): string {
     return this._version;}
-  private _platform:Array<string>=[];  
-  public get platform(): Array<string> {
-    return this._platform;}
   private _releaseDate:Date=new Date();  
   public get ReleaseDate(): Date {
     return this._releaseDate;}
-  private _forVersionExt:string="";  
-  public get ForVersionExt(): string {
-    return this._forVersionExt;}
   private _author:string="";  
   public get Author(): string {
     return this._author;}
@@ -31,9 +25,12 @@ export class EntityBaseAttribute {
   private _description:string="";  
   public get Description(): string {
     return this._description;}
-  private _language:string="";  
-  public get Language(): string {
-    return this._language;}
+  private _forVersionExt:string="";  
+  public get ForVersionExt(): string {
+    return this._forVersionExt;}
+  private _platform:Array<string>=[];  
+  public get platform(): Array<string> {
+    return this._platform;}
   private _endDeviceArchitecture:Array<string>=[]; 
   public get EndDeviceArchitecture(): Array<string> {
     return this._endDeviceArchitecture;}
@@ -84,7 +81,6 @@ export class EntityBaseAttribute {
       this.Label=obj.label;
       this._detail=obj.detail;
       this._description=obj.description;
-      this._language=obj.language;
       //arrays
       let index=0; 
       //platform
@@ -148,7 +144,7 @@ export class EntityBaseAttribute {
     }
     //YamlValidator
     let yamlValidator:IYamlValidator=new YamlValidatorFork(this._pathFolderSchema);
-    let result = yamlValidator.ValidateSchema(yamlFilePath,this._fileNameSchemaRootYaml);
+    let result = yamlValidator.ValidateFileBySchema(yamlFilePath,this._fileNameSchemaRootYaml);
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();
   }

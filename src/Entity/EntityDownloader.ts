@@ -5,10 +5,15 @@ import YAML from 'yaml';
 import { IotResult,StatusResult } from '../IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { networkHelper } from '../Helper/networkHelper';
+import { YamlValidatorFork } from '../Validator/YamlValidatorFork';
+import { IYamlValidator } from '../Validator/IYamlValidator';
 
 export class EntityDownloader {
-  constructor(
-    ){}
+  protected readonly _pathFolderSchema;
+  constructor(pathFolderSchema: string){
+    this._pathFolderSchema=pathFolderSchema;
+
+  }
 
   public async DownloadEntity(item:EntityDownload,destPath:string):Promise<IotResult>
   {
@@ -26,20 +31,53 @@ export class EntityDownloader {
     return Promise.resolve(result);
   }
 
-  public async GetDownloadListEntity(url:string):Promise<IotResult>
+  public async GetDownloadListEntities(url:string):Promise<IotResult>
+  {
+    let result:IotResult;
+    const errMsg=`Error loading entity list ${url}`;
+    try {
+      //download templatelist.fastiot.yaml
+      result=await networkHelper.DownloadFileHttp(url);
+      if(result.Status!=StatusResult.Ok) {
+        result.AddMessage(errMsg);
+        return Promise.resolve(result);
+      }
+      let listEntities=<string>result.returnObject;
+      //validate
+      let yamlValidator:IYamlValidator=new YamlValidatorFork(this._pathFolderSchema);
+      const yamlObj=YAML.parse(listEntities);
+      const schemaFileName="templatelist.fastiot.schema.validator-fork.yaml";
+      result = yamlValidator.ValidateObjBySchema(yamlObj,schemaFileName);
+      if(result.Status!=StatusResult.Ok) {
+        result.AddMessage(errMsg);
+        return Promise.resolve(result);
+      }
+      const validationErrors=<Array<string>>result.returnObject;
+      if(validationErrors.length>0) {
+        result = new IotResult(StatusResult.Error,`File validation error ${url}. schemaFileName = ${schemaFileName}`);
+        result.AddMessage(IoTHelper.ValidationErrorsToString(validationErrors));
+        return Promise.resolve(result);
+      }
+      //parse
+      result = await this.ParseDownloadListEntities(yamlObj,url);
+      result.AddMessage("Got a list of entities to update");
+    } catch (err: any){
+      result = new IotResult(StatusResult.Error,`File parsing error ${url}.`,err);
+    }
+    //result
+    return Promise.resolve(result);
+  }
+
+  protected async ParseDownloadListEntities(yamlObj:any,url:string):Promise<IotResult>
   {
     let result:IotResult;
     let listDownload:Array<EntityDownload>=[];
     try {
-      //download templatelist.fastiot.yaml
-      result=await networkHelper.DownloadFileHttp(url);
-      if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
+      //YamlValidator
       //parse templatelist.fastiot.yaml
-      const obj=YAML.parse(result.returnObject); 
-      //entity download
       let index=0; 
       do { 				
-            let item=obj.entitys[index];
+            let item=yamlObj.entities[index];
             if(item) {
               const downloadEntity=this.ParseEntityDownload(item,url);
               if (downloadEntity) listDownload.push(downloadEntity);
@@ -49,7 +87,7 @@ export class EntityDownloader {
           }  
       while(true)
     } catch (err: any){
-        result = new IotResult(StatusResult.Error,`Unable to download file ${url}.`,err);
+        result = new IotResult(StatusResult.Error,`File parsing error ${url}.`,err);
         return Promise.resolve(result);
     }
     //result

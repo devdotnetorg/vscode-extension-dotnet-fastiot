@@ -1,0 +1,14 @@
+# for https://www.npmjs.com/package/yaml-schema-validator-fork
+entities:
+  - id:
+      type: string
+      required: true
+    version:
+      type: string
+      required: true
+    forVersionExt:
+      type: string
+      required: true
+    platform:
+    - type: string
+      required: true

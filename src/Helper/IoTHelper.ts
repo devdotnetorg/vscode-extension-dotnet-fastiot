@@ -246,4 +246,14 @@ export class IoTHelper {
     cp.exec(fullpath, undefined);
   }
 
+  static ValidationErrorsToString(validationErrors:string[]): string {
+    let msg=`Validation messages:`;
+    let index=1;
+    validationErrors.forEach((item) => {
+      msg=`${msg}\n${index}. ${item}`;
+      index++;
+    });
+    return msg;
+  }
+
 }

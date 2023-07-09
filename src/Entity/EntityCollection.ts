@@ -108,14 +108,14 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
   public SelectByEndDeviceArchitecture(endDeviceArchitecture?:string):Array<T>
   {
-    let listEntitys:Array<T>=[];
-    if(!endDeviceArchitecture) return listEntitys;
+    let listEntities:Array<T>=[];
+    if(!endDeviceArchitecture) return listEntities;
     this._items.forEach(entiny => {
       //Entiny
       let found=entiny.Attributes.EndDeviceArchitecture.find(value=>value==endDeviceArchitecture);
-      if(found) listEntitys.push(entiny);
+      if(found) listEntities.push(entiny);
     });
-    return listEntitys;
+    return listEntities;
   }
 
   public FindById(idEntity:string):T|undefined
@@ -127,7 +127,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   {
     let result:IotResult;
     try {
-      const entitysCountBegin=this.Count;
+      const entitiesCountBegin=this.Count;
       //Recovery
       let recovery = new EntityRecovery(); 
       if(type==EntityType.system) {
@@ -147,7 +147,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         await this.LoadOneEntityFromFolder(dir,type);
       }
       //result
-      if((this.Count-entitysCountBegin)>0) {
+      if((this.Count-entitiesCountBegin)>0) {
         result= new IotResult(StatusResult.Ok,`Loading ${type} ${this._entitiesLabel} from ${pathFolder} folder successfully completed`);
         result.logLevel=LogLevel.Debug;
       }else{
@@ -246,7 +246,8 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       }else{
         result = new IotResult(StatusResult.Error,`The ${this._entityLabel} ${entity.RootDir} has not been validated.`);
         this.CreateEvent(result);
-        this.CreateEvent(entity.ValidationErrorsToString,LogLevel.Debug);
+        this.CreateEvent(IoTHelper.ValidationErrorsToString(entity.ValidationErrors),
+          LogLevel.Debug);
         //delete system entity
         if(!isTest&&type==EntityType.system) {
           result= entity.Remove();
@@ -263,10 +264,10 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   {
     //download list
     const destPath= this.GetDirEntitiesCallback(type);
-    let downloader = new EntityDownloader();
+    let downloader = new EntityDownloader(this.Config.schemasFolderPath);
     let result:IotResult;
     this.CreateEvent(`🔗 Downloading a list of ${this._entitiesLabel} to update: ${url}`,LogLevel.Debug);
-    result= await downloader.GetDownloadListEntity(url);
+    result= await downloader.GetDownloadListEntities(url);
     if(result.Status==StatusResult.Error) {
       result.AddMessage(`Error updating ${type} ${this._entitiesLabel}`);
       return Promise.resolve(result);

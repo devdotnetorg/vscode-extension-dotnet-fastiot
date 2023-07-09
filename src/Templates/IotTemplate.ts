@@ -258,17 +258,17 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       let dataEntity:string= fs.readFileSync(fileEntityPath,'utf8');
       dataEntity=IoTHelper.DeleteComments(dataEntity);
       const fileInsertEntityPath=`${this.TemplatePath}\\.vscode\\insert_${entity}_key.json`;
-      let insertDataEntitys:string= fs.readFileSync(fileInsertEntityPath,'utf8');
-      insertDataEntitys=IoTHelper.DeleteComments(insertDataEntitys);
+      let insertDataEntities:string= fs.readFileSync(fileInsertEntityPath,'utf8');
+      insertDataEntities=IoTHelper.DeleteComments(insertDataEntities);
       //toJSON
       fs.writeFileSync(debugFilePath, dataEntity,undefined);
       let jsonDataEntity = JSON.parse(dataEntity);
-      fs.writeFileSync(debugFilePath, insertDataEntitys,undefined);
-      const jsonInsertDataEntitys = JSON.parse(insertDataEntitys);
-      //insert entitys
+      fs.writeFileSync(debugFilePath, insertDataEntities,undefined);
+      const jsonInsertDataEntities = JSON.parse(insertDataEntities);
+      //insert entities
       let index=0;    
       do {
-        let jsonInsertDataEntity=jsonInsertDataEntitys.values[index];
+        let jsonInsertDataEntity=jsonInsertDataEntities.values[index];
         if(jsonInsertDataEntity)
         {
           if(entity=="launch") {

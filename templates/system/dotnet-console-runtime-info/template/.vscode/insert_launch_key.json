@@ -11,7 +11,7 @@
 			"request": "launch",
 			"program": "dotnet",
 			"args": ["./%{project.name}.dll"],
-			"cwd": "~/fastiot/debugapps/%{project.name}",
+			"cwd": "%{debug.app.folder}/%{project.name}",
 			"stopAtEntry": false,
 			"console": "integratedTerminal",
 			"env": {
@@ -45,7 +45,7 @@
 			"request": "launch",
 			"program": "dotnet",
 			"args": ["./%{project.name}.dll"],
-			"cwd": "~/fastiot/debugapps/%{project.name}",
+			"cwd": "%{debug.app.folder}/%{project.name}",
 			"stopAtEntry": false,
 			"console": "integratedTerminal",
 			"env": {

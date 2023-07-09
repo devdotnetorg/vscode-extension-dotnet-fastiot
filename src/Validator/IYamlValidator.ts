@@ -7,5 +7,6 @@ import { IotTemplate } from '../Templates/IotTemplate';
 import { LogLevel } from '../shared/LogLevel';
 
 export interface IYamlValidator {
-  ValidateSchema (yamlFilePath:string, schemaFileName:string):IotResult;
+  ValidateObjBySchema (yamlObj:any, schemaFileName:string):IotResult;
+  ValidateFileBySchema (yamlFilePath:string, schemaFileName:string):IotResult;
 }

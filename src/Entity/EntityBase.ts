@@ -31,15 +31,6 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   protected _validationErrors:Array<string>=[]; 
   public get ValidationErrors(): Array<string> {
       return this._validationErrors;}
-
-  public get ValidationErrorsToString(): string {
-    let msg=`Validation messages:`;
-    let index=1;
-    this._validationErrors.forEach((item) => {
-      msg=`${msg}\n${index}. ${item}`;
-      index++;
-    });
-    return msg;}
   public Attributes: T;
   public Type:EntityType=EntityType.none;
 
@@ -90,7 +81,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
     //checking folder structure
     //FilesValidator
     let filesValidator=new FilesValidator(this._pathFolderSchema);
-    let result = filesValidator.ValidateFiles(this.RootDir,this._fileNameSchemaDirStructure);
+    let result = filesValidator.ValidateDirStructureBySchema(this.RootDir,this._fileNameSchemaDirStructure);
     const validationErrors=<Array<string>>result.returnObject;
     this._validationErrors = validationErrors.slice();
     //check if folder matches entity and id

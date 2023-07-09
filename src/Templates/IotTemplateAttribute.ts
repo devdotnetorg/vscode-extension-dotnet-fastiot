@@ -6,6 +6,9 @@ import { EntityBaseAttribute } from '../Entity/EntityBaseAttribute';
 import { IoTHelper } from '../Helper/IoTHelper';
 
 export class IotTemplateAttribute extends EntityBaseAttribute {
+  private _language:string="";  
+  public get Language(): string {
+    return this._language;}
   private _typeProj:string="";  
   public get TypeProj(): string {
     return this._typeProj;}
@@ -53,6 +56,7 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
       const file = fs.readFileSync(yamlFilePath, 'utf8');
       const obj=YAML.parse(file);
       //one value
+      this._language=obj.language;
       this._typeProj=obj.typeProj;
       this._projName=obj.projName;
       this._mainFileProj=obj.mainFileProj;
