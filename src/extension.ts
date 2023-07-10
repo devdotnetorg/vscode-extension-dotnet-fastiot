@@ -24,7 +24,7 @@ import { IotDevicePackage } from './IotDevicePackage';
 import { IotDeviceDTO } from './IotDeviceDTO';
 import { IotDeviceGpiochip } from './IotDeviceGpiochip';
 //Devices.actions
-import { addDevice } from './actionsDevice/addDevice';
+import { addDevice_old } from './actionsDevice/addDevice_old';
 import { discoveryDevice } from './actionsDevice/discoveryDevice';
 import { refreshDevices } from './actionsDevice/refreshDevices';
 import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
@@ -150,7 +150,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	//Add new device		  
 	let commandAddDevice = vscode.commands.registerCommand('viewDevices.AddDevice', () => {	
-		addDevice(treeDataDevicesProvider,vscodeTreeViewDevices,app);	
+		addDevice_old(treeDataDevicesProvider,vscodeTreeViewDevices,app);	
 	});
 	//Add new device		  
 	let commandDiscoveryDevice = vscode.commands.registerCommand('viewDevices.DiscoveryDevice', () => {

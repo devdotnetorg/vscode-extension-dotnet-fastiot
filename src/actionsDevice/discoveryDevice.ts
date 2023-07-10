@@ -14,7 +14,7 @@ import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoTApplication } from '../IoTApplication';
 import { networkHelper } from '../Helper/networkHelper';
-import { addDevice } from './addDevice';
+import { addDevice_old } from './addDevice_old';
 
 export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication): Promise<void> {
     
@@ -157,7 +157,7 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
             itemDevices,{title: 'Discovered Devices',placeHolder:`Choose a device to add`});
         if(!SELECTED_ITEM) return;
         //add device
-        addDevice(treeData,treeView,app,SELECTED_ITEM.value,SELECTED_ITEM.tag);
+        addDevice_old(treeData,treeView,app,SELECTED_ITEM.value,SELECTED_ITEM.tag);
     } catch (err: any){
         vscode.window.showErrorMessage(`⚠️ Error: ${err}.`);
     }
