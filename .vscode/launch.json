@@ -29,6 +29,17 @@
 				"${workspaceFolder}/out/test/**/*.js"
 			],
 			"preLaunchTask": "${defaultBuildTask}"
-		}
+		},
+		{
+            "name": "Compile-webview (console)",
+            "type": "coreclr",
+            "request": "launch",
+			"program": "node",
+			"args": ["./esbuild.js"],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "integratedTerminal",
+
+        }
 	]
 }

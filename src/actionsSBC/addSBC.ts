@@ -4,34 +4,51 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { connectionTestDevice } from './connectionTestDevice';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../shared/BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoTApplication } from '../IoTApplication';
-import { WebViewAddDeviceSingleton } from '../UI/webview/WebViewAddDevice/WebViewAddDeviceSingleton';
-import { typeConnectDeviceConfig } from '../Types/typeConnectDeviceConfig';
+import { AddSBCConfigType } from '../Types/AddSBCConfigType';
+import { AddSBCPanelSingleton } from '../Panels/AddSBCPanelSingleton';
 
-export async function addDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication,
-    context: vscode.ExtensionContext, connectDeviceConfig?:typeConnectDeviceConfig): Promise<void> {
+export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication,
+    context: vscode.ExtensionContext, addSBCConfig?:AddSBCConfigType): Promise<void> {
     let result:IotResult;
     //fill data
-    if(!connectDeviceConfig) {
-        connectDeviceConfig={host:"192.168.50.75"};
+    if(!addSBCConfig) {
+        addSBCConfig={host:"192.168.50.75"};
     }
-    if(!connectDeviceConfig.port) connectDeviceConfig.port=22;
-    if(!connectDeviceConfig.username) connectDeviceConfig.username="root";
-    if(!connectDeviceConfig.debugusername) connectDeviceConfig.debugusername=
-        app.Config.UsernameAccountDevice;
-    if(!connectDeviceConfig.debuggroup) connectDeviceConfig.debuggroup=
-        app.Config.GroupAccountDevice;
-    if(!connectDeviceConfig.sshkeytype) connectDeviceConfig.sshkeytype=
+    if(!addSBCConfig.port) addSBCConfig.port=22;
+    if(!addSBCConfig.username) addSBCConfig.username="root";
+    if(!addSBCConfig.sshkeytype) addSBCConfig.sshkeytype=
         `${app.Config.TypeKeySshDevice}-${app.Config.BitsKeySshDevice}`;
+    if(!addSBCConfig.debugusername)
+        addSBCConfig.debugusername=app.Config.UsernameAccountDevice;
+    if(!addSBCConfig.managementusername)
+        addSBCConfig.managementusername="managementvscode";
+    if(!addSBCConfig.udevfilename)
+        addSBCConfig.udevfilename="20-gpio-fastiot.rules";
     //webView
-    let webViewAddDeviceSingleton = WebViewAddDeviceSingleton.getInstance();
-    await webViewAddDeviceSingleton.Init("addDeviceView","Add Device",context,connectDeviceConfig);
-    
+    let addSBCPanel = AddSBCPanelSingleton.getInstance();
+    result= await addSBCPanel.Activate("addSBCView","Add development board",context,addSBCConfig);
+    if(result.Status!=StatusResult.Ok) {
+        //Output
+        app.UI.Output(result);
+        //Message
+        app.UI.ShowNotification(result);
+        return;
+    }
+    addSBCConfig= await addSBCPanel.GetAnswer();
+    if(!addSBCConfig) return;
+    //options
+    if(!addSBCConfig.debuggroups)
+        addSBCConfig.debuggroups="gpio,video,i2c,spi,spidev,kmem,tty,dialout,input,audio";
+    if(!addSBCConfig.managementgroup)
+        addSBCConfig.managementgroup="sudo";
+    //Main process
+
+
     /*
     if(!hostName) {
         hostName = await vscode.window.showInputBox({

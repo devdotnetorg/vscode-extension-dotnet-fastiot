@@ -1,8 +1,9 @@
 .vscode/**
 .vscode-test/**
 out/test/**
-
+# !!! node_modules/**
 src/**
+esbuild.js
 .gitignore
 .yarnrc
 **/tsconfig.json
@@ -14,6 +15,7 @@ src/**
 #folders
 archive/**
 assets/source/**
+assets/webview/**
 bashscript/_old_*.sh
 bashscript/_test*.sh
 docs/**

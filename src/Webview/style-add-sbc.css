@@ -1,0 +1,60 @@
+#webview-body {
+  display: flex;
+  flex-direction: column;
+}
+
+@media screen and (min-width: 1024px) {
+  #webview-body {
+    padding: 0 8rem;
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+}
+
+.component-row {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.component-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 1rem;
+  padding: 1rem;
+  border: 2px dashed #7b61ff;
+  border-radius: 5px;
+}
+
+.component-container > * {
+  margin: 0.25rem 0;
+}
+
+.component-example {
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.component-example > p {
+  margin-bottom: 0.5rem;
+}
+
+vscode-collapsible p {
+  font-size: var(--vscode-font-size);
+  margin: 10px;
+}
+
+.component-row-button {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.component-container-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 1rem;
+  border-radius: 5px;
+}
