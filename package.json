@@ -693,6 +693,7 @@
 		"vscode-test": "^1.5.2"
 	},
 	"dependencies": {
+		"@bendera/vscode-webview-elements": "^0.14.0",
 		"@lolpants/pingman": "^1.0.6",
 		"@microsoft/fast-foundation": "^2.49.0",
 		"@types/ssh2-streams": "^0.1.9",

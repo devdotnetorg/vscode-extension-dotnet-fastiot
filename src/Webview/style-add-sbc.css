@@ -40,11 +40,6 @@
   margin-bottom: 0.5rem;
 }
 
-vscode-collapsible p {
-  font-size: var(--vscode-font-size);
-  margin: 10px;
-}
-
 .component-row-button {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -57,4 +52,14 @@ vscode-collapsible p {
   justify-content: flex-start;
   padding: 1rem;
   border-radius: 5px;
+}
+
+vscode-collapsible p, h3, vscode-dropdown, vscode-checkbox {
+  font-size: var(--vscode-font-size);
+  margin: 10px;
+}
+
+.collapsible-element-end {
+  font-size: var(--vscode-font-size);
+  margin: 10px; /* 0px 10px 40px 10px; */ 
 }

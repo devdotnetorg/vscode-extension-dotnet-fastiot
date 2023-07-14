@@ -181,7 +181,6 @@ export class AddSBCPanelSingleton {
     const webviewUri = webviewHelper.getUri(webview, extensionUri, ["out","webview", "main-add-sbc.js"]);
     const styleUri = webviewHelper.getUri(webview, extensionUri, ["out","webview", "style-add-sbc.css"]);
     const codiconUri = webviewHelper.getUri(webview, extensionUri, ["out", "webview","codicon.css"]);
-    const bannerUri = webviewHelper.getUri(webview, extensionUri, ["out","webview", "embedded-ubuntu.png"]);
     const nonce = webviewHelper.getNonce();
     //
     return /*html*/ `
@@ -193,10 +192,23 @@ export class AddSBCPanelSingleton {
             Use a content security policy to only allow loading images from https or from our extension directory,
             and only allow scripts that have a specific nonce.
             -->
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; font-src ${webview.cspSource}; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">
+            <meta
+              http-equiv="Content-Security-Policy"
+              content="
+                default-src 'none';
+                img-src ${webview.cspSource} https:;
+                script-src ${webview.cspSource} nonce-${nonce};
+                style-src ${webview.cspSource};
+                font-src ${webview.cspSource};
+
+                style-src 'unsafe-inline' ${webview.cspSource};
+                style-src-elem 'unsafe-inline' ${webview.cspSource}; 
+              "
+            />
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="${styleUri}">
             <link rel="stylesheet" href="${codiconUri}">
+            <script type="module" nonce="${nonce}" src="${webviewUri}"></script>
             <title>${this._currentPanel.title}</title>
         </head>
         <body id="webview-body">
@@ -219,25 +231,40 @@ export class AddSBCPanelSingleton {
           <section class="component-row">
             <section class="component-container">
               <h2>Options</h2>
-              <p>Additional options. Change only if necessary.</p>
+              <p>Change only if necessary.</p>
               <vscode-divider role="separator"></vscode-divider>
-              <h3>Debug</h3>
-              <p>Account to debugging applications:</p>
-              <p>Select ROOT if you have problems accessing /dev/* and /sys/* devices".</p>
-              <vscode-dropdown id="debugusername" position="below">
-                <vscode-option>option-1</vscode-option>
-              </vscode-dropdown>
-              <h3>Management</h3>
-              <p>Development board management account.</p>
-              <vscode-dropdown id="managementusername" position="below">
-                <vscode-option>root</vscode-option>
-              </vscode-dropdown>
-              <h3>Devices</h3>
-              <vscode-checkbox id="checkboxudev" checked>Add <vscode-link href="https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/linux/config/20-gpio-fastiot.rules">udev rules</vscode-link> for devices such as GPIO (recommended).</vscode-checkbox>
-              <p>More details in <vscode-link href="https://wiki.loliot.net/docs/linux/linux-tools/linux-udev/">Linux udev</vscode-link> post.</p>
+              <vscode-collapsible
+                title="Accounts"
+                description="created to manage and debug the development board"
+                class="collapsible">
+                <div slot="body">
+                  <h3>Debug</h3>
+                  <p>Account to debugging applications:</p>
+                  <p>Select ROOT if you have problems accessing /dev/* and /sys/* devices".</p>
+                  <vscode-dropdown id="debugusername" position="below">
+                    <vscode-option>option-1</vscode-option>
+                  </vscode-dropdown>
+                  <p>The ABC account will be added to the group(s): ABC</p>
+                  <h3>Management</h3>
+                  <p>Development board management account.</p>
+                  <vscode-dropdown class="collapsible-element-end" id="managementusername" position="below">
+                    <vscode-option>root</vscode-option>
+                  </vscode-dropdown>
+                  <p>The ABC account will be added to the group(s): ABC</p>
+                </div>
+              </vscode-collapsible>
+              <vscode-collapsible
+                title="Devices"
+                description="work with devices such as GPIO, I2C, SPI, PWM, LED etc."
+                class="collapsible">
+                  <div slot="body">
+                    <h3>Devices</h3>
+                    <vscode-checkbox id="checkboxudev" checked>Add <vscode-link href="https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/linux/config/20-gpio-fastiot.rules">udev rules</vscode-link> for devices such as GPIO (recommended).</vscode-checkbox>
+                    <p>More details in <vscode-link href="https://wiki.loliot.net/docs/linux/linux-tools/linux-udev/">Linux udev</vscode-link> post.</p>
+                  </div>
+              </vscode-collapsible>
             </section>
           </section>
-          
           <section class="component-row-button">
             <section class="component-container-button"">
               <vscode-button id="button-submit">
@@ -252,8 +279,6 @@ export class AddSBCPanelSingleton {
               </vscode-button>
             </section>
           </section>
-          
-          <script type="module" nonce="${nonce}" src="${webviewUri}"></script>
         </body>
       </html>
       `;

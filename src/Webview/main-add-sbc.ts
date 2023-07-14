@@ -9,6 +9,8 @@ import {
   Checkbox
 } from "@vscode/webview-ui-toolkit";
 
+import '@bendera/vscode-webview-elements/dist/vscode-collapsible';
+
 /*
 import {
   Listbox,
