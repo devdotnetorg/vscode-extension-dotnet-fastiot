@@ -21,6 +21,7 @@ const webviewConfig = {
   outfile: "./out/webview/main-add-sbc.js",
   plugins: [
     // Copy webview css files to `out` directory unaltered
+    //css
     copy({
       resolveFrom: "cwd",
       assets: {
@@ -28,10 +29,26 @@ const webviewConfig = {
         to: ["./out/webview"],
       }
     }),
+    //webview/*.*
     copy({
       resolveFrom: "cwd",
       assets: {
         from: ["./assets/webview/*.*"],
+        to: ["./out/webview"],
+      }
+    }),
+    //codicon
+    copy({
+      resolveFrom: "cwd",
+      assets: {
+        from: ["./node_modules/@vscode/codicons/dist/codicon.css"],
+        to: ["./out/webview"],
+      }
+    }),
+    copy({
+      resolveFrom: "cwd",
+      assets: {
+        from: ["./node_modules/@vscode/codicons/dist/codicon.ttf"],
         to: ["./out/webview"],
       }
     })

@@ -207,14 +207,13 @@ export class AddSBCPanelSingleton {
             />
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="${styleUri}">
-            <link rel="stylesheet" href="${codiconUri}">
+            <link rel="stylesheet" id="vscode-codicon-stylesheet" href="${codiconUri}">
             <script type="module" nonce="${nonce}" src="${webviewUri}"></script>
             <title>${this._currentPanel.title}</title>
         </head>
         <body id="webview-body">
           <header>
             <h1 id ="title">${this._currentPanel.title}</h1>
-            <div id="tags-container"></div>
           </header>
           <section class="component-row">
             <section class="component-container">
