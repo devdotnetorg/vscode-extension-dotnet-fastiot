@@ -20,9 +20,9 @@ export type AddSBCConfigType = {
    /** Username for debug. Ex: debugvscode */
    debugusername?: string;
    /** Groups for debugusername. Ex: gpio, i2c, and etc. */
-   debuggroups?: string;
+   debuggroups?: string[];
    /** Username for management. Ex: managementvscode */
    managementusername?: string;
-   /** Group for managementusername. Ex: sudo */
-   managementgroup?: string;
+   /** Groups for managementusername. Ex: sudo */
+   managementgroups?: string[];
 };

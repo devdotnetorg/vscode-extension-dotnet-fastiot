@@ -1,14 +1,16 @@
+/*************       custom       ************/
+
 import {
   allComponents,
   provideVSCodeDesignSystem,
   Button,
-  TextArea,
+  Tag,
   TextField,
   Dropdown,
-  Option,
   Checkbox
 } from "@vscode/webview-ui-toolkit";
 
+//@bendera/vscode-webview-elements
 import '@bendera/vscode-webview-elements/dist/vscode-collapsible';
 
 /*
@@ -19,9 +21,9 @@ import {
 } from "@microsoft/fast-foundation";
 */
 
-// In order to use the Webview UI Toolkit web components they
-// must be registered with the browser (i.e. webview) using the
-// syntax below.
+/*********************************************/
+/***      do not change the main code      ***/
+
 provideVSCodeDesignSystem().register(allComponents);
 
 // Get access to the VS Code API from within the webview context
@@ -40,16 +42,19 @@ function main() {
   vscode.postMessage(message);
 
   //Buttons
-  // To get improved type annotations/IntelliSense the associated class for
-  // a given toolkit component can be imported and used to type cast a reference
-  // to the element (i.e. the `as Button` syntax)
   const addButton = document.getElementById("button-submit") as Button;
-  addButton.addEventListener("click", () => addSBC());
-
+  addButton.addEventListener("click", () => onClickButtonSubmit());
   const closeButton = document.getElementById("button-close") as Button;
-  closeButton.addEventListener("click", () => closeSBC());
+  closeButton.addEventListener("click", () => onClickButtonClose());
+
+  /*********************************************/
+  /*************       custom       ************/
+
+
 }
 
+/*********************************************/
+/***      do not change the main code      ***/
 function setVSCodeMessageListener() {
   window.addEventListener("message", (event) => {
     const message = event.data as MessagePanelType;
@@ -68,6 +73,10 @@ function setVSCodeMessageListener() {
         const element = document.getElementById("title") as HTMLElement;
         element.innerHTML = title;
       break;
+/*********************************************/
+/*************       custom       ************/
+
+
     }
   });
 }
@@ -86,10 +95,19 @@ function setInput(content /* AddSBCConfigType */) {
   const managementusernameInput = document.getElementById("managementusername") as Dropdown;
   managementusernameInput.innerHTML= `<vscode-option selected>${content.managementusername}</vscode-option>
   <vscode-option>root</vscode-option>`;
+  //groups
+  let tags=<string[]>content.debuggroups;
+  renderTags("container-tags-debuggroups",tags);
+  tags=<string[]>content.managementgroups;
+  renderTags("container-tags-managementgroups",tags);
+  //text account
+  const debuggroupstext = document.getElementById("debuggroupstext") as Element;
+  debuggroupstext.innerHTML= `The ${content.debugusername} account will be added to the group(s):`;
+  const managementgroupstext = document.getElementById("managementgroupstext") as Element;
+  managementgroupstext.innerHTML= `The ${content.managementusername} account will be added to the group(s):`;
 }
 
-function addSBC() {
-  console.log("addSBC");
+function onClickButtonSubmit() {
   //get
   const hostInput = document.getElementById("host") as TextField;
   const portInput = document.getElementById("port") as TextField;
@@ -132,8 +150,40 @@ function addSBC() {
   vscode.postMessage(message);
 }
 
-function closeSBC() {
-  console.log("closeSBC");
+function renderTags(idContainer:string, tags:string[]) {
+  const tagsContainer = document.getElementById(idContainer);
+  clearTagGroup(tagsContainer);
+  if (tags.length > 0) {
+    addTagsToTagGroup(tags, tagsContainer);
+    if (tagsContainer) {
+      tagsContainer.style.marginBottom = "2rem";
+    }
+  } else {
+    // Remove tag container bottom margin if there are no tags
+    if (tagsContainer) {
+      tagsContainer.style.marginBottom = "0";
+    }
+  }
+}
+
+function clearTagGroup(tagsContainer) {
+  while (tagsContainer.firstChild) {
+    tagsContainer.removeChild(tagsContainer.lastChild);
+  }
+}
+
+function addTagsToTagGroup(tags:string[], tagsContainer) {
+  for (const tagString of tags) {
+    const vscodeTag = document.createElement("vscode-tag") as Tag;
+    vscodeTag.textContent = tagString;
+    tagsContainer.appendChild(vscodeTag);
+  }
+}
+
+/*********************************************/
+/***      do not change the main code      ***/
+
+function onClickButtonClose() {
   //message
   const message = {
     command: "answerClose"
@@ -141,8 +191,8 @@ function closeSBC() {
   //send
   vscode.postMessage(message);
 }
-
 /*********************************************/
+/**************      Types      **************/
 /*    from \src\Types\AddSBCConfigType.ts    */
 
 /**
@@ -167,11 +217,11 @@ export type AddSBCConfigType = {
   /** Username for debug. Ex: debugvscode */
   debugusername?: string;
   /** Groups for debugusername. Ex: gpio, i2c, and etc. */
-  debuggroups?: string;
+  debuggroups?: string[];
   /** Username for management. Ex: managementvscode */
   managementusername?: string;
-  /** Group for managementusername. Ex: sudo */
-  managementgroup?: string;
+  /** Groups for managementusername. Ex: sudo */
+  managementgroups?: string[];
 };
 
 /*    from \src\Types\MessagePanelType.ts    */
@@ -193,5 +243,4 @@ export type BaseMessagePanelType = {
   tag?: string;
 };
 
-
-/**************************************************************/
+/*********************************************/

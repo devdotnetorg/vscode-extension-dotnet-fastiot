@@ -42,7 +42,7 @@
 
 .component-row-button {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
 }
 
 .component-container-button {
@@ -62,4 +62,24 @@ vscode-collapsible p, h3, vscode-dropdown, vscode-checkbox {
 .collapsible-element-end {
   font-size: var(--vscode-font-size);
   margin: 10px; /* 0px 10px 40px 10px; */ 
+}
+
+.tags-container {
+  font-size: var(--vscode-font-size);
+  margin: 10px;
+  
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  grid-column-gap: 0.5rem;
+}
+
+.buttons-container {
+  font-size: var(--vscode-font-size);
+  margin: 20px;
+  
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  grid-column-gap: 0.5rem;
 }

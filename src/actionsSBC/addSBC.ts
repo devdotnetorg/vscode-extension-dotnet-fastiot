@@ -29,6 +29,11 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
         addSBCConfig.managementusername="managementvscode";
     if(!addSBCConfig.udevfilename)
         addSBCConfig.udevfilename="20-gpio-fastiot.rules";
+    //options
+    if(!addSBCConfig.debuggroups)
+        addSBCConfig.debuggroups= ["gpio","video","i2c","spi","spidev","kmem","tty","dialout","input","audio"];
+    if(!addSBCConfig.managementgroups)
+        addSBCConfig.managementgroups=["sudo"];
     //webView
     let addSBCPanel = AddSBCPanelSingleton.getInstance();
     result= await addSBCPanel.Activate("addSBCView","Add development board",context,addSBCConfig);
@@ -43,9 +48,9 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
     if(!addSBCConfig) return;
     //options
     if(!addSBCConfig.debuggroups)
-        addSBCConfig.debuggroups="gpio,video,i2c,spi,spidev,kmem,tty,dialout,input,audio";
-    if(!addSBCConfig.managementgroup)
-        addSBCConfig.managementgroup="sudo";
+        addSBCConfig.debuggroups= ["gpio","video","i2c","spi","spidev","kmem","tty","dialout","input","audio"];
+    if(!addSBCConfig.managementgroups)
+        addSBCConfig.managementgroups=["sudo"];
     //Main process
 
 
