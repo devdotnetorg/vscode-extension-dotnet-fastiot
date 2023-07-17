@@ -203,6 +203,8 @@ export class IoTHelper {
   static GetAllFile(dirPath:string):string[]
   {
     let listFiles:Array<string>=[];
+    //check path 
+    if (!fs.existsSync(dirPath)) return listFiles;
     try {
       const files=fs.readdirSync(dirPath);
       files.forEach((name) => {
@@ -264,6 +266,16 @@ export class IoTHelper {
       index++;
     });
     return msg;
+  }
+
+  static uniqByForEach<T>(array: T[]) {
+    const result: T[] = [];
+    array.forEach((item) => {
+        if (!result.includes(item)) {
+            result.push(item);
+        }
+    })
+    return result;
   }
 
 }

@@ -51,7 +51,7 @@ export class IotConfiguration implements IConfiguration {
       //Extension
       this.Extension= new IotConfigurationExtension(context,this._builtInConfig);
       //Sbc
-      this.Sbc = new IotConfigurationSbc(this._builtInConfig);
+      this.Sbc = new IotConfigurationSbc(this._builtInConfig,this.Folder);
       //Entity
       this.Entity = new IotConfigurationEntity(this._builtInConfig);
       //Template

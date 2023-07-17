@@ -29,6 +29,8 @@ export class IotConfigurationSbcFake implements IConfigurationSbc{
     return "";}
   public get FileNameUdevRules():string {
     return "";}
+  public get ListUdevRulesFiles():string[] {
+    return [];}
   public get PreviousHostname(): string {
     return "";}
   public set PreviousHostname(value:string) {}
@@ -38,5 +40,9 @@ export class IotConfigurationSbcFake implements IConfigurationSbc{
   public set ProfilesSBCJson(data:any) {}
 
   constructor() {}
+
+  public GetUdevRulesFile(fileName:string): IotResult {
+    return new IotResult(StatusResult.Ok);
+  }
 
 }

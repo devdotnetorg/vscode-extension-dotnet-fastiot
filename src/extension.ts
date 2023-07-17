@@ -460,6 +460,8 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 	applicationBuilder.BuildConfig(config);
 	applicationBuilder.BuildTemplates(templates);
 	let app = applicationBuilder.getInstance();
+	//Test
+	//
 	//result
 	return app;
 }

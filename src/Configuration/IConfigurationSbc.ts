@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { EntityType } from '../Entity/EntityType';
 import { LogLevel } from '../shared/LogLevel';
+import { IotResult,StatusResult } from '../IotResult';
 //block
 import { IotBuiltInConfig } from './IotBuiltInConfig';
 import { IotConfiguration } from './IotConfiguration';
@@ -22,6 +23,8 @@ export interface IConfigurationSbc {
   BitsKeySsh:number;
   DebugAppFolder:string;
   FileNameUdevRules:string;
+  ListUdevRulesFiles:string[];
   PreviousHostname: string;
   ProfilesSBCJson:any;
+  GetUdevRulesFile(fileName:string): IotResult;
 }
