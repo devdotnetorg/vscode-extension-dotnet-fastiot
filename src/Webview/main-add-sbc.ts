@@ -7,7 +7,8 @@ import {
   Tag,
   TextField,
   Dropdown,
-  Checkbox
+  Checkbox,
+  Option
 } from "@vscode/webview-ui-toolkit";
 
 //@bendera/vscode-webview-elements
@@ -24,7 +25,7 @@ import {
 /*********************************************/
 /***      do not change the main code      ***/
 
-provideVSCodeDesignSystem().register(allComponents);
+provideVSCodeDesignSystem().register(allComponents,Option);
 
 // Get access to the VS Code API from within the webview context
 const vscode = acquireVsCodeApi();
@@ -81,12 +82,12 @@ function setVSCodeMessageListener() {
   });
 }
 
-function setInput(content /* AddSBCConfigType */) {
+function setInput(content:AddSBCConfigType) {
   //set
   const hostInput = document.getElementById("host") as TextField;
   hostInput.value=content.host;
   const portInput = document.getElementById("port") as TextField;
-  portInput.value=content.port;
+  portInput.value=content.port.toString();
   const usernameInput = document.getElementById("username") as TextField;
   usernameInput.value=content.username;
   const debugusernameInput = document.getElementById("debugusername") as Dropdown;
@@ -105,6 +106,34 @@ function setInput(content /* AddSBCConfigType */) {
   debuggroupstext.innerHTML= `The ${content.debugusername} account will be added to the group(s):`;
   const managementgroupstext = document.getElementById("managementgroupstext") as Element;
   managementgroupstext.innerHTML= `The ${content.managementusername} account will be added to the group(s):`;
+  //Udevrules
+/*
+   filenameudevrules: string;
+  listUdevRulesFiles?: string[];
+  */
+  const filenameudevrulesInput = document.getElementById("filenameudevrules") as Dropdown;
+  if(!content.listUdevRulesFiles) content.listUdevRulesFiles=[];
+  let item:Option;
+  if(content.listUdevRulesFiles.includes(content.filenameudevrules)) {
+    //contains
+    item = new Option(content.filenameudevrules,content.filenameudevrules,true,true);
+    filenameudevrulesInput.appendChild(item);
+    //remove content.filenameudevrules
+    const index = content.listUdevRulesFiles.indexOf(content.filenameudevrules, 0);
+    if (index > -1) {
+      content.listUdevRulesFiles.splice(index, 1);
+    }
+    //add None
+    content.listUdevRulesFiles.push("None");
+  }else {
+    //None
+    item = new Option("None","None",true,true);
+    filenameudevrulesInput.appendChild(item);
+  }
+  for (let value of content.listUdevRulesFiles) {
+    item = new Option(value,value,false,false);
+    filenameudevrulesInput.appendChild(item);
+  }
 }
 
 function onClickButtonSubmit() {
@@ -116,9 +145,7 @@ function onClickButtonSubmit() {
   const passwordInput = document.getElementById("password") as TextField;
   const debugusernameInput = document.getElementById("debugusername") as Dropdown;
   const managementusernameInput = document.getElementById("managementusername") as Dropdown;
-  //checkbox
-  //<vscode-checkbox id="checkboxudev"
-  const checkboxudevInput = document.getElementById("checkboxudev") as Checkbox;
+  const filenameudevrulesInput = document.getElementById("filenameudevrules") as Dropdown;
   //values
   const hostInputValue = hostInput.value;
   const portInputValue = portInput.value;
@@ -126,18 +153,14 @@ function onClickButtonSubmit() {
   const passwordInputValue = passwordInput.value;
   const debugusernameInputValue = debugusernameInput.value;
   const managementusernameInputValue =  managementusernameInput.value;
-  //checkbox
-  const _checkboxudevInputValue = checkboxudevInput.checked;
-  let udevfilenameInputValue:string | undefined= undefined;
-  if (_checkboxudevInputValue) 
-    udevfilenameInputValue="20-gpio-fastiot.rules";
+  const filenameudevrulesInputValue =  filenameudevrulesInput.value;
   //data
   const AddSBCConfigData:AddSBCConfigType= {
     host:hostInputValue,
     port: +portInputValue,
     username: usernameInputValue,
     password: passwordInputValue,
-    udevfilename: udevfilenameInputValue,
+    filenameudevrules: filenameudevrulesInputValue,
     debugusername: debugusernameInputValue,
     managementusername: managementusernameInputValue
   }
@@ -202,24 +225,23 @@ export type AddSBCConfigType = {
   /** Hostname or IP address of the server. */
   host: string;
   /** Port number of the server. */
-  port?: number;
+  port: number;
   /** Username for authentication. */
-  username?: string;
+  username: string;
   /** Password for password-based user authentication. */
   password?: string;
   /** ssh keytype for key generation. Ex: ed25519-256 */
   sshkeytype?: string;
   /** Filename for udev rule. Ex: 20-gpio-fastiot.rules */
-  udevfilename?: string;
-  // TODO: List of udev rules filenames
+  filenameudevrules: string;
   /** List of udev rules filenames */
-  //udevfilenamelist?: string[];
+  listUdevRulesFiles?: string[];
   /** Username for debug. Ex: debugvscode */
-  debugusername?: string;
+  debugusername: string;
   /** Groups for debugusername. Ex: gpio, i2c, and etc. */
   debuggroups?: string[];
   /** Username for management. Ex: managementvscode */
-  managementusername?: string;
+  managementusername: string;
   /** Groups for managementusername. Ex: sudo */
   managementgroups?: string[];
 };

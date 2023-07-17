@@ -13,44 +13,47 @@ import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { AddSBCPanelSingleton } from '../Panels/AddSBCPanelSingleton';
 
 export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication,
-    context: vscode.ExtensionContext, addSBCConfig?:AddSBCConfigType): Promise<void> {
-    let result:IotResult;
-    //fill data
-    if(!addSBCConfig) {
-        addSBCConfig={host:"192.168.50.75"};
-    }
-    if(!addSBCConfig.port) addSBCConfig.port=22;
-    if(!addSBCConfig.username) addSBCConfig.username="root";
-    if(!addSBCConfig.sshkeytype) addSBCConfig.sshkeytype=
-        `${app.Config.Sbc.TypeKeySsh}-${app.Config.Sbc.BitsKeySsh}`;
-    if(!addSBCConfig.debugusername)
-        addSBCConfig.debugusername=app.Config.UsernameAccountDevice_d;
-    if(!addSBCConfig.managementusername)
-        addSBCConfig.managementusername="managementvscode";
-    if(!addSBCConfig.udevfilename)
-        addSBCConfig.udevfilename="20-gpio-fastiot.rules";
-    //options
-    if(!addSBCConfig.debuggroups)
-        addSBCConfig.debuggroups= ["gpio","video","i2c","spi","spidev","kmem","tty","dialout","input","audio"];
-    if(!addSBCConfig.managementgroups)
-        addSBCConfig.managementgroups=["sudo"];
-    //webView
-    let addSBCPanel = AddSBCPanelSingleton.getInstance();
-    result= await addSBCPanel.Activate("addSBCView","Add development board",context,addSBCConfig);
-    if(result.Status!=StatusResult.Ok) {
-        //Output
-        app.UI.Output(result);
-        //Message
-        app.UI.ShowNotification(result);
-        return;
-    }
-    addSBCConfig= await addSBCPanel.GetAnswer();
-    if(!addSBCConfig) return;
-    //options
-    if(!addSBCConfig.debuggroups)
-        addSBCConfig.debuggroups= ["gpio","video","i2c","spi","spidev","kmem","tty","dialout","input","audio"];
-    if(!addSBCConfig.managementgroups)
-        addSBCConfig.managementgroups=["sudo"];
+    nameHost?:string,portHost?:number): Promise<void> {
+        //fill nameHost, portHost
+        if(!nameHost) nameHost= app.Config.Sbc.PreviousHostname;
+        if(!portHost) portHost= 22;
+        //fill addSBCConfig
+        let addSBCConfig:AddSBCConfigType| undefined ={
+            host:nameHost,
+            port:portHost,
+            username: "root",
+            filenameudevrules: app.Config.Sbc.FileNameUdevRules,
+            listUdevRulesFiles: app.Config.Sbc.ListUdevRulesFiles,
+            debugusername: app.Config.Sbc.UsernameDebugAccount,
+            debuggroups: app.Config.Sbc.GroupsDebugAccount,
+            managementusername: app.Config.Sbc.UsernameManagementAccount,
+            managementgroups: app.Config.Sbc.GroupsManagementAccount
+        };
+        //webView
+        let addSBCPanel = AddSBCPanelSingleton.getInstance();
+        let result =
+            await addSBCPanel.Activate(
+                "addSBCView","Add development board",
+                app.Config.Folder.Extension,app.Config.Extension.Subscriptions,addSBCConfig);
+        if(result.Status!=StatusResult.Ok) {
+            //Output
+            app.UI.Output(result);
+            //Message
+            app.UI.ShowNotification(result);
+            return;
+        }
+        addSBCConfig= await addSBCPanel.GetAnswer();
+        if(!addSBCConfig) return;
+        //fill after dialog
+        if(!addSBCConfig.sshkeytype) addSBCConfig.sshkeytype=
+            `${app.Config.Sbc.TypeKeySsh}-${app.Config.Sbc.BitsKeySsh}`;
+        if(!addSBCConfig.debuggroups) addSBCConfig.debuggroups=
+            app.Config.Sbc.GroupsDebugAccount;
+        if(!addSBCConfig. managementgroups) addSBCConfig.managementgroups=
+            app.Config.Sbc.GroupsManagementAccount;
+        //next
+
+
     //Main process
 
 

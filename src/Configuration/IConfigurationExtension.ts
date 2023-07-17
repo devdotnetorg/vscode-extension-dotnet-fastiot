@@ -18,4 +18,5 @@ export interface IConfigurationExtension {
   PreviousVersion: string;
   Mode: vscode.ExtensionMode;
   Loglevel:LogLevel;
+  Subscriptions: { dispose(): any }[];
 }

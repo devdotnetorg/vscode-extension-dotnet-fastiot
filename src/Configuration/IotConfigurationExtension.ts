@@ -33,12 +33,14 @@ export class IotConfigurationExtension implements IConfigurationExtension{
     return this._mode;}
   public get Loglevel():LogLevel {
     return <LogLevel>vscode.workspace.getConfiguration().get('fastiot.loglevel');}
+  public Subscriptions: { dispose(): any }[];
   
   constructor(context: vscode.ExtensionContext, builtInConfig: IotBuiltInConfig) {
     //Get info from context
     this._version=`${context.extension.packageJSON.version}`;
     this._mode=context.extensionMode;
     this._builtInConfig=builtInConfig;
+    this.Subscriptions=context.subscriptions;
   }
 
 }

@@ -75,7 +75,7 @@ export class AddSBCPanelSingleton extends BasePanelDialog<AddSBCConfigType>{
                 <div id="container-tags-debuggroups" class="tags-container">tags</div>
                 <h3>Management</h3>
                 <p>Development board management account.</p>
-                <vscode-dropdown class="collapsible-element-end" id="managementusername" position="below">
+                <vscode-dropdown class="collapsible-element" id="managementusername" position="below">
                   <vscode-option>root</vscode-option>
                 </vscode-dropdown>
                 <p id="managementgroupstext">The ABC account will be added to the group(s):</p>
@@ -88,8 +88,11 @@ export class AddSBCPanelSingleton extends BasePanelDialog<AddSBCConfigType>{
               class="collapsible">
                 <div slot="body">
                   <h3>Device permissions</h3>
-                  <vscode-checkbox id="checkboxudev" checked>Add <vscode-link href="https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/linux/config/20-gpio-fastiot.rules">udev rules</vscode-link> for devices such as GPIO (recommended).</vscode-checkbox>
-                  <p>More details in <vscode-link href="https://wiki.loliot.net/docs/linux/linux-tools/linux-udev/">Linux udev</vscode-link> post.</p>
+                  <p>Files:</p>
+                  <vscode-dropdown class="collapsible-element" id="filenameudevrules" position="below">
+                  </vscode-dropdown>
+                  <p>Select udev rules file for devices such as GPIO (recommended).</vscode-checkbox>
+                  <p class="collapsible-element-end">More details in <vscode-link href="https://wiki.loliot.net/docs/linux/linux-tools/linux-udev/">Linux udev</vscode-link> post.</p>
                 </div>
             </vscode-collapsible>
           </section>

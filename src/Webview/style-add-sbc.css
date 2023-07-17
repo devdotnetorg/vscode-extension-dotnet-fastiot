@@ -59,9 +59,14 @@ vscode-collapsible p, h3, vscode-dropdown, vscode-checkbox {
   margin: 10px;
 }
 
+.collapsible-element {
+  font-size: var(--vscode-font-size);
+  margin: 10px;
+}
+
 .collapsible-element-end {
   font-size: var(--vscode-font-size);
-  margin: 10px; /* 0px 10px 40px 10px; */ 
+  margin: 0px 10px 40px 10px; /* 0px 10px 40px 10px; */ 
 }
 
 .tags-container {

@@ -150,7 +150,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	//Add new SBC  
 	let commandAddDevice = vscode.commands.registerCommand('viewDevices.AddDevice', () => {	
-		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,app,context);	
+		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,app);	
 	});
 	//Add new device		  
 	let commandDiscoveryDevice = vscode.commands.registerCommand('viewDevices.DiscoveryDevice', () => {

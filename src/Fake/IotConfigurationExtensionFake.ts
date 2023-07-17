@@ -19,6 +19,10 @@ export class IotConfigurationExtensionFake implements IConfigurationExtension{
     return vscode.ExtensionMode.Test;}
   public get Loglevel():LogLevel {
     return LogLevel.Debug;}
+  public get Subscriptions(): { dispose(): any }[] {
+    const item:{ dispose(): any }[]=[];
+    return item;
+  };
   
   constructor() {}
 

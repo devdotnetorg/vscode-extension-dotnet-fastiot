@@ -9,7 +9,8 @@ import { MessagePanelType } from '../Types/MessagePanelType';
 export abstract class BasePanelDialog<T> {
   // Track currently webview panel
   protected _currentPanel?: vscode.WebviewPanel;
-  private _contextVscode?: vscode.ExtensionContext;
+  protected _extensionUri?:vscode.Uri;
+  protected _subscriptions?: { dispose(): any }[]; 
   private _answerData?:T;
   private _isAnswerReceived:boolean=true;
   private _fileNamePageResources:string;
@@ -37,7 +38,7 @@ export abstract class BasePanelDialog<T> {
   /**
    * Activate webview
    */
-  public async Activate (viewType?: string, title?: string, context?: vscode.ExtensionContext,sendData?:T): Promise<IotResult> {
+  public async Activate (viewType?: string, title?: string, extensionUri?:vscode.Uri, subscriptions?: { dispose(): any }[], sendData?:T): Promise<IotResult> {
     let result:IotResult;
     try {
       if (this._currentPanel) {
@@ -48,12 +49,13 @@ export abstract class BasePanelDialog<T> {
         return Promise.resolve(result);
       }
       //parameter check
-      if(!viewType||!title||!context||!sendData) {
+      if(!viewType||!title||!extensionUri||!subscriptions||!sendData) {
         //result
         result= new IotResult(StatusResult.Error,"Panel needs to be initialized");
         return Promise.resolve(result);
       }
-      this._contextVscode=context;
+      this._extensionUri=extensionUri;
+      this._subscriptions=subscriptions;
       // If no panel is open, create a new one and update the HTML
       this._currentPanel = vscode.window.createWebviewPanel(viewType, title,
         {viewColumn: vscode.ViewColumn.One, preserveFocus:true},
@@ -61,7 +63,7 @@ export abstract class BasePanelDialog<T> {
           // Enable JavaScript in the webview
           enableScripts: true,
           // Restrict the webview to only load resources from the `out/webview` directory
-          localResourceRoots: [vscode.Uri.joinPath(this._contextVscode.extensionUri, "out","webview")],
+          localResourceRoots: [vscode.Uri.joinPath(this._extensionUri, "out","webview")],
       });
       //events
       this._currentPanel.webview.onDidReceiveMessage((message:MessagePanelType) => {
@@ -98,7 +100,7 @@ export abstract class BasePanelDialog<T> {
           this.Dispose();
         },
         null,
-        this._contextVscode.subscriptions
+        this._subscriptions
       );
       // If a panel is open, update the HTML with the selected item's content
       this.UpdateContent();
@@ -139,8 +141,9 @@ export abstract class BasePanelDialog<T> {
   public Dispose () {
     this._isAnswerReceived=true;
     this._answerData = undefined;
-    this._contextVscode = undefined;
     this._currentPanel?.dispose();
+    this._extensionUri=undefined;
+    this._subscriptions=undefined;
     this._currentPanel = undefined;
   }
 
@@ -196,11 +199,11 @@ export abstract class BasePanelDialog<T> {
    * rendered within the webview panel
    */
   private getWebviewContent(contentBody:string):string {
-    if(!this._currentPanel || !this._contextVscode) {
+    if(!this._currentPanel || !this._extensionUri) {
       return "non";
     }
     const webview=this._currentPanel.webview;
-    const extensionUri=this._contextVscode.extensionUri;
+    const extensionUri=this._extensionUri;
     const nonce = webviewHelper.getNonce();
     //base
     const codiconUri = webviewHelper.getUri(webview, extensionUri, ["out", "webview","codicon.css"]);
