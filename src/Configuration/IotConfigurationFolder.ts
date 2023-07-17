@@ -1,33 +1,46 @@
 import * as vscode from 'vscode';
-//import * as fs from 'fs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
+import * as platformFolders from 'platform-folders';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../IotResult';
 import { EntityType } from '../Entity/EntityType';
 import { Constants } from "../Constants"
+import { IConfigurationFolder } from './IConfigurationFolder';
+//block
+import { IotBuiltInConfig } from './IotBuiltInConfig';
+import { IotConfiguration } from './IotConfiguration';
+import { IotConfigurationEntity } from './IotConfigurationEntity';
+import { IotConfigurationExtension } from './IotConfigurationExtension';
+import { IotConfigurationSbc } from './IotConfigurationSbc';
+import { IotConfigurationTemplate } from './IotConfigurationTemplate';
+//
 
-export class IotConfigurationFolder {
+export class IotConfigurationFolder implements IConfigurationFolder{
   //from https://learn.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=net-7.0
   public get ApplicationData(): string {
     return this.InitApplicationData();}
-  public get DeviceKeys(): string {
+  public get KeysSbc(): string {
     return path.join(this.ApplicationData, "settings", "keys");}
-  private readonly _extension: string;
-  public get Extension(): string {
-      return this._extension;}
+  public get UdevRules(): string {
+    return path.join(this.ApplicationData, "settings", "udevrules");}
+  private readonly _extensionPath: vscode.Uri;
+  public get Extension(): vscode.Uri {
+      return this._extensionPath;}
   public get AppsBuiltIn(): string {
-    return path.join(this.Extension, "windows", "apps");}
+    return path.join(this.Extension.fsPath, "windows", "apps");}
   public get Temp(): string {
     return path.join(this.ApplicationData, "tmp");}
   public get Schemas(): string {
-    return path.join(this.Extension, "schemas");}
+    return path.join(this.Extension.fsPath, "schemas");}
   public get WorkspaceDirectory(): string| undefined {
     return IoTHelper.GetWorkspaceDirectory();}
+  public get DefaultProject(): string {  
+    return this.InitDefaultProjectFolder();}
 
-  constructor(extensionPath: string) {
-    this._extension=extensionPath;
+  constructor(context: vscode.ExtensionContext) {
+    this._extensionPath=context.extensionUri;
     this.CreateDirs();
     //Clear
     this.ClearTmp();
@@ -36,7 +49,8 @@ export class IotConfigurationFolder {
   private CreateDirs() {
     try {
       IoTHelper.MakeDirSync(this.ApplicationData);
-      IoTHelper.MakeDirSync(this.DeviceKeys);
+      IoTHelper.MakeDirSync(this.KeysSbc);
+      IoTHelper.MakeDirSync(this.UdevRules);
       IoTHelper.MakeDirSync(this.Temp);
       //Templates
       IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.none));
@@ -49,7 +63,13 @@ export class IotConfigurationFolder {
 
   private InitApplicationData():string {
     //Get Application folder
-    let applicationDataPath: string=<string>vscode.workspace.getConfiguration().get('fastiot.device.applicationdatafolder');
+    let applicationDataPath: string=<string>vscode.workspace.getConfiguration().get('fastiot.sbc.applicationdata.folder');
+    //TODO: remove after update
+    if(applicationDataPath == null||applicationDataPath == undefined||applicationDataPath == "") {
+      applicationDataPath=<string>vscode.workspace.getConfiguration().get('fastiot.device.applicationdatafolder');
+      //Saving settings
+      vscode.workspace.getConfiguration().update('fastiot.sbc.applicationdata.folder',applicationDataPath,true);
+    }
     //Application folder definition
     if(applicationDataPath == null||applicationDataPath == undefined||applicationDataPath == "") 
     {
@@ -58,7 +78,7 @@ export class IotConfigurationFolder {
       const userHomeDir = os.homedir();
       applicationDataPath=path.join(userHomeDir, Constants.nameFolderSettings);
       //Saving settings
-      vscode.workspace.getConfiguration().update('fastiot.device.applicationdatafolder',applicationDataPath,true);
+      vscode.workspace.getConfiguration().update('fastiot.sbc.applicationdata.folder',applicationDataPath,true);
     }
     return applicationDataPath;
   }
@@ -73,6 +93,21 @@ export class IotConfigurationFolder {
     }
     return result;
   }
+
+  private InitDefaultProjectFolder():string {
+    //Get default project folder
+    let defaultProjectFolder: string=<string>vscode.workspace.getConfiguration().get('fastiot.defaultprojectfolder');
+    //default project folder definition
+    if(defaultProjectFolder == null||defaultProjectFolder == undefined||defaultProjectFolder == "") 
+    {
+      defaultProjectFolder=path.join(platformFolders.getDocumentsFolder(), Constants.nameFolderProjects);
+      //check folder
+      IoTHelper.MakeDirSync(defaultProjectFolder);
+      //Saving settings
+      vscode.workspace.getConfiguration().update('fastiot.defaultprojectfolder',defaultProjectFolder,true);
+    }
+   return defaultProjectFolder;
+ }
   
   //clearing temporary files
   public ClearTmp() {

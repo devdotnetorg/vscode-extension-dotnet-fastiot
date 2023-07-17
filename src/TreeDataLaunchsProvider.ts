@@ -6,14 +6,14 @@ import { IotDevice } from './IotDevice';
 import { LaunchNode } from './LaunchNode';
 import { IoTHelper } from './Helper/IoTHelper';
 import { IotResult,StatusResult } from './IotResult';
-import { IotConfiguration } from './Configuration/IotConfiguration';
+import { IConfiguration } from './Configuration/IConfiguration';
 import { IotTemplate } from './Templates/IotTemplate';
 import { IotLaunch } from './IotLaunch';
 
 export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTreeItemNode> {    
   public RootItems:Array<LaunchNode>=[];
 
-  private readonly _config: IotConfiguration;
+  private readonly _config: IConfiguration ;
     
   private _onDidChangeTreeData: vscode.EventEmitter<LaunchTreeItemNode| undefined | null | void> = 
     new vscode.EventEmitter<LaunchTreeItemNode| undefined | null | void>();
@@ -23,7 +23,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
   private readonly _devices: Array<IotDevice>;
 
   constructor(
-    config:IotConfiguration,
+    config:IConfiguration,
     devices: Array<IotDevice>
   ) {
       //Set config

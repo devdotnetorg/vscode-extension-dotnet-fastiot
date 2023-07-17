@@ -52,7 +52,7 @@ export class IotDeviceInformation extends BaseTreeItem{
       //# apt-get update иногда останавливает выполнение из-за WARNING
       // которые не являются критическими, поэтому выполнение только
       // как Stream
-      let result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
+      let result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension.fsPath,
          "pregetinformation",undefined, true,false);
       //Result
       if(result.Status==StatusResult.Error) return Promise.resolve(result);
@@ -62,7 +62,7 @@ export class IotDeviceInformation extends BaseTreeItem{
          console:"Run: getinformation.sh",
          obj:undefined
        });
-      result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
+      result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension.fsPath,
           "getinformation",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({

@@ -10,7 +10,6 @@ import { IotResult,StatusResult } from '../IotResult';
 import { LogLevel } from '../shared/LogLevel';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { EntityDownload, EntityDownloader } from './EntityDownloader';
-import { IotBuiltInConfig } from '../Configuration/IotBuiltInConfig';
 import { ClassWithEvent } from '../Shared/ClassWithEvent';
 import { ContainsType } from '../Shared/ContainsType';
 
@@ -22,13 +21,18 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   private readonly TCreator: new(pathFolderSchemas: string) => T;
   protected readonly Config:IConfigEntityCollection;
   protected GetDirEntitiesCallback:(type:EntityType) =>string;
+  protected SaveLastUpdateHours:(value:number) => void;
 
   public get Count(): number {
       return this._items.size;}
 
   constructor(
-    entityLabel:string, entitiesLabel:string, TCreator: new(pathFolderSchemas: string) => T,
-    getDirEntitiesCallback:(type:EntityType) =>string, config:IConfigEntityCollection
+    entityLabel:string,
+    entitiesLabel:string,
+    TCreator: new(pathFolderSchemas: string) => T,
+    config:IConfigEntityCollection,
+    getDirEntitiesCallback:(type:EntityType) =>string, 
+    saveLastUpdateHours:(value:number) => void
     ){
       super();
       this._items = new Map<string,T>(); 
@@ -36,6 +40,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       this._entitiesLabel=entitiesLabel;
       this.TCreator=TCreator;
       this.GetDirEntitiesCallback=getDirEntitiesCallback;
+      this.SaveLastUpdateHours=saveLastUpdateHours;
       this.Config=config;
     }
 
@@ -376,7 +381,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       this.CreateEvent(`Updating system ${this._entitiesLabel}`,undefined,15); //30
       //To get the number of hours since Unix epoch, i.e. Unix timestamp:
       const dateNow=Math.floor(Date.now() / 1000/ 3600);
-      const TimeHasPassedHours=dateNow-this.Config.builtInConfig.LastUpdateTemplatesHours;
+      const TimeHasPassedHours=dateNow-this.Config.lastUpdateHours;
       const isNeedUpdate = ()=>this.Config.isUpdate&&(TimeHasPassedHours>=this.Config.updateIntervalHours);
       if(force||isNeedUpdate()){
         //system
@@ -385,8 +390,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         this.CreateEvent(result,LogLevel.Debug);
         //timestamp of last update
         if(result.Status==StatusResult.Ok){
-          this.Config.builtInConfig.LastUpdateTemplatesHours=<number>dateNow;
-          this.Config.builtInConfig.Save();
+          this.SaveLastUpdateHours(dateNow);
         }
       } else {
         this.CreateEvent(`📥 ${this._entityLabel} update: disabled or less than ${this.Config.updateIntervalHours} hour(s) have passed since the last update.`,LogLevel.Debug);
@@ -403,8 +407,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         this.CreateEvent(result,LogLevel.Debug);
         //timestamp of last update
         if(result.Status==StatusResult.Ok){
-          this.Config.builtInConfig.LastUpdateTemplatesHours=<number>dateNow;
-          this.Config.builtInConfig.Save();
+          this.SaveLastUpdateHours(dateNow);
         }
       }
       //Loading custom entities
@@ -449,7 +452,7 @@ export interface IConfigEntityCollection {
   recoverySourcePath: string;
   schemasFolderPath: string;
   tempFolderPath:string;
-  builtInConfig:IotBuiltInConfig;
+	lastUpdateHours:number;
   isUpdate:boolean;
   updateIntervalHours:number;
   urlsUpdateEntitiesCommunity:string[];

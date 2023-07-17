@@ -59,6 +59,16 @@ export class IoTHelper {
     return result;	
   }
 
+  static StringToArray(data:string,separator:string): string[] {
+    let result:string[]=[];
+    let array=data.split(separator);
+    array.forEach((item) => {
+      item=IoTHelper.StringTrim(item);
+      if(item != "") result.push(item);
+    });
+    return result;	
+  }
+
   static MergeWithDictionary(dictionary:Map<string,string>,data:string):string{
     let result:string=data;
     dictionary.forEach((value,key) => {      

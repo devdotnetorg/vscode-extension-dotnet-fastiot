@@ -6,6 +6,7 @@ import * as fs from 'fs-extra';
 import { compare } from 'compare-versions';
 //shared
 import { IoTApplication } from './IoTApplication';
+import { IoTApplicationBuilder } from './IoTApplicationBuilder';
 import { IoTHelper } from './Helper/IoTHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
 import { IotItemTree } from './shared/IotItemTree';
@@ -89,15 +90,14 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Templates
 	const loadTemplatesExt = async () => {
 		//Checking if templates need to be updated after updating an extension
-		const isNeedUpgrade=compare(`${app.Config.ExtVersion}`,`${app.Config.BuiltInConfig.PreviousVerExt}`, '>');
+		const isNeedUpgrade=compare(`${app.Config.Extension.Version}`,`${app.Config.Extension.PreviousVersion}`, '>');
 		if(isNeedUpgrade) {
 			app.Templates.DeletingSystemEntities();
 			loadTemplates(app,true);
 			//BuiltInConfig
-			app.Config.BuiltInConfig.PreviousVerExt=app.Config.ExtVersion;
-			app.Config.BuiltInConfig.Save();
+			app.Config.Extension.PreviousVersion=app.Config.Extension.Version;
 		}else {
-			if(app.Config.LoadTemplatesOnStart) loadTemplates(app);
+			if(app.Config.Template.LoadOnStart) loadTemplates(app);
 		}
 	};
 	loadTemplatesExt();
@@ -190,7 +190,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Open folder with ssh keys
 	let commandOpenFolderKeys = vscode.commands.registerCommand("viewDevices.OpenFolderSshKeys", () => {
-		openFolderKeys(app.Config.Folder.DeviceKeys);
+		openFolderKeys(app.Config.Folder.KeysSbc);
 	});
 	//Open ssh-terminal in New Window
 	let commandOpenSshTerminal = vscode.commands.registerCommand("viewDevices.OpenSshTerminal", (item:IotDevice) => {
@@ -422,35 +422,44 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 	//Config
 	let config=new IotConfiguration(context);
 	//UI
-	let contextUI:IContexUI= new IoTUI(config.Loglevel);
+	let contextUI= new IoTUI(config.Extension.Loglevel);
 	//Templates
 	//Templates config
 	let urlUpdateTemplatesSystem:string="";
-	if(config.ExtMode==vscode.ExtensionMode.Production) {
+	if(config.Extension.Mode==vscode.ExtensionMode.Production) {
 		urlUpdateTemplatesSystem=Constants.urlUpdateTemplatesSystemRelease;
     }else {
 		//for test
       	urlUpdateTemplatesSystem=Constants.urlUpdateTemplatesSystemDebug;
     }
-	//
+	
     const configTemplateCollection:IConfigEntityCollection = {
-		extVersion: config.ExtVersion,
-		extMode: config.ExtMode,
-		recoverySourcePath: path.join(config.Folder.Extension, "templates", "system"),
+		extVersion: config.Extension.Version,
+		extMode: config.Extension.Mode,
+		recoverySourcePath: path.join(config.Folder.Extension.fsPath, "templates", "system"),
 		schemasFolderPath: config.Folder.Schemas,
 		tempFolderPath:config.Folder.Temp,
-  		builtInConfig:config.BuiltInConfig,
-		isUpdate:config.IsUpdateEntities,
-		updateIntervalHours:config.UpdateIntervalEntitiesHours,
-		urlsUpdateEntitiesCommunity:config.ListSourceUpdateTemplateCommunity,
+		lastUpdateHours:config.Entity.LastUpdateHours,
+		isUpdate:config.Entity.IsUpdate,
+		updateIntervalHours:config.Entity.UpdateIntervalHours,
+		urlsUpdateEntitiesCommunity:config.Template.ListSourceUpdateCommunity,
 		urlUpdateEntitiesSystem:urlUpdateTemplatesSystem
 	};
 	const getDirTemplatesCallback = (type:EntityType):string => {
 		return config.Folder.GetDirTemplates(type);
 	};
-	let templates= new IotTemplateCollection(getDirTemplatesCallback,configTemplateCollection);
+
+	const saveLastUpdateHours = (value:number):void=> {
+		config.Entity.LastUpdateHours=value;
+	};
+
+	let templates= new IotTemplateCollection(configTemplateCollection,getDirTemplatesCallback,saveLastUpdateHours);
 	//Build
-	let app = new IoTApplication(contextUI,config,templates);
+	let applicationBuilder = new IoTApplicationBuilder();
+	applicationBuilder.BuildUI(contextUI);
+	applicationBuilder.BuildConfig(config);
+	applicationBuilder.BuildTemplates(templates);
+	let app = applicationBuilder.getInstance();
 	//result
 	return app;
 }

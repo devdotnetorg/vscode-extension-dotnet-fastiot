@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IotResult,StatusResult } from '../IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { BasePanelDialog } from './BasePanelDialog';
+import { BasePanelDialog } from '../Shared/BasePanelDialog';
 import { webviewHelper } from '../Helper/webviewHelper';
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { MessagePanelType } from '../Types/MessagePanelType';

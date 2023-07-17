@@ -10,7 +10,7 @@ import { IoTHelper } from '../Helper/IoTHelper';
 import { launchHelper } from '../Helper/launchHelper';
 import { dotnetHelper } from '../Helper/dotnetHelper';
 import { IotDevice } from '../IotDevice';
-import { IotConfiguration } from '../Configuration/IotConfiguration';
+import { IConfiguration } from '../Configuration/IConfiguration';
 import { FilesValidator } from '../Validator/FilesValidator';
 
 /*
@@ -70,7 +70,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   }
 
   //------------ Project ------------
-  public CreateProject(device:IotDevice, config:IotConfiguration, dstPath:string,
+  public CreateProject(device:IotDevice, config:IConfiguration, dstPath:string,
     values:Map<string,string>):IotResult {
     let result:IotResult;
     const errorMsg=`Project not created!`;
@@ -83,13 +83,13 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       }
       //Create MergeDictionary---------------------------------
       this.CreateDictionaryStep1CopyValues(values);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step1CopyValues");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step1CopyValues");
       this.CreateDictionaryStep2AddDeviceInfo(device,config);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step2AddDeviceInfo");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step2AddDeviceInfo");
       this.CreateDictionaryStep3DependencyProjectType(device);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step3DependencyProjectType");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step3DependencyProjectType");
       this.CreateDictionaryStep4Additional(config);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step4Additional");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step4Additional");
       //File Name Replacement
       result=this.FileNameReplacement(dstPath);
       if(result.Status==StatusResult.Error) {
@@ -98,12 +98,12 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       }
       //Set new name project
       this.CreateDictionaryStep5DefinePathToProject(dstPath);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step5DefinePathToProject");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step5DefinePathToProject");
       this.CreateDictionaryStep6DependencyProjectPath(dstPath);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step6DependencyProjectPath");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step6DependencyProjectPath");
       //last
       this.CreateDictionaryStep7Launch(config);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step7Launch");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step7Launch");
       //End MergeDictionary---------------------------------
       //FilesToProcess
       result=this.FilesToProcess(dstPath);
@@ -140,7 +140,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     return result;
   }
 
-  public AddConfigurationVscode(device:IotDevice, config:IotConfiguration, dstPath:string,
+  public AddConfigurationVscode(device:IotDevice, config:IConfiguration, dstPath:string,
     values:Map<string,string>):IotResult {
     let result:IotResult;
     const errorMsg=`Launch and tasks not added!`;
@@ -153,20 +153,20 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       }
       //Create MergeDictionary---------------------------------
       this.CreateDictionaryStep1CopyValues(values);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step1CopyValues");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step1CopyValues");
       this.CreateDictionaryStep2AddDeviceInfo(device,config);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step2AddDeviceInfo");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step2AddDeviceInfo");
       this.CreateDictionaryStep3DependencyProjectType(device);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step3DependencyProjectType");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step3DependencyProjectType");
       this.CreateDictionaryStep4Additional(config);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step4Additional");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step4Additional");
       this.CreateDictionaryStep5DefinePathToProject(dstPath);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step5DefinePathToProject");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step5DefinePathToProject");
       this.CreateDictionaryStep6DependencyProjectPath(dstPath);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step6DependencyProjectPath");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step6DependencyProjectPath");
       //last
       this.CreateDictionaryStep7Launch(config);
-      if(config.DebugMode) this.CreateDumpDictionary(dstPath,"Step7Launch");
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step7Launch");
       //End MergeDictionary---------------------------------
       //Insert Launch
       result=this.InsertLaunchOrTask(dstPath,"launch");
@@ -363,10 +363,10 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     values.forEach((value,key) => this._mergeDictionary.set(key,value));
   }
 
-  private CreateDictionaryStep2AddDeviceInfo (device:IotDevice, config:IotConfiguration) {
+  private CreateDictionaryStep2AddDeviceInfo (device:IotDevice, config:IConfiguration) {
       //device
       this._mergeDictionary.set("%{device.id}",<string>device.IdDevice); 
-      let ssh_key= config.Folder.DeviceKeys+"\\"+<string>device?.Account.Identity;
+      let ssh_key= config.Folder.KeysSbc+"\\"+<string>device?.Account.Identity;
       ssh_key=IoTHelper.ReverseSeparatorReplacement(ssh_key);
       this._mergeDictionary.set("%{device.ssh.key.path.full.aswindows}",ssh_key);
       this._mergeDictionary.set("%{device.ssh.port}",<string>device?.Account.Port);
@@ -399,7 +399,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     }
   }
 
-  private CreateDictionaryStep4Additional(config:IotConfiguration) {
+  private CreateDictionaryStep4Additional(config:IConfiguration) {
     //fastiot
     this._mergeDictionary.set("%{launch.id}", IoTHelper.CreateGuid());
     this._mergeDictionary.set("%{template.id}", this.Attributes.Id);
@@ -410,7 +410,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     this._mergeDictionary.set("%{template.storage.path.aswindows}",<string>storagePath);
     const userName=os.userInfo().username;
     this._mergeDictionary.set("%{os.userinfo.username}",<string>userName);
-    this._mergeDictionary.set("%{debug.app.folder}",<string>config.DebugAppFolderDevice);
+    this._mergeDictionary.set("%{debug.app.folder}",<string>config.Sbc.DebugAppFolder);
   }
 
   private CreateDictionaryStep5DefinePathToProject(dstPath:string) {
@@ -468,9 +468,9 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     this._mergeDictionary.set("%{project.path.full.ascygdrive}",<string>IoTHelper.GetPathAsCygdrive(dirProjectWin));
   }
 
-  private CreateDictionaryStep7Launch(config:IotConfiguration) {
+  private CreateDictionaryStep7Launch(config:IConfiguration) {
     //launch. Always last
-    const label=IoTHelper.MergeWithDictionary(this._mergeDictionary,config.TemplateTitleLaunch);
+    const label=IoTHelper.MergeWithDictionary(this._mergeDictionary,config.Template.TitleLaunch);
     this._mergeDictionary.set("%{launch.label}",<string>label);
   }
 

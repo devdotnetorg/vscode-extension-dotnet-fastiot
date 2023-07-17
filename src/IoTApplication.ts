@@ -4,21 +4,43 @@ import * as path from 'path';
 import { StatusResult,IotResult } from './IotResult';
 import { IContexUI } from './ui/IContexUI';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
-import {IotConfiguration} from './Configuration/IotConfiguration';
+import { IConfiguration } from './Configuration/IConfiguration';
+import { EntityType } from './Entity/EntityType';
+import { IConfigEntityCollection } from './Entity/EntityCollection';
+import { IotBuiltInConfig } from './Configuration/IotBuiltInConfig';
+//Fake
+import { IoTUIFake } from './Fake/IoTUIFake';
+import { IotConfigurationFake } from './Fake/IotConfigurationFake';
 
 export class IoTApplication {
 
   public UI:IContexUI;
-  public Config:IotConfiguration;
+  public Config:IConfiguration;
   public Templates: IotTemplateCollection;
   
-  constructor(
-    contextUI:IContexUI,
-    config:IotConfiguration,
-    templates: IotTemplateCollection
-  ){
-    this.UI=contextUI;
-    this.Config=config;
-    this.Templates=templates;
+  constructor(){
+    //Fake
+    this.UI= new IoTUIFake();
+    this.Config=new IotConfigurationFake ();
+    //Templates
+    const builtInConfig = new IotBuiltInConfig('fastiot.config.Fake');
+    const configTemplateCollection:IConfigEntityCollection = {
+      extVersion: "",
+      extMode: vscode.ExtensionMode.Test,
+      recoverySourcePath: "",
+      schemasFolderPath: "",
+      tempFolderPath:"",
+      lastUpdateHours:0,
+      isUpdate:false,
+      updateIntervalHours:0,
+      urlsUpdateEntitiesCommunity:[""],
+      urlUpdateEntitiesSystem:""
+    };
+    const getDirTemplatesCallback = (type:EntityType):string => {
+      return "";
+    };
+
+    const saveLastUpdateHours = (value:number):void=> {};
+    this.Templates= new IotTemplateCollection(configTemplateCollection,getDirTemplatesCallback,saveLastUpdateHours);
   }
 }

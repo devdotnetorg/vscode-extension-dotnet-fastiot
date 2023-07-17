@@ -7,7 +7,7 @@ import { IotLaunchEnvironment } from './IotLaunchEnvironment';
 import { IotTreeItem } from './shared/IotTreeItem';
 import { IoTHelper } from './Helper/IoTHelper';
 import { launchHelper } from './Helper/launchHelper';
-import { IotConfiguration } from './Configuration/IotConfiguration';
+import { IConfiguration } from './Configuration/IConfiguration';
 import { IotLaunchOption } from './IotLaunchOption';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 
@@ -594,7 +594,7 @@ export class IotLaunch {
     */
   }
 
-  public RebuildLaunch(config:IotConfiguration, templates:IotTemplateCollection, devices: Array<IotDevice>): IotResult {
+  public RebuildLaunch(config:IConfiguration, templates:IotTemplateCollection, devices: Array<IotDevice>): IotResult {
     const errorMsg=`Unable to execute RebuildLaunch. IdLaunch: ${this.IdLaunch}`;
     let result:IotResult;
     //--------------Checks--------------

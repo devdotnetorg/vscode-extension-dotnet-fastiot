@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotDevice } from '../IotDevice';
-import { IotConfiguration } from '../Configuration/IotConfiguration';
+import { IConfiguration } from '../Configuration/IConfiguration';
 
-export async function openSshTerminal(item:IotDevice,config:IotConfiguration): Promise<void> {
+export async function openSshTerminal(item:IotDevice,config:IConfiguration): Promise<void> {
         const runCmd=`${config.Folder.AppsBuiltIn}\\cwrsync\\ssh.exe `+
                 `-i ${item.Account.PathKey} `+
                 `-o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile /dev/null' `+

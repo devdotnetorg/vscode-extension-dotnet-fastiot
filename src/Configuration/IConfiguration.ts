@@ -1,0 +1,24 @@
+import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
+import { EntityType } from '../Entity/EntityType';
+import { LogLevel } from '../shared/LogLevel';
+import { IConfigurationFolder } from './IConfigurationFolder';
+import { IConfigurationExtension } from './IConfigurationExtension';
+import { IConfigurationSbc } from './IConfigurationSbc';
+import { IConfigurationEntity } from './IConfigurationEntity';
+import { IConfigurationTemplate } from './IConfigurationTemplate';
+
+export interface IConfiguration {
+  Folder: IConfigurationFolder;
+  Extension: IConfigurationExtension;
+  Sbc: IConfigurationSbc;
+  Entity: IConfigurationEntity;
+  Template: IConfigurationTemplate;
+
+  //*********  [deprecated]  *********//
+  UsernameAccountDevice_d:string;
+  GroupAccountDevice_d:string;
+  JsonDevices_d:any;
+  //**********************************//
+}

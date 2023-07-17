@@ -54,19 +54,44 @@
 					"fastiot.device.account.username": {
 						"type": "string",
 						"default": "debugvscode",
+						"markdownDescription": "[deprecated] Debug account name. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+					},
+					"fastiot.sbc.account.debug.username": {
+						"type": "string",
+						"default": "debugvscode",
 						"markdownDescription": "Debug account name. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.account.group": {
 						"type": "string",
 						"default": "sudo",
-						"markdownDescription": "Linux group for a new user (debugvscode) of a development device. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+						"markdownDescription": "[deprecated] Linux group for a new user (debugvscode) of a development device. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+					},
+					"fastiot.sbc.account.debug.groups": {
+						"type": "string",
+						"default": "gpio, video, i2c, spi, spidev, kmem, tty, dialout, input, audio",
+						"markdownDescription": "Linux groups for a new user (`#fastiot.sbc.account.debug.username#`) of a development board. Groups are separated by the symbol \"`,`\". For example: `gpio, video, i2c`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+					},
+					"fastiot.sbc.account.management.username": {
+						"type": "string",
+						"default": "managementvscode",
+						"markdownDescription": "Management account name. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+					},
+					"fastiot.sbc.account.management.groups": {
+						"type": "string",
+						"default": "sudo",
+						"markdownDescription": "Linux groups for a new user (`#fastiot.sbc.account.management.username#`) of a development board. Groups are separated by the symbol \"`,`\". For example: `sudo, group1, group2`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.device.applicationdatafolder": {
 						"type": "string",
 						"default": "",
+						"markdownDescription": "[deprecated] Shared folder for storing keys, templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+					},
+					"fastiot.sbc.applicationdata.folder": {
+						"type": "string",
+						"default": "",
 						"markdownDescription": "Shared folder for storing keys, templates. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-					"fastiot.device.ssh.keytype": {
+					"fastiot.sbc.ssh.keytype": {
 						"type": "string",
 						"enum": [
 							"ed25519-256",
@@ -79,22 +104,22 @@
 							"rsa-4096"
 						],
 						"default": "ed25519-256",
-						"markdownDescription": "Type of key generation algorithm for ssh. Used to authenticate with a device after it has been added to the device list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the `PubkeyAcceptedAlgorithms=+ssh-rsa` line to the `/etc/ssh/sshd_config` file. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+						"markdownDescription": "Type of key generation algorithm for ssh. Used to authenticate with a development board after it has been added to the development board list. Learn more about key algorithms see [How To Set Up SSH Keys](https://goteleport.com/blog/how-to-set-up-ssh-keys/). If you use the rsa key type, then you need to add the `PubkeyAcceptedAlgorithms=+ssh-rsa` line to the `/etc/ssh/sshd_config` file. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-					"fastiot.device.ssh.key.customtype": {
+					"fastiot.sbc.ssh.key.customtype": {
 						"type": "string",
 						"default": "",
-						"markdownDescription": "Custom type of key generation algorithm for ssh. Replaces `#fastiot.device.ssh.keytype#`. For example `ed25519`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+						"markdownDescription": "Custom type of key generation algorithm for ssh. Replaces `#fastiot.sbc.ssh.keytype#`. For example `ed25519`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-					"fastiot.device.ssh.key.custombits": {
+					"fastiot.sbc.ssh.key.custombits": {
 						"type": "number",
 						"default": 0,
-						"markdownDescription": "Custom key length in bits. Replaces `#fastiot.device.ssh.keytype#`. For example `256`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+						"markdownDescription": "Custom key length in bits. Replaces `#fastiot.sbc.ssh.keytype#`. For example `256`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-					"fastiot.device.debug.app.folder": {
+					"fastiot.sbc.debug.app.folder": {
 						"type": "string",
 						"default": "~/fastiot/debugapps",
-						"markdownDescription": "Folder to put debug apps on the device. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+						"markdownDescription": "Folder to put debug apps on the development board. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.launch.templatetitle": {
 						"type": "string",
@@ -104,7 +129,17 @@
 					"fastiot.device.all.JSON": {
 						"type": "object",
 						"default": {},
-						"description": "Configuration of all devices in JSON format."
+						"description": "[deprecated] Configuration of all devices in JSON format."
+					},
+					"fastiot.sbc.profiles.JSON": {
+						"type": "object",
+						"default": {},
+						"description": "Configuration of all development boards in JSON format."
+					},
+					"fastiot.sbc.udevfilename": {
+						"type": "string",
+						"default": "20-gpio-fastiot.rules",
+						"markdownDescription": "Udev rules (device permissions) name file for devices like GPIO. More details in [Linux udev](https://wiki.loliot.net/docs/linux/linux-tools/linux-udev/). File from `%userprofile%\\fastiot\\settings\\udevrules` directory."
 					},
 					"fastiot.entities.isupdate": {
 						"type": "boolean",
@@ -133,7 +168,7 @@
 						"default": true,
 						"markdownDescription": "Load templates on extension start (false, speeds up the start of the extension). See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
-					"fastiot.template.defaultprojectfolder": {
+					"fastiot.defaultprojectfolder": {
 						"type": "string",
 						"default": "",
 						"markdownDescription": "Default folder for storing projects. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
@@ -141,7 +176,7 @@
 					"fastiot.template.community.updatesource": {
 						"type": "string",
 						"default": "",
-						"markdownDescription": "Update source for community project templates. Sources are separated by the symbol `;`. For example: `htts://url1/list.yaml;htts://url2/list.yaml`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
+						"markdownDescription": "Update source for community project templates. Sources are separated by the symbol \"`;`\". For example: `htts://url1/list.yaml;htts://url2/list.yaml`. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
 					},
 					"fastiot.config.JSON": {
 						"type": "object",
@@ -178,12 +213,6 @@
 							"Logs that highlight when the current flow of execution is stopped due to a failure."
 						],
 						"markdownDescription": "Defines logging severity levels. See [Extension settings](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Extension-settings.md)."
-					},
-					"conf.resource.insertEmptyLastLine": {
-						"type": "object",
-						"default": {},
-						"markdownDescription": "Resource configuration: Configure files using glob patterns to have an empty last line always",
-						"scope": "resource"
 					}
 				}
 			}

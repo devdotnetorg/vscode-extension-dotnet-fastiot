@@ -24,7 +24,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   constructor(app:IoTApplication) {
       this._app=app;
       //Recovery devices
-      if(this._app.Config.JsonDevices.IotDevices) this.RecoveryDevices(this._app.Config.JsonDevices);
+      if(this._app.Config.JsonDevices_d.IotDevices) this.RecoveryDevices(this._app.Config.JsonDevices_d);
   }
 
   public getTreeItem(element: BaseTreeItem): vscode.TreeItem | Thenable<BaseTreeItem> {
@@ -172,7 +172,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
 
   public async SaveDevices(): Promise<void> {
     const jsonObj = this.ToJSON();
-    this._app.Config.JsonDevices=jsonObj;
+    this._app.Config.JsonDevices_d=jsonObj;
   }      
   
   private async RecoveryDevices(jsonObj:any): Promise<void>{    

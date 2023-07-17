@@ -47,7 +47,7 @@ export async function addDevice_old(treeData: TreeDataDevicesProvider,treeView:v
     if(!password) return;
     //select account: debugvscode or root
     let itemAccounts:Array<ItemQuickPick>=[];
-    let item = new ItemQuickPick(app.Config.UsernameAccountDevice,"(default)", app.Config.UsernameAccountDevice);
+    let item = new ItemQuickPick(app.Config.UsernameAccountDevice_d,"(default)", app.Config.UsernameAccountDevice_d);
     itemAccounts.push(item);
     item = new ItemQuickPick("root","Select if you have problems accessing /dev/* and /sys/* devices","root");
     itemAccounts.push(item);

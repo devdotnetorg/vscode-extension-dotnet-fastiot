@@ -5,7 +5,7 @@ import {BaseTreeItem} from './shared/BaseTreeItem';
 import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation, Existences} from './IotDeviceInformation';
 import {TypePackage,IotDevicePackage} from './IotDevicePackage';
-import {IotConfiguration} from './Configuration/IotConfiguration';
+import { IConfiguration } from './Configuration/IConfiguration';
 import {IotResult,StatusResult} from './IotResult';
 import {IotItemTree} from './shared/IotItemTree';
 import {IotDeviceDTO} from './IotDeviceDTO';
@@ -22,7 +22,7 @@ export class IotDevice extends BaseTreeItem {
   public Childs: Array<IotDeviceAccount| IotDeviceInformation| IotDevicePackage| IotDeviceDTO| IotDeviceGpiochip>=[];
   public Device: IotDevice=this;
 
-  public Config:IotConfiguration  
+  public Config:IConfiguration 
   
   public Account: IotDeviceAccount;
   public Information: IotDeviceInformation;  
@@ -33,7 +33,7 @@ export class IotDevice extends BaseTreeItem {
   //Format Version for export to json
   private _formatVersion: number=1;  
 
-  constructor(config:IotConfiguration
+  constructor(config:IConfiguration
     ){
       super("device","description", undefined,vscode.TreeItemCollapsibleState.Expanded);
       this.Config=config;
@@ -387,7 +387,7 @@ export class IotDevice extends BaseTreeItem {
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
-    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.Folder.Extension,"reboot",
+    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.Folder.Extension.fsPath,"reboot",
       undefined,false,false);
     //if(result.status==StatusResult.Error) return Promise.resolve(result);
     
@@ -402,7 +402,7 @@ export class IotDevice extends BaseTreeItem {
       if(result.Status==StatusResult.Error) return Promise.resolve(result);  
     }    
     //
-    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.Folder.Extension,"shutdown",
+    const result=await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Config.Folder.Extension.fsPath,"shutdown",
       undefined,false,false);    
     return Promise.resolve(result);    
   }

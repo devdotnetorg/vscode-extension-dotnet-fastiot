@@ -22,9 +22,9 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
     if(!addSBCConfig.port) addSBCConfig.port=22;
     if(!addSBCConfig.username) addSBCConfig.username="root";
     if(!addSBCConfig.sshkeytype) addSBCConfig.sshkeytype=
-        `${app.Config.TypeKeySshDevice}-${app.Config.BitsKeySshDevice}`;
+        `${app.Config.Sbc.TypeKeySsh}-${app.Config.Sbc.BitsKeySsh}`;
     if(!addSBCConfig.debugusername)
-        addSBCConfig.debugusername=app.Config.UsernameAccountDevice;
+        addSBCConfig.debugusername=app.Config.UsernameAccountDevice_d;
     if(!addSBCConfig.managementusername)
         addSBCConfig.managementusername="managementvscode";
     if(!addSBCConfig.udevfilename)

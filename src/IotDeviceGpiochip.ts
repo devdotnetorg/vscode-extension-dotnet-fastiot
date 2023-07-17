@@ -68,7 +68,7 @@ export class IotDeviceGpiochip extends BaseTreeItem {
     if(!packageLibgpiod?.isInstalled)      
       return Promise.resolve(new IotResult(StatusResult.Error,"Libgpiod library not installed.",undefined));   
     //
-    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
+    let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension.fsPath,
         "gpiodetecttojson",undefined, false,false);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     //parse result

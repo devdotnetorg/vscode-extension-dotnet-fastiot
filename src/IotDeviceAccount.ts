@@ -19,7 +19,7 @@ export class IotDeviceAccount extends BaseTreeItem{
   public Groups: Array<string>=[]; // $ groups debugvscode = debugvscode : debugvscode sudo docker
 
   public get PathKey(): string| undefined {
-    return this.Device?.Config.Folder.DeviceKeys +"\\"+this.Identity;}
+    return this.Device?.Config.Folder.KeysSbc +"\\"+this.Identity;}
     
   public get SshConfig(): SSHConfig {
     let port:number=0;
@@ -87,11 +87,11 @@ export class IotDeviceAccount extends BaseTreeItem{
       let result:IotResult;
       //base root
       nameScript="createaccountroot";
-      paramsScript=`${this.Device.Config.TypeKeySshDevice} ${this.Device.Config.BitsKeySshDevice}`;
+      paramsScript=`${this.Device.Config.Sbc.TypeKeySsh} ${this.Device.Config.Sbc.BitsKeySsh}`;
       //if debugvscode
       if(accountNameDebug!="root"){
         nameScript="createaccount";
-        paramsScript=`${accountNameDebug} ${this.Device.Config.GroupAccountDevice} ${paramsScript}`;
+        paramsScript=`${accountNameDebug} ${this.Device.Config.GroupAccountDevice_d} ${paramsScript}`;
       }
       //event
       this.Client.FireChangedState({
@@ -100,7 +100,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         obj:undefined
       });
       //run
-      result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
+      result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension.fsPath,
         nameScript,paramsScript, false,false);
       //out
       if(result.SystemMessage){
@@ -115,10 +115,10 @@ export class IotDeviceAccount extends BaseTreeItem{
       //get private file key
       let pathFile:string;
       if(accountNameDebug=="root"){
-        pathFile=`/root/.ssh/id_${this.Device.Config.TypeKeySshDevice}`;
+        pathFile=`/root/.ssh/id_${this.Device.Config.Sbc.TypeKeySsh}`;
       }else
       {
-        pathFile=`/home/${accountNameDebug}/.ssh/id_${this.Device.Config.TypeKeySshDevice}`;
+        pathFile=`/home/${accountNameDebug}/.ssh/id_${this.Device.Config.Sbc.TypeKeySsh}`;
       }      
       this.Client.FireChangedState({
         status:undefined,
@@ -131,15 +131,15 @@ export class IotDeviceAccount extends BaseTreeItem{
       let data=result.SystemMessage;
       if(data)
       {
-        const fileName=`id-${this.Device.Config.TypeKeySshDevice}-${this.Device.IdDevice}-${accountNameDebug}`;
-        pathFile=`${this.Device.Config.Folder.DeviceKeys}\\${fileName}`;
+        const fileName=`id-${this.Device.Config.Sbc.TypeKeySsh}-${this.Device.IdDevice}-${accountNameDebug}`;
+        pathFile=`${this.Device.Config.Folder.KeysSbc}\\${fileName}`;
         fs.writeFileSync(pathFile,data,undefined);
         //Attribute writing
         this.Host=sshconfig.host?.toString();
         this.Port=sshconfig.port?.toString();
         this.UserName=accountNameDebug;
         this.Identity=fileName;
-        this.Groups.push(this.Device.Config.GroupAccountDevice);	        
+        this.Groups.push(this.Device.Config.GroupAccountDevice_d);	        
       }
       //-------------------------------
       //udev rules
@@ -169,7 +169,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         result = await this.Client.PutFile(sshconfig,undefined,pathFile,dataFile,"utf8",false);
         if(result.Status==StatusResult.Error) return Promise.resolve(result);            
         //add udev rules
-        result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
+        result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension.fsPath,
             "addudevrules",paramsScript, false,false);
         if(result.SystemMessage){
               this.Client.FireChangedState({
@@ -187,7 +187,7 @@ export class IotDeviceAccount extends BaseTreeItem{
         ChallengeResponseAuthentication yes
         AuthenticationMethods publickey password
       */
-      result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension,
+      result = await this.Client.RunScript(sshconfig,undefined, this.Device.Config.Folder.Extension.fsPath,
           "changeconfigssh",undefined, false,false);
       if(result.SystemMessage){
             this.Client.FireChangedState({

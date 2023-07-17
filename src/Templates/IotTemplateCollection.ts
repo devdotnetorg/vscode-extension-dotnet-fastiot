@@ -9,8 +9,12 @@ import { IotTemplateAttribute } from './IotTemplateAttribute';
 
 export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute,IotTemplate> {
 
-  constructor(getDirEntitiesCallback:(type:EntityType) =>string,config:IConfigEntityCollection){
-      super("template","templates",IotTemplate,getDirEntitiesCallback,config);
+  constructor(
+    config:IConfigEntityCollection,
+    getDirEntitiesCallback:(type:EntityType) => string,
+    saveLastUpdateHours:(value:number) => void
+    ){
+      super("template","templates",IotTemplate,config,getDirEntitiesCallback,saveLastUpdateHours);
   }
 
   public async ImportTemplateUserFromZip(fileZipPath:string):Promise<IotResult>
