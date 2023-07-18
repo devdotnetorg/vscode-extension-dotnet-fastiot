@@ -18,7 +18,7 @@ export class FilesValidator {
     let msg="";
     try {
       //open schema
-      const schemaPath=`${this._schemasFolderPath}\\${schemaFileName}`;
+      const schemaPath=path.join(this._schemasFolderPath, schemaFileName);
       let dataFile:string= fs.readFileSync(schemaPath, 'utf8');
       let jsonSchema = JSON.parse(dataFile);
       jsonSchema.files.forEach((element:any) => {

@@ -10,7 +10,7 @@ import { ItemQuickPick } from '../Helper/actionHelper';
 import { LogLevel } from '../shared/LogLevel';
 import { BadgeActivityBar  } from './BadgeActivityBar';
 
-export class IoTUI implements IContexUI {
+export class UI implements IContexUI {
   private _outputChannel:vscode.OutputChannel;
   private _statusBarBackground: StatusBarBackground;
   private readonly _currentLogLevel:LogLevel;

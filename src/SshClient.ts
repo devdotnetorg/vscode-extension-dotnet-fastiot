@@ -37,7 +37,7 @@ export class SshClient {
       let outSystemMessage:string| undefined;
       let result:IotResult;
       //get script
-      let pathFile:string= pathFolderExtension +"\\bashscript\\"+nameScript+".sh";
+      let pathFile:string= path.join(pathFolderExtension, "bashscript", `${nameScript}.sh`);
       console.log(`pathFileScript= ${pathFile}`);      
       if (!fs.existsSync(pathFile)) 
       {        

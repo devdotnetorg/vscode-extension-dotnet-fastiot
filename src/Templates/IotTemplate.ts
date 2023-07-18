@@ -36,11 +36,11 @@ Init:
 
 export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   public get StoragePath(): string {
-    return this.RootDir+"\\storage";}
+    return path.join(this.RootDir, "storage");}
   public get TemplatePath(): string {
-    return this.RootDir+"\\template";}
+    return path.join(this.RootDir, "template");}
   public get ImagePath(): string {
-    return this.RootDir+"\\template.fastiot.png";}
+    return path.join(this.RootDir, "template.fastiot.png");}
 
   private _mergeDictionary:Map<string,string>= new Map<string,string>();
 
@@ -118,7 +118,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         return result;
       }
       //Unique names for Launchs
-      result=launchHelper.FixUniqueLabel(`${dstPath}\\.vscode\\launch.json`);
+      result=launchHelper.FixUniqueLabel(path.join(dstPath, ".vscode", "launch.json"));
       if(result.Status==StatusResult.Error) {
         result.AddMessage(errorMsg);
         return result;
@@ -146,7 +146,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     const errorMsg=`Launch and tasks not added!`;
     try {
       //Copy
-      result=this.CopyOnlyFilesVscode(dstPath+"\\.vscode");
+      result=this.CopyOnlyFilesVscode(path.join(dstPath, ".vscode"));
       if(result.Status==StatusResult.Error) {
         result.AddMessage(errorMsg);
         return result;
@@ -175,7 +175,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         return result;
       }
       //Unique names for Launchs
-      result=launchHelper.FixUniqueLabel(`${dstPath}\\.vscode\\launch.json`);
+      result=launchHelper.FixUniqueLabel(path.join(dstPath, ".vscode", "launch.json"));
       if(result.Status==StatusResult.Error) {
         result.AddMessage(errorMsg);
         return result;
@@ -187,7 +187,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         return result;
       }
       //Not necessary. Time setting
-      IoTHelper.SetTimeFiles(IoTHelper.GetAllFile(`${dstPath}\\.vscode`));
+      IoTHelper.SetTimeFiles(IoTHelper.GetAllFile(path.join(dstPath, ".vscode")));
       //
       result= new IotResult(StatusResult.Ok, `Launch and tasks added successfully`);
       //launch.id
@@ -204,7 +204,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     try {
       //Files
       this.Attributes.FilesToProcess.forEach((name) => {
-        const filePath=dstPath+"\\"+ IoTHelper.ReverseSeparatorLinuxToWin(name);
+        const filePath= path.join(dstPath, IoTHelper.ReverseSeparatorLinuxToWin(name));
         let text =fs.readFileSync(filePath, 'utf-8');
         text=IoTHelper.MergeWithDictionary(this._mergeDictionary,text);
         //write file
@@ -224,9 +224,9 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     try {
       //Files
       this.Attributes.FileNameReplacement.forEach((value,key) => {
-        const oldPath=dstPath+"\\"+IoTHelper.ReverseSeparatorLinuxToWin(key);
+        const oldPath=path.join(dstPath, IoTHelper.ReverseSeparatorLinuxToWin(key));
         value=IoTHelper.MergeWithDictionary(this._mergeDictionary,value);
-        const newPath=dstPath+"\\"+IoTHelper.ReverseSeparatorLinuxToWin(value);
+        const newPath=path.join(dstPath, IoTHelper.ReverseSeparatorLinuxToWin(value));
         fs.renameSync(oldPath,newPath);
         //replace in FilesToProcess
         let indexItem=this.Attributes.FilesToProcess.indexOf(key);
@@ -251,13 +251,13 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   private InsertLaunchOrTask(dstPath:string,entity:string /*launch or tasks*/):IotResult {
     let result:IotResult;
     //debug
-    const debugFilePath=`${dstPath}\\debug_${entity}_json.txt`;
+    const debugFilePath=path.join(dstPath, `debug_${entity}_json.txt`);
     try {
       //open files
-      const fileEntityPath=`${dstPath}\\.vscode\\${entity}.json`;
+      const fileEntityPath=path.join(dstPath, ".vscode", `${entity}.json`);
       let dataEntity:string= fs.readFileSync(fileEntityPath,'utf8');
       dataEntity=IoTHelper.DeleteComments(dataEntity);
-      const fileInsertEntityPath=`${this.TemplatePath}\\.vscode\\insert_${entity}_key.json`;
+      const fileInsertEntityPath=path.join(this.TemplatePath, ".vscode", `insert_${entity}_key.json`);
       let insertDataEntities:string= fs.readFileSync(fileInsertEntityPath,'utf8');
       insertDataEntities=IoTHelper.DeleteComments(insertDataEntities);
       //toJSON
@@ -311,12 +311,12 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       IoTHelper.MakeDirSync(dstPath);
       fs.copySync(this.TemplatePath, dstPath);
       // remove files
-      let file=dstPath+"\\.vscode\\insert_launch_key.json";
+      let file=path.join(dstPath, ".vscode", "insert_launch_key.json");
       if (fs.existsSync(file)) fs.removeSync(file);
-      file=dstPath+"\\.vscode\\insert_tasks_key.json";
+      file=path.join(dstPath, ".vscode", "insert_tasks_key.json");
       if (fs.existsSync(file)) fs.removeSync(file);
       //copy template.fastiot.yaml
-      fs.copyFileSync(this.YAMLFilePath,dstPath+"\\template.fastiot.yaml");
+      fs.copyFileSync(this.YAMLFilePath,path.join(dstPath, "template.fastiot.yaml"));
       result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       //result
@@ -331,16 +331,16 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //Create dir
       IoTHelper.MakeDirSync(dstPath);
       //copy files from /.vscode to dstPath(project)
-      const files = fs.readdirSync(this.TemplatePath+"\\.vscode");
+      const files = fs.readdirSync(path.join(this.TemplatePath, ".vscode"));
       files.forEach(name => {
         //Exception check
         if (name=="insert_launch_key.json"||name=="insert_tasks_key.json")
         {/* skip */}else{
           //file
-          const file=`${this.TemplatePath}\\.vscode\\${name}`;
+          const file=path.join(this.TemplatePath, ".vscode", name);
           if(fs.lstatSync(file).isFile())
           {
-            const dstFile=`${dstPath}\\${name}`;
+            const dstFile=path.join(dstPath, name);
             //check
             if(!fs.existsSync(dstFile)){
               //copy file
@@ -365,8 +365,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
 
   private CreateDictionaryStep2AddDeviceInfo (device:IotDevice, config:IConfiguration) {
       //device
-      this._mergeDictionary.set("%{device.id}",<string>device.IdDevice); 
-      let ssh_key= config.Folder.KeysSbc+"\\"+<string>device?.Account.Identity;
+      this._mergeDictionary.set("%{device.id}",<string>device.IdDevice);
+      let ssh_key= path.join(config.Folder.KeysSbc, <string>device?.Account.Identity);
       ssh_key=IoTHelper.ReverseSeparatorReplacement(ssh_key);
       this._mergeDictionary.set("%{device.ssh.key.path.full.aswindows}",ssh_key);
       this._mergeDictionary.set("%{device.ssh.port}",<string>device?.Account.Port);
@@ -484,7 +484,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     try {
       const currentDate: Date = new Date();
       const dateString: string = `${currentDate.getHours()}-${currentDate.getMinutes()}-${currentDate.getSeconds()}_${currentDate.getMilliseconds()}`;
-      const filePath=`${dstPath}\\${dateString}-${name}.txt`;
+      const filePath=path.join(dstPath, `${dateString}-${name}.txt`);
       //save in file
       let data="";
       let line="";

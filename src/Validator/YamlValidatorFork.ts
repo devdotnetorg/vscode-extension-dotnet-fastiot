@@ -20,7 +20,7 @@ export class YamlValidatorFork implements IYamlValidator {
       //source - https://www.npmjs.com/package/yaml-schema-validator-fork
       const validateSchema = require('yaml-schema-validator-fork');
       // validate a yml file
-      const schemaPath=`${this._schemasFolderPath}\\${schemaFileName}`;
+      const schemaPath=path.join(this._schemasFolderPath, schemaFileName);
       var schemaErrors = validateSchema(yamlObj,
         {
           schemaPath: schemaPath,
@@ -51,7 +51,7 @@ export class YamlValidatorFork implements IYamlValidator {
   {
     let result:IotResult;
     const errMsg="Validation error";
-    const schemaPath=`${this._schemasFolderPath}\\${schemaFileName}`;
+    const schemaPath=path.join(this._schemasFolderPath, schemaFileName);
     //exist
     if (!fs.existsSync(yamlFilePath)) {
       result = new IotResult(StatusResult.Error,`${errMsg}. ${yamlFilePath} file does not exist`);

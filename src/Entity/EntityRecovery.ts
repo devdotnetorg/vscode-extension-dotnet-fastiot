@@ -14,7 +14,7 @@ export class EntityRecovery {
     try {
       this.GetListNameBuiltInEntity(sourceDir).forEach(name => {
         //directory
-        const dir=`${destDir}\\${name}`;
+        const dir=path.join(destDir, name);
         //MkDir
         IoTHelper.MakeDirSync(dir);
       });
@@ -33,7 +33,7 @@ export class EntityRecovery {
     const files = fs.readdirSync(sourceDir);
     files.forEach(name => {
       //file
-      if(fs.lstatSync(`${sourceDir}\\${name}`).isFile())
+      if(fs.lstatSync(path.join(sourceDir, name)).isFile())
       {
         const extFile=IoTHelper.GetFileExtensions(name);
         if(extFile==".zip") {

@@ -9,7 +9,7 @@ import { EntityType } from './Entity/EntityType';
 import { IConfigEntityCollection } from './Entity/EntityCollection';
 import { IotBuiltInConfig } from './Configuration/IotBuiltInConfig';
 //Fake
-import { IoTUIFake } from './Fake/IoTUIFake';
+import { UIFake } from './Fake/UIFake';
 import { IotConfigurationFake } from './Fake/IotConfigurationFake';
 
 export class IoTApplication {
@@ -20,7 +20,7 @@ export class IoTApplication {
   
   constructor(){
     //Fake
-    this.UI= new IoTUIFake();
+    this.UI= new UIFake();
     this.Config=new IotConfigurationFake ();
     //Templates
     const builtInConfig = new IotBuiltInConfig('fastiot.config.Fake');

@@ -40,7 +40,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     if(!selectDevice) return;
     //Select template
     //get id template
-    let idTemplate=new IotTemplateAttribute("","").ForceGetID(workspaceDirectory+"\\template.fastiot.yaml");
+    let idTemplate=new IotTemplateAttribute("","").ForceGetID(path.join(workspaceDirectory, "template.fastiot.yaml"));
     let selectTemplate:IotTemplate|undefined;
     if(idTemplate)
         selectTemplate=app.Templates.FindById(idTemplate);

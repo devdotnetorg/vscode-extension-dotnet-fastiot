@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export class IoTGpiochip {
+export class Gpiochip {
   private _id: number; 
   public get Id(): number { //Id=0
     return this._id;};

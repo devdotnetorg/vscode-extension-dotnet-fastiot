@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IotDevice} from '../IotDevice';
-import {IoTDTO} from './IoTDTO';
+import { IotDevice } from '../IotDevice';
+import { DTO } from './DTO';
 import { IotResult,StatusResult } from '../IotResult';
 
 export interface IDtoAdapter {  

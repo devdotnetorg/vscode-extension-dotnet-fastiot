@@ -3,21 +3,21 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem} from './shared/BaseTreeItem';
 import {IotDevice} from './IotDevice';
-import {IoTGpiochip} from './GPIO/IoTGpiochip';
+import {Gpiochip} from './GPIO/Gpiochip';
 import {IotResult,StatusResult} from './IotResult';
 import {TypePackage} from './IotDevicePackage';
 
 export class IotDeviceGpiochip extends BaseTreeItem {
-  public Items: Array<IoTGpiochip>=[];
+  public Items: Array<Gpiochip>=[];
 
   public Parent: IotDevice| IotDeviceGpiochip;
   public Childs: Array<IotDeviceGpiochip>=[]; 
   public Device: IotDevice;
     
-  private _gpiochip: IoTGpiochip| undefined; 
-  public get Gpiochip(): IoTGpiochip| undefined {
+  private _gpiochip: Gpiochip| undefined; 
+  public get Gpiochip(): Gpiochip| undefined {
     return this._gpiochip;};
-  public set Gpiochip(gpiochip: IoTGpiochip| undefined) {
+  public set Gpiochip(gpiochip: Gpiochip| undefined) {
       this._gpiochip=gpiochip;
       //
       this.label=`${this._gpiochip?.Name} [${this._gpiochip?.Description}]`;
@@ -55,7 +55,7 @@ export class IotDeviceGpiochip extends BaseTreeItem {
     };
   }
 
-  public InitGpiochip(gpiochip:IoTGpiochip)
+  public InitGpiochip(gpiochip:Gpiochip)
   {
     this.Gpiochip=gpiochip;    
     //view
@@ -114,7 +114,7 @@ export class IotDeviceGpiochip extends BaseTreeItem {
           let chipDescription = <string> item.description;
           let chipNumberlines = parseInt(item.numberlines);
           //
-          let gpiochip = new IoTGpiochip(chipId,"gpiochip"+chipId,chipDescription,chipNumberlines);
+          let gpiochip = new Gpiochip(chipId,"gpiochip"+chipId,chipDescription,chipNumberlines);
           this.Items.push(gpiochip);
           //next position
           index=index+1;
@@ -167,7 +167,7 @@ export class IotDeviceGpiochip extends BaseTreeItem {
           let descriptionGpiochip = <string> item.description;
           let numberlinesGpiochip = <number> item.numberlines;
           //
-          let gpiochip = new IoTGpiochip(idGpiochip,nameGpiochip,
+          let gpiochip = new Gpiochip(idGpiochip,nameGpiochip,
             descriptionGpiochip,numberlinesGpiochip);          
           //push
           this.Items.push(gpiochip);

@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IotDevice} from '../IotDevice';
-import {IDtoAdapter} from './IDtoAdapter';
-import {IoTDTOArmbianAdapter} from './IoTDTOArmbianAdapter';
+import { IotDevice } from '../IotDevice';
+import { IDtoAdapter } from './IDtoAdapter';
+import { DTOArmbianAdapter } from './DTOArmbianAdapter';
 import { IotResult,StatusResult } from '../IotResult';
 
-export class IoTDTO {  
+export class DTO {  
   private _device: IotDevice;
   private _adapterDTO?:IDtoAdapter;
 
@@ -44,7 +44,7 @@ export class IoTDTO {
     let adapter:IDtoAdapter| undefined;
     //Select adapter - Armbian
     if(device.Information.ArmbianVersion)
-      adapter=new IoTDTOArmbianAdapter(device);
+      adapter=new DTOArmbianAdapter(device);
     //Select adapter - other OS
     //using only - device
 
@@ -59,7 +59,7 @@ export class IoTDTO {
       if(result.Status==StatusResult.Ok)
       {
         //sort
-        result.returnObject=(<Array<IoTDTO>>result.returnObject).sort(compare);
+        result.returnObject=(<Array<DTO>>result.returnObject).sort(compare);
         //
         const jsonObj=this._adapterDTO.WriteConfig();
         this._device.DtoLinux.Config=jsonObj;
@@ -131,7 +131,7 @@ export class IoTDTO {
   }
 }
 
-export function compare( a:IoTDTO, b:IoTDTO ) {
+export function compare( a:DTO, b:DTO ) {
   if(a.Name && b.Name){
     if ( a.Name < b.Name ){
       return -1;

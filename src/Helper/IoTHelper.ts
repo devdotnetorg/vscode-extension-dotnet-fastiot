@@ -112,7 +112,7 @@ export class IoTHelper {
     try {
       let files=fs.readdirSync(pathFolder);
       files.forEach((name) => {
-        const filename=`${pathFolder}\\${name}`;      
+        const filename=path.join(pathFolder, name);
         if(fs.lstatSync(filename).isDirectory()) {
           const helper= new IoTHelper();
           const result2=helper.GetAllFilesByExtRecurc(filename, fileExtension, depthLevel,currenDepthLevel+1);
@@ -166,18 +166,18 @@ export class IoTHelper {
     return result;
   }
 
-  static GetListDir(path:string):string[]
+  static GetListDir(dirPath:string):string[]
   {
     let listFolders:Array<string>=[];
     //check path 
-    if (!fs.existsSync(path)) return listFolders;
+    if (!fs.existsSync(dirPath)) return listFolders;
     try {
       //getting a list of entity directories
-      const files = fs.readdirSync(path);
+      const files = fs.readdirSync(dirPath);
       //getting a list of folders
       files.forEach(name => {
         //directory
-        const dir=`${path}\\${name}`;
+        const dir=path.join(dirPath, name);
         if(fs.lstatSync(dir).isDirectory()) listFolders.push(dir);
       });
     } catch (err: any){}   
@@ -208,7 +208,7 @@ export class IoTHelper {
     try {
       const files=fs.readdirSync(dirPath);
       files.forEach((name) => {
-        const filename=`${dirPath}\\${name}`;
+        const filename=path.join(dirPath, name);
         if(fs.lstatSync(filename).isDirectory())
         {
           //Directory

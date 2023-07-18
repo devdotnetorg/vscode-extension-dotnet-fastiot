@@ -87,7 +87,7 @@ export async function createProject(app:IoTApplication,devices:Array<IotDevice>)
         if(!folders||folders.length==0) return;
         folder=folders[0].fsPath;
         //Project path confirmation
-        folder=`${folder}\\${nameProject}`;
+        folder=path.join(folder, nameProject);
         selectFolder = await vscode.window.showInputBox({				
             prompt: 'Confirm project location',
             title: 'Project path (6/6)',

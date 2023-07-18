@@ -6,7 +6,7 @@ import { IotDevice } from '../IotDevice';
 import { IConfiguration } from '../Configuration/IConfiguration';
 
 export async function openSshTerminal(item:IotDevice,config:IConfiguration): Promise<void> {
-        const runCmd=`${config.Folder.AppsBuiltIn}\\cwrsync\\ssh.exe `+
+        const runCmd=`${path.join(config.Folder.AppsBuiltIn, "cwrsync", "ssh.exe")} `+
                 `-i ${item.Account.PathKey} `+
                 `-o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile /dev/null' `+
                 `-p ${item.Account.Port} `+

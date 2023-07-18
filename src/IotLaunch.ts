@@ -55,8 +55,8 @@ export class IotLaunch {
 
   constructor(workspaceDirectory:string){
     this._workspaceDirectory=workspaceDirectory;
-    this._launchFilePath=<string>this.WorkspaceDirectory+"\\.vscode\\launch.json";
-    this._tasksFilePath=<string>this.WorkspaceDirectory+"\\.vscode\\tasks.json";
+    this._launchFilePath=path.join(this.WorkspaceDirectory, ".vscode", "launch.json");
+    this._tasksFilePath=path.join(this.WorkspaceDirectory, ".vscode", "tasks.json");
     this._environment = new IotLaunchEnvironment();  
   }
 

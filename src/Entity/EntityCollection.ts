@@ -200,7 +200,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   {
     let result:IotResult;
     try {
-      const filePath=`${dir}\\${this._entityLabel.toLowerCase()}.fastiot.yaml`;
+      const filePath= path.join(dir, `${this._entityLabel.toLowerCase()}.fastiot.yaml`);
       let entity = new this.TCreator(this.Config.schemasFolderPath);
       entity.Init(type,filePath,this.Config.recoverySourcePath);
       if(!isTest&&!entity.IsValid&&type==EntityType.system) {

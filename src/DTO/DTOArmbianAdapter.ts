@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IotDevice} from '../IotDevice';
-import {IDtoAdapter} from './IDtoAdapter';
-import {IoTDTO} from './IoTDTO';
+import { IotDevice } from '../IotDevice';
+import { IDtoAdapter } from './IDtoAdapter';
+import { DTO } from './DTO';
 import { IotResult,StatusResult } from '../IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 
-export class IoTDTOArmbianAdapter implements IDtoAdapter {
+export class DTOArmbianAdapter implements IDtoAdapter {
   private _config = {
     overlay_prefix: "",
     overlaydir: ""
@@ -164,9 +164,9 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
     return overlaysArray;
   }
 
-  private MergeDTOs(enabledDTOs: Array<string>, DTOFiles:any):Array<IoTDTO>{
+  private MergeDTOs(enabledDTOs: Array<string>, DTOFiles:any):Array<DTO>{
     const files = <Array<any>>DTOFiles;
-    let resultDtos: Array<IoTDTO>=[];
+    let resultDtos: Array<DTO>=[];
     //
     files.forEach(element =>
 			{				
@@ -185,7 +185,7 @@ export class IoTDTOArmbianAdapter implements IDtoAdapter {
             const foundItem=enabledDTOs.find(x=>x==filenameForMerge);
             if(foundItem) isEnabledDTO=true;            
             //create DTO
-            let item = new IoTDTO(this.Device);
+            let item = new DTO(this.Device);
             item.Init(isEnabledDTO,filenameForMerge,`${this._config.overlaydir}/${filename}`);
             resultDtos.push(item);
           }          

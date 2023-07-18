@@ -10,7 +10,7 @@ import { ItemQuickPick } from '../Helper/actionHelper';
 import { LogLevel } from '../shared/LogLevel';
 import { BadgeActivityBar  } from '../UI/BadgeActivityBar';
 
-export class IoTUIFake implements IContexUI {
+export class UIFake implements IContexUI {
 
   constructor(){}
 

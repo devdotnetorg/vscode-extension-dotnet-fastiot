@@ -6,7 +6,7 @@ import * as fs from 'fs-extra';
 import { compare } from 'compare-versions';
 //shared
 import { IoTApplication } from './IoTApplication';
-import { IoTApplicationBuilder } from './IoTApplicationBuilder';
+import { ApplicationBuilder } from './ApplicationBuilder';
 import { IoTHelper } from './Helper/IoTHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
 import { IotItemTree } from './shared/IotItemTree';
@@ -16,7 +16,7 @@ import { IConfigEntityCollection } from './Entity/EntityCollection';
 import { Constants } from "./Constants";
 import { DialogEnum } from './Types/DialogEnum';
 //UI
-import { IoTUI } from './ui/IoTUI';
+import { UI } from './ui/UI';
 import { IContexUI } from './ui/IContexUI';
 import { StatusBarBackground } from './ui/StatusBarBackground';
 //Devices
@@ -428,7 +428,7 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 	//Config
 	let config=new IotConfiguration(context);
 	//UI
-	let contextUI= new IoTUI(config.Extension.Loglevel);
+	let contextUI= new UI(config.Extension.Loglevel);
 	//Templates
 	//Templates config
 	let urlUpdateTemplatesSystem:string="";
@@ -461,7 +461,7 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 
 	let templates= new IotTemplateCollection(configTemplateCollection,getDirTemplatesCallback,saveLastUpdateHours);
 	//Build
-	let applicationBuilder = new IoTApplicationBuilder();
+	let applicationBuilder = new ApplicationBuilder();
 	applicationBuilder.BuildUI(contextUI);
 	applicationBuilder.BuildConfig(config);
 	applicationBuilder.BuildTemplates(templates);

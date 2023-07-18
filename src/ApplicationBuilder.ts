@@ -7,7 +7,7 @@ import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 import { IoTApplication } from './IoTApplication';
 import { IConfiguration } from './Configuration/IConfiguration';
 
-export class IoTApplicationBuilder {
+export class ApplicationBuilder {
 
   private _instance: IoTApplication;
   
