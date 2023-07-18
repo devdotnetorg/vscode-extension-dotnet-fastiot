@@ -42,7 +42,14 @@ export class IotConfigurationSbc implements IConfigurationSbc{
   public get DebugAppFolder():string {
     return <string>vscode.workspace.getConfiguration().get('fastiot.sbc.debug.app.folder');}
   public get FileNameUdevRules():string {
-    return <string>vscode.workspace.getConfiguration().get('fastiot.sbc.udevfilename');}
+    let value = <string>vscode.workspace.getConfiguration().get('fastiot.sbc.udevfilename');
+    const result = this.GetUdevRulesFile(value,true);
+    if(result.Status!=StatusResult.Ok) {
+      value = Constants.fileNameUdevRules;
+      vscode.workspace.getConfiguration().update('fastiot.sbc.udevfilename',value,true);
+    }
+    return value;
+  }
   public get ListUdevRulesFiles():string[] {
     return this.GetListUdevRulesFiles();}
   public get PreviousHostname(): string {
@@ -101,7 +108,7 @@ export class IotConfigurationSbc implements IConfigurationSbc{
     return result;
   }
 
-  public GetUdevRulesFile(fileName:string): IotResult {
+  public GetUdevRulesFile(fileName:string, isTest?:boolean): IotResult {
     let result:IotResult;
     let pathFileLocalRules:string| undefined;
     let pathFileLocalRules_temp:string;
@@ -122,9 +129,12 @@ export class IotConfigurationSbc implements IConfigurationSbc{
     //read file
     if(pathFileLocalRules) {
       //Ok
-      dataFile= fs.readFileSync(pathFileLocalRules, 'utf8');
       result = new IotResult(StatusResult.Ok);
-      result.returnObject=dataFile;
+
+      if(!isTest) {
+        dataFile= fs.readFileSync(pathFileLocalRules, 'utf8');
+        result.returnObject=dataFile;
+      }
     }else {
       //File not found
       result = new IotResult(StatusResult.Error,`File not found! ${pathFileLocalRules_temp}`);

@@ -13,7 +13,8 @@ import { IotItemTree } from './shared/IotItemTree';
 import { IotResult,StatusResult } from './IotResult';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 import { IConfigEntityCollection } from './Entity/EntityCollection';
-import { Constants } from "./Constants"
+import { Constants } from "./Constants";
+import { DialogEnum } from './Types/DialogEnum';
 //UI
 import { IoTUI } from './ui/IoTUI';
 import { IContexUI } from './ui/IContexUI';
@@ -148,11 +149,15 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	*/
 
-	//Add new SBC  
-	let commandAddDevice = vscode.commands.registerCommand('viewDevices.AddDevice', () => {	
-		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,app);	
+	//Add new SBC
+	let commandAddSbc = vscode.commands.registerCommand('viewDevices.AddSbc', () => {	
+		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,app,DialogEnum.standard);	
 	});
-	//Add new device		  
+	//Add new SBC ExtMode
+	let commandAddSbcExtMode = vscode.commands.registerCommand('viewDevices.AddSbcExtMode', () => {	
+		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,app,DialogEnum.exwebview);	
+	});
+	//Device discovery
 	let commandDiscoveryDevice = vscode.commands.registerCommand('viewDevices.DiscoveryDevice', () => {
 		discoveryDevice(treeDataDevicesProvider,vscodeTreeViewDevices,app);	
 	});
@@ -360,7 +365,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Commands
 	//devices
 	//context.subscriptions.push(commandHelloWorld);
-	context.subscriptions.push(commandAddDevice);
+	context.subscriptions.push(commandAddSbc);
+	context.subscriptions.push(commandAddSbcExtMode);
 	context.subscriptions.push(commandDiscoveryDevice);
 	context.subscriptions.push(commandRefreshDevices);
 	context.subscriptions.push(commandExportDevices);

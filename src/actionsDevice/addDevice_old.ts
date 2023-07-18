@@ -63,6 +63,7 @@ export async function addDevice_old(treeData: TreeDataDevicesProvider,treeView:v
     const labelTask="Adding a device";
     app.UI.ShowBackgroundNotification(labelTask);
     const guidBadge=app.UI.BadgeAddItem(labelTask);
+    /*
     const result = await treeData.AddDevice(hostName,hostPort,userName,password,accountNameDebug);
     if(guidBadge) app.UI.BadgeDeleteItem(guidBadge);
     app.UI.HideBackgroundNotification();
@@ -78,4 +79,5 @@ export async function addDevice_old(treeData: TreeDataDevicesProvider,treeView:v
         //Set focus
         treeView.reveal(newDevice, {focus: true});
     }
+    */
 }

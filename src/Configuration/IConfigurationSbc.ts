@@ -26,5 +26,5 @@ export interface IConfigurationSbc {
   ListUdevRulesFiles:string[];
   PreviousHostname: string;
   ProfilesSBCJson:any;
-  GetUdevRulesFile(fileName:string): IotResult;
+  GetUdevRulesFile(fileName:string, isTest?:boolean): IotResult;
 }

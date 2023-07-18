@@ -41,7 +41,7 @@ export class IotConfigurationSbcFake implements IConfigurationSbc{
 
   constructor() {}
 
-  public GetUdevRulesFile(fileName:string): IotResult {
+  public GetUdevRulesFile(fileName:string, isTest?:boolean): IotResult {
     return new IotResult(StatusResult.Ok);
   }
 

@@ -10,6 +10,7 @@ import {IotResult,StatusResult} from './IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IContexUI} from './ui/IContexUI';
 import { IoTApplication } from './IoTApplication';
+import { AddSBCConfigType } from './Types/AddSBCConfigType';
 
 export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTreeItem> {    
   public RootItems:Array<IotDevice>=[];
@@ -132,42 +133,49 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
   }
 
   //------------ Devices ------------
-  public async AddDevice(hostName: string,port: number,userName: string,password: string,accountNameDebug:string): Promise<IotResult> {         
-      let device = new IotDevice(this._app.Config);
-      //Connection test device
-      this._app.UI.ShowBackgroundNotification("Checking the network connection");
-      let result=await device.ConnectionTest(hostName,port,userName,password);
-      if(result.Status==StatusResult.Ok)
-      this._app.UI.Output(result);
-        else return Promise.resolve(result);
-        this._app.UI.ShowBackgroundNotification("Create a device");
-        this._app.UI.Output("Create a device");
-      //event subscription
-      let handler=device.Client.OnChangedStateSubscribe(event => {        
-        if(event.status) this._app.UI.ShowBackgroundNotification(event.status);
-        if(event.status) this._app.UI.Output(event.status);
-        if(event.console) this._app.UI.Output(event.console); 
-      });
-      result = await device.Create(hostName,port,userName, password,accountNameDebug);
-      if(result.Status==StatusResult.Error) {
-        result.AddMessage(`Device not added!`);
-        return Promise.resolve(result);
-      }
-      //Rename. checking for matching names.
-      device.label= this.GetUniqueLabel(<string>device.label,'#',undefined);      
-      //
-      this.RootItems.push(device);
-      //save in config      
-      this.SaveDevices()
-      //Refresh treeView
-      this.Refresh();
-      //event unsubscription
-      device.Client.OnChangedStateUnsubscribe(handler);
-      //
-      result=new IotResult(StatusResult.Ok,`Device added successfully 🎉! Device: ${device.label}`);
-      //return new device
-      result.returnObject=device;
-      return Promise.resolve(result);   
+  public async AddDevice(addSBCConfig:AddSBCConfigType): Promise<IotResult> {
+    //proxy
+    const hostName=addSBCConfig.host;
+    const port=addSBCConfig.port;
+    const userName=addSBCConfig.username;
+    const password=addSBCConfig.password ?? "";
+    const accountNameDebug=addSBCConfig.debugusername;
+    //
+    let device = new IotDevice(this._app.Config);
+    //Connection test device
+    this._app.UI.ShowBackgroundNotification("Checking the network connection");
+    let result=await device.ConnectionTest(hostName,port,userName,password);
+    if(result.Status==StatusResult.Ok)
+    this._app.UI.Output(result);
+      else return Promise.resolve(result);
+      this._app.UI.ShowBackgroundNotification("Create a device");
+      this._app.UI.Output("Create a device");
+    //event subscription
+    let handler=device.Client.OnChangedStateSubscribe(event => {        
+      if(event.status) this._app.UI.ShowBackgroundNotification(event.status);
+      if(event.status) this._app.UI.Output(event.status);
+      if(event.console) this._app.UI.Output(event.console); 
+    });
+    result = await device.Create(hostName,port,userName, password,accountNameDebug);
+    if(result.Status==StatusResult.Error) {
+      result.AddMessage(`Device not added!`);
+      return Promise.resolve(result);
+    }
+    //Rename. checking for matching names.
+    device.label= this.GetUniqueLabel(<string>device.label,'#',undefined);      
+    //
+    this.RootItems.push(device);
+    //save in config      
+    this.SaveDevices()
+    //Refresh treeView
+    this.Refresh();
+    //event unsubscription
+    device.Client.OnChangedStateUnsubscribe(handler);
+    //
+    result=new IotResult(StatusResult.Ok,`Device added successfully 🎉! Device: ${device.label}`);
+    //return new device
+    result.returnObject=device;
+    return Promise.resolve(result);   
   }
 
   public async SaveDevices(): Promise<void> {

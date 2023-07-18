@@ -219,10 +219,16 @@
 		],
 		"commands": [
 			{
-				"command": "viewDevices.AddDevice",
-				"title": "Add Device",
+				"command": "viewDevices.AddSbc",
+				"title": "Add development board",
 				"category": "FastIoT",
 				"icon": "$(add)"
+			},
+			{
+				"command": "viewDevices.AddSbcExtMode",
+				"title": "Add development board (extended mode)",
+				"category": "FastIoT",
+				"icon": "$(diff-added)"
 			},
 			{
 				"command": "viewDevices.DiscoveryDevice",
@@ -420,7 +426,7 @@
 		],
 		"keybindings": [
 			{
-				"command": "viewDevices.AddDevice",
+				"command": "viewDevices.AddSbc",
 				"key": "ctrl+f1",
 				"mac": "cmd+f1"
 			},
@@ -443,8 +449,8 @@
 			"bar-devices-explorer": [
 				{
 					"id": "viewDevices",
-					"name": "Devices",
-					"contextualTitle": "Devices"
+					"name": "Boards",
+					"contextualTitle": "Development boards"
 				},
 				{
 					"id": "viewLaunchs",
@@ -462,7 +468,12 @@
 		"menus": {
 			"view/title": [
 				{
-					"command": "viewDevices.AddDevice",
+					"command": "viewDevices.AddSbc",
+					"when": "view == viewDevices",
+					"group": "navigation"
+				},
+				{
+					"command": "viewDevices.AddSbcExtMode",
 					"when": "view == viewDevices",
 					"group": "navigation"
 				},
@@ -670,7 +681,7 @@
 		"viewsWelcome": [
 			{
 				"view": "viewDevices",
-				"contents": "No devices. How to add device see [Adding a device](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device).\n[Add Device](command:viewDevices.AddDevice)"
+				"contents": "No devices. How to add device see [Adding a device](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device).\n[Add Device](command:viewDevices.AddSbc)"
 			},
 			{
 				"view": "viewLaunchs",
@@ -686,7 +697,7 @@
 			},
 			{
 				"view": "workbench.explorer.emptyView",
-				"contents": "[Add device](command:viewDevices.AddDevice)"
+				"contents": "[Add device](command:viewDevices.AddSbc)"
 			}
 		]
 	},
