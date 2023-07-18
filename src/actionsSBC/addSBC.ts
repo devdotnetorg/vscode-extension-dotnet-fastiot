@@ -13,9 +13,11 @@ import { IoTApplication } from '../IoTApplication';
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { AddSBCPanelSingleton } from '../Panels/AddSBCPanelSingleton';
 import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
+import { AppDomain } from '../AppDomain';
 
-export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication,
+export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,
     dialogType:DialogEnum, nameHost?:string,portHost?:number): Promise<void> {
+        const app = AppDomain.getInstance().CurrentApp;
         //fill nameHost, portHost
         if(!nameHost) nameHost= app.Config.Sbc.PreviousHostname;
         if(!portHost) portHost= 22;

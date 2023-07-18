@@ -23,7 +23,6 @@ export class IoTApplication {
     this.UI= new UIFake();
     this.Config=new IotConfigurationFake ();
     //Templates
-    const builtInConfig = new IotBuiltInConfig('fastiot.config.Fake');
     const configTemplateCollection:IConfigEntityCollection = {
       extVersion: "",
       extMode: vscode.ExtensionMode.Test,

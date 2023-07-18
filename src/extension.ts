@@ -6,6 +6,7 @@ import * as fs from 'fs-extra';
 import { compare } from 'compare-versions';
 //shared
 import { IoTApplication } from './IoTApplication';
+import { AppDomain } from './AppDomain';
 import { ApplicationBuilder } from './ApplicationBuilder';
 import { IoTHelper } from './Helper/IoTHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
@@ -151,11 +152,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	//Add new SBC
 	let commandAddSbc = vscode.commands.registerCommand('viewDevices.AddSbc', () => {	
-		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,app,DialogEnum.standard);	
+		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,DialogEnum.standard);	
 	});
 	//Add new SBC ExtMode
 	let commandAddSbcExtMode = vscode.commands.registerCommand('viewDevices.AddSbcExtMode', () => {	
-		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,app,DialogEnum.exwebview);	
+		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,DialogEnum.exwebview);	
 	});
 	//Device discovery
 	let commandDiscoveryDevice = vscode.commands.registerCommand('viewDevices.DiscoveryDevice', () => {
@@ -466,6 +467,9 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 	applicationBuilder.BuildConfig(config);
 	applicationBuilder.BuildTemplates(templates);
 	let app = applicationBuilder.getInstance();
+	//Init AppDomain
+	const appDomain = AppDomain.getInstance();
+	appDomain.AddInstanceApp(app);
 	//Test
 	//
 	//result
