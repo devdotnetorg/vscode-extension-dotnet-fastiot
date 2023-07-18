@@ -7,28 +7,29 @@ import { IDevice } from 'local-devices'
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
-import { connectionTestDevice } from './connectionTestDevice';
+import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../shared/BaseTreeItem';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoTApplication } from '../IoTApplication';
 import { networkHelper } from '../Helper/networkHelper';
-import { addDevice_old } from './addDevice_old';
+import { addSBC } from './addSBC';
+import { DialogEnum } from '../Types/DialogEnum';
 
-export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication): Promise<void> {
-    
-    const labelTask="Device discovery";
+export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication): Promise<void> {
+        
+    const labelTask="Board discovery";
     const checkPort=22;
     try {
-        //device discovery or subnet scan
+        //Sbc discovery or subnet scan
         //Choice of two options
         let items:Array<ItemQuickPick>=[];
-        let item = new ItemQuickPick("1. Fast device discovery (recommended)","Fast","discovery","Some devices may not be found");
+        let item = new ItemQuickPick("1. Fast development board discovery (recommended)","Fast","discovery","Some development boards may not be found");
         items.push(item);
         item = new ItemQuickPick("2. Subnet scan","Takes 3-5 minutes","scan","Checking every IP-Address in a subnet");
         items.push(item);
-        let SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Choose a device discovery method'});
+        let SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Choose a development board discovery method'});
         if(!SELECTED_ITEM) return;
         let answerAction=SELECTED_ITEM.value as string;
         if (answerAction=="scan") {
@@ -102,7 +103,7 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
                 }
                 //check 22 port and create ItemQuickPick
                 const checkPortAsync = async (item:ItemQuickPick) => {
-                    let result = await networkHelper.CheckTcpPortUsed(item.value,checkPort,150,700);
+                    let result = await networkHelper.CheckTcpPortUsed(item.value,checkPort,100,300); //150,700
                     if(result.Status==StatusResult.Ok) {
                         item.description=`port ${checkPort} available`;
                         item.tag=`${checkPort}`;
@@ -116,7 +117,7 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
                     //ip availability check
                     const msg=`${i+1} of ${devices.length+1}. Checking host ${devices[i].ip}.`;
                     progress.report({ message: msg });
-                    let result = await networkHelper.PingHost(devices[i].ip,3,1,true);
+                    let result = await networkHelper.PingHost(devices[i].ip,1,1,true);
                     if(result.Status==StatusResult.Ok) {
                         //label
                         let labelHostname:string=devices[i].ip;
@@ -149,15 +150,17 @@ export async function discoveryDevice(treeData: TreeDataDevicesProvider,treeView
             return;
         }
         if(itemDevices.length==0) {
-            vscode.window.showInformationMessage(`⚠️ No network devices found.`);
+            vscode.window.showInformationMessage(`⚠️ No network development boards found.`);
             return;
         }
         //show list
         SELECTED_ITEM = await vscode.window.showQuickPick(
-            itemDevices,{title: 'Discovered Devices',placeHolder:`Choose a device to add`});
+            itemDevices,{title: 'Discovered development boards',placeHolder:`Choose a development board to add`});
         if(!SELECTED_ITEM) return;
-        //add device
-        addDevice_old(treeData,treeView,app,SELECTED_ITEM.value,SELECTED_ITEM.tag);
+        //add Sbc
+        const nameHost=SELECTED_ITEM.value;
+        const portHost=+SELECTED_ITEM.tag;
+        addSBC(treeData,treeView,DialogEnum.webview,nameHost,portHost);
     } catch (err: any){
         vscode.window.showErrorMessage(`⚠️ Error: ${err}.`);
     }

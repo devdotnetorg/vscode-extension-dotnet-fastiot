@@ -28,7 +28,7 @@ import { IotDeviceDTO } from './IotDeviceDTO';
 import { IotDeviceGpiochip } from './IotDeviceGpiochip';
 //Devices.actions
 import { addSBC } from './actionsSBC/addSBC';
-import { discoveryDevice } from './actionsDevice/discoveryDevice';
+import { discoverySBC } from './actionsSBC/discoverySBC';
 import { refreshDevices } from './actionsDevice/refreshDevices';
 import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
 import { deleteDevice } from './actionsDevice/deleteDevice';
@@ -156,11 +156,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Add new SBC ExtMode
 	let commandAddSbcExtMode = vscode.commands.registerCommand('viewDevices.AddSbcExtMode', () => {	
-		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,DialogEnum.exwebview);	
+		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,DialogEnum.webview);	
 	});
-	//Device discovery
-	let commandDiscoveryDevice = vscode.commands.registerCommand('viewDevices.DiscoveryDevice', () => {
-		discoveryDevice(treeDataDevicesProvider,vscodeTreeViewDevices,app);	
+	//Sbc discovery
+	let commandDiscoverySbc = vscode.commands.registerCommand('viewDevices.DiscoverySbc', () => {
+		discoverySBC(treeDataDevicesProvider,vscodeTreeViewDevices,app);	
 	});
 	//Refresh Devices
 	let commandRefreshDevices = vscode.commands.registerCommand('viewDevices.RefreshDevices', () => {
@@ -368,7 +368,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	//context.subscriptions.push(commandHelloWorld);
 	context.subscriptions.push(commandAddSbc);
 	context.subscriptions.push(commandAddSbcExtMode);
-	context.subscriptions.push(commandDiscoveryDevice);
+	context.subscriptions.push(commandDiscoverySbc);
 	context.subscriptions.push(commandRefreshDevices);
 	context.subscriptions.push(commandExportDevices);
 	context.subscriptions.push(commandImportDevices);

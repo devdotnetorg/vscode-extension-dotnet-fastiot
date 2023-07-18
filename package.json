@@ -231,7 +231,7 @@
 				"icon": "$(diff-added)"
 			},
 			{
-				"command": "viewDevices.DiscoveryDevice",
+				"command": "viewDevices.DiscoverySbc",
 				"title": "Device Discovery",
 				"category": "FastIoT",
 				"icon": "$(search)"
@@ -478,7 +478,7 @@
 					"group": "navigation"
 				},
 				{
-					"command": "viewDevices.DiscoveryDevice",
+					"command": "viewDevices.DiscoverySbc",
 					"when": "view == viewDevices",
 					"group": "navigation"
 				},

@@ -6,7 +6,6 @@ import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../IotResult';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../shared/BaseTreeItem';
-import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { DialogEnum } from '../Types/DialogEnum';
 import { IoTApplication } from '../IoTApplication';
@@ -74,10 +73,10 @@ async function showDialog(app:IoTApplication, dialogType:DialogEnum, addSBCConfi
     switch(dialogType) {
         case DialogEnum.standard: {
             //vscode.window.showInputBox
-            addSBCConfig=await showDialogStandard(app, addSBCConfig);
+            addSBCConfig=await showDialogStandard(addSBCConfig);
             break; 
         } 
-        case DialogEnum.exwebview: { 
+        case DialogEnum.webview: { 
             //webView
             addSBCConfig=await showDialogExWebview(app, addSBCConfig);
             break; 
@@ -91,7 +90,7 @@ async function showDialog(app:IoTApplication, dialogType:DialogEnum, addSBCConfi
     return Promise.resolve(addSBCConfig);
 }
 
-async function showDialogStandard(app:IoTApplication, addSBCConfig?:AddSBCConfigType): Promise<AddSBCConfigType| undefined>  {
+async function showDialogStandard(addSBCConfig?:AddSBCConfigType): Promise<AddSBCConfigType| undefined>  {
     if(!addSBCConfig) return Promise.resolve(undefined);
     const title = "Add development board";
     //1. hostName
