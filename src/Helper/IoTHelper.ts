@@ -278,4 +278,12 @@ export class IoTHelper {
     return result;
   }
 
+  static Debounce (fn: Function, ms = 200) {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return function (this: any, ...args: any[]) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), ms);
+    };
+  };
+
 }

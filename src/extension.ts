@@ -7,7 +7,7 @@ import { compare } from 'compare-versions';
 //shared
 import { IoTApplication } from './IoTApplication';
 import { AppDomain } from './AppDomain';
-import { ApplicationBuilder } from './ApplicationBuilder';
+import { ApplicationBuilder, BuildApplication } from './Application';
 import { IoTHelper } from './Helper/IoTHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
 import { IotItemTree } from './shared/IotItemTree';
@@ -345,7 +345,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }, undefined, context.subscriptions);
 	//FileSystemWatcher
 	//- "**/.vscode/launch.json"
-	const reloadLaunchs = debounce( () => {
+	const reloadLaunchs = IoTHelper.Debounce( () => {
 		if(app.Config.Folder.WorkspaceVSCode) {
 			const lockFilePath=path.join(app.Config.Folder.WorkspaceVSCode,".vscode",".lockreadlaunch");
 			if (!fs.existsSync(lockFilePath)) loadLaunchs();
@@ -419,6 +419,7 @@ export async function activate(context: vscode.ExtensionContext) {
 // this method is called when your extension is deactivated
 export function deactivate(value:string) {}
 
+/*
 const debounce = (fn: Function, ms = 200) => {
 	let timeoutId: ReturnType<typeof setTimeout>;
 	return function (this: any, ...args: any[]) {
@@ -426,59 +427,4 @@ const debounce = (fn: Function, ms = 200) => {
 	  timeoutId = setTimeout(() => fn.apply(this, args), ms);
 	};
 };
-
-function BuildApplication(context: vscode.ExtensionContext):IoTApplication
-{
-	//Config
-	let config=new IotConfiguration(context);
-	//UI
-	let contextUI= new UI(config.Extension.Loglevel);
-	//Templates
-	//Templates config
-	let urlUpdateTemplatesSystem:string="";
-	if(config.Extension.Mode==vscode.ExtensionMode.Production) {
-		urlUpdateTemplatesSystem=Constants.urlUpdateTemplatesSystemRelease;
-    }else {
-		//for test
-      	urlUpdateTemplatesSystem=Constants.urlUpdateTemplatesSystemDebug;
-    }
-
-	const getDirTemplatesCallback = (type:EntityEnum):string => {
-		return config.Folder.GetDirTemplates(type);
-	};
-
-	const saveLastUpdateHours = (value:number):void=> {
-		config.Template.LastUpdateTimeInHours=value;
-	};
-	
-    const configTemplateCollection:IConfigEntityCollection = {
-		extVersion: config.Extension.Version,
-		extMode: config.Extension.Mode,
-		recoverySourcePath: path.join(config.Folder.Extension.fsPath, "templates", "system"),
-		schemasFolderPath: config.Folder.Schemas,
-		tempFolderPath:config.Folder.Temp,
-		lastUpdateTimeInHours:config.Template.LastUpdateTimeInHours,
-		isUpdate:config.Entity.IsUpdate,
-		updateIntervalInHours:config.Entity.UpdateIntervalInHours,
-		urlsUpdateEntitiesCommunity:config.Template.ListSourceUpdateCommunity,
-		urlUpdateEntitiesSystem:urlUpdateTemplatesSystem,
-		getDirEntitiesCallback:getDirTemplatesCallback,
-		saveLastUpdateHours:saveLastUpdateHours
-	};
-
-
-	let templates= new IotTemplateCollection(configTemplateCollection);
-	//Build
-	let applicationBuilder = new ApplicationBuilder();
-	applicationBuilder.BuildUI(contextUI);
-	applicationBuilder.BuildConfig(config);
-	applicationBuilder.BuildTemplates(templates);
-	let app = applicationBuilder.getInstance();
-	//Init AppDomain
-	const appDomain = AppDomain.getInstance();
-	appDomain.AddInstanceApp(app);
-	//Test
-	//
-	//result
-	return app;
-}
+*/
