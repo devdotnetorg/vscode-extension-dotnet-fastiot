@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IotDevice } from '../IotDevice';
 import { DTO } from './DTO';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 
 export interface IDtoAdapter {  
   readonly Device:IotDevice;  

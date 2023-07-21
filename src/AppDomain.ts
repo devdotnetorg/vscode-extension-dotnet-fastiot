@@ -20,5 +20,6 @@ export class AppDomain {
   }
 
   public AddInstanceApp = (app:IoTApplication) => this._app=app;
+  
 
 }

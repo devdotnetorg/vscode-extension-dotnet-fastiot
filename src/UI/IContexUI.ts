@@ -1,10 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IotDevice } from '../IotDevice';
 import { IotTemplate } from '../Templates/IotTemplate';
-import { LogLevel } from '../shared/LogLevel';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
+import Contain = IoT.Enums.Contain;
 
 export interface IContexUI {
   Output(value:string|IotResult): void;

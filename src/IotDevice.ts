@@ -6,7 +6,7 @@ import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation, Existences} from './IotDeviceInformation';
 import {TypePackage,IotDevicePackage} from './IotDevicePackage';
 import { IConfiguration } from './Configuration/IConfiguration';
-import {IotResult,StatusResult} from './IotResult';
+import { IotResult,StatusResult } from './Shared/IotResult';
 import {IotItemTree} from './shared/IotItemTree';
 import {IotDeviceDTO} from './IotDeviceDTO';
 import {IotDeviceGpiochip} from './IotDeviceGpiochip';

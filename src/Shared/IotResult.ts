@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { LogLevel } from './shared/LogLevel';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
    
 export enum StatusResult { None="None", Ok="Ok", No ="No", Error="Error" };
 
-export class IotResult {  
+export class IotResult {
   private readonly _status: StatusResult;  
   public get Status(): StatusResult {
     return this._status;}

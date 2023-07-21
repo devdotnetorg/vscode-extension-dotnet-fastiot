@@ -11,11 +11,14 @@ import { ApplicationBuilder } from './ApplicationBuilder';
 import { IoTHelper } from './Helper/IoTHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
 import { IotItemTree } from './shared/IotItemTree';
-import { IotResult,StatusResult } from './IotResult';
+import { IotResult,StatusResult } from './Shared/IotResult';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
-import { IConfigEntityCollection } from './Entity/EntityCollection';
+import { IConfigEntityCollection } from './Entity/IConfigEntityCollection';
 import { Constants } from "./Constants";
-import { DialogEnum } from './Types/DialogEnum';
+import { IoT } from './Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
+import Contain = IoT.Enums.Contain;
 //UI
 import { UI } from './ui/UI';
 import { IContexUI } from './ui/IContexUI';
@@ -71,7 +74,7 @@ import { createProject } from './actionsTemplates/createProject';
 import { loadTemplates } from './actionsTemplates/loadTemplates';
 import { openTemplateFolder } from './actionsTemplates/openTemplateFolder';
 import { importTemplate } from './actionsTemplates/importTemplate';
-import { EntityType } from './Entity/EntityType';
+import { EntityEnum } from './Entity/EntityEnum';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -152,11 +155,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	//Add new SBC
 	let commandAddSbc = vscode.commands.registerCommand('viewDevices.AddSbc', () => {	
-		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,DialogEnum.standard);	
+		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,Dialog.standard);	
 	});
 	//Add new SBC ExtMode
 	let commandAddSbcExtMode = vscode.commands.registerCommand('viewDevices.AddSbcExtMode', () => {	
-		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,DialogEnum.webview);	
+		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,Dialog.webview);	
 	});
 	//Sbc discovery
 	let commandDiscoverySbc = vscode.commands.registerCommand('viewDevices.DiscoverySbc', () => {
@@ -310,7 +313,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Open template folder
 	let commandOpenTemplateFolder = vscode.commands.registerCommand('viewTemplates.OpenTemplateFolder', () => {	
-			openTemplateFolder(app.Config.Folder.GetDirTemplates(EntityType.none));
+			openTemplateFolder(app.Config.Folder.GetDirTemplates(EntityEnum.none));
 	});
 	//Import template
 	let commandImportTemplate = vscode.commands.registerCommand('viewTemplates.ImportTemplate', () => {	
@@ -439,6 +442,14 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 		//for test
       	urlUpdateTemplatesSystem=Constants.urlUpdateTemplatesSystemDebug;
     }
+
+	const getDirTemplatesCallback = (type:EntityEnum):string => {
+		return config.Folder.GetDirTemplates(type);
+	};
+
+	const saveLastUpdateHours = (value:number):void=> {
+		config.Template.LastUpdateTimeInHours=value;
+	};
 	
     const configTemplateCollection:IConfigEntityCollection = {
 		extVersion: config.Extension.Version,
@@ -446,21 +457,17 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 		recoverySourcePath: path.join(config.Folder.Extension.fsPath, "templates", "system"),
 		schemasFolderPath: config.Folder.Schemas,
 		tempFolderPath:config.Folder.Temp,
-		lastUpdateTimeInHours:config.Entity.LastUpdateTimeInHours,
+		lastUpdateTimeInHours:config.Template.LastUpdateTimeInHours,
 		isUpdate:config.Entity.IsUpdate,
 		updateIntervalInHours:config.Entity.UpdateIntervalInHours,
 		urlsUpdateEntitiesCommunity:config.Template.ListSourceUpdateCommunity,
-		urlUpdateEntitiesSystem:urlUpdateTemplatesSystem
-	};
-	const getDirTemplatesCallback = (type:EntityType):string => {
-		return config.Folder.GetDirTemplates(type);
-	};
-
-	const saveLastUpdateHours = (value:number):void=> {
-		config.Entity.LastUpdateTimeInHours=value;
+		urlUpdateEntitiesSystem:urlUpdateTemplatesSystem,
+		getDirEntitiesCallback:getDirTemplatesCallback,
+		saveLastUpdateHours:saveLastUpdateHours
 	};
 
-	let templates= new IotTemplateCollection(configTemplateCollection,getDirTemplatesCallback,saveLastUpdateHours);
+
+	let templates= new IotTemplateCollection(configTemplateCollection);
 	//Build
 	let applicationBuilder = new ApplicationBuilder();
 	applicationBuilder.BuildUI(contextUI);

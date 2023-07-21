@@ -3,8 +3,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotResult,StatusResult } from '../IotResult';
-import { EntityType } from '../Entity/EntityType';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { Constants } from "../Constants";
 import { IConfigurationSbc } from "../Configuration/IConfigurationSbc";
 

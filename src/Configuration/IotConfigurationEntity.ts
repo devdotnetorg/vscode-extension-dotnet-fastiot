@@ -3,8 +3,11 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotResult,StatusResult } from '../IotResult';
-import { EntityType } from '../Entity/EntityType';
+import { IotResult,StatusResult } from '../Shared/IotResult';
+import { EntityEnum } from '../Entity/EntityEnum';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
 import { Constants } from "../Constants"
 //block
 import { IotBuiltInConfig } from './IotBuiltInConfig';
@@ -27,12 +30,7 @@ export class IotConfigurationEntity implements IConfigurationEntity {
   }
   public get DebugMode():boolean {
     return <boolean>vscode.workspace.getConfiguration().get('fastiot.entities.debug');}
-  public get LastUpdateTimeInHours(): number {
-    return this._builtInConfig.LastUpdateTimeEntitiesInHours;}
-  public set LastUpdateTimeInHours(value:number) {
-    this._builtInConfig.LastUpdateTimeEntitiesInHours=value;
-    this._builtInConfig.Save();}
-
+  
   constructor(builtInConfig: IotBuiltInConfig) {
     this._builtInConfig=builtInConfig;
   }

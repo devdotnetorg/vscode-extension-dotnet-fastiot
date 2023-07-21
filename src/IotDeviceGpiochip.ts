@@ -4,7 +4,7 @@ import * as path from 'path';
 import {BaseTreeItem} from './shared/BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {Gpiochip} from './GPIO/Gpiochip';
-import {IotResult,StatusResult} from './IotResult';
+import { IotResult,StatusResult } from './Shared/IotResult';
 import {TypePackage} from './IotDevicePackage';
 
 export class IotDeviceGpiochip extends BaseTreeItem {

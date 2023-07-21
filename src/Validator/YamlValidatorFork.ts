@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import YAML from 'yaml';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IYamlValidator } from './IYamlValidator';
 
 export class YamlValidatorFork implements IYamlValidator { 

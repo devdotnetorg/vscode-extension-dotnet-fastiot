@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 //import * as fs from 'fs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { Constants } from "../Constants";
 //block
@@ -55,7 +55,7 @@ export class IotConfiguration implements IConfiguration {
       //Entity
       this.Entity = new IotConfigurationEntity(this._builtInConfig);
       //Template
-      this.Template = new IotConfigurationTemplate();
+      this.Template = new IotConfigurationTemplate(this._builtInConfig);
     }
 
   /*

@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem} from './shared/BaseTreeItem';
 import {IotDevice} from './IotDevice';
-import { IotResult,StatusResult } from './IotResult';
+import { IotResult,StatusResult } from './Shared/IotResult';
 import { DTO } from './Dto/DTO';
 
 export class IotDeviceDTO extends BaseTreeItem {

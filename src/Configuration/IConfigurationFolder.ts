@@ -1,16 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { EntityType } from '../Entity/EntityType';
-//block
-import { IotBuiltInConfig } from './IotBuiltInConfig';
-import { IotConfiguration } from './IotConfiguration';
-import { IotConfigurationEntity } from './IotConfigurationEntity';
-import { IotConfigurationExtension } from './IotConfigurationExtension';
-import { IotConfigurationFolder } from './IotConfigurationFolder';
-import { IotConfigurationSbc } from './IotConfigurationSbc';
-import { IotConfigurationTemplate } from './IotConfigurationTemplate';
-//
+import { EntityEnum } from '../Entity/EntityEnum';
 
 export interface IConfigurationFolder {
   ApplicationData: string;
@@ -22,6 +13,6 @@ export interface IConfigurationFolder {
   Schemas: string;
   WorkspaceVSCode: string| undefined;
   SaveProjectByDefault: string;
-  GetDirTemplates(type:EntityType):string;
+  GetDirTemplates(type:EntityEnum):string;
   ClearTmp():void;
 }

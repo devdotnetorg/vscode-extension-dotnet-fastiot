@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { EntityType } from '../Entity/EntityType';
-import { LogLevel } from '../shared/LogLevel';
 import { IConfigurationFolder } from './IConfigurationFolder';
 import { IConfigurationExtension } from './IConfigurationExtension';
 import { IConfigurationSbc } from './IConfigurationSbc';

@@ -3,11 +3,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { StatusBarBackground } from './StatusBarBackground';
 import { IContexUI } from './IContexUI';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IotDevice } from '../IotDevice';
 import { IotTemplate } from '../Templates/IotTemplate';
 import { ItemQuickPick } from '../Helper/actionHelper';
-import { LogLevel } from '../shared/LogLevel';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
+import Contain = IoT.Enums.Contain;
 import { BadgeActivityBar  } from './BadgeActivityBar';
 
 export class UI implements IContexUI {

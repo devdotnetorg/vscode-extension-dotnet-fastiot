@@ -1,8 +1,11 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { IotResult,StatusResult } from '../IotResult';
-import { LogLevel } from './LogLevel';
+import { IotResult,StatusResult } from '../Shared/IotResult';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
+import Contain = IoT.Enums.Contain;
 
 export abstract class ClassWithEvent {
   

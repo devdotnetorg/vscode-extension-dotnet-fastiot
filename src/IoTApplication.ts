@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { StatusResult,IotResult } from './IotResult';
+import { IotResult,StatusResult } from './Shared/IotResult';
 import { IContexUI } from './ui/IContexUI';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 import { IConfiguration } from './Configuration/IConfiguration';
-import { EntityType } from './Entity/EntityType';
-import { IConfigEntityCollection } from './Entity/EntityCollection';
+import { EntityEnum } from './Entity/EntityEnum';
+import { IConfigEntityCollection } from './Entity/IConfigEntityCollection';
 import { IotBuiltInConfig } from './Configuration/IotBuiltInConfig';
 //Fake
 import { UIFake } from './Fake/UIFake';
@@ -23,6 +23,11 @@ export class IoTApplication {
     this.UI= new UIFake();
     this.Config=new IotConfigurationFake ();
     //Templates
+    const getDirTemplatesCallback = (type:EntityEnum):string => {
+      return "";
+    };
+    const saveLastUpdateHours = (value:number):void=> {};
+
     const configTemplateCollection:IConfigEntityCollection = {
       extVersion: "",
       extMode: vscode.ExtensionMode.Test,
@@ -33,13 +38,11 @@ export class IoTApplication {
       isUpdate:false,
       updateIntervalInHours:0,
       urlsUpdateEntitiesCommunity:[""],
-      urlUpdateEntitiesSystem:""
+      urlUpdateEntitiesSystem:"",
+      getDirEntitiesCallback:getDirTemplatesCallback,
+      saveLastUpdateHours:saveLastUpdateHours
     };
-    const getDirTemplatesCallback = (type:EntityType):string => {
-      return "";
-    };
-
-    const saveLastUpdateHours = (value:number):void=> {};
-    this.Templates= new IotTemplateCollection(configTemplateCollection,getDirTemplatesCallback,saveLastUpdateHours);
+    
+    this.Templates= new IotTemplateCollection(configTemplateCollection);
   }
 }

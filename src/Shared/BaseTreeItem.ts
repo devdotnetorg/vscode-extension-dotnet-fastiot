@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {SshClient} from '../SshClient';
+import {SshClient} from './SshClient';
 
 export abstract class BaseTreeItem extends vscode.TreeItem {
   public abstract Parent?: BaseTreeItem| any;

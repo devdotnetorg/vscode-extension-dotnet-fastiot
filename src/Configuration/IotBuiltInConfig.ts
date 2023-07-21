@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IotTemplateCollection } from '../Templates/IotTemplateCollection';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IContexUI } from '../ui/IContexUI';
@@ -23,7 +23,7 @@ export class IotBuiltInConfig {
   private readonly _nameKeySetting:string;
   //keys
   public PreviousVerExt: string;
-  public LastUpdateTimeEntitiesInHours:number;
+  public LastUpdateTimeTemplatesInHours:number;
   public PreviousHostnameSbcWhenAdding: string;
   
   constructor(nameKeySetting:string)
@@ -36,9 +36,9 @@ export class IotBuiltInConfig {
       this.PreviousVerExt=configJson.PreviousVerExt;
       else this.PreviousVerExt="0.1";
     //
-    if(configJson&&configJson.LastUpdateTimeEntitiesInHours)
-      this.LastUpdateTimeEntitiesInHours=configJson.LastUpdateTimeEntitiesInHours;
-      else this.LastUpdateTimeEntitiesInHours=0;
+    if(configJson&&configJson.LastUpdateTimeTemplatesInHours)
+      this.LastUpdateTimeTemplatesInHours=configJson.LastUpdateTimeTemplatesInHours;
+      else this.LastUpdateTimeTemplatesInHours=0;
     //
     if(configJson&&configJson.PreviousHostnameSbcWhenAdding)
       this.PreviousHostnameSbcWhenAdding=configJson.PreviousHostnameSbcWhenAdding;
@@ -50,7 +50,7 @@ export class IotBuiltInConfig {
     //Built-in config
     const data:IBuiltInConfigStorage = {
       PreviousVerExt: this.PreviousVerExt,
-      LastUpdateTimeEntitiesInHours: this.LastUpdateTimeEntitiesInHours,
+      LastUpdateTimeTemplatesInHours: this.LastUpdateTimeTemplatesInHours,
       PreviousHostnameSbcWhenAdding:this.PreviousHostnameSbcWhenAdding
     };
     //write

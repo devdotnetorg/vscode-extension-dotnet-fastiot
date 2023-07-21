@@ -1,18 +1,11 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { EntityType } from '../Entity/EntityType';
-import { LogLevel } from '../shared/LogLevel';
-import { IotResult,StatusResult } from '../IotResult';
-//block
-import { IotBuiltInConfig } from './IotBuiltInConfig';
-import { IotConfiguration } from './IotConfiguration';
-import { IotConfigurationEntity } from './IotConfigurationEntity';
-import { IotConfigurationExtension } from './IotConfigurationExtension';
-import { IotConfigurationFolder } from './IotConfigurationFolder';
-import { IotConfigurationSbc } from './IotConfigurationSbc';
-import { IotConfigurationTemplate } from './IotConfigurationTemplate';
-//
+import { EntityEnum } from '../Entity/EntityEnum';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
+import { IotResult,StatusResult } from '../Shared/IotResult';
 
 export interface IConfigurationSbc {
   DebugUserNameAccount:string;

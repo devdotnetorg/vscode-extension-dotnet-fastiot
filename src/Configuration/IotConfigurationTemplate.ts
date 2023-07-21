@@ -3,8 +3,8 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotResult,StatusResult } from '../IotResult';
-import { EntityType } from '../Entity/EntityType';
+import { IotResult,StatusResult } from '../Shared/IotResult';
+import { EntityEnum } from '../Entity/EntityEnum';
 import { Constants } from "../Constants";
 //block
 import { IotBuiltInConfig } from './IotBuiltInConfig';
@@ -17,6 +17,8 @@ import { IotConfigurationSbc } from './IotConfigurationSbc';
 import { IConfigurationTemplate } from './IConfigurationTemplate';
 
 export class IotConfigurationTemplate implements IConfigurationTemplate {
+  private _builtInConfig: IotBuiltInConfig;
+
   public get TitleLaunch():string {
     return <string>vscode.workspace.getConfiguration().get('fastiot.launch.templatetitle');}
   public get ListSourceUpdateCommunity(): string[] {
@@ -24,7 +26,15 @@ export class IotConfigurationTemplate implements IConfigurationTemplate {
   public get LoadOnStart():boolean {
     return <boolean>vscode.workspace.getConfiguration().get('fastiot.template.loadonstart');}
   
-  constructor() {}
+  public get LastUpdateTimeInHours(): number {
+    return this._builtInConfig.LastUpdateTimeTemplatesInHours;}
+  public set LastUpdateTimeInHours(value:number) {
+    this._builtInConfig.LastUpdateTimeTemplatesInHours=value;
+    this._builtInConfig.Save();}
+
+    constructor(builtInConfig: IotBuiltInConfig) {
+      this._builtInConfig=builtInConfig;
+    }
 
   private InitListSourceUpdateCommunity(): string[] {
     let listSourceUpdateTemplateCommunity:string[]=[];

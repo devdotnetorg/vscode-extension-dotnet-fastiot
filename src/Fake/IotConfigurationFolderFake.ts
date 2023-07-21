@@ -4,9 +4,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as platformFolders from 'platform-folders';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotResult,StatusResult } from '../IotResult';
-import { EntityType } from '../Entity/EntityType';
-import { Constants } from "../Constants"
+import { EntityEnum } from '../Entity/EntityEnum';
 import { IConfigurationFolder } from '../Configuration/IConfigurationFolder';
 
 export class IotConfigurationFolderFake implements IConfigurationFolder{
@@ -31,7 +29,7 @@ export class IotConfigurationFolderFake implements IConfigurationFolder{
 
   constructor() {}
 
-  public GetDirTemplates(type:EntityType):string {
+  public GetDirTemplates(type:EntityEnum):string {
     let result:string;
     result="";
     return result;

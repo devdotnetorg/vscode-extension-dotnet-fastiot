@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { LaunchTreeItemNode } from './LaunchTreeItemNode';
 import { LaunchNode } from './LaunchNode';
-import { IotResult,StatusResult } from './IotResult';
+import { IotResult,StatusResult } from './Shared/IotResult';
 
 export class TreeDataTemplatesProvider implements vscode.TreeDataProvider<LaunchTreeItemNode> {
 

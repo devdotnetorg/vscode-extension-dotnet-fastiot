@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import {IContexUI} from '../ui/IContexUI';
 
 export async function exportDevices(treeData: TreeDataDevicesProvider): Promise<void> {        

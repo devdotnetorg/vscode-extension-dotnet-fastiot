@@ -3,11 +3,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../shared/BaseTreeItem';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { DialogEnum } from '../Types/DialogEnum';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
 import { IoTApplication } from '../IoTApplication';
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { AddSBCPanelSingleton } from '../Panels/AddSBCPanelSingleton';
@@ -15,7 +17,7 @@ import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
 import { AppDomain } from '../AppDomain';
 
 export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,
-    dialogType:DialogEnum, hostName?:string, hostPort?:number): Promise<void> {
+    dialogType:Dialog, hostName?:string, hostPort?:number): Promise<void> {
         const app = AppDomain.getInstance().CurrentApp;
         //fill hostName, hostPort
         if(!hostName) hostName= app.Config.Sbc.PreviousHostnameWhenAdding;
@@ -69,14 +71,14 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
         }
 }
 
-async function showDialog(app:IoTApplication, dialogType:DialogEnum, addSBCConfig?:AddSBCConfigType): Promise<AddSBCConfigType| undefined> {
+async function showDialog(app:IoTApplication, dialogType:Dialog, addSBCConfig?:AddSBCConfigType): Promise<AddSBCConfigType| undefined> {
     switch(dialogType) {
-        case DialogEnum.standard: {
+        case Dialog.standard: {
             //vscode.window.showInputBox
             addSBCConfig=await showDialogStandard(addSBCConfig);
             break; 
         } 
-        case DialogEnum.webview: { 
+        case Dialog.webview: { 
             //webView
             addSBCConfig=await showDialogExWebview(app, addSBCConfig);
             break; 

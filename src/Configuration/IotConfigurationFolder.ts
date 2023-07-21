@@ -4,8 +4,11 @@ import * as path from 'path';
 import * as os from 'os';
 import * as platformFolders from 'platform-folders';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotResult,StatusResult } from '../IotResult';
-import { EntityType } from '../Entity/EntityType';
+import { IotResult,StatusResult } from '../Shared/IotResult';
+import { EntityEnum } from '../Entity/EntityEnum';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
 import { Constants } from "../Constants"
 import { IConfigurationFolder } from './IConfigurationFolder';
 //block
@@ -53,11 +56,11 @@ export class IotConfigurationFolder implements IConfigurationFolder{
       IoTHelper.MakeDirSync(this.UdevRules);
       IoTHelper.MakeDirSync(this.Temp);
       //Templates
-      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.none));
-      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.system));
-      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.webapi));
-      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.community));
-      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityType.user));
+      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityEnum.none));
+      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityEnum.system));
+      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityEnum.webapi));
+      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityEnum.community));
+      IoTHelper.MakeDirSync(this.GetDirTemplates(EntityEnum.user));
     } catch (err: any){}
   }
 
@@ -83,10 +86,10 @@ export class IotConfigurationFolder implements IConfigurationFolder{
     return applicationDataPath;
   }
 
-  public GetDirTemplates(type:EntityType):string {
+  public GetDirTemplates(type:EntityEnum):string {
     let result:string;
     const dirEntities= path.join(this.ApplicationData, "templates");
-    if(type!=EntityType.none) {
+    if(type!=EntityEnum.none) {
       result= path.join(dirEntities, type.toString());
     }else {
       result= dirEntities;

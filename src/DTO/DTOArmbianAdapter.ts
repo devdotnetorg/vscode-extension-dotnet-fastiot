@@ -4,7 +4,7 @@ import * as path from 'path';
 import { IotDevice } from '../IotDevice';
 import { IDtoAdapter } from './IDtoAdapter';
 import { DTO } from './DTO';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 
 export class DTOArmbianAdapter implements IDtoAdapter {

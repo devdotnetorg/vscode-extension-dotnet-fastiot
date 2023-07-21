@@ -2,9 +2,6 @@ import * as vscode from 'vscode';
 //import * as fs from 'fs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { IotResult,StatusResult } from '../IotResult';
-import { IoTHelper } from '../Helper/IoTHelper';
-import { Constants } from "../Constants";
 //block
 import { IotConfigurationEntityFake } from './IotConfigurationEntityFake';
 import { IotConfigurationExtensionFake } from './IotConfigurationExtensionFake';

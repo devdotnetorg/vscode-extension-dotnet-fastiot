@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as cp from "child_process";
 import { v4 as uuidv4 } from 'uuid';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { utimesSync } from 'utimes';
 
 export class IoTHelper {

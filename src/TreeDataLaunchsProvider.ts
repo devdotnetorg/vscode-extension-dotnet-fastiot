@@ -5,7 +5,7 @@ import { LaunchTreeItemNode } from './LaunchTreeItemNode';
 import { IotDevice } from './IotDevice';
 import { LaunchNode } from './LaunchNode';
 import { IoTHelper } from './Helper/IoTHelper';
-import { IotResult,StatusResult } from './IotResult';
+import { IotResult,StatusResult } from './Shared/IotResult';
 import { IConfiguration } from './Configuration/IConfiguration';
 import { IotTemplate } from './Templates/IotTemplate';
 import { IotLaunch } from './IotLaunch';

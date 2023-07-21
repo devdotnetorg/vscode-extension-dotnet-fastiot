@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
-import { EntityType } from '../Entity/EntityType';
+import { EntityEnum} from '../Entity/EntityEnum';
 import { EntityBase } from '../Entity/EntityBase';
 import { IotTemplateAttribute } from './IotTemplateAttribute';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { launchHelper } from '../Helper/launchHelper';
 import { dotnetHelper } from '../Helper/dotnetHelper';
@@ -50,7 +50,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       pathFolderSchema,"template.fastiot.schema.validator-fork.yaml","template.fastiot.files.schema.json");
   }
 
-  public Init(type:EntityType,yamlFilePath:string,recoverySourcePath?:string)
+  public Init(type:EntityEnum,yamlFilePath:string,recoverySourcePath?:string)
   {
     super.Init(type,yamlFilePath,recoverySourcePath);
     //

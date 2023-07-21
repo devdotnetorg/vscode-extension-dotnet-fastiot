@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IYamlValidator } from './IYamlValidator';
 import { YamlRedHatServiceSingleton } from './YamlRedHatServiceSingleton';
 import { SSH2Stream } from 'ssh2-streams';

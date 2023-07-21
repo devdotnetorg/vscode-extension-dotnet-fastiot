@@ -4,7 +4,7 @@ import * as path from 'path';
 import {BaseTreeItem} from './shared/BaseTreeItem';
 import {IotDevice} from './IotDevice';
 import {IotItemTree} from './shared/IotItemTree';
-import {StatusResult,IotResult} from './IotResult';
+import { IotResult,StatusResult } from './Shared/IotResult';
 
 export class IotDeviceInformation extends BaseTreeItem{  
    

@@ -6,7 +6,7 @@ import {IotDevice} from './IotDevice';
 import {IotDevicePackage,TypePackage} from './IotDevicePackage';
 import {IotDeviceDTO} from './IotDeviceDTO';
 import {IoTHelper} from './Helper/IoTHelper';
-import {IotResult,StatusResult} from './IotResult';
+import { IotResult,StatusResult } from './Shared/IotResult';
 import {IotConfiguration} from './Configuration/IotConfiguration';
 import {IContexUI} from './ui/IContexUI';
 import { IoTApplication } from './IoTApplication';

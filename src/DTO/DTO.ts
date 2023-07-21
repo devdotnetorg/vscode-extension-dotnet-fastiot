@@ -4,7 +4,7 @@ import * as path from 'path';
 import { IotDevice } from '../IotDevice';
 import { IDtoAdapter } from './IDtoAdapter';
 import { DTOArmbianAdapter } from './DTOArmbianAdapter';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 
 export class DTO {  
   private _device: IotDevice;

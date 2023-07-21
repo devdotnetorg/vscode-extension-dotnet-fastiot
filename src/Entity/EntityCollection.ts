@@ -4,15 +4,18 @@ import * as path from 'path';
 import { compare } from 'compare-versions';
 import { EntityBase } from './EntityBase';
 import { EntityBaseAttribute } from './EntityBaseAttribute';
-import { EntityType } from './EntityType';
+import { EntityEnum } from './EntityEnum';
 import { EntityRecovery } from './EntityRecovery';
-import { IotResult,StatusResult } from '../IotResult';
-import { LogLevel } from '../shared/LogLevel';
+import { IotResult,StatusResult } from '../Shared/IotResult';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
+import Contain = IoT.Enums.Contain;
 import { IoTHelper } from '../Helper/IoTHelper';
 import { EntityDownload, EntityDownloader } from './EntityDownloader';
 import { ClassWithEvent } from '../Shared/ClassWithEvent';
-import { ContainsType } from '../Shared/ContainsType';
-
+import { IConfigEntityCollection } from './IConfigEntityCollection';
+ 
 export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> extends ClassWithEvent {
   
   protected _items:Map<string,T>;
@@ -20,8 +23,6 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   protected readonly _entitiesLabel:string; //for understandable log
   private readonly TCreator: new(pathFolderSchemas: string) => T;
   protected readonly Config:IConfigEntityCollection;
-  protected GetDirEntitiesCallback:(type:EntityType) =>string;
-  protected SaveLastUpdateHours:(value:number) => void;
 
   public get Count(): number {
       return this._items.size;}
@@ -30,17 +31,13 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     entityLabel:string,
     entitiesLabel:string,
     TCreator: new(pathFolderSchemas: string) => T,
-    config:IConfigEntityCollection,
-    getDirEntitiesCallback:(type:EntityType) =>string, 
-    saveLastUpdateHours:(value:number) => void
+    config:IConfigEntityCollection
     ){
       super();
       this._items = new Map<string,T>(); 
       this._entityLabel=entityLabel;
       this._entitiesLabel=entitiesLabel;
       this.TCreator=TCreator;
-      this.GetDirEntitiesCallback=getDirEntitiesCallback;
-      this.SaveLastUpdateHours=saveLastUpdateHours;
       this.Config=config;
     }
 
@@ -93,22 +90,22 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     //if(isCompatibleVersion&&isCompatiblePlatform) return true; else return false;
   }
 
-  protected Contains(value:T):ContainsType
+  protected Contains(value:T):Contain
   {
     return this.Contains2(value.Attributes.Id,value.Type,value.Attributes.Version);
   }
 
-  protected Contains2(id:string,type:EntityType,version:string):ContainsType
+  protected Contains2(id:string,type:EntityEnum,version:string):Contain
   {
-    // type:EntityType, version:string
-    if(!this._items.has(id)) return ContainsType.no;
+    // type:EntityEnum, version:string
+    if(!this._items.has(id)) return Contain.no;
     let element=this._items.get(id);
     const result=element?.CompareByVersion2(type,version);
     //0 - equal, 1 - entityBase up, -1 - entityBase down
     if(result==0) {
-      return ContainsType.yesSameVersion;
-    } else if (result==1) return ContainsType.yesVersionSmaller;
-    return ContainsType.yesNewerVersion;
+      return Contain.yesSameVersion;
+    } else if (result==1) return Contain.yesVersionSmaller;
+    return Contain.yesNewerVersion;
   }
 
   public SelectByEndDeviceArchitecture(endDeviceArchitecture?:string):Array<T>
@@ -128,14 +125,14 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return this._items.get(idEntity);
   }
 
-  protected async LoadEntitiesFromFolder(pathFolder:string, type:EntityType):Promise<IotResult>
+  protected async LoadEntitiesFromFolder(pathFolder:string, type:EntityEnum):Promise<IotResult>
   {
     let result:IotResult;
     try {
       const entitiesCountBegin=this.Count;
       //Recovery
       let recovery = new EntityRecovery(); 
-      if(type==EntityType.system) {
+      if(type==EntityEnum.system) {
         result=recovery.RestoryDirStructure(this.Config.recoverySourcePath,pathFolder);
         if(result.Status==StatusResult.Error) return Promise.resolve(result);
       }
@@ -165,7 +162,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return Promise.resolve(result);
   }
 
-  protected async ImportEntityFromZip(fileZipPath:string,type:EntityType):Promise<IotResult>
+  protected async ImportEntityFromZip(fileZipPath:string,type:EntityEnum):Promise<IotResult>
   {
     let result:IotResult;
     //unpack to current dir
@@ -179,7 +176,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       //move
       let entity:T;
       entity=<T>result.returnObject;
-      result=entity.Move(this.GetDirEntitiesCallback(type));
+      result=entity.Move(this.Config.getDirEntitiesCallback(type));
       if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
       //add
       unpackDir=<string>result.returnObject;
@@ -196,14 +193,14 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return Promise.resolve(result);
   }
 
-  protected async LoadOneEntityFromFolder(dir:string,type:EntityType,isTest:boolean=false):Promise<IotResult>
+  protected async LoadOneEntityFromFolder(dir:string,type:EntityEnum,isTest:boolean=false):Promise<IotResult>
   {
     let result:IotResult;
     try {
       const filePath= path.join(dir, `${this._entityLabel.toLowerCase()}.fastiot.yaml`);
       let entity = new this.TCreator(this.Config.schemasFolderPath);
       entity.Init(type,filePath,this.Config.recoverySourcePath);
-      if(!isTest&&!entity.IsValid&&type==EntityType.system) {
+      if(!isTest&&!entity.IsValid&&type==EntityEnum.system) {
         //Recovery
         this.CreateEvent(`${this._entityLabel} recovery: ${path.dirname(filePath)}`,LogLevel.Debug);
         result= entity.Recovery();
@@ -219,7 +216,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         if(this.IsCompatibleByVersionExtAndPlatform(entity)) {
           const isContains=this.Contains(entity);
           switch(isContains) { 
-            case ContainsType.no: {
+            case Contain.no: {
               if(!isTest) {
                 this.Add(entity);
                 this.CreateEvent(`${this._entityLabel} added: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
@@ -228,7 +225,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
               result.returnObject=entity;
               break; 
             } 
-            case ContainsType.yesVersionSmaller: {
+            case Contain.yesVersionSmaller: {
               if(!isTest) {
                 this.Update(entity);
                 this.CreateEvent(`${this._entityLabel} updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
@@ -252,9 +249,9 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         result = new IotResult(StatusResult.Error,`The ${this._entityLabel} ${entity.RootDir} has not been validated.`);
         this.CreateEvent(result);
         this.CreateEvent(IoTHelper.ValidationErrorsToString(entity.ValidationErrors),
-          LogLevel.Debug);
+        LogLevel.Debug);
         //delete system entity
-        if(!isTest&&type==EntityType.system) {
+        if(!isTest&&type==EntityEnum.system) {
           result= entity.Remove();
           this.CreateEvent(result,LogLevel.Debug);
         }
@@ -265,10 +262,10 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return Promise.resolve(result);
   }
 
-  protected async UpdateEntitiesFromUrl(url:string,type:EntityType):Promise<IotResult>
+  protected async UpdateEntitiesFromUrl(url:string,type:EntityEnum):Promise<IotResult>
   {
     //download list
-    const destPath= this.GetDirEntitiesCallback(type);
+    const destPath= this.Config.getDirEntitiesCallback(type);
     let downloader = new EntityDownloader(this.Config.schemasFolderPath);
     let result:IotResult;
     this.CreateEvent(`🔗 Downloading a list of ${this._entitiesLabel} to update: ${url}`,LogLevel.Debug);
@@ -290,8 +287,8 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       if(item) {
         //check
         if(this.IsCompatibleByVersionExtAndPlatform2(item.ForVersionExt,item.platform)) {
-          const isContains=this.Contains2(item.Id,EntityType.system,item.Version);
-          if(isContains==ContainsType.yesSameVersion || isContains==ContainsType.yesNewerVersion) {
+          const isContains=this.Contains2(item.Id,EntityEnum.system,item.Version);
+          if(isContains==Contain.yesSameVersion || isContains==Contain.yesNewerVersion) {
             //remove
             listDownload.splice(index, 1);
             index--;
@@ -331,7 +328,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return Promise.resolve(result);
   }
 
-  protected async UpdateEntitiesFromUrls(urls:string[],type:EntityType):Promise<IotResult>
+  protected async UpdateEntitiesFromUrls(urls:string[],type:EntityEnum):Promise<IotResult>
   {
     let result:IotResult;
     //Check urls
@@ -356,10 +353,10 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return Promise.resolve(result);
   }
 
-  protected async LoadEntitiesByType(type:EntityType):Promise<void>
+  protected async LoadEntitiesByType(type:EntityEnum):Promise<void>
   {
     this.CreateEvent(`☑️ Loading ${type} ${this._entitiesLabel}`,LogLevel.Debug);
-    const path=this.GetDirEntitiesCallback(type);
+    const path=this.Config.getDirEntitiesCallback(type);
     const result = await this.LoadEntitiesFromFolder(path,type);
     this.CreateEvent(result,LogLevel.Debug);
   }
@@ -376,7 +373,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         LogLevel.Information);
       //Loading system entities
       this.CreateEvent(`Loading system ${this._entitiesLabel}`,undefined,15); //15
-      await this.LoadEntitiesByType(EntityType.system);
+      await this.LoadEntitiesByType(EntityEnum.system);
       //Updating system entities
       this.CreateEvent(`Updating system ${this._entitiesLabel}`,undefined,15); //30
       //To get the number of hours since Unix epoch, i.e. Unix timestamp:
@@ -386,33 +383,33 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       if(force||isNeedUpdate()){
         //system
         this.CreateEvent(`☑️ Updating system ${this._entitiesLabel}`,LogLevel.Debug);
-        result=await this.UpdateEntitiesFromUrl(this.Config.urlUpdateEntitiesSystem,EntityType.system);
+        result=await this.UpdateEntitiesFromUrl(this.Config.urlUpdateEntitiesSystem,EntityEnum.system);
         this.CreateEvent(result,LogLevel.Debug);
         //timestamp of last update
         if(result.Status==StatusResult.Ok){
-          this.SaveLastUpdateHours(dateNow);
+          this.Config.saveLastUpdateHours(dateNow);
         }
       } else {
         this.CreateEvent(`📥 ${this._entityLabel} update: disabled or less than ${this.Config.updateIntervalInHours} hour(s) have passed since the last update.`,LogLevel.Debug);
       }
       //Loading community entities
       this.CreateEvent(`Loading community ${this._entitiesLabel}`,undefined,15); //45
-      await this.LoadEntitiesByType(EntityType.community);
+      await this.LoadEntitiesByType(EntityEnum.community);
       //Updating community entities
       this.CreateEvent(`Updating community ${this._entitiesLabel}`,undefined,15); //60
       if(force||isNeedUpdate()){
         //community
         this.CreateEvent(`☑️ Updating community ${this._entitiesLabel}`,LogLevel.Debug);
-        result=await this.UpdateEntitiesFromUrls(this.Config.urlsUpdateEntitiesCommunity,EntityType.community);
+        result=await this.UpdateEntitiesFromUrls(this.Config.urlsUpdateEntitiesCommunity,EntityEnum.community);
         this.CreateEvent(result,LogLevel.Debug);
         //timestamp of last update
         if(result.Status==StatusResult.Ok){
-          this.SaveLastUpdateHours(dateNow);
+          this.Config.saveLastUpdateHours(dateNow);
         }
       }
       //Loading custom entities
       this.CreateEvent(`Loading custom ${this._entitiesLabel}  templates loaded `,undefined,15); //75
-      await this.LoadEntitiesByType(EntityType.user);
+      await this.LoadEntitiesByType(EntityEnum.user);
       //result
       this.CreateEvent(new IotResult(StatusResult.Ok, `${this._entitiesLabel} loaded`));
       const endMsg=`📚 ${this.Count} ${this._entityLabel}(s) available.`;
@@ -428,7 +425,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public DeletingSystemEntities()
   {
     //clear
-    const dir=this.GetDirEntitiesCallback(EntityType.system);
+    const dir=this.Config.getDirEntitiesCallback(EntityEnum.system);
     if (fs.existsSync(dir)) fs.emptyDirSync(dir);
   }
 
@@ -442,17 +439,4 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return true;
   }
 
-}
-
-export interface IConfigEntityCollection {
-  extVersion: string;
-  extMode: vscode.ExtensionMode;
-  recoverySourcePath: string;
-  schemasFolderPath: string;
-  tempFolderPath:string;
-	lastUpdateTimeInHours:number;
-  isUpdate:boolean;
-  updateIntervalInHours:number;
-  urlsUpdateEntitiesCommunity:string[];
-  urlUpdateEntitiesSystem:string;
 }

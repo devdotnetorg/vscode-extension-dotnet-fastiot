@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTApplication } from '../IoTApplication';
 
 export async function loadTemplates(app:IoTApplication,force:boolean=false): Promise<void> {

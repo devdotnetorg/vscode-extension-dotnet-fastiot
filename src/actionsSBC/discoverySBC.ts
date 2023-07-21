@@ -6,7 +6,7 @@ import ip from 'ip';
 import { IDevice } from 'local-devices'
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem } from '../shared/BaseTreeItem';
@@ -15,7 +15,9 @@ import { IoTHelper } from '../Helper/IoTHelper';
 import { IoTApplication } from '../IoTApplication';
 import { networkHelper } from '../Helper/networkHelper';
 import { addSBC } from './addSBC';
-import { DialogEnum } from '../Types/DialogEnum';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
 
 export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication): Promise<void> {
         
@@ -160,7 +162,7 @@ export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vs
         //add Sbc
         const nameHost=SELECTED_ITEM.value;
         const portHost=+SELECTED_ITEM.tag;
-        addSBC(treeData,treeView,DialogEnum.webview,nameHost,portHost);
+        addSBC(treeData,treeView,Dialog.webview,nameHost,portHost);
     } catch (err: any){
         vscode.window.showErrorMessage(`⚠️ Error: ${err}.`);
     }

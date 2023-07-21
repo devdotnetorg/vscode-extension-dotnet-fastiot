@@ -15,7 +15,7 @@ import * as platformFolders from 'platform-folders';
 import { promisify } from 'util';
 
 import {IoTHelper} from './IoTHelper';
-import {IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 
 export class networkHelper {
   static async GetIpAddress(hostName:string): Promise<IotResult>{

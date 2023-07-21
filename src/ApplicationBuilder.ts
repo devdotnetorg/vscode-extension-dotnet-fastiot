@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { StatusResult,IotResult } from './IotResult';
 import { IContexUI } from './ui/IContexUI';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 import { IoTApplication } from './IoTApplication';

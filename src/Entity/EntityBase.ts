@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { compare } from 'compare-versions';
-import { EntityType } from './EntityType';
+import { EntityEnum } from './EntityEnum';
 import { EntityBaseAttribute } from './EntityBaseAttribute';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { FilesValidator } from '../Validator/FilesValidator';
 
 export abstract class EntityBase<T extends EntityBaseAttribute> {
@@ -32,7 +32,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
   public get ValidationErrors(): Array<string> {
       return this._validationErrors;}
   public Attributes: T;
-  public Type:EntityType=EntityType.none;
+  public Type:EntityEnum=EntityEnum.none;
 
   protected readonly _pathFolderSchema: string;
   protected readonly _fileNameSchemaRootYaml: string;
@@ -54,7 +54,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
       this._validationErrors.push("non");
   }
 
-  public Init(type:EntityType,yamlFilePath:string,recoverySourcePath?:string)
+  public Init(type:EntityEnum,yamlFilePath:string,recoverySourcePath?:string)
   {
     try {
       this.Type= type;
@@ -137,7 +137,7 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
     return this.CompareByVersion2(entityBase.Type,entityBase.Attributes.Version);
   }
 
-  public CompareByVersion2(type:EntityType, version:string):number{
+  public CompareByVersion2(type:EntityEnum, version:string):number{
     //0 - equal, 1 - entityBase up, -1 - entityBase down
     if(type==this.Type){
       if(compare(`${version}`,`${this.Attributes.Version}`, '=')) return 0;

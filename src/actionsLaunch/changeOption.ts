@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { LaunchOptionNode } from '../LaunchOptionNode';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IContexUI } from '../ui/IContexUI';

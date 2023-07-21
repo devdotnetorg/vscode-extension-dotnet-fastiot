@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotDevice } from '../IotDevice';
 import { ItemQuickPick } from '../Helper/actionHelper';

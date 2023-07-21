@@ -2,10 +2,12 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
-import { LogLevel } from '../shared/LogLevel';
+import { EntityEnum } from '../Entity/EntityEnum';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotResult,StatusResult } from '../IotResult';
-import { EntityType } from '../Entity/EntityType';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { Constants } from "../Constants"
 import { IConfigurationExtension } from './IConfigurationExtension';
 //block

@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { IotResult,StatusResult } from '../IotResult';
+import { IotResult,StatusResult } from '../Shared/IotResult';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';         
 import {IContexUI} from '../ui/IContexUI';
