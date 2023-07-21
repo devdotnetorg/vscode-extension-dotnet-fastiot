@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './shared/BaseTreeItem';
+import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
 import {IotDeviceAccount} from './IotDeviceAccount';
 import {IotDeviceInformation, Existences} from './IotDeviceInformation';
 import {TypePackage,IotDevicePackage} from './IotDevicePackage';
 import { IConfiguration } from './Configuration/IConfiguration';
 import { IotResult,StatusResult } from './Shared/IotResult';
-import {IotItemTree} from './shared/IotItemTree';
+import {IotItemTree_d} from './shared/IotItemTree_d';
 import {IotDeviceDTO} from './IotDeviceDTO';
 import {IotDeviceGpiochip} from './IotDeviceGpiochip';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
@@ -15,7 +15,7 @@ import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import {IoTHelper} from './Helper/IoTHelper';
 import {networkHelper} from './Helper/networkHelper';
 
-export class IotDevice extends BaseTreeItem {    
+export class IotDevice extends BaseTreeItem_d {    
   public IdDevice:string|undefined;
 
   public Parent: undefined;
@@ -145,7 +145,7 @@ export class IotDevice extends BaseTreeItem {
   private AddidDeviceInChildsInformation():void
   {
     //Add child: Id device
-    let elementIdDevice = new IotItemTree("Id device",this.IdDevice,`Id device: ${this.IdDevice}`,vscode.TreeItemCollapsibleState.None,this.Information,this);
+    let elementIdDevice = new IotItemTree_d("Id device",this.IdDevice,`Id device: ${this.IdDevice}`,vscode.TreeItemCollapsibleState.None,this.Information,this);
     this.Information.Childs.unshift(elementIdDevice);
   }
 

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './shared/BaseTreeItem';
+import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
 import {IotDevice} from './IotDevice';
 import {IotDevicePackage,TypePackage} from './IotDevicePackage';
 import {IotDeviceDTO} from './IotDeviceDTO';
@@ -12,14 +12,14 @@ import {IContexUI} from './ui/IContexUI';
 import { IoTApplication } from './IoTApplication';
 import { AddSBCConfigType } from './Types/AddSBCConfigType';
 
-export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTreeItem> {    
+export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTreeItem_d> {    
   public RootItems:Array<IotDevice>=[];
 
   private _app:IoTApplication
 
-  private _onDidChangeTreeData: vscode.EventEmitter<BaseTreeItem| undefined | null | void> = 
-    new vscode.EventEmitter<BaseTreeItem| undefined | null | void>();
-  public readonly onDidChangeTreeData: vscode.Event<BaseTreeItem| undefined | null | void> = 
+  private _onDidChangeTreeData: vscode.EventEmitter<BaseTreeItem_d| undefined | null | void> = 
+    new vscode.EventEmitter<BaseTreeItem_d| undefined | null | void>();
+  public readonly onDidChangeTreeData: vscode.Event<BaseTreeItem_d| undefined | null | void> = 
     this._onDidChangeTreeData.event;
     
   constructor(app:IoTApplication) {
@@ -28,14 +28,14 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
       if(this._app.Config.JsonDevices_d.IotDevices) this.RecoveryDevices(this._app.Config.JsonDevices_d);
   }
 
-  public getTreeItem(element: BaseTreeItem): vscode.TreeItem | Thenable<BaseTreeItem> {
+  public getTreeItem(element: BaseTreeItem_d): vscode.TreeItem | Thenable<BaseTreeItem_d> {
     return element;
   }  
   
-  public getChildren(element?: BaseTreeItem): Thenable<BaseTreeItem[]> {
+  public getChildren(element?: BaseTreeItem_d): Thenable<BaseTreeItem_d[]> {
     if (element) {
       //Creating a child element
-      let objArray: Array<BaseTreeItem> =[];
+      let objArray: Array<BaseTreeItem_d> =[];
       element.Childs.forEach(child =>
         {	
           objArray.push(child)
@@ -48,7 +48,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     }    
   }
 
-  public getParent(element: BaseTreeItem): BaseTreeItem| undefined {
+  public getParent(element: BaseTreeItem_d): BaseTreeItem_d| undefined {
     return element.Parent    
   } 
 

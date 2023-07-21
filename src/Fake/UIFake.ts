@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { StatusBarBackground } from '../UI/StatusBarBackground';
 import { IContexUI } from '../UI/IContexUI';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IotDevice } from '../IotDevice';

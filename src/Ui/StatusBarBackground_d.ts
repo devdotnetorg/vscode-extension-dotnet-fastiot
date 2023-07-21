@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export class StatusBarBackground {
+export class StatusBarBackground_d {
   private _statusBarItem: vscode.StatusBarItem;
   private readonly _animationText: string;
 

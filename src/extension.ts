@@ -10,7 +10,7 @@ import { AppDomain } from './AppDomain';
 import { ApplicationBuilder, BuildApplication } from './Application';
 import { IoTHelper } from './Helper/IoTHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
-import { IotItemTree } from './shared/IotItemTree';
+import { IotItemTree_d } from './shared/IotItemTree_d';
 import { IotResult,StatusResult } from './Shared/IotResult';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 import { IConfigEntityCollection } from './Entity/IConfigEntityCollection';
@@ -22,7 +22,6 @@ import Contain = IoT.Enums.Contain;
 //UI
 import { UI } from './ui/UI';
 import { IContexUI } from './ui/IContexUI';
-import { StatusBarBackground } from './ui/StatusBarBackground';
 //Devices
 import { TreeDataDevicesProvider } from './TreeDataDevicesProvider';
 import { IotDevice } from './IotDevice';
@@ -206,7 +205,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		openSshTerminal(item,app.Config);
 	});
 	//Copy To Clipboard
-	let commandCopyToClipboard = vscode.commands.registerCommand("viewDevices.CopyToClipboard", (item:IotItemTree) => {
+	let commandCopyToClipboard = vscode.commands.registerCommand("viewDevices.CopyToClipboard", (item:IotItemTree_d) => {
 		copyTexttoClipboard(item);
 	});
 	//Check all packages

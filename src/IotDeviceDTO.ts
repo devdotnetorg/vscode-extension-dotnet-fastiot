@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './shared/BaseTreeItem';
+import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
 import {IotDevice} from './IotDevice';
 import { IotResult,StatusResult } from './Shared/IotResult';
 import { DTO } from './Dto/DTO';
 
-export class IotDeviceDTO extends BaseTreeItem {
+export class IotDeviceDTO extends BaseTreeItem_d {
   public Parent: IotDevice| IotDeviceDTO;
   public Childs: Array<IotDeviceDTO>=[];
   public Device: IotDevice;

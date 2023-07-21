@@ -10,7 +10,7 @@ import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { stderr } from 'process';
 
-export class SshClient {
+export class SshClient_d {
   constructor(){}
 
   //Event--------------------------------------

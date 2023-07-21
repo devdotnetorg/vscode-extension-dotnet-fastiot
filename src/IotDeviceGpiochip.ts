@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './shared/BaseTreeItem';
+import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
 import {IotDevice} from './IotDevice';
 import {Gpiochip} from './GPIO/Gpiochip';
 import { IotResult,StatusResult } from './Shared/IotResult';
 import {TypePackage} from './IotDevicePackage';
 
-export class IotDeviceGpiochip extends BaseTreeItem {
+export class IotDeviceGpiochip extends BaseTreeItem_d {
   public Items: Array<Gpiochip>=[];
 
   public Parent: IotDevice| IotDeviceGpiochip;

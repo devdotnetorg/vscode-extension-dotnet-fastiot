@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { StatusBarBackground } from './StatusBarBackground';
+import { StatusBarBackground_d } from './StatusBarBackground_d';
 import { IContexUI } from './IContexUI';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IotDevice } from '../IotDevice';
@@ -15,7 +15,7 @@ import { BadgeActivityBar  } from './BadgeActivityBar';
 
 export class UI implements IContexUI {
   private _outputChannel:vscode.OutputChannel;
-  private _statusBarBackground: StatusBarBackground;
+  private _statusBarBackground: StatusBarBackground_d;
   private readonly _currentLogLevel:LogLevel;
   private _badgeActivityBar?:BadgeActivityBar;
   
@@ -23,7 +23,7 @@ export class UI implements IContexUI {
     //OutputChannel
 	  this._outputChannel = vscode.window.createOutputChannel(".NET FastIoT");
 	  //StatusBar
-	  this._statusBarBackground= new StatusBarBackground(
+	  this._statusBarBackground= new StatusBarBackground_d(
 		  vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000));
     //LogLevel
     this._currentLogLevel=logLevel;

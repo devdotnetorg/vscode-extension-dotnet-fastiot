@@ -1,15 +1,15 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './shared/BaseTreeItem';
+import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
 import {IotDevice} from './IotDevice';
-import {IotItemTree} from './shared/IotItemTree';
+import {IotItemTree_d} from './shared/IotItemTree_d';
 import { IotResult,StatusResult } from './Shared/IotResult';
 
-export class IotDeviceInformation extends BaseTreeItem{  
+export class IotDeviceInformation extends BaseTreeItem_d{  
    
   public Parent: IotDevice;
-  public Childs: Array<IotItemTree>=[];
+  public Childs: Array<IotItemTree_d>=[];
   public Device: IotDevice;
 
   //apt-get install lsb-release
@@ -155,37 +155,37 @@ export class IotDeviceInformation extends BaseTreeItem{
    ): Promise<void>{
       //create child elements
       this.Childs=[];      
-      let element:IotItemTree;
+      let element:IotItemTree_d;
       //
       if(this.BoardName){
-         element = new IotItemTree("Board name",this.BoardName,this.BoardName,vscode.TreeItemCollapsibleState.None,this,this.Device);
+         element = new IotItemTree_d("Board name",this.BoardName,this.BoardName,vscode.TreeItemCollapsibleState.None,this,this.Device);
          this.Childs.push(element);
       }
-      element = new IotItemTree("Architecture",this.Architecture,this.Architecture,vscode.TreeItemCollapsibleState.None,this,this.Device);
+      element = new IotItemTree_d("Architecture",this.Architecture,this.Architecture,vscode.TreeItemCollapsibleState.None,this,this.Device);
       this.Childs.push(element);
       if(this.ArmbianVersion){
-         element = new IotItemTree("Armbian",this.ArmbianVersion,this.ArmbianVersion,vscode.TreeItemCollapsibleState.None,this,this.Device);
+         element = new IotItemTree_d("Armbian",this.ArmbianVersion,this.ArmbianVersion,vscode.TreeItemCollapsibleState.None,this,this.Device);
          this.Childs.push(element);
       }
       if(this.BoardFamily){
-         element = new IotItemTree("Board family",this.BoardFamily,this.BoardFamily,vscode.TreeItemCollapsibleState.None,this,this.Device);
+         element = new IotItemTree_d("Board family",this.BoardFamily,this.BoardFamily,vscode.TreeItemCollapsibleState.None,this,this.Device);
          this.Childs.push(element);
       }
       if(this.LinuxFamily){
-         element = new IotItemTree("Linux family",this.LinuxFamily,this.LinuxFamily,vscode.TreeItemCollapsibleState.None,this,this.Device);
+         element = new IotItemTree_d("Linux family",this.LinuxFamily,this.LinuxFamily,vscode.TreeItemCollapsibleState.None,this,this.Device);
          this.Childs.push(element);
       }
-      element = new IotItemTree("Hostname",this.Hostname,this.Hostname,vscode.TreeItemCollapsibleState.None,this,this.Device);
+      element = new IotItemTree_d("Hostname",this.Hostname,this.Hostname,vscode.TreeItemCollapsibleState.None,this,this.Device);
       this.Childs.push(element);
-      element = new IotItemTree("OS",this.OsDescription,this.OsDescription,vscode.TreeItemCollapsibleState.None,this,this.Device);
+      element = new IotItemTree_d("OS",this.OsDescription,this.OsDescription,vscode.TreeItemCollapsibleState.None,this,this.Device);
       this.Childs.push(element);
-      element = new IotItemTree("Linux kernel",this.OsKernel,this.OsKernel,vscode.TreeItemCollapsibleState.None,this,this.Device);
+      element = new IotItemTree_d("Linux kernel",this.OsKernel,this.OsKernel,vscode.TreeItemCollapsibleState.None,this,this.Device);
       this.Childs.push(element);
-      element = new IotItemTree("OS name",this.OsName,this.OsName,vscode.TreeItemCollapsibleState.None,this,this.Device);
+      element = new IotItemTree_d("OS name",this.OsName,this.OsName,vscode.TreeItemCollapsibleState.None,this,this.Device);
       this.Childs.push(element);
-      element = new IotItemTree("OS release",this.OsRelease,this.OsRelease,vscode.TreeItemCollapsibleState.None,this,this.Device);
+      element = new IotItemTree_d("OS release",this.OsRelease,this.OsRelease,vscode.TreeItemCollapsibleState.None,this,this.Device);
       this.Childs.push(element);
-      element = new IotItemTree("OS codename",this.OsCodename,this.OsCodename,vscode.TreeItemCollapsibleState.None,this,this.Device);
+      element = new IotItemTree_d("OS codename",this.OsCodename,this.OsCodename,vscode.TreeItemCollapsibleState.None,this,this.Device);
       this.Childs.push(element); 
    }
 

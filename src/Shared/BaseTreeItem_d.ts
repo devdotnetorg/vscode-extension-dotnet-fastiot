@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {SshClient} from './SshClient';
+import {SshClient_d} from './SshClient_d';
 
-export abstract class BaseTreeItem extends vscode.TreeItem {
-  public abstract Parent?: BaseTreeItem| any;
-  public abstract Childs: Array<BaseTreeItem| any>;
-  public Client:SshClient;
+export abstract class BaseTreeItem_d extends vscode.TreeItem {
+  public abstract Parent?: BaseTreeItem_d| any;
+  public abstract Childs: Array<BaseTreeItem_d| any>;
+  public Client:SshClient_d;
   
   constructor(
     label: string,
@@ -18,6 +18,6 @@ export abstract class BaseTreeItem extends vscode.TreeItem {
     this.description = description;
     //tooltip Markdown
     this.tooltip = tooltip;
-    this.Client = new SshClient();
+    this.Client = new SshClient_d();
   }
 }

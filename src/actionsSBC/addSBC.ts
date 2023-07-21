@@ -5,7 +5,7 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IotDevice } from '../IotDevice';
-import { BaseTreeItem } from '../shared/BaseTreeItem';
+import { BaseTreeItem_d } from '../shared/BaseTreeItem_d';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoT } from '../Types/Enums';
 import LogLevel = IoT.Enums.LogLevel;
@@ -16,7 +16,7 @@ import { AddSBCPanelSingleton } from '../Panels/AddSBCPanelSingleton';
 import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
 import { AppDomain } from '../AppDomain';
 
-export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,
+export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem_d>,
     dialogType:Dialog, hostName?:string, hostPort?:number): Promise<void> {
         const app = AppDomain.getInstance().CurrentApp;
         //fill hostName, hostPort

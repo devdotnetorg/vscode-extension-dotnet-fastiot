@@ -1,17 +1,17 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './BaseTreeItem';
+import {BaseTreeItem_d} from './BaseTreeItem_d';
 import {IotDevice} from '../IotDevice';
 import {IotDeviceAccount} from '../IotDeviceAccount';
 import {IotDeviceInformation} from '../IotDeviceInformation';
 import {IotDevicePackage} from '../IotDevicePackage';
 import {LaunchNode} from '../LaunchNode';
 
-export class IotItemTree extends BaseTreeItem { 
-  public Parent: IotDevice| IotDeviceAccount| IotDeviceInformation| IotItemTree| 
+export class IotItemTree_d extends BaseTreeItem_d { 
+  public Parent: IotDevice| IotDeviceAccount| IotDeviceInformation| IotItemTree_d| 
   IotDevicePackage| LaunchNode;
-  public Childs: Array<IotItemTree>=[]; 
+  public Childs: Array<IotItemTree_d>=[]; 
   public Device: IotDevice;
 
   constructor(
@@ -19,7 +19,7 @@ export class IotItemTree extends BaseTreeItem {
     description: string|  undefined,
     tooltip: string | vscode.MarkdownString | undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,
-    parent: IotDevice| IotDeviceAccount| IotDeviceInformation| IotItemTree| 
+    parent: IotDevice| IotDeviceAccount| IotDeviceInformation| IotItemTree_d| 
       IotDevicePackage| LaunchNode,
     device: IotDevice
     ){

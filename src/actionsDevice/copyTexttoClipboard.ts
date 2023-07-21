@@ -2,9 +2,9 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { IotItemTree } from '../shared/IotItemTree';
+import { IotItemTree_d } from '../shared/IotItemTree_d';
 
-export async function copyTexttoClipboard(item:IotItemTree): Promise<void> {                    
+export async function copyTexttoClipboard(item:IotItemTree_d): Promise<void> {                    
         let text="";
         if (item.description==item.tooltip){
             text=`${item.label}: ${item.description}`;

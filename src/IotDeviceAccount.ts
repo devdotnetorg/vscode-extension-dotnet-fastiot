@@ -1,15 +1,15 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BaseTreeItem} from './shared/BaseTreeItem';
+import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
 import {IotDevice} from './IotDevice';
-import {IotItemTree} from './shared/IotItemTree';
+import {IotItemTree_d} from './shared/IotItemTree_d';
 import { IotResult,StatusResult } from './Shared/IotResult';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 
-export class IotDeviceAccount extends BaseTreeItem{  
+export class IotDeviceAccount extends BaseTreeItem_d{  
   public Parent: IotDevice| undefined;
-  public Childs: Array<BaseTreeItem| any>=[];;
+  public Childs: Array<BaseTreeItem_d| any>=[];;
   public Device: IotDevice;
 
   public Host: string| undefined;
@@ -210,16 +210,16 @@ export class IotDeviceAccount extends BaseTreeItem{
   ): Promise<void>{
     //create child elements
     this.Childs=[];         
-    let element = new IotItemTree("Username",this.UserName,this.UserName,vscode.TreeItemCollapsibleState.None,this,this.Device);
+    let element = new IotItemTree_d("Username",this.UserName,this.UserName,vscode.TreeItemCollapsibleState.None,this,this.Device);
     this.Childs.push(element);      
     let groups:string="";
     this.Groups.forEach(group =>
       {	
         groups=group+ " ";          
       });        
-    element = new IotItemTree("Groups",groups,groups,vscode.TreeItemCollapsibleState.None,this,this.Device);
+    element = new IotItemTree_d("Groups",groups,groups,vscode.TreeItemCollapsibleState.None,this,this.Device);
     this.Childs.push(element);
-    element = new IotItemTree("SSH Key",this.Identity,`File ${this.PathKey}`,vscode.TreeItemCollapsibleState.None,this,this.Device);
+    element = new IotItemTree_d("SSH Key",this.Identity,`File ${this.PathKey}`,vscode.TreeItemCollapsibleState.None,this,this.Device);
     //Key availability check
     if(this.PathKey&&!fs.existsSync(this.PathKey)){
       //Not found
@@ -239,13 +239,13 @@ export class IotDeviceAccount extends BaseTreeItem{
      if (values.length>=2)
      {
       const value=values[1];
-      element = new IotItemTree("SSH Key type",value,value,vscode.TreeItemCollapsibleState.None,this,this.Device);
+      element = new IotItemTree_d("SSH Key type",value,value,vscode.TreeItemCollapsibleState.None,this,this.Device);
       this.Childs.push(element);
      }
     }
-    element = new IotItemTree("Host",this.Host,this.Host,vscode.TreeItemCollapsibleState.None,this,this.Device);
+    element = new IotItemTree_d("Host",this.Host,this.Host,vscode.TreeItemCollapsibleState.None,this,this.Device);
     this.Childs.push(element);
-    element = new IotItemTree("Port",this.Port,this.Port,vscode.TreeItemCollapsibleState.None,this,this.Device);
+    element = new IotItemTree_d("Port",this.Port,this.Port,vscode.TreeItemCollapsibleState.None,this,this.Device);
     this.Childs.push(element);
   }
   

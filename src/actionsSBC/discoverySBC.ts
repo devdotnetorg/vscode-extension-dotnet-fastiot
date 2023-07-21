@@ -9,7 +9,7 @@ import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
 import { IotDevice } from '../IotDevice';
-import { BaseTreeItem } from '../shared/BaseTreeItem';
+import { BaseTreeItem_d } from '../shared/BaseTreeItem_d';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoTApplication } from '../IoTApplication';
@@ -19,7 +19,7 @@ import { IoT } from '../Types/Enums';
 import LogLevel = IoT.Enums.LogLevel;
 import Dialog = IoT.Enums.Dialog;
 
-export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,app:IoTApplication): Promise<void> {
+export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem_d>,app:IoTApplication): Promise<void> {
         
     const labelTask="Board discovery";
     const checkPort=22;
