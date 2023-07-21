@@ -93,7 +93,7 @@ export class UI implements IContexUI {
    }
   }
 
-  public async ShowDeviceDialog(devices:Array<IotDevice>,title = 'Choose a device'):Promise<IotDevice | undefined> {
+  public async ShowDeviceDialog(devices:Array<IotDevice>,title = 'Choose a single-board computer'):Promise<IotDevice | undefined> {
     //Get all architectures
     let architectures:string[]=[];
     devices.forEach((device) => {
@@ -143,7 +143,7 @@ export class UI implements IContexUI {
     });
     */
     //Select
-    const SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: title,placeHolder:`Developer board`});
+    const SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: title,placeHolder:`Single-board computer`});
     if(SELECTED_ITEM)
       return Promise.resolve(<IotDevice>(SELECTED_ITEM as ItemQuickPick).value);
       else Promise.resolve(undefined);

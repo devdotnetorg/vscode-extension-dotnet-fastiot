@@ -46,10 +46,10 @@ export class AddSBCPanelSingleton extends BasePanelDialog<AddSBCConfigType>{
         <section class="component-row">
           <section class="component-container">
             <h2>SSH Credentials</h2>
-            <p>Required to create a development board management account and debugging.</p>
+            <p>Required to create a single-board computer management account and debugging.</p>
             <p>The OpenSSH server must first be configured. How to do this in the <vscode-link href="https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#getting-started">Preparing the device</vscode-link>.</p>
             <vscode-divider role="separator"></vscode-divider>
-            <vscode-text-field id="host" placeholder="192.168.50.75">Hostname or IP address of the developer board:</vscode-text-field>
+            <vscode-text-field id="host" placeholder="192.168.50.75">Hostname or IP address of the single-board computer:</vscode-text-field>
             <vscode-text-field id="port" value="22" placeholder="22">Port number:</vscode-text-field>
             <vscode-text-field id="username" value="root" placeholder="root">Username with sudo rights (usually root):</vscode-text-field>
             <vscode-text-field id="password" type="password" size="20">Password:</vscode-text-field>
@@ -62,7 +62,7 @@ export class AddSBCPanelSingleton extends BasePanelDialog<AddSBCConfigType>{
             <vscode-divider role="separator"></vscode-divider>
             <vscode-collapsible
               title="Accounts"
-              description="created to manage and debug the development board"
+              description="created to manage and debug the single-board computer"
               class="collapsible">
               <div slot="body">
                 <h3>Debug</h3>
@@ -74,7 +74,7 @@ export class AddSBCPanelSingleton extends BasePanelDialog<AddSBCConfigType>{
                 <p id="debuggroupstext">The ABC account will be added to the group(s):</p>
                 <div id="container-tags-debuggroups" class="tags-container">tags</div>
                 <h3>Management</h3>
-                <p>Development board management account.</p>
+                <p>Single-board computer management account.</p>
                 <vscode-dropdown class="collapsible-element" id="managementusername" position="below">
                   <vscode-option>root</vscode-option>
                 </vscode-dropdown>
@@ -101,7 +101,7 @@ export class AddSBCPanelSingleton extends BasePanelDialog<AddSBCConfigType>{
         <section class="component-row-button">
           <div class="buttons-container">
             <vscode-button id="button-submit">
-              Create a development board profile
+              Create a single-board computer profile
               <span slot="start" class="codicon codicon-add"></span>
             </vscode-button> 
             <vscode-button id="button-close" appearance="secondary">

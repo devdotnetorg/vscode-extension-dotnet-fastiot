@@ -33,7 +33,7 @@ export async function createProject(app:IoTApplication,devices:Array<IotDevice>)
         return;
     }
     //Select Device
-    const selectDevice = await app.UI.ShowDeviceDialog(devices,'Choose a device (1/6)');
+    const selectDevice = await app.UI.ShowDeviceDialog(devices,'Choose a single-board computer (1/6)');
     if(!selectDevice) return;
     //Select template
     const listTemplates= app.Templates.SelectByEndDeviceArchitecture(selectDevice.Information.Architecture);

@@ -36,7 +36,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         return;
     }
     //Select Device
-    const selectDevice = await app.UI.ShowDeviceDialog(devices,'Choose a device (1/4)');
+    const selectDevice = await app.UI.ShowDeviceDialog(devices,'Choose a single-board computer (1/4)');
     if(!selectDevice) return;
     //Select template
     //get id template

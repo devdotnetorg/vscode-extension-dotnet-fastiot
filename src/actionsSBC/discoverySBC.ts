@@ -27,11 +27,11 @@ export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vs
         //Sbc discovery or subnet scan
         //Choice of two options
         let items:Array<ItemQuickPick>=[];
-        let item = new ItemQuickPick("1. Fast development board discovery (recommended)","Fast","discovery","Some development boards may not be found");
+        let item = new ItemQuickPick("1. Fast single-board computer discovery (recommended)","Fast","discovery","Some single-board computers may not be found");
         items.push(item);
         item = new ItemQuickPick("2. Subnet scan","Takes 3-5 minutes","scan","Checking every IP-Address in a subnet");
         items.push(item);
-        let SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Choose a development board discovery method'});
+        let SELECTED_ITEM = await vscode.window.showQuickPick(items,{title: 'Choose a single-board computer discovery method'});
         if(!SELECTED_ITEM) return;
         let answerAction=SELECTED_ITEM.value as string;
         if (answerAction=="scan") {
@@ -152,12 +152,12 @@ export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vs
             return;
         }
         if(itemDevices.length==0) {
-            vscode.window.showInformationMessage(`⚠️ No network development boards found.`);
+            vscode.window.showInformationMessage(`⚠️ No network single-board computers found.`);
             return;
         }
         //show list
         SELECTED_ITEM = await vscode.window.showQuickPick(
-            itemDevices,{title: 'Discovered development boards',placeHolder:`Choose a development board to add`});
+            itemDevices,{title: 'Discovered single-board computers',placeHolder:`Choose a single-board computer to add`});
         if(!SELECTED_ITEM) return;
         //add Sbc
         const nameHost=SELECTED_ITEM.value;

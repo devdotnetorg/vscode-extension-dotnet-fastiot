@@ -14,6 +14,14 @@ export abstract class BasePanelDialog<T> {
   private _answerData?:T;
   private _isAnswerReceived:boolean=true;
   private _fileNamePageResources:string;
+
+  public get IsActive(): boolean {
+    if (this._currentPanel) {
+      return this._currentPanel.active;
+    }
+    return false;
+  }
+  
   //
   private getWebviewContentBodyFromDerivative:() =>string;
   private onReceiveMessageFromDerivative:(message:MessagePanelType) => void;

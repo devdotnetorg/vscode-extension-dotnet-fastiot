@@ -75,12 +75,15 @@ async function showDialog(app:IoTApplication, dialogType:Dialog, addSBCConfig?:A
     switch(dialogType) {
         case Dialog.standard: {
             //vscode.window.showInputBox
+            //close webView
+            let addSBCPanel = AddSBCPanelSingleton.getInstance();
+            if (addSBCPanel.IsActive) addSBCPanel.Dispose();
             addSBCConfig=await showDialogStandard(addSBCConfig);
             break; 
         } 
         case Dialog.webview: { 
             //webView
-            addSBCConfig=await showDialogExWebview(app, addSBCConfig);
+            addSBCConfig=await showDialogWebview(app, addSBCConfig);
             break; 
         }
         default: { 
@@ -94,10 +97,10 @@ async function showDialog(app:IoTApplication, dialogType:Dialog, addSBCConfig?:A
 
 async function showDialogStandard(addSBCConfig?:AddSBCConfigType): Promise<AddSBCConfigType| undefined>  {
     if(!addSBCConfig) return Promise.resolve(undefined);
-    const title = "Add development board";
+    const title = "Add single-board computer";
     //1. hostName
     let hostName = await vscode.window.showInputBox({
-        prompt: 'Enter the hostname of the development board',
+        prompt: 'Enter the hostname of the single-board computer',
         title: `${title} (1/4)`,
         value: addSBCConfig.host
     });
@@ -135,12 +138,12 @@ async function showDialogStandard(addSBCConfig?:AddSBCConfigType): Promise<AddSB
     return Promise.resolve(addSBCConfig);
 }
 
-async function showDialogExWebview(app:IoTApplication, addSBCConfig?:AddSBCConfigType): Promise<AddSBCConfigType| undefined>  {
+async function showDialogWebview(app:IoTApplication, addSBCConfig?:AddSBCConfigType): Promise<AddSBCConfigType| undefined>  {
     //webView
     let addSBCPanel = AddSBCPanelSingleton.getInstance();
     let result =
         await addSBCPanel.Activate(
-            "addSBCView","Add development board",
+            "addSBCView","Add single-board computer",
             app.Config.Folder.Extension,app.Config.Extension.Subscriptions,addSBCConfig);
     if(result.Status!=StatusResult.Ok) {
         //Output
