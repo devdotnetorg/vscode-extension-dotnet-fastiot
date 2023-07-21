@@ -343,8 +343,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	//FileSystemWatcher
 	//- "**/.vscode/launch.json"
 	const reloadLaunchs = debounce( () => {
-		if(app.Config.Folder.WorkspaceDirectory) {
-			const lockFilePath=path.join(app.Config.Folder.WorkspaceDirectory,".vscode",".lockreadlaunch");
+		if(app.Config.Folder.WorkspaceVSCode) {
+			const lockFilePath=path.join(app.Config.Folder.WorkspaceVSCode,".vscode",".lockreadlaunch");
 			if (!fs.existsSync(lockFilePath)) loadLaunchs();
 		}
 	});
@@ -446,9 +446,9 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 		recoverySourcePath: path.join(config.Folder.Extension.fsPath, "templates", "system"),
 		schemasFolderPath: config.Folder.Schemas,
 		tempFolderPath:config.Folder.Temp,
-		lastUpdateHours:config.Entity.LastUpdateHours,
+		lastUpdateTimeInHours:config.Entity.LastUpdateTimeInHours,
 		isUpdate:config.Entity.IsUpdate,
-		updateIntervalHours:config.Entity.UpdateIntervalHours,
+		updateIntervalInHours:config.Entity.UpdateIntervalInHours,
 		urlsUpdateEntitiesCommunity:config.Template.ListSourceUpdateCommunity,
 		urlUpdateEntitiesSystem:urlUpdateTemplatesSystem
 	};
@@ -457,7 +457,7 @@ function BuildApplication(context: vscode.ExtensionContext):IoTApplication
 	};
 
 	const saveLastUpdateHours = (value:number):void=> {
-		config.Entity.LastUpdateHours=value;
+		config.Entity.LastUpdateTimeInHours=value;
 	};
 
 	let templates= new IotTemplateCollection(configTemplateCollection,getDirTemplatesCallback,saveLastUpdateHours);

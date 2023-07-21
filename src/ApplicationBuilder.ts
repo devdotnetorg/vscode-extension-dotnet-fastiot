@@ -8,25 +8,15 @@ import { IoTApplication } from './IoTApplication';
 import { IConfiguration } from './Configuration/IConfiguration';
 
 export class ApplicationBuilder {
-
   private _instance: IoTApplication;
   
   constructor(){
     this._instance= new IoTApplication();
   }
 
-  public BuildUI (value:IContexUI) {
-    this._instance.UI=value;
-  }
-
-  public BuildConfig (value:IConfiguration) {
-    this._instance.Config=value;
-  }
-
-  public BuildTemplates (value:IotTemplateCollection) {
-    this._instance.Templates=value;
-  }
-
+  public BuildUI = (value:IContexUI) => this._instance.UI=value;
+  public BuildConfig = (value:IConfiguration) => this._instance.Config=value;
+  public BuildTemplates = (value:IotTemplateCollection) => this._instance.Templates=value;
   /**
    * Get instance IoTApplication
    */

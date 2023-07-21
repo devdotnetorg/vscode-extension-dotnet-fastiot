@@ -20,8 +20,8 @@ export interface IConfigurationFolder {
   AppsBuiltIn: string;
   Temp: string;
   Schemas: string;
-  WorkspaceDirectory: string| undefined;
-  DefaultProject: string;
+  WorkspaceVSCode: string| undefined;
+  SaveProjectByDefault: string;
   GetDirTemplates(type:EntityType):string;
   ClearTmp():void;
 }

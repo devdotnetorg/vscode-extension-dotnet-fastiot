@@ -10,16 +10,10 @@ import { Constants } from "../Constants"
 import { IConfigurationEntity } from '../Configuration/IConfigurationEntity';
 
 export class IotConfigurationEntityFake implements IConfigurationEntity {
-  public get IsUpdate():boolean { //Template update
-    return false;}
-  public get UpdateIntervalHours():number { //Template update
-    return 0;}
-  public get DebugMode():boolean {
-    return false;}
-  public get LastUpdateHours(): number {
-    return 0;}
-  public set LastUpdateHours(value:number) {}
-
+  public IsUpdate:boolean=false;
+  public UpdateIntervalInHours:number=0;
+  public DebugMode:boolean=false;
+  public LastUpdateTimeInHours: number=0;
   constructor() {}
 
 }

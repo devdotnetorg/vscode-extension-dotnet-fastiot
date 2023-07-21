@@ -62,7 +62,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
   public LoadLaunches(sortLaunchs:boolean=false):IotResult {
     let result:IotResult;
     //Check WorkspaceDirectory
-    if(!this._config.Folder.WorkspaceDirectory) {
+    if(!this._config.Folder.WorkspaceVSCode) {
       result= new IotResult(StatusResult.No,`WorkspaceDirectory not open`);
       return result;
     }
@@ -73,7 +73,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
       //Refresh treeView
       this.Refresh();
       //Recovery launchs from config in JSON format
-      let launch =new IotLaunch(this._config.Folder.WorkspaceDirectory);
+      let launch =new IotLaunch(this._config.Folder.WorkspaceVSCode);
       result=launch.GetAllLaunchs(this._devices);
       if(result.Status==StatusResult.No) {
         result.AddMessage(`No Launches.`);
@@ -93,14 +93,14 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
       //Sort
       if(sortLaunchs) this.SortNodes();
       //check .lockreadlaunch
-      const lockFilePath=path.join(this._config.Folder.WorkspaceDirectory,".vscode",".lockreadlaunch");
+      const lockFilePath=path.join(this._config.Folder.WorkspaceVSCode,".vscode",".lockreadlaunch");
       if (fs.existsSync(lockFilePath)) fs.removeSync(lockFilePath);
       //result
       result= new IotResult(StatusResult.Ok,`Launchs loaded successfully`);      
     }
     catch (err:any)
     {
-      const launchPath=path.join(this._config.Folder.WorkspaceDirectory, ".vscode", "launch.json");
+      const launchPath=path.join(this._config.Folder.WorkspaceVSCode, ".vscode", "launch.json");
       result= new IotResult(StatusResult.Error,`Launches loading error. Path: ${launchPath}`,err);
     }
     //Refresh treeView

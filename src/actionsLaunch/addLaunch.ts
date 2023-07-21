@@ -14,7 +14,7 @@ import { loadTemplates } from '../actionsTemplates/loadTemplates';
 
 export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,app:IoTApplication): Promise<void> {
     let result:IotResult;
-    const workspaceDirectory=app.Config.Folder.WorkspaceDirectory;
+    const workspaceDirectory=app.Config.Folder.WorkspaceVSCode;
     if(!workspaceDirectory) {
         result=new IotResult(StatusResult.No,`No Workspace. Open the menu: File -> Open Folder ... or create a project`);
         app.UI.ShowNotification(result);

@@ -15,14 +15,10 @@ export class AppDomain {
   }
 
   public static getInstance(): AppDomain {
-    if (!AppDomain.instance) {
-      AppDomain.instance = new AppDomain();
-    }
-
+    if (!AppDomain.instance) AppDomain.instance = new AppDomain();
     return AppDomain.instance;
   }
 
-  public AddInstanceApp(app:IoTApplication) {
-    this._app=app;
-  }
+  public AddInstanceApp = (app:IoTApplication) => this._app=app;
+
 }

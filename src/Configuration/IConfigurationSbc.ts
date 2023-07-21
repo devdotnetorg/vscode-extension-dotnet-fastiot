@@ -15,16 +15,16 @@ import { IotConfigurationTemplate } from './IotConfigurationTemplate';
 //
 
 export interface IConfigurationSbc {
-  UsernameDebugAccount:string;
-  GroupsDebugAccount:string[];
-  UsernameManagementAccount:string;
-  GroupsManagementAccount:string[];
-  TypeKeySsh:string;
-  BitsKeySsh:number;
+  DebugUserNameAccount:string;
+  DebugGroupsAccount:string[];
+  ManagementUserNameAccount:string;
+  ManagementGroupsAccount:string[];
+  SshKeyType:string;
+  SshKeyBits:number;
   DebugAppFolder:string;
   FileNameUdevRules:string;
-  ListUdevRulesFiles:string[];
-  PreviousHostname: string;
+  ListFilesUdevRules:string[];
+  PreviousHostnameWhenAdding: string;
   ProfilesSBCJson:any;
-  GetUdevRulesFile(fileName:string, isTest?:boolean): IotResult;
+  GetFileUdevRules(fileName:string, isTest?:boolean): IotResult;
 }

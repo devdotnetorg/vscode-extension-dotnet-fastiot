@@ -87,7 +87,7 @@ export class IotDeviceAccount extends BaseTreeItem{
       let result:IotResult;
       //base root
       nameScript="createaccountroot";
-      paramsScript=`${this.Device.Config.Sbc.TypeKeySsh} ${this.Device.Config.Sbc.BitsKeySsh}`;
+      paramsScript=`${this.Device.Config.Sbc.SshKeyType} ${this.Device.Config.Sbc.SshKeyBits}`;
       //if debugvscode
       if(accountNameDebug!="root"){
         nameScript="createaccount";
@@ -115,10 +115,10 @@ export class IotDeviceAccount extends BaseTreeItem{
       //get private file key
       let pathFile:string;
       if(accountNameDebug=="root"){
-        pathFile=`/root/.ssh/id_${this.Device.Config.Sbc.TypeKeySsh}`;
+        pathFile=`/root/.ssh/id_${this.Device.Config.Sbc.SshKeyType}`;
       }else
       {
-        pathFile=`/home/${accountNameDebug}/.ssh/id_${this.Device.Config.Sbc.TypeKeySsh}`;
+        pathFile=`/home/${accountNameDebug}/.ssh/id_${this.Device.Config.Sbc.SshKeyType}`;
       }      
       this.Client.FireChangedState({
         status:undefined,
@@ -131,7 +131,7 @@ export class IotDeviceAccount extends BaseTreeItem{
       let data=result.SystemMessage;
       if(data)
       {
-        const fileName=`id-${this.Device.Config.Sbc.TypeKeySsh}-${this.Device.IdDevice}-${accountNameDebug}`;
+        const fileName=`id-${this.Device.Config.Sbc.SshKeyType}-${this.Device.IdDevice}-${accountNameDebug}`;
         pathFile=`${this.Device.Config.Folder.KeysSbc}\\${fileName}`;
         fs.writeFileSync(pathFile,data,undefined);
         //Attribute writing

@@ -9,31 +9,29 @@ import { Constants } from "../Constants";
 import { IConfigurationSbc } from "../Configuration/IConfigurationSbc";
 
 export class IotConfigurationSbcFake implements IConfigurationSbc{
-  public get UsernameDebugAccount():string {
+  public get DebugUserNameAccount():string {
     return "";}
-  public get GroupsDebugAccount():string[] {
+  public get DebugGroupsAccount():string[] {
     const value = 
       IoTHelper.StringToArray("none1,none2",',');
     return value;}
-  public get UsernameManagementAccount():string {
+  public get ManagementUserNameAccount():string {
     return "";}
-  public get GroupsManagementAccount():string[] {
+  public get ManagementGroupsAccount():string[] {
     const value = 
       IoTHelper.StringToArray("none1,none2",',');
     return value;}
-  public get TypeKeySsh():string {
+  public get SshKeyType():string {
     return "";}
-  public get BitsKeySsh():number {
+  public get SshKeyBits():number {
     return 0;}
   public get DebugAppFolder():string {
     return "";}
   public get FileNameUdevRules():string {
     return "";}
-  public get ListUdevRulesFiles():string[] {
+  public get ListFilesUdevRules():string[] {
     return [];}
-  public get PreviousHostname(): string {
-    return "";}
-  public set PreviousHostname(value:string) {}
+  public PreviousHostnameWhenAdding: string ="";
   //SBCs storage
   public get ProfilesSBCJson():any {
     return undefined;}
@@ -41,7 +39,7 @@ export class IotConfigurationSbcFake implements IConfigurationSbc{
 
   constructor() {}
 
-  public GetUdevRulesFile(fileName:string, isTest?:boolean): IotResult {
+  public GetFileUdevRules(fileName:string, isTest?:boolean): IotResult {
     return new IotResult(StatusResult.Ok);
   }
 

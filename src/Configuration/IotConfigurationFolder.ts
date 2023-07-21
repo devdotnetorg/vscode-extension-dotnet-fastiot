@@ -34,10 +34,10 @@ export class IotConfigurationFolder implements IConfigurationFolder{
     return path.join(this.ApplicationData, "tmp");}
   public get Schemas(): string {
     return path.join(this.Extension.fsPath, "schemas");}
-  public get WorkspaceDirectory(): string| undefined {
+  public get WorkspaceVSCode(): string| undefined {
     return IoTHelper.GetWorkspaceDirectory();}
-  public get DefaultProject(): string {  
-    return this.InitDefaultProjectFolder();}
+  public get SaveProjectByDefault(): string {  
+    return this.InitSaveProjectByDefaultFolder();}
 
   constructor(context: vscode.ExtensionContext) {
     this._extensionPath=context.extensionUri;
@@ -94,7 +94,7 @@ export class IotConfigurationFolder implements IConfigurationFolder{
     return result;
   }
 
-  private InitDefaultProjectFolder():string {
+  private InitSaveProjectByDefaultFolder():string {
     //Get default project folder
     let defaultProjectFolder: string=<string>vscode.workspace.getConfiguration().get('fastiot.defaultprojectfolder');
     //default project folder definition

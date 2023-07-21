@@ -15,7 +15,7 @@ import { IotConfigurationTemplate } from './IotConfigurationTemplate';
 
 export interface IConfigurationEntity {
   IsUpdate:boolean;
-  UpdateIntervalHours:number;
+  UpdateIntervalInHours:number;
   DebugMode:boolean;
-  LastUpdateHours: number;
+  LastUpdateTimeInHours: number;
 }

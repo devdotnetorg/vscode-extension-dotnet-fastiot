@@ -21,16 +21,16 @@ export class IotConfigurationEntity implements IConfigurationEntity {
   //Entities
   public get IsUpdate():boolean { //Template update
     return <boolean>vscode.workspace.getConfiguration().get('fastiot.entities.isupdate');}
-  public get UpdateIntervalHours():number { //Template update
+  public get UpdateIntervalInHours():number { //Template update
     return <number>vscode.workspace.getConfiguration().get('fastiot.entities.updateinterval');
     //return 0;
   }
   public get DebugMode():boolean {
     return <boolean>vscode.workspace.getConfiguration().get('fastiot.entities.debug');}
-  public get LastUpdateHours(): number {
-    return this._builtInConfig.LastUpdateEntitiesHours ;}
-  public set LastUpdateHours(value:number) {
-    this._builtInConfig.LastUpdateEntitiesHours=value;
+  public get LastUpdateTimeInHours(): number {
+    return this._builtInConfig.LastUpdateTimeEntitiesInHours;}
+  public set LastUpdateTimeInHours(value:number) {
+    this._builtInConfig.LastUpdateTimeEntitiesInHours=value;
     this._builtInConfig.Save();}
 
   constructor(builtInConfig: IotBuiltInConfig) {

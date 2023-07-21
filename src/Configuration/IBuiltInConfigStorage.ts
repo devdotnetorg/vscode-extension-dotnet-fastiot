@@ -13,6 +13,6 @@ import { IotConfigurationTemplate } from './IotConfigurationTemplate';
 
 export interface IBuiltInConfigStorage {
   PreviousVerExt: string;
-  LastUpdateEntitiesHours:number;
-  PreviousHostnameSbc:string;
+  LastUpdateTimeEntitiesInHours:number;
+  PreviousHostnameSbcWhenAdding:string;
 }

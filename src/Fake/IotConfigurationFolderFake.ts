@@ -24,9 +24,9 @@ export class IotConfigurationFolderFake implements IConfigurationFolder{
     return "";}
   public get Schemas(): string {
     return "";}
-  public get WorkspaceDirectory(): string| undefined {
+  public get WorkspaceVSCode(): string| undefined {
     return undefined;}
-  public get DefaultProject(): string {  
+  public get SaveProjectByDefault(): string {  
     return "";}
 
   constructor() {}

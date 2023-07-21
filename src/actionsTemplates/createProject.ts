@@ -60,7 +60,7 @@ export async function createProject(app:IoTApplication,devices:Array<IotDevice>)
     }
     //Select folder
     let selectFolder:string|undefined;
-    selectFolder=path.join(app.Config.Folder.DefaultProject, nameProject);
+    selectFolder=path.join(app.Config.Folder.SaveProjectByDefault, nameProject);
     //Debug
     if(app.Config.Extension.Mode==vscode.ExtensionMode.Development)
         selectFolder=`${selectFolder}-${IoTHelper.CreateGuid()}`;
@@ -80,7 +80,7 @@ export async function createProject(app:IoTApplication,devices:Array<IotDevice>)
             canSelectMany: false,
             title: "Select a folder for the project (5/6)",
             openLabel: 'Select folder',
-            defaultUri:vscode.Uri.file(app.Config.Folder.DefaultProject)
+            defaultUri:vscode.Uri.file(app.Config.Folder.SaveProjectByDefault)
         };
         let folder:string;
         const folders = await vscode.window.showOpenDialog(options);

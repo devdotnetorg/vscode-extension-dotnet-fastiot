@@ -381,8 +381,8 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       this.CreateEvent(`Updating system ${this._entitiesLabel}`,undefined,15); //30
       //To get the number of hours since Unix epoch, i.e. Unix timestamp:
       const dateNow=Math.floor(Date.now() / 1000/ 3600);
-      const TimeHasPassedHours=dateNow-this.Config.lastUpdateHours;
-      const isNeedUpdate = ()=>this.Config.isUpdate&&(TimeHasPassedHours>=this.Config.updateIntervalHours);
+      const TimeHasPassedHours=dateNow-this.Config.lastUpdateTimeInHours;
+      const isNeedUpdate = ()=>this.Config.isUpdate&&(TimeHasPassedHours>=this.Config.updateIntervalInHours);
       if(force||isNeedUpdate()){
         //system
         this.CreateEvent(`☑️ Updating system ${this._entitiesLabel}`,LogLevel.Debug);
@@ -393,7 +393,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
           this.SaveLastUpdateHours(dateNow);
         }
       } else {
-        this.CreateEvent(`📥 ${this._entityLabel} update: disabled or less than ${this.Config.updateIntervalHours} hour(s) have passed since the last update.`,LogLevel.Debug);
+        this.CreateEvent(`📥 ${this._entityLabel} update: disabled or less than ${this.Config.updateIntervalInHours} hour(s) have passed since the last update.`,LogLevel.Debug);
       }
       //Loading community entities
       this.CreateEvent(`Loading community ${this._entitiesLabel}`,undefined,15); //45
@@ -444,17 +444,15 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
 
 }
 
-//TODO убрать, заменить на Interface IConfig. Все еще под ???
-
 export interface IConfigEntityCollection {
   extVersion: string;
   extMode: vscode.ExtensionMode;
   recoverySourcePath: string;
   schemasFolderPath: string;
   tempFolderPath:string;
-	lastUpdateHours:number;
+	lastUpdateTimeInHours:number;
   isUpdate:boolean;
-  updateIntervalHours:number;
+  updateIntervalInHours:number;
   urlsUpdateEntitiesCommunity:string[];
   urlUpdateEntitiesSystem:string;
 }

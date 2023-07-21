@@ -23,8 +23,8 @@ export class IotBuiltInConfig {
   private readonly _nameKeySetting:string;
   //keys
   public PreviousVerExt: string;
-  public LastUpdateEntitiesHours:number;
-  public PreviousHostnameSbc: string;
+  public LastUpdateTimeEntitiesInHours:number;
+  public PreviousHostnameSbcWhenAdding: string;
   
   constructor(nameKeySetting:string)
   {
@@ -36,13 +36,13 @@ export class IotBuiltInConfig {
       this.PreviousVerExt=configJson.PreviousVerExt;
       else this.PreviousVerExt="0.1";
     //
-    if(configJson&&configJson.LastUpdateEntitiesHours)
-      this.LastUpdateEntitiesHours=configJson.LastUpdateEntitiesHours;
-      else this.LastUpdateEntitiesHours=0;
+    if(configJson&&configJson.LastUpdateTimeEntitiesInHours)
+      this.LastUpdateTimeEntitiesInHours=configJson.LastUpdateTimeEntitiesInHours;
+      else this.LastUpdateTimeEntitiesInHours=0;
     //
-    if(configJson&&configJson.PreviousHostnameSbc)
-      this.PreviousHostnameSbc=configJson.PreviousHostnameSbc;
-      else this.PreviousHostnameSbc="192.168.50.75";
+    if(configJson&&configJson.PreviousHostnameSbcWhenAdding)
+      this.PreviousHostnameSbcWhenAdding=configJson.PreviousHostnameSbcWhenAdding;
+      else this.PreviousHostnameSbcWhenAdding="192.168.50.75";
   }
 
   public async Save()
@@ -50,8 +50,8 @@ export class IotBuiltInConfig {
     //Built-in config
     const data:IBuiltInConfigStorage = {
       PreviousVerExt: this.PreviousVerExt,
-      LastUpdateEntitiesHours: this.LastUpdateEntitiesHours,
-      PreviousHostnameSbc:this.PreviousHostnameSbc
+      LastUpdateTimeEntitiesInHours: this.LastUpdateTimeEntitiesInHours,
+      PreviousHostnameSbcWhenAdding:this.PreviousHostnameSbcWhenAdding
     };
     //write
     vscode.workspace.getConfiguration().update(this._nameKeySetting,data,true);

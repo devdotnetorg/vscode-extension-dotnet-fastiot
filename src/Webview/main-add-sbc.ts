@@ -107,30 +107,30 @@ function setInput(content:AddSBCConfigType) {
   const managementgroupstext = document.getElementById("managementgroupstext") as Element;
   managementgroupstext.innerHTML= `The ${content.managementusername} account will be added to the group(s):`;
   //Udevrules
-/*
-   filenameudevrules: string;
-  listUdevRulesFiles?: string[];
+  /*
+  filenameudevrules: string;
+  listfilesudevrules?: string[];
   */
   const filenameudevrulesInput = document.getElementById("filenameudevrules") as Dropdown;
-  if(!content.listUdevRulesFiles) content.listUdevRulesFiles=[];
+  if(!content.listfilesudevrules) content.listfilesudevrules=[];
   let item:Option;
-  if(content.listUdevRulesFiles.includes(content.filenameudevrules)) {
+  if(content.listfilesudevrules.includes(content.filenameudevrules)) {
     //contains
     item = new Option(content.filenameudevrules,content.filenameudevrules,true,true);
     filenameudevrulesInput.appendChild(item);
     //remove content.filenameudevrules
-    const index = content.listUdevRulesFiles.indexOf(content.filenameudevrules, 0);
+    const index = content.listfilesudevrules.indexOf(content.filenameudevrules, 0);
     if (index > -1) {
-      content.listUdevRulesFiles.splice(index, 1);
+      content.listfilesudevrules.splice(index, 1);
     }
     //add None
-    content.listUdevRulesFiles.push("None");
+    content.listfilesudevrules.push("None");
   }else {
     //None
     item = new Option("None","None",true,true);
     filenameudevrulesInput.appendChild(item);
   }
-  for (let value of content.listUdevRulesFiles) {
+  for (let value of content.listfilesudevrules) {
     item = new Option(value,value,false,false);
     filenameudevrulesInput.appendChild(item);
   }
@@ -231,11 +231,11 @@ export type AddSBCConfigType = {
   /** Password for password-based user authentication. */
   password?: string;
   /** ssh keytype for key generation. Ex: ed25519-256 */
-  sshkeytype?: string;
+  sshkeytypebits?: string;
   /** Filename for udev rule. Ex: 20-gpio-fastiot.rules */
   filenameudevrules: string;
   /** List of udev rules filenames */
-  listUdevRulesFiles?: string[];
+  listfilesudevrules?: string[];
   /** Username for debug. Ex: debugvscode */
   debugusername: string;
   /** Groups for debugusername. Ex: gpio, i2c, and etc. */

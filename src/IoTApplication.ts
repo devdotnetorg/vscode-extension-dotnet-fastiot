@@ -29,9 +29,9 @@ export class IoTApplication {
       recoverySourcePath: "",
       schemasFolderPath: "",
       tempFolderPath:"",
-      lastUpdateHours:0,
+      lastUpdateTimeInHours:0,
       isUpdate:false,
-      updateIntervalHours:0,
+      updateIntervalInHours:0,
       urlsUpdateEntitiesCommunity:[""],
       urlUpdateEntitiesSystem:""
     };

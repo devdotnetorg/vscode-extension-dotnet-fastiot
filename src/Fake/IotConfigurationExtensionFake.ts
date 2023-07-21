@@ -10,15 +10,10 @@ import { Constants } from "../Constants"
 import { IConfigurationExtension } from '../Configuration/IConfigurationExtension';
 
 export class IotConfigurationExtensionFake implements IConfigurationExtension{
-  public get Version(): string {
-    return "";}
-  public get PreviousVersion(): string {
-    return "";}
-  public set PreviousVersion(value:string) {}
-  public get Mode(): vscode.ExtensionMode {
-    return vscode.ExtensionMode.Test;}
-  public get Loglevel():LogLevel {
-    return LogLevel.Debug;}
+  public Version: string ="";
+  public PreviousVersion: string="";
+  public Mode: vscode.ExtensionMode = vscode.ExtensionMode.Test;
+  public Loglevel:LogLevel = LogLevel.Debug;
   public get Subscriptions(): { dispose(): any }[] {
     const item:{ dispose(): any }[]=[];
     return item;

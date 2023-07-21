@@ -21,41 +21,41 @@ export class IotConfigurationSbc implements IConfigurationSbc{
   private _builtInConfig: IotBuiltInConfig;
   private _configurationFolder: IConfigurationFolder;
   //
-  public get UsernameDebugAccount():string {
+  public get DebugUserNameAccount():string {
     return <string>vscode.workspace.getConfiguration().get('fastiot.sbc.account.debug.username');}
-  public get GroupsDebugAccount():string[] {
+  public get DebugGroupsAccount():string[] {
     const value = 
       IoTHelper.StringToArray(<string>vscode.workspace.getConfiguration().get('fastiot.sbc.account.debug.groups'),',');
     return value;}
-  public get UsernameManagementAccount():string {
+  public get ManagementUserNameAccount():string {
     return <string>vscode.workspace.getConfiguration().get('fastiot.sbc.account.management.username');}
-  public get GroupsManagementAccount():string[] {
+  public get ManagementGroupsAccount():string[] {
     const value = 
       IoTHelper.StringToArray(<string>vscode.workspace.getConfiguration().get('fastiot.sbc.account.management.groups'),',');
     return value;}
-  public get TypeKeySsh():string {
+  public get SshKeyType():string {
     const KeySsh = this.InitTypeAndBitsKeySshSbc();
     return KeySsh.TypeKey;}
-  public get BitsKeySsh():number {
+  public get SshKeyBits():number {
     const KeySsh = this.InitTypeAndBitsKeySshSbc();
     return KeySsh.BitsKey;}
   public get DebugAppFolder():string {
     return <string>vscode.workspace.getConfiguration().get('fastiot.sbc.debug.app.folder');}
   public get FileNameUdevRules():string {
     let value = <string>vscode.workspace.getConfiguration().get('fastiot.sbc.udevfilename');
-    const result = this.GetUdevRulesFile(value,true);
+    const result = this.GetFileUdevRules(value,true);
     if(result.Status!=StatusResult.Ok) {
       value = Constants.fileNameUdevRules;
       vscode.workspace.getConfiguration().update('fastiot.sbc.udevfilename',value,true);
     }
     return value;
   }
-  public get ListUdevRulesFiles():string[] {
-    return this.GetListUdevRulesFiles();}
-  public get PreviousHostname(): string {
-    return this._builtInConfig.PreviousHostnameSbc ;}
-  public set PreviousHostname(value:string) {
-    this._builtInConfig.PreviousHostnameSbc=value;
+  public get ListFilesUdevRules():string[] {
+    return this.GetListFilesUdevRules();}
+  public get PreviousHostnameWhenAdding(): string {
+    return this._builtInConfig.PreviousHostnameSbcWhenAdding ;}
+  public set PreviousHostnameWhenAdding(value:string) {
+    this._builtInConfig.PreviousHostnameSbcWhenAdding=value;
     this._builtInConfig.Save();}
   //SBCs storage
   public get ProfilesSBCJson():any {
@@ -86,7 +86,7 @@ export class IotConfigurationSbc implements IConfigurationSbc{
     return result;
   }
   
-  private GetListUdevRulesFiles(): string[] {
+  private GetListFilesUdevRules(): string[] {
     let items:string[]=[];
     let filePath:string;
     //reading files from the \linux\config\udevrules\ directory
@@ -108,7 +108,7 @@ export class IotConfigurationSbc implements IConfigurationSbc{
     return result;
   }
 
-  public GetUdevRulesFile(fileName:string, isTest?:boolean): IotResult {
+  public GetFileUdevRules(fileName:string, isTest?:boolean): IotResult {
     let result:IotResult;
     let pathFileLocalRules:string| undefined;
     let pathFileLocalRules_temp:string;

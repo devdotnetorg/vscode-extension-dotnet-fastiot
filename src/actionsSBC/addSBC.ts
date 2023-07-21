@@ -15,35 +15,35 @@ import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
 import { AppDomain } from '../AppDomain';
 
 export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem>,
-    dialogType:DialogEnum, nameHost?:string,portHost?:number): Promise<void> {
+    dialogType:DialogEnum, hostName?:string, hostPort?:number): Promise<void> {
         const app = AppDomain.getInstance().CurrentApp;
-        //fill nameHost, portHost
-        if(!nameHost) nameHost= app.Config.Sbc.PreviousHostname;
-        if(!portHost) portHost= 22;
+        //fill hostName, hostPort
+        if(!hostName) hostName= app.Config.Sbc.PreviousHostnameWhenAdding;
+        if(!hostPort) hostPort= 22;
         //fill addSBCConfig
         let addSBCConfig:AddSBCConfigType| undefined ={
-            host:nameHost,
-            port:portHost,
+            host:hostName,
+            port:hostPort,
             username: "root",
             filenameudevrules: app.Config.Sbc.FileNameUdevRules,
-            listUdevRulesFiles: app.Config.Sbc.ListUdevRulesFiles,
-            debugusername: app.Config.Sbc.UsernameDebugAccount,
-            debuggroups: app.Config.Sbc.GroupsDebugAccount,
-            managementusername: app.Config.Sbc.UsernameManagementAccount,
-            managementgroups: app.Config.Sbc.GroupsManagementAccount
+            listfilesudevrules: app.Config.Sbc.ListFilesUdevRules,
+            debugusername: app.Config.Sbc.DebugUserNameAccount,
+            debuggroups: app.Config.Sbc.DebugGroupsAccount,
+            managementusername: app.Config.Sbc.ManagementUserNameAccount,
+            managementgroups: app.Config.Sbc.ManagementGroupsAccount
         };
         //Dialog
         addSBCConfig = await showDialog (app,dialogType,addSBCConfig);
         if(!addSBCConfig) return;
         //fill after dialog
-        if(!addSBCConfig.sshkeytype) addSBCConfig.sshkeytype=
-            `${app.Config.Sbc.TypeKeySsh}-${app.Config.Sbc.BitsKeySsh}`;
+        if(!addSBCConfig.sshkeytypebits) addSBCConfig.sshkeytypebits=
+            `${app.Config.Sbc.SshKeyType}-${app.Config.Sbc.SshKeyBits}`;
         if(!addSBCConfig.debuggroups) addSBCConfig.debuggroups=
-            app.Config.Sbc.GroupsDebugAccount;
+            app.Config.Sbc.DebugGroupsAccount;
         if(!addSBCConfig. managementgroups) addSBCConfig.managementgroups=
-            app.Config.Sbc.GroupsManagementAccount;
+            app.Config.Sbc.ManagementGroupsAccount;
         //Save PreviousHostname
-        app.Config.Sbc.PreviousHostname=addSBCConfig.host;
+        app.Config.Sbc.PreviousHostnameWhenAdding=addSBCConfig.host;
         //Info
         vscode.window.showInformationMessage('⌛ It may take 2 to 7 minutes to initialize and configure the device.');
         //Main process

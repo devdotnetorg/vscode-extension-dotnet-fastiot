@@ -9,14 +9,9 @@ import { Constants } from "../Constants";
 import { IConfigurationTemplate } from '../Configuration/IConfigurationTemplate';
 
 export class IotConfigurationTemplateFake implements IConfigurationTemplate {
-  public get TitleLaunch():string {
-    return "";}
-  public get ListSourceUpdateCommunity(): string[] {
-    const value = 
-      IoTHelper.StringToArray("none1,none2",',');
-    return value;}
-  public get LoadOnStart():boolean {
-    return false;}
+  public TitleLaunch:string ="";
+  public ListSourceUpdateCommunity: string[] = [];
+  public LoadOnStart:boolean = false;
   
   constructor() {}
 

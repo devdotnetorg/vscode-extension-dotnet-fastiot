@@ -267,8 +267,8 @@ export class IoTHelper {
     });
     return msg;
   }
-
-  static uniqByForEach<T>(array: T[]) {
+  /** Getting only unique array values */
+  static uniqByForEach<T>(array: T[]):T[] {
     const result: T[] = [];
     array.forEach((item) => {
         if (!result.includes(item)) {
