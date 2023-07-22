@@ -45,4 +45,16 @@ export namespace IoT.Enums
       Error=4
     }
 
+    export enum Existences {
+        native = "native",
+        docker_container = "docker_container",
+        virtual_machine = "virtual_machine",
+        none = "none"
+    }
+
+    export enum AccountAssignment {
+        debug  = "debug",
+        management = "management",
+        none = "none"
+    }
 }
