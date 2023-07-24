@@ -7,6 +7,8 @@ import { IoT } from '../Types/Enums';
 import Existences = IoT.Enums.Existences;
 import AccountAssignment = IoT.Enums.AccountAssignment;
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
+import { SbcType } from '../Types/SbcType';
+import SSHConfig from 'ssh2-promise/lib/sshConfig';
 
 export interface ISbc {
   Id: string;
@@ -29,12 +31,13 @@ export interface ISbc {
   //
   GetAccount(assignment: AccountAssignment): ISbcAccount| undefined;
   //
-  Create(addSBCConfigType:AddSBCConfigType):IotResult;
-  ConnectionTest(host?:string, port?:number, password?:string, account?: ISbcAccount): IotResult;
-  Reboot(): IotResult;
-  Shutdown(): IotResult;
+  Create(addSBCConfigType:AddSBCConfigType):Promise<IotResult>;
+  ConnectionTestLoginPass(host:string, port:number, userName:string, password:string): Promise<IotResult>;
+  ConnectionTestSshKey(sshconfig: SSHConfig): Promise<IotResult>;
+  Reboot(): Promise<IotResult>;
+  Shutdown(): Promise<IotResult>;
   Rename(newLabel:string): IotResult;
-     
-  ToJSON():any;
-  FromJSON(obj:any):any;
+
+  ToJSON():SbcType;
+  FromJSON(obj:SbcType):void;
 }

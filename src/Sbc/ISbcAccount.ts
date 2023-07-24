@@ -14,8 +14,7 @@ export interface ISbcAccount {
   SshKeyFileName: string;
   /** .returnObject - the path to the file. Error - if the file does not exist */
   SshKeyPath: IotResult;
-  /** .returnObject - SSHConfig type. Error - if the ssh key file does not exist */
-  ToSshConfig(): IotResult;
+  ToSshConfig(): SSHConfig;
   ToJSON():any;
   FromJSON(obj:any):any;
 }

@@ -13,7 +13,7 @@ import { stderr } from 'process';
 
 export class SshClient extends ClassWithEvent {
   private _ssh: SSH2Promise| undefined;
-  private _bashScriptsFolder: string;
+  private _bashScriptsFolder?: string;
   public get IsActive(): boolean {
     if (this._ssh) {
       return true;
@@ -25,7 +25,7 @@ export class SshClient extends ClassWithEvent {
   public get IsConnected(): boolean {
     return this._isConnected;}
 
-  constructor(bashScriptsFolder:string){
+  constructor(bashScriptsFolder?:string){
     super();
     this._bashScriptsFolder=bashScriptsFolder;
     this._isConnected=false;
@@ -97,6 +97,11 @@ export class SshClient extends ClassWithEvent {
         return Promise.resolve(result);
       }
       //get script
+      if(!this._bashScriptsFolder) {
+        //result
+        result= new IotResult(StatusResult.Error,"Bash script folder not specified!");
+        return Promise.resolve(result);
+      }
       let pathFile:string = path.join(this._bashScriptsFolder, `${fileNameScript}.sh`);
       if (!fs.existsSync(pathFile)) {
         return Promise.resolve(new IotResult(StatusResult.Error,`Bash script ${fileNameScript}.sh file not found!`));   
@@ -172,7 +177,7 @@ export class SshClient extends ClassWithEvent {
       catch (err) {}
       //end processing
       result = new IotResult(StatusResult.Ok,"Successfully");
-      if(getStdout) result.returnObject = outSystemMessage;
+      if(getStdout) result.AddSystemMessage(outSystemMessage);
       //result
       return Promise.resolve(result);   
   }
@@ -194,8 +199,7 @@ export class SshClient extends ClassWithEvent {
       return Promise.resolve(new IotResult(StatusResult.Error,`Unable to read file ${filePath}`,err));
     }
     //end processing
-    result = new IotResult(StatusResult.Ok,"Successfully");
-    result.returnObject=outSystemMessage;
+    result = new IotResult(StatusResult.Ok,"Successfully",outSystemMessage);
     //result
     return Promise.resolve(result);
   }
@@ -245,8 +249,7 @@ export class SshClient extends ClassWithEvent {
       return Promise.resolve(new IotResult(StatusResult.Error,`Unable to read dir ${dir}`,err));
     }
     //end processing
-    result = new IotResult(StatusResult.Ok,"Successfully");
-    result.returnObject = outSystemMessage;
+    result = new IotResult(StatusResult.Ok,"Successfully",outSystemMessage);
     //result
     return Promise.resolve(result);
   }
@@ -291,7 +294,7 @@ export class SshClient extends ClassWithEvent {
     const identity=sshConfig.identity;
     if(identity) {
       //checking for the existence of a key
-      if (!fs.existsSync(identity)) result=new IotResult(StatusResult.Error, `Error. SSH key not found: ${identity}`);
+      if (!fs.existsSync(identity)) result=new IotResult(StatusResult.Error, `SSH key file not found: ${identity}`);
     }
     return result;
   }

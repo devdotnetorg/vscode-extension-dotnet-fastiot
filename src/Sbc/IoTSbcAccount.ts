@@ -59,29 +59,24 @@ export class IoTSbcAccount implements ISbcAccount {
       result = new IotResult(StatusResult.Ok);
     }else {
       //not exists
-      result = new IotResult(StatusResult.Error,`${sshKeyPath} SSH key file does not exist.`);
+      result = new IotResult(StatusResult.Error,`SSH key file not found: ${sshKeyPath}`);
     }
     result.returnObject=sshKeyPath;
     return result;
   }
 
-  public ToSshConfig():IotResult {
+  public ToSshConfig():SSHConfig {
     let result:IotResult;
     result = this.SshKeyPath;
-    if(result.Status==StatusResult.Ok) {
-      //ok
-      const identity = <string>result.returnObject;
-      result = new IotResult(StatusResult.Ok);
-      const sshconfig:SSHConfig  = {
-        host: this._host,
-        port: this._port,
-        username: this.UserName,
-        identity: identity,
-        readyTimeout: 7000
-      };
-      result.returnObject=sshconfig;
-    }
-    return result;
+    const identity = <string>result.returnObject;
+    const sshconfig:SSHConfig  = {
+      host: this._host,
+      port: this._port,
+      username: this.UserName,
+      identity: identity,
+      readyTimeout: 7000
+    };
+    return sshconfig;
   }
 
   public ToJSON():SbcAccountType {
