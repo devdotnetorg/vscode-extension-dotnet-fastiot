@@ -23,8 +23,9 @@ import {networkHelper} from '../Helper/networkHelper';
 import { SshClient } from '../Shared/SshClient';
 import { AppDomain } from '../AppDomain';
 import { SbcType } from '../Types/SbcType';
+import { ClassWithEvent } from '../Shared/ClassWithEvent';
 
-export class IoTSbc implements ISbc {
+export class IoTSbc extends ClassWithEvent implements ISbc {
   private _id:string;
   public get Id(): string {
     return this._id;}
@@ -71,6 +72,7 @@ export class IoTSbc implements ISbc {
     return this._accounts;}
   
   constructor() {
+    super();
 		this._id = IoTHelper.CreateGuid();
     this._label = "None";
     this._host = "None";
