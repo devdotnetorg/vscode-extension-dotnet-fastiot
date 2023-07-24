@@ -1,10 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { EntityEnum } from '../Entity/EntityEnum';
 import { IoT } from '../Types/Enums';
-import LogLevel = IoT.Enums.LogLevel;
-import Dialog = IoT.Enums.Dialog;
+import EntityEnum = IoT.Enums.Entity;
 import { IotResult,StatusResult } from '../Shared/IotResult';
 
 export interface IConfigurationSbc {
@@ -17,7 +15,7 @@ export interface IConfigurationSbc {
   DebugAppFolder:string;
   FileNameUdevRules:string;
   ListFilesUdevRules:string[];
-  PreviousHostnameWhenAdding: string;
+  PreviousHostWhenAdding: string;
   ProfilesSBCJson:any;
   GetFileUdevRules(fileName:string, isTest?:boolean): IotResult;
 }

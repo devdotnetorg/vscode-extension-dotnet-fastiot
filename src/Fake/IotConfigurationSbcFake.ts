@@ -30,7 +30,7 @@ export class IotConfigurationSbcFake implements IConfigurationSbc{
     return "";}
   public get ListFilesUdevRules():string[] {
     return [];}
-  public PreviousHostnameWhenAdding: string ="";
+  public PreviousHostWhenAdding: string ="";
   //SBCs storage
   public get ProfilesSBCJson():any {
     return undefined;}

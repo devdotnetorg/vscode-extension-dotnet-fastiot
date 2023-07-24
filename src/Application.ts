@@ -12,7 +12,8 @@ import { IotResult,StatusResult } from './Shared/IotResult';
 import { IConfigEntityCollection } from './Entity/IConfigEntityCollection';
 import { Constants } from "./Constants";
 import { UI } from './ui/UI';
-import { EntityEnum } from './Entity/EntityEnum';
+import { IoT } from './Types/Enums';
+import EntityEnum = IoT.Enums.Entity;
 
 export class ApplicationBuilder {
   private _instance: IoTApplication;

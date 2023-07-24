@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { EntityEnum } from '../Entity/EntityEnum';
+import { IoT } from '../Types/Enums';
+import EntityEnum = IoT.Enums.Entity;
 
 export interface IConfigurationFolder {
   ApplicationData: string;
@@ -9,6 +10,7 @@ export interface IConfigurationFolder {
   UdevRules: string;
   Extension: vscode.Uri;
   AppsBuiltIn: string;
+  BashScripts: string;
   Temp: string;
   Schemas: string;
   WorkspaceVSCode: string| undefined;

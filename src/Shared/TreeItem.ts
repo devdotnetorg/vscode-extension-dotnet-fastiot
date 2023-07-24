@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 
-export class IotTreeItem {  
+export class TreeItem {  
   public Status: StatusResult;
   public Label: string;
   public Description?: string;

@@ -5,7 +5,8 @@ import { IotResult,StatusResult } from './Shared/IotResult';
 import { IContexUI } from './ui/IContexUI';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 import { IConfiguration } from './Configuration/IConfiguration';
-import { EntityEnum } from './Entity/EntityEnum';
+import { IoT } from './Types/Enums';
+import EntityEnum = IoT.Enums.Entity;
 import { IConfigEntityCollection } from './Entity/IConfigEntityCollection';
 import { IotBuiltInConfig } from './Configuration/IotBuiltInConfig';
 //Fake

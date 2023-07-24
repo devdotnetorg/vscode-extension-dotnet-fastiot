@@ -1,5 +1,14 @@
 export namespace IoT.Enums
 {
+    export enum Entity {
+        //listed in order of priority of use
+        system = "system",
+        webapi ="webapi",
+        community = "community",
+        user  = "user",
+        none = "none"
+    }
+
     export enum Contain {
         no = "no",
         yesSameVersion  = "yes same version",
@@ -8,11 +17,11 @@ export namespace IoT.Enums
     }
     
     export enum Dialog {
+        none = 0,
         standard = 1,
         exstandard =2,
         webview = 3,
-        exwebview = 4,
-        none = 0
+        exwebview = 4
     }
     
     /**
@@ -46,15 +55,15 @@ export namespace IoT.Enums
     }
 
     export enum Existences {
+        none = "none",
         native = "native",
         docker_container = "docker_container",
-        virtual_machine = "virtual_machine",
-        none = "none"
+        virtual_machine = "virtual_machine"
     }
 
     export enum AccountAssignment {
+        none = "none",
         debug  = "debug",
-        management = "management",
-        none = "none"
+        management = "management"
     }
 }

@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { IotResult,StatusResult } from './Shared/IotResult';
-import { IotTreeItem } from './shared/IotTreeItem';
 import { IotLaunch } from './IotLaunch';
 
 export class IotLaunchOption {

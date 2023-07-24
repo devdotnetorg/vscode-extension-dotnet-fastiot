@@ -5,10 +5,8 @@ import * as os from 'os';
 import * as platformFolders from 'platform-folders';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { EntityEnum } from '../Entity/EntityEnum';
 import { IoT } from '../Types/Enums';
-import LogLevel = IoT.Enums.LogLevel;
-import Dialog = IoT.Enums.Dialog;
+import EntityEnum = IoT.Enums.Entity;
 import { Constants } from "../Constants"
 import { IConfigurationFolder } from './IConfigurationFolder';
 //block
@@ -33,6 +31,8 @@ export class IotConfigurationFolder implements IConfigurationFolder{
       return this._extensionPath;}
   public get AppsBuiltIn(): string {
     return path.join(this.Extension.fsPath, "windows", "apps");}
+  public get BashScripts(): string {
+    return path.join(this.Extension.fsPath, "bashscript");}
   public get Temp(): string {
     return path.join(this.ApplicationData, "tmp");}
   public get Schemas(): string {

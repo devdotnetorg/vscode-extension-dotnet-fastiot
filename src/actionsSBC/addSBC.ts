@@ -17,15 +17,15 @@ import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
 import { AppDomain } from '../AppDomain';
 
 export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem_d>,
-    dialogType:Dialog, hostName?:string, hostPort?:number): Promise<void> {
+    dialogType:Dialog, host?:string, port?:number): Promise<void> {
         const app = AppDomain.getInstance().CurrentApp;
-        //fill hostName, hostPort
-        if(!hostName) hostName= app.Config.Sbc.PreviousHostnameWhenAdding;
-        if(!hostPort) hostPort= 22;
+        //fill host, port
+        if(!host) host= app.Config.Sbc.PreviousHostWhenAdding;
+        if(!port) port= 22;
         //fill addSBCConfig
         let addSBCConfig:AddSBCConfigType| undefined ={
-            host:hostName,
-            port:hostPort,
+            host:host,
+            port:port,
             username: "root",
             filenameudevrules: app.Config.Sbc.FileNameUdevRules,
             listfilesudevrules: app.Config.Sbc.ListFilesUdevRules,
@@ -44,8 +44,8 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
             app.Config.Sbc.DebugGroupsAccount;
         if(!addSBCConfig. managementgroups) addSBCConfig.managementgroups=
             app.Config.Sbc.ManagementGroupsAccount;
-        //Save PreviousHostname
-        app.Config.Sbc.PreviousHostnameWhenAdding=addSBCConfig.host;
+        //Save PreviousHost
+        app.Config.Sbc.PreviousHostWhenAdding=addSBCConfig.host;
         //Info
         vscode.window.showInformationMessage('⌛ It may take 2 to 7 minutes to initialize and configure the device.');
         //Main process
@@ -98,14 +98,14 @@ async function showDialog(app:IoTApplication, dialogType:Dialog, addSBCConfig?:A
 async function showDialogStandard(addSBCConfig?:AddSBCConfigType): Promise<AddSBCConfigType| undefined>  {
     if(!addSBCConfig) return Promise.resolve(undefined);
     const title = "Add single-board computer";
-    //1. hostName
-    let hostName = await vscode.window.showInputBox({
-        prompt: 'Enter the hostname of the single-board computer',
+    //1. host
+    let host = await vscode.window.showInputBox({
+        prompt: 'Enter the host of the single-board computer',
         title: `${title} (1/4)`,
         value: addSBCConfig.host
     });
-    if(!hostName) return Promise.resolve(undefined);
-    hostName=IoTHelper.StringTrim(hostName);
+    if(!host) return Promise.resolve(undefined);
+    host=IoTHelper.StringTrim(host);
     //2. port
     let portAnswer = await vscode.window.showInputBox({
         prompt: 'Enter a number port ssh',
@@ -130,7 +130,7 @@ async function showDialogStandard(addSBCConfig?:AddSBCConfigType): Promise<AddSB
     });
     if(!password) return Promise.resolve(undefined);
     //fill addSBCConfig
-    addSBCConfig.host = hostName;
+    addSBCConfig.host = host;
     addSBCConfig.port = port;
     addSBCConfig.username = userName;
     addSBCConfig.password = password;

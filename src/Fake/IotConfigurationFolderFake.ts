@@ -4,7 +4,8 @@ import * as path from 'path';
 import * as os from 'os';
 import * as platformFolders from 'platform-folders';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { EntityEnum } from '../Entity/EntityEnum';
+import { IoT } from '../Types/Enums';
+import EntityEnum = IoT.Enums.Entity;
 import { IConfigurationFolder } from '../Configuration/IConfigurationFolder';
 
 export class IotConfigurationFolderFake implements IConfigurationFolder{
@@ -17,6 +18,8 @@ export class IotConfigurationFolderFake implements IConfigurationFolder{
   public get Extension(): vscode.Uri {
       return vscode.Uri.file("c:\\test");}
   public get AppsBuiltIn(): string {
+    return "";}
+  public get BashScripts(): string {
     return "";}
   public get Temp(): string {
     return "";}

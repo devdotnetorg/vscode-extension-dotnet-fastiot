@@ -122,12 +122,12 @@ export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vs
                     let result = await networkHelper.PingHost(devices[i].ip,1,1,true);
                     if(result.Status==StatusResult.Ok) {
                         //label
-                        let labelHostname:string=devices[i].ip;
-                        if (devices[i].name!='?') labelHostname=devices[i].name;
-                        if (result.returnObject) labelHostname=result.returnObject;
+                        let labelHost:string=devices[i].ip;
+                        if (devices[i].name!='?') labelHost=devices[i].name;
+                        if (result.returnObject) labelHost=result.returnObject;
                         let label:string;
-                        if(labelHostname!=devices[i].ip) {
-                            label=`Hostname: ${labelHostname} IP: ${devices[i].ip}`;
+                        if(labelHost!=devices[i].ip) {
+                            label=`Host: ${labelHost} IP: ${devices[i].ip}`;
                         }else {
                             label=`IP: ${devices[i].ip}`;
                         }

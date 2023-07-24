@@ -24,7 +24,7 @@ export class IotBuiltInConfig {
   //keys
   public PreviousVerExt: string;
   public LastUpdateTimeTemplatesInHours:number;
-  public PreviousHostnameSbcWhenAdding: string;
+  public PreviousHostSbcWhenAdding: string;
   
   constructor(nameKeySetting:string)
   {
@@ -40,9 +40,9 @@ export class IotBuiltInConfig {
       this.LastUpdateTimeTemplatesInHours=configJson.LastUpdateTimeTemplatesInHours;
       else this.LastUpdateTimeTemplatesInHours=0;
     //
-    if(configJson&&configJson.PreviousHostnameSbcWhenAdding)
-      this.PreviousHostnameSbcWhenAdding=configJson.PreviousHostnameSbcWhenAdding;
-      else this.PreviousHostnameSbcWhenAdding="192.168.50.75";
+    if(configJson&&configJson.PreviousHostSbcWhenAdding)
+      this.PreviousHostSbcWhenAdding=configJson.PreviousHostSbcWhenAdding;
+      else this.PreviousHostSbcWhenAdding="192.168.50.75";
   }
 
   public async Save()
@@ -51,7 +51,7 @@ export class IotBuiltInConfig {
     const data:IBuiltInConfigStorage = {
       PreviousVerExt: this.PreviousVerExt,
       LastUpdateTimeTemplatesInHours: this.LastUpdateTimeTemplatesInHours,
-      PreviousHostnameSbcWhenAdding:this.PreviousHostnameSbcWhenAdding
+      PreviousHostSbcWhenAdding:this.PreviousHostSbcWhenAdding
     };
     //write
     vscode.workspace.getConfiguration().update(this._nameKeySetting,data,true);

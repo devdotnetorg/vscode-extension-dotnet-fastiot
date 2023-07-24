@@ -4,7 +4,7 @@ import * as path from 'path';
 import { LaunchTreeItemNode } from './LaunchTreeItemNode';
 import { IotResult,StatusResult } from './Shared/IotResult';
 import { IotLaunch } from './IotLaunch';
-import { IotTreeItem } from './shared/IotTreeItem';
+import { TreeItem } from './shared/TreeItem';
 import { LaunchOptionNode } from './LaunchOptionNode';
 import { IotLaunchOption } from './IotLaunchOption';
 
@@ -86,7 +86,7 @@ export class LaunchNode extends LaunchTreeItemNode {
     const result=this._launch.GetConfigurationItems();
     if(result.Status==StatusResult.Error) return result;
     //read
-    const options=<IotTreeItem[]>result.returnObject;
+    const options=<TreeItem[]>result.returnObject;
     options.forEach((value) => {
       item=new LaunchTreeItemNode(value.Label,value.Description,
         value.Tooltip,vscode.TreeItemCollapsibleState.None,this.Configuration);

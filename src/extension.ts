@@ -16,9 +16,8 @@ import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 import { IConfigEntityCollection } from './Entity/IConfigEntityCollection';
 import { Constants } from "./Constants";
 import { IoT } from './Types/Enums';
-import LogLevel = IoT.Enums.LogLevel;
 import Dialog = IoT.Enums.Dialog;
-import Contain = IoT.Enums.Contain;
+import EntityEnum = IoT.Enums.Entity;
 //UI
 import { UI } from './ui/UI';
 import { IContexUI } from './ui/IContexUI';
@@ -73,7 +72,6 @@ import { createProject } from './actionsTemplates/createProject';
 import { loadTemplates } from './actionsTemplates/loadTemplates';
 import { openTemplateFolder } from './actionsTemplates/openTemplateFolder';
 import { importTemplate } from './actionsTemplates/importTemplate';
-import { EntityEnum } from './Entity/EntityEnum';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

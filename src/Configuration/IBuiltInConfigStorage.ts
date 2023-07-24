@@ -5,5 +5,5 @@ import * as path from 'path';
 export interface IBuiltInConfigStorage {
   PreviousVerExt: string;
   LastUpdateTimeTemplatesInHours:number;
-  PreviousHostnameSbcWhenAdding:string;
+  PreviousHostSbcWhenAdding:string;
 }

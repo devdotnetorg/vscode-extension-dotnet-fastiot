@@ -4,10 +4,8 @@ import * as path from 'path';
 import * as os from 'os';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { EntityEnum } from '../Entity/EntityEnum';
 import { IoT } from '../Types/Enums';
-import LogLevel = IoT.Enums.LogLevel;
-import Dialog = IoT.Enums.Dialog;
+import EntityEnum = IoT.Enums.Entity;
 import { Constants } from "../Constants";
 import { IConfigurationSbc } from "./IConfigurationSbc";
 import { IConfigurationFolder } from './IConfigurationFolder';
@@ -55,10 +53,10 @@ export class IotConfigurationSbc implements IConfigurationSbc{
   }
   public get ListFilesUdevRules():string[] {
     return this.GetListFilesUdevRules();}
-  public get PreviousHostnameWhenAdding(): string {
-    return this._builtInConfig.PreviousHostnameSbcWhenAdding ;}
-  public set PreviousHostnameWhenAdding(value:string) {
-    this._builtInConfig.PreviousHostnameSbcWhenAdding=value;
+  public get PreviousHostWhenAdding(): string {
+    return this._builtInConfig.PreviousHostSbcWhenAdding ;}
+  public set PreviousHostWhenAdding(value:string) {
+    this._builtInConfig.PreviousHostSbcWhenAdding=value;
     this._builtInConfig.Save();}
   //SBCs storage
   public get ProfilesSBCJson():any {

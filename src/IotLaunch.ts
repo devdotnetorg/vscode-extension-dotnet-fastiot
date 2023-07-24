@@ -4,7 +4,7 @@ import * as path from 'path';
 import { IotResult,StatusResult } from './Shared/IotResult';
 import { IotDevice } from './IotDevice';
 import { IotLaunchEnvironment } from './IotLaunchEnvironment';
-import { IotTreeItem } from './shared/IotTreeItem';
+import { TreeItem } from './shared/TreeItem';
 import { IoTHelper } from './Helper/IoTHelper';
 import { launchHelper } from './Helper/launchHelper';
 import { IConfiguration } from './Configuration/IConfiguration';
@@ -161,16 +161,16 @@ export class IotLaunch {
 
   public GetConfigurationItems():IotResult{
     let result:IotResult;
-    let items:IotTreeItem[]=[];
+    let items:TreeItem[]=[];
     try {
-      let item:IotTreeItem;
+      let item:TreeItem;
       //IdLaunch
-      item=new IotTreeItem("ID Launch",this.IdLaunch);
+      item=new TreeItem("ID Launch",this.IdLaunch);
       items.push(item);
       //Project
       if(this.PathProject) {
         const fullPathProject= IoTHelper.ReverseSeparatorLinuxToWin(this.WorkspaceDirectory+this.PathProject);
-        item=new IotTreeItem("Project",this.PathProject);
+        item=new TreeItem("Project",this.PathProject);
         if(fs.existsSync(fullPathProject)) {
           //OK
           item.Tooltip=fullPathProject;
@@ -181,15 +181,15 @@ export class IotLaunch {
         }
         items.push(item);
       } else{
-        item=new IotTreeItem("Project","not found","Project not found",StatusResult.Error);
+        item=new TreeItem("Project","not found","Project not found",StatusResult.Error);
         items.push(item);
       }
       //IdTemplate
       if(this.IdTemplate) {
-        item=new IotTreeItem("Template",this.IdTemplate);
+        item=new TreeItem("Template",this.IdTemplate);
         items.push(item);
       } else{
-        item=new IotTreeItem("Template","not found","Template not found",StatusResult.Error);
+        item=new TreeItem("Template","not found","Template not found",StatusResult.Error);
         items.push(item);
       }
       //IdDevice - IotDevice|string| undefined
@@ -197,20 +197,20 @@ export class IotLaunch {
         //IotDevice or string
         if(typeof this.Device === "string") {
           //string - device not found
-          item=new IotTreeItem("Device",this.Device,`${this.Device} not found`,StatusResult.Error);
+          item=new TreeItem("Device",this.Device,`${this.Device} not found`,StatusResult.Error);
           items.push(item);
         } else{
           //IotDevice
           const description=`${this.Device?.label} ${this.Device?.Information.Architecture}`;
           const tooltip=`label: ${this.Device?.label}. Id device: ${this.Device?.IdDevice}`;
-          item=new IotTreeItem("Device",description,tooltip);
+          item=new TreeItem("Device",description,tooltip);
           items.push(item);
           //Username
           //option=new IotOption("Username",this.Device?.Account.UserName);
           //options.push(option);
         }
       } else {
-        item=new IotTreeItem("Device","not found","Device not found",StatusResult.Error);
+        item=new TreeItem("Device","not found","Device not found",StatusResult.Error);
         items.push(item);
       }
       result= new IotResult(StatusResult.Ok, "GetOptions");

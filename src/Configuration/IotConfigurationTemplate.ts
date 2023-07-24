@@ -4,7 +4,6 @@ import * as path from 'path';
 import * as os from 'os';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { EntityEnum } from '../Entity/EntityEnum';
 import { Constants } from "../Constants";
 //block
 import { IotBuiltInConfig } from './IotBuiltInConfig';

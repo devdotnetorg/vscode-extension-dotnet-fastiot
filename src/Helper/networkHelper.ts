@@ -18,33 +18,33 @@ import {IoTHelper} from './IoTHelper';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 
 export class networkHelper {
-  static async GetIpAddress(hostName:string): Promise<IotResult>{
+  static async GetIpAddress(host:string): Promise<IotResult>{
     let result:IotResult;
     let ipAddress:string;
     try {
-      if(ip.isV4Format(hostName)){
+      if(ip.isV4Format(host)){
         //IpAddress
-        ipAddress=hostName;
+        ipAddress=host;
       }else{
         //host
         const lookup = util.promisify(dns.lookup);
-        let hostIp = await lookup(hostName);
+        let hostIp = await lookup(host);
         ipAddress = hostIp.address;
       }
       result = new IotResult(StatusResult.Ok,"IP-Address defined.");
       result.returnObject=ipAddress;
     } catch (err: any){
-      result= new IotResult(StatusResult.Error,`Unable to get IP-Address or invalid IP-Address. Host: ${hostName}.`,err);
+      result= new IotResult(StatusResult.Error,`Unable to get IP-Address or invalid IP-Address. Host: ${host}.`,err);
     }
     return Promise.resolve(result);
   }
 
-  static async PingHost(hostName:string, numberOfEchos = 3, timeout = 1,getHostname:boolean=false): Promise<IotResult>{
+  static async PingHost(host:string, numberOfEchos = 3, timeout = 1,getHostname:boolean=false): Promise<IotResult>{
     let result:IotResult;
-    result=await this.GetIpAddress(hostName);
+    result=await this.GetIpAddress(host);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     const ipAddress=<string>result.returnObject;
-    const msg=`The host is unavailable. Host: ${hostName} IP-Address: ${ipAddress}.`;
+    const msg=`The host is unavailable. Host: ${host} IP-Address: ${ipAddress}.`;
     const option:pingOptions = {
       numberOfEchos: numberOfEchos,
       timeout: timeout,
@@ -68,15 +68,15 @@ export class networkHelper {
     return Promise.resolve(result);
   }
 
-  static async CheckTcpPortUsed(hostName:string, port: number,retryTimeMs:number=200,timeOutMs:number=1000): Promise<IotResult>{
+  static async CheckTcpPortUsed(host:string, port: number,retryTimeMs:number=200,timeOutMs:number=1000): Promise<IotResult>{
     //[retryTimeMs] the retry interval in milliseconds - defaultis is 200ms
     //[timeOutMs] the amount of time to wait until port is free default is 1000ms
     let result:IotResult;
-    result=await this.GetIpAddress(hostName);
+    result=await this.GetIpAddress(host);
     if(result.Status==StatusResult.Error) return Promise.resolve(result);
     const ipAddress=<string>result.returnObject;
     //next
-    const msg=`${port} port unavailable. Host: ${hostName} IP-Address: ${ipAddress}.`;
+    const msg=`${port} port unavailable. Host: ${host} IP-Address: ${ipAddress}.`;
     const tcpPortUsedOptions:tcpPortUsed.TcpPortUsedOptions = {
       port: port,
       host: ipAddress,
