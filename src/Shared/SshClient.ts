@@ -81,9 +81,15 @@ export class SshClient extends ClassWithEvent {
   }
 
   public async RunScript(fileNameScript:string, argumentScript?:string,
-    getStdout?:boolean): Promise<IotResult> {            
+    getStdout?:boolean, token?:vscode.CancellationToken): Promise<IotResult> {            
       let result:IotResult;
       let msg:string| undefined;
+      let flagExit:Boolean=false;
+      if(token) {
+        token.onCancellationRequested(() => {
+          flagExit=true;
+        });
+      }
       //check ssh
       if(!this._ssh||!this.IsActive||!this.IsConnected) {
         //result
@@ -118,7 +124,6 @@ export class SshClient extends ClassWithEvent {
       //Exec stream
       let lastConsoleLine:string="";
       let outSystemMessage:string="";
-      let flagExit:Boolean=false;
       let codeErr:string|undefined;
       let stdErr:string="";
       try {
@@ -139,6 +144,11 @@ export class SshClient extends ClassWithEvent {
         //circle          
         do{await IoTHelper.Sleep(200);}while(!flagExit);
         await IoTHelper.Sleep(100);
+        //check isCancellationRequested
+        if(token&&token.isCancellationRequested) {
+          msg=`The execution of the ${fileNameScript}.sh script was canceled by the user!`;
+          return Promise.resolve(new IotResult(StatusResult.Error,msg));
+        }
         //output
         if(stdErr!="") {
           stdErr=stdErr.replace(`W: `,`WARNING: `).replace(`E: `,`ERROR: `);

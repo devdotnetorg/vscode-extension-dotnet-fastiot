@@ -169,7 +169,7 @@ export class networkHelper {
     return results;
   }
 
-  static async ScanRangeIPaddresses(firstAddress:string, lastAddress:string, token:vscode.CancellationToken|undefined=undefined,stateCallback:((state:string) =>void)|undefined=undefined): Promise<string[]> {
+  static async ScanRangeIPaddresses(firstAddress:string, lastAddress:string, token?:vscode.CancellationToken,stateCallback:((state:string) =>void)|undefined=undefined): Promise<string[]> {
     let rangeIP:string[]=[];
     try {
       const firstIP=ip.toLong(firstAddress);
