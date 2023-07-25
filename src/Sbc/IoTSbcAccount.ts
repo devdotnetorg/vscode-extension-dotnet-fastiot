@@ -16,12 +16,12 @@ import { IoT } from '../Types/Enums';
 import AccountAssignment = IoT.Enums.AccountAssignment;
 import { ISbcAccount } from './ISbcAccount';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
+import { enumHelper } from '../Helper/enumHelper';
 
 export class IoTSbcAccount implements ISbcAccount {
   private _host:string;
   private _port:number;
-  private _keysSbcPath:string;
-
+  private _sshKeystorePath:string;
   private _userName:string;
   public get UserName(): string {
     return this._userName;}
@@ -40,10 +40,10 @@ export class IoTSbcAccount implements ISbcAccount {
   public get SshKeyPath(): IotResult {
     return this.GetSshKeyPath();}
 
-  constructor(host:string, port:number,keysSbcPath:string) {
+  constructor(host:string, port:number,sshKeystorePath:string) {
     this._host = host;
     this._port = port;
-    this._keysSbcPath = keysSbcPath;
+    this._sshKeystorePath = sshKeystorePath;
     this._userName = "None";
     this._groups = [];
     this._assignment = AccountAssignment.none;
@@ -53,7 +53,7 @@ export class IoTSbcAccount implements ISbcAccount {
 
   private GetSshKeyPath():IotResult {
     let result:IotResult;
-    const sshKeyPath = path.join(this._keysSbcPath, this._sshKeyFileName);
+    const sshKeyPath = path.join(this._sshKeystorePath, this._sshKeyFileName);
     if (fs.existsSync(sshKeyPath)) {
       //ok
       result = new IotResult(StatusResult.Ok);
@@ -90,7 +90,7 @@ export class IoTSbcAccount implements ISbcAccount {
     };
     try {
       const groupsAccount = IoTHelper.ArrayToString(this.Groups,',');
-      const assignmentStr = this.GetNameAccountAssignmentByType(this.Assignment) ?? AccountAssignment.none;
+      const assignmentStr = enumHelper.GetNameAccountAssignmentByType(this.Assignment) ?? AccountAssignment.none;
       //Fill
       obj = {
         username:this.UserName,
@@ -107,7 +107,7 @@ export class IoTSbcAccount implements ISbcAccount {
   public FromJSON(obj:SbcAccountType) {
     try {
       const groupsAccount = IoTHelper.StringToArray(obj.groups,',');
-      const assignment = this.GetAccountAssignmentByName(obj.assignment);
+      const assignment = enumHelper.GetAccountAssignmentByName(obj.assignment);
       //get
       this._userName=obj.username;
       this._groups=groupsAccount;
@@ -115,20 +115,6 @@ export class IoTSbcAccount implements ISbcAccount {
       this._sshKeyTypeBits=obj.sshkeytypebits;
       this._sshKeyFileName=obj.sshkeyfileName;
     } catch (err: any){}
-  }
-
-  private GetNameAccountAssignmentByType(value:AccountAssignment):string| undefined
-  {
-    //get name
-    let result = Object.keys(AccountAssignment)[Object.values(AccountAssignment).indexOf(value)];
-    return result;
-  }
-
-  private GetAccountAssignmentByName(value:string):AccountAssignment
-  {
-    //get type
-    const result = Object.values(AccountAssignment)[Object.keys(AccountAssignment).indexOf(value)];
-    return  <AccountAssignment>result;
   }
 
 }

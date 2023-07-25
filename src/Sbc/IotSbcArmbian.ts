@@ -15,7 +15,7 @@ import { SbcArmbianType } from '../Types/SbcArmbianType';
 
 import { ISbcArmbian } from './ISbcArmbian';
 
-export class IotSbcArmbiants implements ISbcArmbian {
+export class IotSbcArmbian implements ISbcArmbian {
   private _boardFamily?:string; //BOARDFAMILY=sun50iw1 from cat /etc/armbian-release
   public get BoardFamily(): string| undefined {
     return this._boardFamily;}

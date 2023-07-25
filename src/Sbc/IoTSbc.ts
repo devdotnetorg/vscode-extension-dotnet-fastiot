@@ -15,15 +15,18 @@ import { FilesValidator } from '../Validator/FilesValidator';
 import { SbcAccountType } from '../Types/SbcAccountType';
 import { IoT } from '../Types/Enums';
 import AccountAssignment = IoT.Enums.AccountAssignment;
-import Existences = IoT.Enums.Existences;
+import Existence = IoT.Enums.Existence;
 import { ISbc } from './ISbc';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
-import {networkHelper} from '../Helper/networkHelper';
+import { networkHelper } from '../Helper/networkHelper';
 import { SshClient } from '../Shared/SshClient';
 import { AppDomain } from '../AppDomain';
 import { SbcType } from '../Types/SbcType';
 import { ClassWithEvent } from '../Shared/ClassWithEvent';
+import { IotSbcArmbian } from './IotSbcArmbian';
+import { IoTSbcAccount } from './IoTSbcAccount';
+import { enumHelper } from '../Helper/enumHelper';
 
 export class IoTSbc extends ClassWithEvent implements ISbc {
   private _id:string;
@@ -38,9 +41,9 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   private _port:number;
   public get Port(): number {
     return this._port;}
-  private _Existence:Existences;
-  public get Existence(): Existences {
-    return this._Existence;}
+  private _existence:Existence;
+  public get Existence(): Existence {
+    return this._existence;}
   //Info about Board and OS
   private _hostName:string;
   public get HostName(): string {
@@ -70,14 +73,20 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   private _accounts:ISbcAccount[];
   public get Accounts(): ISbcAccount[] {
     return this._accounts;}
-  
+  private _armbian:IotSbcArmbian
+  public get Armbian(): IotSbcArmbian {
+    return this._armbian;}
+
+  //Format Version JSON
+  private readonly _formatVersion = 2;
+
   constructor() {
     super();
 		this._id = IoTHelper.CreateGuid();
     this._label = "None";
     this._host = "None";
     this._port = 0;
-    this._Existence = Existences.none;
+    this._existence = Existence.none;
     //info
     this._hostName = "None";
     this._boardName = "Embedded device";
@@ -89,6 +98,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     this._osCodename = "None";
     // Parts
     this._accounts = [];
+    this._armbian = new IotSbcArmbian();
   }
 
   public GetAccount(assignment: AccountAssignment): ISbcAccount| undefined {
@@ -98,6 +108,12 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
  
   public Create(addSBCConfigType:AddSBCConfigType):Promise<IotResult> {
 
+
+
+
+
+
+    
     throw new Error("This is an example exception.");
 
   }
@@ -209,7 +225,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     const AccountAssignmentType=AccountAssignment.management;
     const account = this.GetAccount(AccountAssignmentType);
     if(!account) {
-      result=new IotResult(StatusResult.Error, `No account type ${this.GetNameAccountAssignmentByType(AccountAssignmentType)} to perform action: ${fileNameScript}.`);
+      result=new IotResult(StatusResult.Error, `No account type ${enumHelper.GetNameAccountAssignmentByType(AccountAssignmentType)} to perform action: ${fileNameScript}.`);
       return Promise.resolve(result);
     }
     result=await this.ConnectionTestSshKey(account.ToSshConfig(),false);
@@ -256,29 +272,90 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   }
 
   public ToJSON():SbcType {
-
-    throw new Error("This is an example exception.");
-
+    let accounts:SbcAccountType[] = [];
+    //blank
+    let obj:SbcType = {
+      id: "None",
+      label: "None",
+      host: "None",
+      port: 22,
+      existence: "None",
+      formatversion:0,
+      //Info
+      hostname: "None",
+      boardname: "None",
+      architecture: "None",
+      oskernel: "None",
+      osname:"None",
+      osdescription: "None",
+      osrelease: "None",
+      oscodename: "None",
+      // Parts
+      accounts: accounts,
+      armbian: new IotSbcArmbian().ToJSON()
+    };
+    try {
+      const existence = enumHelper.GetNameExistenceByType(this.Existence) ?? "none";
+      this.Accounts.forEach((item) => {
+        let obj = item.ToJSON();
+        accounts.push(obj);
+      });
+      const armbian = this.Armbian.ToJSON();
+      //Fill
+      obj = {
+        id: this.Id,
+        label: this.Label,
+        host: this.Host,
+        port: this.Port,
+        existence: existence,
+        formatversion:this._formatVersion,
+        //Info
+        hostname: this.HostName,
+        boardname: this.BoardName,
+        architecture: this.Architecture,
+        oskernel: this.OsKernel,
+        osname: this.OsName,
+        osdescription: this.OsDescription,
+        osrelease: this.OsRelease,
+        oscodename: this.OsCodename,
+        // Parts
+        accounts: accounts,
+        armbian: armbian
+      };
+    } catch (err: any){}
+    //result
+    return obj;
   }
 
   public FromJSON(obj:SbcType) {
-
-    throw new Error("This is an example exception.");
-
-  }
-
-  private GetNameAccountAssignmentByType(value:AccountAssignment):string| undefined
-  {
-    //get name
-    let result = Object.keys(AccountAssignment)[Object.values(AccountAssignment).indexOf(value)];
-    return result;
-  }
-
-  private GetAccountAssignmentByName(value:string):AccountAssignment
-  {
-    //get type
-    const result = Object.values(AccountAssignment)[Object.keys(AccountAssignment).indexOf(value)];
-    return  <AccountAssignment>result;
+    try {
+      this._id = obj.id;
+      this._label = obj.label;
+      this._host = obj.host;
+      this._port = obj.port;
+      const existence = enumHelper.GetExistenceByName(obj.existence);
+      this._existence = existence;
+      //Info
+      this._hostName = obj.hostname;
+      this._boardName = obj.boardname;
+      this._architecture = obj.architecture;
+      this._osKernel = obj.oskernel;
+      this._osName = obj.osname;
+      this._osDescription = obj.osdescription;
+      this._osRelease = obj.osrelease;
+      this._osCodename = obj.oscodename;
+      // Parts
+      const app = AppDomain.getInstance().CurrentApp;
+      //Accounts
+      let account:ISbcAccount;
+      obj.accounts.forEach((item) => {
+        account = new IoTSbcAccount(this.Host,this.Port,app.Config.Folder.KeysSbc);
+        account.FromJSON(item);
+        this._accounts.push(account);
+      });
+      //Armbian
+      this._armbian.FromJSON(obj.armbian);
+    } catch (err: any){}
   }
 
 }

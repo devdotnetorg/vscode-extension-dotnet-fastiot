@@ -4,18 +4,19 @@ import * as path from 'path';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { ISbcAccount } from './ISbcAccount';
 import { IoT } from '../Types/Enums';
-import Existences = IoT.Enums.Existences;
+import Existence = IoT.Enums.Existence;
 import AccountAssignment = IoT.Enums.AccountAssignment;
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { SbcType } from '../Types/SbcType';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
+import { IotSbcArmbian } from './IotSbcArmbian';
 
 export interface ISbc {
   Id: string;
   Label: string;
   Host: string;
   Port: number;
-  Existence: Existences;
+  Existence: Existence;
   //Info
   //apt-get install lsb-release
   HostName: string; //$uname -n = bananapim64
@@ -28,6 +29,7 @@ export interface ISbc {
   OsCodename: string; //$lsb_release c = Codename: bionic
   // Parts
   Accounts: ISbcAccount[];
+  Armbian: IotSbcArmbian;
   //
   GetAccount(assignment: AccountAssignment): ISbcAccount| undefined;
   //

@@ -54,7 +54,7 @@ export namespace IoT.Enums
       Error=4
     }
 
-    export enum Existences {
+    export enum Existence {
         none = "none",
         native = "native",
         docker_container = "docker_container",

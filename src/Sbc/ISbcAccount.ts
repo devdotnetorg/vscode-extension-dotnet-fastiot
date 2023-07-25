@@ -5,6 +5,8 @@ import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoT } from '../Types/Enums';
 import AccountAssignment = IoT.Enums.AccountAssignment;
+import { VscodeLabel } from '@bendera/vscode-webview-elements';
+import { SbcAccountType } from '../Types/SbcAccountType';
 
 export interface ISbcAccount {
   UserName: string;
@@ -15,6 +17,6 @@ export interface ISbcAccount {
   /** .returnObject - the path to the file. Error - if the file does not exist */
   SshKeyPath: IotResult;
   ToSshConfig(): SSHConfig;
-  ToJSON():any;
-  FromJSON(obj:any):any;
+  ToJSON():SbcAccountType;
+  FromJSON(obj:SbcAccountType):void;
 }
