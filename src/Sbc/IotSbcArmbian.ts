@@ -31,9 +31,11 @@ export class IotSbcArmbian implements ISbcArmbian {
   public Parse(obj:any): IotResult {
     let result:IotResult;
     try {
-      this._boardFamily=obj.boardfamily;
-      this._version=obj.version;
-      this._linuxFamily=obj.linuxfamily;
+      if (obj.version) {
+        this._boardFamily=obj.boardfamily;
+        this._version=obj.version;
+        this._linuxFamily=obj.linuxfamily;
+      }
       result = new IotResult(StatusResult.Ok);
     } catch (err: any){
       result= new IotResult(StatusResult.Error,`JSON parse error.`,err);
@@ -44,16 +46,18 @@ export class IotSbcArmbian implements ISbcArmbian {
   public ToJSON():SbcArmbianType {
     //blank
     let obj:SbcArmbianType = {
-      boardfamily: "None",
-      version: "None",
-      linuxfamily: "None"
+      boardfamily: undefined,
+      version: undefined,
+      linuxfamily: undefined
     };
     try {
       //Fill
-      obj = {
-        boardfamily: this.BoardFamily,
-        version: this.Version,
-        linuxfamily: this.LinuxFamily
+      if (obj.version) {
+        obj = {
+          boardfamily: this.BoardFamily,
+          version: this.Version,
+          linuxfamily: this.LinuxFamily
+        }
       };
     } catch (err: any){}
     //result
@@ -62,9 +66,11 @@ export class IotSbcArmbian implements ISbcArmbian {
 
   public FromJSON(obj:SbcArmbianType) {
     try {
-      this._boardFamily=obj.boardfamily;
-      this._version=obj.version;
-      this._linuxFamily=obj.linuxfamily;
+      if (obj.version) {
+        this._boardFamily=obj.boardfamily;
+        this._version=obj.version;
+        this._linuxFamily=obj.linuxfamily;
+      }
     } catch (err: any){}
   }
 

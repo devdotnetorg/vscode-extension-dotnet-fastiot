@@ -110,9 +110,11 @@ export class SshClient extends ClassWithEvent {
       //CRLF => LF / '\r\n' => '\n'
       dataFile=IoTHelper.SetLineEnding(dataFile);
       //Event
+      this.CreateEvent("--------------------------------------------");
       msg=`Run: ${fileNameScript}.sh.`;
       if (argumentScript) msg=`${msg} Arguments: ${argumentScript}`;
       this.CreateEvent(msg);
+      this.CreateEvent("--------------------------------------------");
       //put script
 	    var sftp = this._ssh.sftp();		
       try {
