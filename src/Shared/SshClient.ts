@@ -9,6 +9,7 @@ import { EventDispatcher,Handler } from '../shared/ClassWithEvent';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { ClassWithEvent } from './ClassWithEvent';
+import { ArgumentsCommandCli } from './ArgumentsCommandCli';
 import { stderr } from 'process';
 
 export class SshClient extends ClassWithEvent {
@@ -80,7 +81,7 @@ export class SshClient extends ClassWithEvent {
     return Promise.resolve(result);
   }
 
-  public async RunScript(fileNameScript:string, argumentScript?:string,
+  public async RunScript(fileNameScript:string, argumentScript?:ArgumentsCommandCli,
     getStdout?:boolean, token?:vscode.CancellationToken): Promise<IotResult> {            
       let result:IotResult;
       let msg:string| undefined;
@@ -112,7 +113,7 @@ export class SshClient extends ClassWithEvent {
       //Event
       this.CreateEvent("--------------------------------------------");
       msg=`Run: ${fileNameScript}.sh.`;
-      if (argumentScript) msg=`${msg} Arguments: ${argumentScript}`;
+      if (argumentScript) msg=`${msg} Arguments: ${argumentScript.toString()}`;
       this.CreateEvent(msg);
       this.CreateEvent("--------------------------------------------");
       //put script
@@ -126,8 +127,7 @@ export class SshClient extends ClassWithEvent {
       //exec script
       let command=`chmod +x vscode-dotnetfastiot.sh && ./vscode-dotnetfastiot.sh`;
       //add argument
-      if (argumentScript) command=`${command} ${argumentScript}`;
-      //>
+      if (argumentScript) command=`${command} ${argumentScript.toString()}`;
       //Exec stream
       let lastConsoleLine:string="";
       let outSystemMessage:string="";

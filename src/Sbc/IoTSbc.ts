@@ -107,6 +107,24 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   }
  
   public Create(addSBCConfigType:AddSBCConfigType):Promise<IotResult> {
+    /*******************************
+    Script run order:
+      1) 1_pregetinfo.sh
+      force: 1_pregetinfo_force.sh
+      2) 2_getinfo.sh
+      3) 3_getinfoboardname.sh
+      force: if it fails, then pass
+      4) 4_getinfoarmbian.sh
+      force: if it fails, then pass
+      5) 5_createaccount.sh
+      force: if it fails, then switching works as ROOT
+      6) 6_addusertogroups.sh
+      force: if it fails, then switch to return to level (5), work as ROOT
+      7) 7_changeconfigssh.sh
+      force: if it fails, then pass
+      8) 8_addudevrules.sh
+      force: if it fails, then pass
+     *******************************/
 
 
 
