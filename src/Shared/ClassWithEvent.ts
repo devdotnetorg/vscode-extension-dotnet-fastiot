@@ -27,12 +27,13 @@ export abstract class ClassWithEvent {
   //-------------------------------------------
   constructor() {}
   
-  protected CreateEvent(message?:string|IotResult,logLevel?:LogLevel,increment?:number)
+  protected CreateEvent(message?:string|IotResult,logLevel?:LogLevel,status?:string,increment?:number)
   {
     //Event
     this.FireChangedState({
       message:message,
       logLevel:logLevel,
+      status:status,
       increment:increment
     });
   }
@@ -42,6 +43,7 @@ export abstract class ClassWithEvent {
 export interface IChangedStateEvent {
   message?:string|IotResult,
   logLevel?:LogLevel,
+  status?:string
   increment?:number
 }
 

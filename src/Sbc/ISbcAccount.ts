@@ -7,16 +7,13 @@ import { IoT } from '../Types/Enums';
 import AccountAssignment = IoT.Enums.AccountAssignment;
 import { VscodeLabel } from '@bendera/vscode-webview-elements';
 import { SbcAccountType } from '../Types/SbcAccountType';
+import { ISshConnection } from '../Shared/ISshConnection';
+import { SshConnection } from '../Shared/SshConnection';
 
-export interface ISbcAccount {
-  UserName: string;
+export interface ISbcAccount extends ISshConnection {
   Groups: Array<string>;
   Assignment: AccountAssignment;
   SshKeyTypeBits: string;
-  SshKeyFileName: string;
-  /** .returnObject - the path to the file. Error - if the file does not exist */
-  SshKeyPath: IotResult;
-  ToSshConfig(): SSHConfig;
   ToJSON():SbcAccountType;
   FromJSON(obj:SbcAccountType):void;
 }

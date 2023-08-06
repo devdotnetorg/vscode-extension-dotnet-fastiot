@@ -106,7 +106,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     return result;
   }
  
-  public Create(addSBCConfigType:AddSBCConfigType):Promise<IotResult> {
+  public async Create(addSBCConfigType:AddSBCConfigType):Promise<IotResult> {
     /*******************************
     Script run order:
       1) 1_pregetinfo.sh
@@ -125,116 +125,63 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       8) 8_addudevrules.sh
       force: if it fails, then pass
      *******************************/
+    //
+    let result:IotResult;
+    this.CreateEvent("Checking the network connection",undefined,0);
+    result=await this.ConnectionTestLoginPass(
+      addSBCConfigType.host,
+      addSBCConfigType.port,
+      addSBCConfigType.username,
+      addSBCConfigType.password ?? "");
+    if(result.Status!=StatusResult.Ok)
+      return Promise.resolve(result);
 
+      /*
+      Создание профиля одноплатного компьютера
+      Create a Single Board Computer Profile
 
+      Create a single-board computer profile
+      
+      Добавление одноплат
 
+     this._app.UI.Output(result);
+       else return Promise.resolve(result);
+       this._app.UI.ShowBackgroundNotification("Create a device");
+       this._app.UI.Output("Create a device");
+     //event subscription
+     let handler=device.Client.OnChangedStateSubscribe(event => {        
+       if(event.status) this._app.UI.ShowBackgroundNotification(event.status);
+       if(event.status) this._app.UI.Output(event.status);
+       if(event.console) this._app.UI.Output(event.console); 
+     });
+     result = await device.Create(hostName,port,userName, password,accountNameDebug);
+     if(result.Status==StatusResult.Error) {
+       result.AddMessage(`Device not added!`);
+       return Promise.resolve(result);
+     }
+     //Rename. checking for matching names.
+     device.label= this.GetUniqueLabel(<string>device.label,'#',undefined);      
+     //
+     this.RootItems.push(device);
+     //save in config      
+     this.SaveDevices()
+     //Refresh treeView
+     this.Refresh();
+     //event unsubscription
+     device.Client.OnChangedStateUnsubscribe(handler);
+     //
+     result=new IotResult(StatusResult.Ok,`Device added successfully 🎉! Device: ${device.label}`);
+     //return new device
+     result.returnObject=device;
+     return Promise.resolve(result);   
+
+     */
 
 
 
     
     throw new Error("This is an example exception.");
 
-  }
-
-  public async ConnectionTestLoginPass(host:string, port:number,  userName:string, password:string): Promise<IotResult> {
-    let result:IotResult;
-    //Get sshconfig
-    const sshconfig:SSHConfig = {
-      host: host,
-      port: port,
-      username: userName,
-      password: password,
-      tryKeyboard: true,
-      readyTimeout: 7000
-    };
-    result = await this.ConnectionTest(sshconfig);
-    return Promise.resolve(result);
-  }
-
-  public async ConnectionTestSshKey(sshconfig: SSHConfig, withSshConnectionTest:boolean=true): Promise<IotResult> {
-    let result:IotResult;
-    //Get sshconfig
-    result = await this.ConnectionTest(sshconfig,withSshConnectionTest);
-    return Promise.resolve(result);
-  }
-
-  private async ConnectionTest(sshconfig:SSHConfig, withSshConnectionTest:boolean=true): Promise<IotResult> {
-    let result:IotResult;
-    //Trubleshooting text
-    const trubleshootingText=
-      `To solve the problem, visit the Trubleshooting page:\n`+
-      `https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Troubleshooting.md\n`+
-      `If you can't resolve the issue, you can create an Issue on GitHub:\n`+
-      `https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues`;
-      //GetIp
-    result=await networkHelper.GetIpAddress(sshconfig.host ?? "non");
-    if(result.Status==StatusResult.Error) {
-      result.AddMessage(
-        `Checklist:\n`+
-        `❌ IP-Address defined;\n`+
-        `❌ Host availability. Command: "ping";\n`+
-        `❌ Port ${sshconfig.port} availability;\n`+
-        `❌ Authorization via ssh protocol.\n`+
-        `${trubleshootingText}`);
-      return Promise.resolve(result);}
-    const ipAddress = <string>result.returnObject;
-    //Ping
-    result=await networkHelper.PingHost(ipAddress);
-    if(result.Status==StatusResult.Error) {
-      result.AddMessage(
-        `Checklist:\n`+
-        `✔️ IP-Address defined;\n`+
-        `❌ Host availability. Command: "ping";\n`+
-        `❌ Port ${sshconfig.port} availability;\n`+
-        `❌ Authorization via ssh protocol.\n`+
-        `${trubleshootingText}`);
-      return Promise.resolve(result);}
-    //Check port
-    result=await networkHelper.CheckTcpPortUsed(ipAddress,sshconfig.port ?? 22);
-    if(result.Status==StatusResult.Error) {
-      result.AddMessage(
-        `Checklist:\n`+
-        `✔️ IP-Address defined;\n`+
-        `✔️ Host availability. Command: "ping";\n`+
-        `❌ Port ${sshconfig.port} availability;\n`+
-        `❌ Authorization via ssh protocol.\n`+
-        `${trubleshootingText}`);
-      return Promise.resolve(result);}
-    if(!withSshConnectionTest) {
-      result = new IotResult(StatusResult.Ok);
-      //OK
-      result.AddMessage(
-        `Checklist:\n`+
-        `✔️ IP-Address defined;\n`+
-        `✔️ Host availability. Command: "ping";\n`+
-        `✔️ Port ${sshconfig.port} availability.`);
-      return Promise.resolve(result);
-    }
-    //Check ssh connection
-    let sshClient = new SshClient();
-    result = await sshClient.Connect(sshconfig);
-    await sshClient.Close();
-    await sshClient.Dispose();
-    if(result.Status==StatusResult.Error) {
-      //Error
-      result.AddMessage(
-        `Checklist:\n`+
-        `✔️ IP-Address defined;\n`+
-        `✔️ Host availability. Command: "ping";\n`+
-        `✔️ Port ${sshconfig.port} availability;\n`+
-        `❌ Authorization via ssh protocol.\n`+
-        `${trubleshootingText}.\n`+
-        `${result.toString()}`);
-    } else {
-      //OK
-      result.AddMessage(
-        `Checklist:\n`+
-        `✔️ IP-Address defined;\n`+
-        `✔️ Host availability. Command: "ping";\n`+
-        `✔️ Port ${sshconfig.port} availability;\n`+
-        `✔️ Authorization via ssh protocol.`);
-    }
-    return Promise.resolve(result);
   }
 
   private async RunScriptAsManagementAccount(fileNameScript:string): Promise<IotResult> {
@@ -246,7 +193,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       result=new IotResult(StatusResult.Error, `No account type ${enumHelper.GetNameAccountAssignmentByType(AccountAssignmentType)} to perform action: ${fileNameScript}.`);
       return Promise.resolve(result);
     }
-    result=await this.ConnectionTestSshKey(account.ToSshConfig(),false);
+    result=await account.ConnectionTest(false);
     if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
     //Ssh connection
     const app = AppDomain.getInstance().CurrentApp;

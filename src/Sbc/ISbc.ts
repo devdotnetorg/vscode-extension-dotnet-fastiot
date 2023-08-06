@@ -34,8 +34,6 @@ export interface ISbc {
   GetAccount(assignment: AccountAssignment): ISbcAccount| undefined;
   //
   Create(addSBCConfigType:AddSBCConfigType):Promise<IotResult>;
-  ConnectionTestLoginPass(host:string, port:number, userName:string, password:string): Promise<IotResult>;
-  ConnectionTestSshKey(sshconfig: SSHConfig): Promise<IotResult>;
   Reboot(): Promise<IotResult>;
   Shutdown(): Promise<IotResult>;
   Rename(newLabel:string): IotResult;

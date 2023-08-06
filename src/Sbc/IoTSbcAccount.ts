@@ -18,13 +18,9 @@ import { ISbcAccount } from './ISbcAccount';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { enumHelper } from '../Helper/enumHelper';
 
-export class IoTSbcAccount implements ISbcAccount {
-  private _host:string;
-  private _port:number;
-  private _sshKeystorePath:string;
-  private _userName:string;
-  public get UserName(): string {
-    return this._userName;}
+import { SshConnection } from '../Shared/SshConnection';
+
+export class IoTSbcAccount extends SshConnection implements ISbcAccount {
   private _groups:Array<string>;
   public get Groups():Array<string> {
     return this._groups;}
@@ -34,49 +30,13 @@ export class IoTSbcAccount implements ISbcAccount {
   private _sshKeyTypeBits:string;
   public get SshKeyTypeBits(): string {
     return this._sshKeyTypeBits;}
-  private _sshKeyFileName:string;
-  public get SshKeyFileName(): string {
-    return this._sshKeyFileName;}
-  public get SshKeyPath(): IotResult {
-    return this.GetSshKeyPath();}
 
   constructor(host:string, port:number,sshKeystorePath:string) {
-    this._host = host;
-    this._port = port;
-    this._sshKeystorePath = sshKeystorePath;
-    this._userName = "None";
+    super();
+    super.fromLoginSshKey(host,port,"None",sshKeystorePath,"None");
     this._groups = [];
     this._assignment = AccountAssignment.none;
     this._sshKeyTypeBits = "None";
-    this._sshKeyFileName = "None";
-  }
-
-  private GetSshKeyPath():IotResult {
-    let result:IotResult;
-    const sshKeyPath = path.join(this._sshKeystorePath, this._sshKeyFileName);
-    if (fs.existsSync(sshKeyPath)) {
-      //ok
-      result = new IotResult(StatusResult.Ok);
-    }else {
-      //not exists
-      result = new IotResult(StatusResult.Error,`SSH key file not found: ${sshKeyPath}`);
-    }
-    result.returnObject=sshKeyPath;
-    return result;
-  }
-
-  public ToSshConfig():SSHConfig {
-    let result:IotResult;
-    result = this.SshKeyPath;
-    const identity = <string>result.returnObject;
-    const sshconfig:SSHConfig  = {
-      host: this._host,
-      port: this._port,
-      username: this.UserName,
-      identity: identity,
-      readyTimeout: 7000
-    };
-    return sshconfig;
   }
 
   public ToJSON():SbcAccountType {
@@ -97,7 +57,7 @@ export class IoTSbcAccount implements ISbcAccount {
         groups:groupsAccount,
         assignment:assignmentStr,
         sshkeytypebits: this.SshKeyTypeBits,
-        sshkeyfileName: this.SshKeyFileName
+        sshkeyfileName: this.SshKeyFileName?? "None"
       };
   } catch (err: any){}
     //result
@@ -109,11 +69,13 @@ export class IoTSbcAccount implements ISbcAccount {
       const groupsAccount = IoTHelper.StringToArray(obj.groups,',');
       const assignment = enumHelper.GetAccountAssignmentByName(obj.assignment);
       //get
-      this._userName=obj.username;
+      const userName= obj.username;
+      const sshkeyfileName= obj.sshkeyfileName;
+      this.fromLoginSshKey(this.Host,this.Port,userName,this.SshKeystorePath ?? "None",sshkeyfileName);
+      //
       this._groups=groupsAccount;
       this._assignment=assignment;
       this._sshKeyTypeBits=obj.sshkeytypebits;
-      this._sshKeyFileName=obj.sshkeyfileName;
     } catch (err: any){}
   }
 
