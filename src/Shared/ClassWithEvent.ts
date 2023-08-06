@@ -13,8 +13,8 @@ export abstract class ClassWithEvent {
   protected ChangedStateDispatcher = new EventDispatcher<IChangedStateEvent>();
 
   public OnChangedStateSubscribe(handler: Handler<IChangedStateEvent>):Handler<IChangedStateEvent> {
-        this.ChangedStateDispatcher.Register(handler);
-        return handler;
+    this.ChangedStateDispatcher.Register(handler);
+    return handler;
   }
 
   public OnChangedStateUnsubscribe (handler: Handler<IChangedStateEvent>) {
@@ -27,12 +27,17 @@ export abstract class ClassWithEvent {
   //-------------------------------------------
   constructor() {}
   
-  protected CreateEvent(message?:string|IotResult,logLevel?:LogLevel,status?:string,increment?:number)
-  {
+  protected CreateEvent(message:string|IotResult,logLevel?:LogLevel) {
     //Event
     this.FireChangedState({
       message:message,
-      logLevel:logLevel,
+      logLevel:logLevel
+    });
+  }
+
+  protected CreateEventProgress(status:string,increment?:number) {
+    //Event
+    this.FireChangedState({
       status:status,
       increment:increment
     });
@@ -49,19 +54,18 @@ export interface IChangedStateEvent {
 
 export type Handler<E> = (event: E) => void;
 
-export class EventDispatcher<E> { 
-    private _handlers: Handler<E>[] = [];
-    Fire(event: E) { 
-        for (let h of this._handlers)
-            h(event);
-    }
-    Register(handler: Handler<E>) { 
-        this._handlers.push(handler);
-    }
-    Unregister(handler: Handler<E>) {
-        const index = this._handlers.indexOf(handler, 0);
-        if (index > -1) {
-            this._handlers.splice(index, 1);
-        }
-    }
+export class EventDispatcher<E> {
+  private _handlers: Handler<E>[] = [];
+  Fire(event: E) {
+    for (let h of this._handlers)
+      h(event);
+  }
+  Register(handler: Handler<E>) {
+    this._handlers.push(handler);
+  }
+  Unregister(handler: Handler<E>) {
+    const index = this._handlers.indexOf(handler, 0);
+    if (index > -1) this._handlers.splice(index, 1);  
+  }
+
 }

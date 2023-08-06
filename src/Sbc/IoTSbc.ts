@@ -127,7 +127,8 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
      *******************************/
     //
     let result:IotResult;
-    this.CreateEvent("Checking the network connection",undefined,0);
+    //this.CreateEvent("Checking the network connection",undefined,0);
+   /*
     result=await this.ConnectionTestLoginPass(
       addSBCConfigType.host,
       addSBCConfigType.port,
@@ -135,7 +136,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       addSBCConfigType.password ?? "");
     if(result.Status!=StatusResult.Ok)
       return Promise.resolve(result);
-
+*/
       /*
       Создание профиля одноплатного компьютера
       Create a Single Board Computer Profile

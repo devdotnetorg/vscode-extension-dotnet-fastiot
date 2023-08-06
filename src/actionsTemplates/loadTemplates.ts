@@ -18,15 +18,14 @@ export async function loadTemplates(app:IoTApplication,force:boolean=false): Pro
         //});
         return new Promise(async (resolve, reject) => {
             //event subscription
-            let handler=app.Templates.OnChangedStateSubscribe(event => {              
-                if(event.increment&&typeof event.message === 'string'){
-                    progress.report({ message: event.message,increment: event.increment });
-                }else {
-                    //output
-                    if(event.message) {
-                        if(event.logLevel) app.UI.Output(event.message,event.logLevel);
-                            else app.UI.Output(event.message);
-                    }
+            let handler=app.Templates.OnChangedStateSubscribe(event => {
+                //Progress
+                if(event.status)
+                    progress.report({ message: event.status,increment: event.increment });
+                //output
+                if(event.message) {
+                    if(event.logLevel) app.UI.Output(event.message,event.logLevel);
+                        else app.UI.Output(event.message);
                 }
             });
             //run

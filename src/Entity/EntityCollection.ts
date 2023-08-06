@@ -371,10 +371,10 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       this.CreateEvent(`-------- Loading ${this._entitiesLabel} -------`,
         LogLevel.Information);
       //Loading system entities
-      this.CreateEvent(`Loading system ${this._entitiesLabel}`,undefined,15); //15
+      this.CreateEventProgress(`Loading system ${this._entitiesLabel}`,15); //15
       await this.LoadEntitiesByType(EntityEnum.system);
       //Updating system entities
-      this.CreateEvent(`Updating system ${this._entitiesLabel}`,undefined,15); //30
+      this.CreateEventProgress(`Updating system ${this._entitiesLabel}`,15); //30
       //To get the number of hours since Unix epoch, i.e. Unix timestamp:
       const dateNow=Math.floor(Date.now() / 1000/ 3600);
       const TimeHasPassedHours=dateNow-this.Config.lastUpdateTimeInHours;
@@ -392,10 +392,10 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         this.CreateEvent(`📥 ${this._entityLabel} update: disabled or less than ${this.Config.updateIntervalInHours} hour(s) have passed since the last update.`,LogLevel.Debug);
       }
       //Loading community entities
-      this.CreateEvent(`Loading community ${this._entitiesLabel}`,undefined,15); //45
+      this.CreateEventProgress(`Loading community ${this._entitiesLabel}`,15); //45
       await this.LoadEntitiesByType(EntityEnum.community);
       //Updating community entities
-      this.CreateEvent(`Updating community ${this._entitiesLabel}`,undefined,15); //60
+      this.CreateEventProgress(`Updating community ${this._entitiesLabel}`,15); //60
       if(force||isNeedUpdate()){
         //community
         this.CreateEvent(`☑️ Updating community ${this._entitiesLabel}`,LogLevel.Debug);
@@ -407,14 +407,14 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         }
       }
       //Loading custom entities
-      this.CreateEvent(`Loading custom ${this._entitiesLabel}  templates loaded `,undefined,15); //75
+      this.CreateEventProgress(`Loading custom ${this._entitiesLabel}  templates loaded `,15); //75
       await this.LoadEntitiesByType(EntityEnum.user);
       //result
       this.CreateEvent(new IotResult(StatusResult.Ok, `${this._entitiesLabel} loaded`));
       const endMsg=`📚 ${this.Count} ${this._entityLabel}(s) available.`;
       this.CreateEvent(endMsg,LogLevel.Information);
       this.CreateEvent(`----------------------------------`,LogLevel.Information);
-      this.CreateEvent(`${this._entitiesLabel} loaded`,undefined,15); //90
+      this.CreateEventProgress(`${this._entitiesLabel} loaded`,15); //90
     } catch (err: any){
       result= new IotResult(StatusResult.Error, `Error loading ${this._entityLabel} collection`,err); 
       this.CreateEvent(result,LogLevel.Information);
