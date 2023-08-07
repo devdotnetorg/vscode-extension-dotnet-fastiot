@@ -25,7 +25,7 @@ export class IotResult {
 
   constructor(
     status:StatusResult, message?:string,
-    systemMessage?:string, logLevel?:LogLevel,
+    systemMessage?:string, logLevel?:LogLevel
     ){
       this._status=status;
       this._message=message;

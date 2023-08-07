@@ -21,6 +21,8 @@ import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { networkHelper } from '../Helper/networkHelper';
 import { SshClient } from '../Shared/SshClient';
+import { ISshConnection } from '../Shared/ISshConnection';
+import { SshConnection } from '../Shared/SshConnection';
 import { AppDomain } from '../AppDomain';
 import { SbcType } from '../Types/SbcType';
 import { ClassWithEvent } from '../Shared/ClassWithEvent';
@@ -106,7 +108,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     return result;
   }
  
-  public async Create(addSBCConfigType:AddSBCConfigType):Promise<IotResult> {
+  public async Create(addSBCConfigType:AddSBCConfigType,token?:vscode.CancellationToken, force?:boolean):Promise<IotResult> {
     /*******************************
     Script run order:
       1) 1_pregetinfo.sh
@@ -127,34 +129,87 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
      *******************************/
     //
     let result:IotResult;
-    //this.CreateEvent("Checking the network connection",undefined,0);
-   /*
-    result=await this.ConnectionTestLoginPass(
-      addSBCConfigType.host,
-      addSBCConfigType.port,
-      addSBCConfigType.username,
-      addSBCConfigType.password ?? "");
-    if(result.Status!=StatusResult.Ok)
+    const app = AppDomain.getInstance().CurrentApp;
+    this.CreateEventProgress("checking the network connection");
+    //Connection
+    let sshConnection:ISshConnection = new SshConnection();
+    sshConnection.fromLoginPass(
+      addSBCConfigType.host,addSBCConfigType.port,addSBCConfigType.username,
+      addSBCConfigType.password ?? "None");
+    result = await sshConnection.ConnectionTest();
+    if(result.Status!=StatusResult.Ok) {
+      if(!force) return Promise.resolve(result);
+    }
+    this.CreateEvent(result);
+    //SshClient
+    let sshClient = new SshClient(app.Config.Folder.BashScripts);
+    //event subscription
+    let handler=sshClient.OnChangedStateSubscribe(event => {
+      //output
+      if(event.message) {
+          if(event.logLevel) app.UI.Output(event.message,event.logLevel);
+              else app.UI.Output(event.message);
+      }
+    });
+    result = await sshClient.Connect(sshConnection.ToSshConfig());
+    if(result.Status!=StatusResult.Ok) {
+      //event unsubscription
+      sshClient.OnChangedStateUnsubscribe(handler);
       return Promise.resolve(result);
-*/
+    }
+    //Create a single-board computer profile
+    //const baseMsg="Create a SBC profile: ";
+    const forceMsg= "********  Forced mode enabled ********";
+    const stepsMsg="5";
+    // ********************************************************************
+    // 1_pregetinfo.sh
+    /*
+    this.CreateEventProgress(`step 1 of ${stepsMsg}. Installing utilities`);
+    result = await sshClient.RunScript("1_pregetinfo",undefined,token);
+    if(result.Status!=StatusResult.Ok) {
+      if(!force) {
+        //event unsubscription
+        sshClient.OnChangedStateUnsubscribe(handler);
+        return Promise.resolve(result);
+      }
+      this.CreateEvent(forceMsg);
+      result = await sshClient.RunScript("1_pregetinfo_force",undefined,token);
+      if(result.Status!=StatusResult.Ok) {
+        //event unsubscription
+        sshClient.OnChangedStateUnsubscribe(handler);
+        return Promise.resolve(result);
+      }
+    }
+    */
+    // ********************************************************************
+    // 2_getinfo.sh
+    this.CreateEventProgress(`step 2 of ${stepsMsg}. Getting data`);
+    result = await sshClient.RunScript("2_getinfo",undefined,token,true);
+    
+    result = await sshClient.RunScript("2_getinfo",undefined,token);
+    if(result.Status!=StatusResult.Ok) {
+      //event unsubscription    
+      sshClient.OnChangedStateUnsubscribe(handler);
+      return Promise.resolve(result);
+    }
+    //parse
+
+
+
+
+
+    //result
+    //event unsubscription    
+    sshClient.OnChangedStateUnsubscribe(handler);
+    await sshClient.Close();
+    await sshClient.Dispose();
+    result=new IotResult(StatusResult.Ok,`Device added successfully 🎉! Device: ${this.Label}`);
+    return Promise.resolve(result);
+
+    
+
+
       /*
-      Создание профиля одноплатного компьютера
-      Create a Single Board Computer Profile
-
-      Create a single-board computer profile
-      
-      Добавление одноплат
-
-     this._app.UI.Output(result);
-       else return Promise.resolve(result);
-       this._app.UI.ShowBackgroundNotification("Create a device");
-       this._app.UI.Output("Create a device");
-     //event subscription
-     let handler=device.Client.OnChangedStateSubscribe(event => {        
-       if(event.status) this._app.UI.ShowBackgroundNotification(event.status);
-       if(event.status) this._app.UI.Output(event.status);
-       if(event.console) this._app.UI.Output(event.console); 
-     });
      result = await device.Create(hostName,port,userName, password,accountNameDebug);
      if(result.Status==StatusResult.Error) {
        result.AddMessage(`Device not added!`);
@@ -162,7 +217,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
      }
      //Rename. checking for matching names.
      device.label= this.GetUniqueLabel(<string>device.label,'#',undefined);      
-     //
+    //
      this.RootItems.push(device);
      //save in config      
      this.SaveDevices()
@@ -178,9 +233,6 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
 
      */
 
-
-
-    
     throw new Error("This is an example exception.");
 
   }
@@ -206,7 +258,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       return Promise.resolve(result);
     }
     //run script
-    result=await sshClient.RunScript(fileNameScript,undefined,true);
+    result=await sshClient.RunScript(fileNameScript, undefined, undefined, true);
     await sshClient.Close();
     await sshClient.Dispose();
     return Promise.resolve(result);

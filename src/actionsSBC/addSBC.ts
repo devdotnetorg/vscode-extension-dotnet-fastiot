@@ -14,6 +14,8 @@ import { IoTApplication } from '../IoTApplication';
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { AddSBCPanelSingleton } from '../Panels/AddSBCPanelSingleton';
 import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
+import { ISbc } from '../Sbc/ISbc';
+import { IoTSbc } from '../Sbc/IoTSbc';
 import { AppDomain } from '../AppDomain';
 
 export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem_d>,
@@ -47,20 +49,49 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
         //Save PreviousHost
         app.Config.Sbc.PreviousHostWhenAdding=addSBCConfig.host;
         //Info
-        vscode.window.showInformationMessage('⌛ It may take 2 to 7 minutes to initialize and configure the device.');
+        vscode.window.showInformationMessage('⌛ It may take 2 to 7 minutes to initialize and configure the SBC.');
         //Main process
-        app.UI.Output("Action: adding a device");
-        //Adding a device is the main process
-        const labelTask="Adding a device";
-        app.UI.ShowBackgroundNotification(labelTask);
+        const labelTask="create a SBC profile";
+        app.UI.Output(`Action: ${labelTask}`);
         const guidBadge=app.UI.BadgeAddItem(labelTask);
-        let result = await treeData.AddDevice(addSBCConfig);
+        let sbc:ISbc = new IoTSbc();
+        //progress
+        let result:IotResult| undefined = await vscode.window.withProgress({
+            location: vscode.ProgressLocation.Window,
+            title: IoTHelper.FirstLetter(labelTask),
+            cancellable: true
+        }, (progress, token) => {
+            token.onCancellationRequested(() => {
+                vscode.window.showWarningMessage(`${IoTHelper.FirstLetter(labelTask)}: cancel operation requested`);
+            });
+            return new Promise(async (resolve, reject) => {
+                //event subscription
+                let handler=sbc.OnChangedStateSubscribe(event => {
+                    //Progress
+                    if(event.status)
+                        progress.report({ message: event.status });
+                    //output
+                    if(event.message) app.UI.Output(event.message);
+                });
+                //run
+                if(!addSBCConfig) {
+                    resolve(undefined);
+                    return;
+                }
+                const result = await sbc.Create(addSBCConfig);
+                //event unsubscription    
+                sbc.OnChangedStateUnsubscribe(handler);
+                resolve(result);
+                //end
+            });
+        });
+        if(!result) return;
         if(guidBadge) app.UI.BadgeDeleteItem(guidBadge);
-        app.UI.HideBackgroundNotification();
         //Output
         app.UI.Output(result.toStringWithHead());
         //Message
         app.UI.ShowNotification(result);
+        /*
         if(result.Status==StatusResult.Ok) {
             //get device
             const newDevice=<IotDevice>result.returnObject;
@@ -69,6 +100,9 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
             //Set focus
             treeView.reveal(newDevice, {focus: true});
         }
+        */
+       //Mode: force
+       
 }
 
 async function showDialog(app:IoTApplication, dialogType:Dialog, addSBCConfig?:AddSBCConfigType): Promise<AddSBCConfigType| undefined> {

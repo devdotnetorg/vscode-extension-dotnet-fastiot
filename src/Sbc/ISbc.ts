@@ -4,12 +4,14 @@ import * as path from 'path';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { ISbcAccount } from './ISbcAccount';
 import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
 import Existence = IoT.Enums.Existence;
 import AccountAssignment = IoT.Enums.AccountAssignment;
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { SbcType } from '../Types/SbcType';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { IotSbcArmbian } from './IotSbcArmbian';
+import { ClassWithEvent,Handler,IChangedStateEvent } from '../Shared/ClassWithEvent';
 
 export interface ISbc {
   Id: string;
@@ -33,11 +35,14 @@ export interface ISbc {
   //
   GetAccount(assignment: AccountAssignment): ISbcAccount| undefined;
   //
-  Create(addSBCConfigType:AddSBCConfigType):Promise<IotResult>;
+  Create(addSBCConfigType:AddSBCConfigType,token?:vscode.CancellationToken, force?:boolean):Promise<IotResult>;
   Reboot(): Promise<IotResult>;
   Shutdown(): Promise<IotResult>;
   Rename(newLabel:string): IotResult;
 
   ToJSON():SbcType;
   FromJSON(obj:SbcType):void;
+  //ClassWithEvent
+  OnChangedStateSubscribe(handler: Handler<IChangedStateEvent>):Handler<IChangedStateEvent>;
+  OnChangedStateUnsubscribe(handler: Handler<IChangedStateEvent>):void;
 }

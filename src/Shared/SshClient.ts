@@ -82,7 +82,7 @@ export class SshClient extends ClassWithEvent {
   }
 
   public async RunScript(fileNameScript:string, argumentScript?:ArgumentsCommandCli,
-    getStdout?:boolean, token?:vscode.CancellationToken): Promise<IotResult> {            
+    token?:vscode.CancellationToken, getStdout?:boolean): Promise<IotResult> {            
       let result:IotResult;
       let msg:string| undefined;
       let flagExit:Boolean=false;
@@ -112,7 +112,7 @@ export class SshClient extends ClassWithEvent {
       dataFile=IoTHelper.SetLineEnding(dataFile);
       //Event
       this.CreateEvent("--------------------------------------------");
-      msg=`Run: ${fileNameScript}.sh.`;
+      msg=`Run: ${fileNameScript}.sh`;
       if (argumentScript) msg=`${msg} Arguments: ${argumentScript.toString()}`;
       this.CreateEvent(msg);
       this.CreateEvent("--------------------------------------------");
@@ -138,8 +138,11 @@ export class SshClient extends ClassWithEvent {
         //events
         socket.on('data', (data:any) => {
           lastConsoleLine=data.toString();
-          if(getStdout) outSystemMessage=outSystemMessage+lastConsoleLine;
-          this.CreateEvent(lastConsoleLine);
+          if(getStdout) {
+            outSystemMessage=outSystemMessage+lastConsoleLine;
+          } else {
+            this.CreateEvent(lastConsoleLine);
+          }
         });
         socket.stderr.on('data', (data:any) => {
             if(data) stdErr=`${stdErr}${data}`;
@@ -149,8 +152,8 @@ export class SshClient extends ClassWithEvent {
           flagExit=true;
         });
         //circle          
-        do{await IoTHelper.Sleep(200);}while(!flagExit);
-        await IoTHelper.Sleep(100);
+        do{await IoTHelper.Sleep(100);}while(!flagExit);
+        await IoTHelper.Sleep(200);
         //check isCancellationRequested
         if(token&&token.isCancellationRequested) {
           msg=`The execution of the ${fileNameScript}.sh script was canceled by the user!`;
@@ -165,8 +168,10 @@ export class SshClient extends ClassWithEvent {
         if(codeErr) this.CreateEvent(`CODEERR: ${codeErr}`);
         //Check "Successfully" OR codeErr
         lastConsoleLine=IoTHelper.StringTrim(lastConsoleLine);
-        if ((!lastConsoleLine.includes("Successfully"))||codeErr) {
-          return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${fileNameScript}.sh script ended with an error`,lastConsoleLine));
+        if (!lastConsoleLine.includes("Successfully")||!lastConsoleLine.includes("successfully")) {
+          if(codeErr) {
+            return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${fileNameScript}.sh script ended with an error`,lastConsoleLine));
+          }
         }
       }
       catch (err:any) {
@@ -179,7 +184,10 @@ export class SshClient extends ClassWithEvent {
       catch (err) {}
       //end processing
       result = new IotResult(StatusResult.Ok,"Successfully");
-      if(getStdout) result.AddSystemMessage(outSystemMessage);
+      if(getStdout) {
+        outSystemMessage=IoTHelper.StringTrim(outSystemMessage);
+        result.AddSystemMessage(outSystemMessage);
+      }
       //result
       return Promise.resolve(result);   
   }
