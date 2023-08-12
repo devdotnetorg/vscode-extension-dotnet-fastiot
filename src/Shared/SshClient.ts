@@ -32,7 +32,7 @@ export class SshClient extends ClassWithEvent {
     this._isConnected=false;
   }
 
-  public async Connect(sshConfig:SSHConfig): Promise<IotResult> {
+  public async Connect(sshConfig:SSHConfig,token?:vscode.CancellationToken): Promise<IotResult> {
     //connect
     let result:IotResult;
     //check IsActive IsConnected

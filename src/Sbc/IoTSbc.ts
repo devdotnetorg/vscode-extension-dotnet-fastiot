@@ -26,9 +26,14 @@ import { SshConnection } from '../Shared/SshConnection';
 import { AppDomain } from '../AppDomain';
 import { SbcType } from '../Types/SbcType';
 import { ClassWithEvent } from '../Shared/ClassWithEvent';
+import { TaskQueue } from '../Shared/TaskQueue';
+import { TaskRunScript } from '../Shared/TaskRunScript';
+import { TaskPutFile } from '../Shared/TaskPutFile';
+import { ArgumentsCommandCli } from '../Shared/ArgumentsCommandCli';
 import { IotSbcArmbian } from './IotSbcArmbian';
 import { IoTSbcAccount } from './IoTSbcAccount';
 import { enumHelper } from '../Helper/enumHelper';
+import { Constants } from "../Constants"
 
 export class IoTSbc extends ClassWithEvent implements ISbc {
   private _id:string;
@@ -108,7 +113,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     return result;
   }
  
-  public async Create(addSBCConfigType:AddSBCConfigType,token?:vscode.CancellationToken, force?:boolean):Promise<IotResult> {
+  public async Create(addSBCConfig:AddSBCConfigType,token?:vscode.CancellationToken,forceMode?:boolean):Promise<IotResult> {
     /*******************************
     Script run order:
       1) 1_pregetinfo.sh
@@ -119,28 +124,21 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       4) 4_getinfoarmbian.sh
       force: if it fails, then pass
       5) 5_createaccount.sh
-      force: if it fails, then switching works as ROOT
-      6) 6_addusertogroups.sh
-      force: if it fails, then switch to return to level (5), work as ROOT
-      7) 7_changeconfigssh.sh
+      6) 6_getsshkeyofaccount.sh
+      7) 7_addusertogroups.sh
+      8) 8_changeconfigssh.sh
       force: if it fails, then pass
-      8) 8_addudevrules.sh
+      9) 9_applyudevrules.sh
       force: if it fails, then pass
      *******************************/
     //
     let result:IotResult;
     const app = AppDomain.getInstance().CurrentApp;
-    this.CreateEventProgress("checking the network connection");
     //Connection
     let sshConnection:ISshConnection = new SshConnection();
     sshConnection.fromLoginPass(
-      addSBCConfigType.host,addSBCConfigType.port,addSBCConfigType.username,
-      addSBCConfigType.password ?? "None");
-    result = await sshConnection.ConnectionTest();
-    if(result.Status!=StatusResult.Ok) {
-      if(!force) return Promise.resolve(result);
-    }
-    this.CreateEvent(result);
+      addSBCConfig.host, addSBCConfig.port,
+      addSBCConfig.username, addSBCConfig.password ?? "None");
     //SshClient
     let sshClient = new SshClient(app.Config.Folder.BashScripts);
     //event subscription
@@ -151,90 +149,172 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
               else app.UI.Output(event.message);
       }
     });
-    result = await sshClient.Connect(sshConnection.ToSshConfig());
+    result = await sshClient.Connect(sshConnection.ToSshConfig(forceMode),token);
     if(result.Status!=StatusResult.Ok) {
       //event unsubscription
       sshClient.OnChangedStateUnsubscribe(handler);
       return Promise.resolve(result);
     }
-    //Create a single-board computer profile
-    //const baseMsg="Create a SBC profile: ";
-    const forceMsg= "********  Forced mode enabled ********";
-    const stepsMsg="5";
+    //Tasks Queue
+    let taskQueue:TaskQueue<TaskRunScript|TaskPutFile>;
+    taskQueue = new TaskQueue<TaskRunScript|TaskPutFile>();
+    taskQueue.SetCallbacks(this.CreateEvent,this.CreateEventProgress);
+    let taskRunScript:TaskRunScript;
+    let taskPutFile:TaskPutFile;
+    let argumentsCommandCliNormal:ArgumentsCommandCli;
+    //let argumentsCommandCliForce:ArgumentsCommandCli;
     // ********************************************************************
     // 1_pregetinfo.sh
-    /*
-    this.CreateEventProgress(`step 1 of ${stepsMsg}. Installing utilities`);
-    result = await sshClient.RunScript("1_pregetinfo",undefined,token);
-    if(result.Status!=StatusResult.Ok) {
-      if(!force) {
-        //event unsubscription
-        sshClient.OnChangedStateUnsubscribe(handler);
-        return Promise.resolve(result);
-      }
-      this.CreateEvent(forceMsg);
-      result = await sshClient.RunScript("1_pregetinfo_force",undefined,token);
-      if(result.Status!=StatusResult.Ok) {
-        //event unsubscription
-        sshClient.OnChangedStateUnsubscribe(handler);
-        return Promise.resolve(result);
-      }
-    }
-    */
+    // force: 1_pregetinfo_force.sh
+    taskRunScript = new TaskRunScript(
+      "Installing utilities",
+      "1_pregetinfo",undefined,
+      "1_pregetinfo_force",undefined);
+    taskQueue.push(taskRunScript);
     // ********************************************************************
     // 2_getinfo.sh
-    this.CreateEventProgress(`step 2 of ${stepsMsg}. Getting data`);
-    result = await sshClient.RunScript("2_getinfo",undefined,token,true);
-    
-    result = await sshClient.RunScript("2_getinfo",undefined,token);
-    if(result.Status!=StatusResult.Ok) {
-      //event unsubscription    
-      sshClient.OnChangedStateUnsubscribe(handler);
-      return Promise.resolve(result);
+    taskRunScript = new TaskRunScript(
+      "Getting data",
+      "2_getinfo",undefined,
+      undefined,undefined,
+      this.ParseGetInfo);
+    taskQueue.push(taskRunScript);
+    // ********************************************************************
+    // 3_getinfoboardname.sh
+    // force: if it fails, then pass
+    taskRunScript = new TaskRunScript(
+      "Getting board name",
+      "3_getinfoboardname",undefined,
+      undefined,undefined,
+      this.ParseGetBoardName,true);
+    taskQueue.push(taskRunScript);
+    // ********************************************************************
+    // 4_getinfoarmbian.sh
+    // force: if it fails, then pass
+    taskRunScript = new TaskRunScript(
+      "Getting information about Armbian",
+      "4_getinfoarmbian",undefined,
+      undefined,undefined,
+      this.ParseGetInfoArmbian,true);
+    taskQueue.push(taskRunScript);
+    // ********************************************************************
+    // 5_createaccount.sh
+    // debugvscode
+    argumentsCommandCliNormal = new ArgumentsCommandCli();
+    argumentsCommandCliNormal.AddArgument("username",addSBCConfig.debugusername);
+    taskRunScript = new TaskRunScript(
+      `Create an account '${addSBCConfig.debugusername}'`,
+      "5_createaccount",argumentsCommandCliNormal);
+    taskQueue.push(taskRunScript);
+    // ********************************************************************
+    // 6_getsshkeyofaccount.sh
+    // debugvscode
+    // get file of debugvscode
+    taskRunScript = new TaskRunScript(
+      `Get ssh key of account '${addSBCConfig.debugusername}'`,
+      "6_getsshkeyofaccount",argumentsCommandCliNormal,
+      undefined,undefined,
+      this.ParseGetSshKeyOfAccount);
+    taskQueue.push(taskRunScript);
+    // ********************************************************************
+    // 5_createaccount.sh
+    // managementvscode
+    argumentsCommandCliNormal = new ArgumentsCommandCli();
+    argumentsCommandCliNormal.AddArgument("username",addSBCConfig.managementusername);
+    taskRunScript = new TaskRunScript(
+      `Create an account '${addSBCConfig.managementusername}'`,
+      "5_createaccount",argumentsCommandCliNormal,
+      undefined,undefined,
+      this.ParseGetSshKeyOfAccount);
+    taskQueue.push(taskRunScript);
+    // ********************************************************************
+    // 6_getsshkeyofaccount.sh
+    // managementvscode
+    // get file of debugvscode
+    taskRunScript = new TaskRunScript(
+      `Get ssh key of account '${addSBCConfig.managementusername}'`,
+      "6_getsshkeyofaccount",argumentsCommandCliNormal,
+      undefined,undefined,
+      this.ParseGetSshKeyOfAccount);
+    taskQueue.push(taskRunScript);
+    // ********************************************************************
+    // 7_addusertogroups.sh
+    // debugvscode
+    argumentsCommandCliNormal = new ArgumentsCommandCli();
+    argumentsCommandCliNormal.AddArgument("username",addSBCConfig.debugusername);
+    argumentsCommandCliNormal.AddArgument("groups", IoTHelper.ArrayToString(addSBCConfig.debuggroups ?? [],','));
+    argumentsCommandCliNormal.AddArgument("creategroup","yes");
+    taskRunScript = new TaskRunScript(
+      `Adding the user '${addSBCConfig.debugusername}' to the group(s) '${IoTHelper.ArrayToString(addSBCConfig.debuggroups ?? [],',')}'`,
+      "6_addusertogroups",argumentsCommandCliNormal);
+    taskQueue.push(taskRunScript);
+    // ********************************************************************
+    // 7_addusertogroups.sh
+    // managementvscode
+    argumentsCommandCliNormal = new ArgumentsCommandCli();
+    argumentsCommandCliNormal.AddArgument("username",addSBCConfig.managementusername);
+    argumentsCommandCliNormal.AddArgument("groups", IoTHelper.ArrayToString(addSBCConfig.managementgroups ?? [],','));
+    taskRunScript = new TaskRunScript(
+      `Adding the user '${addSBCConfig.managementusername}' to the group(s) '${IoTHelper.ArrayToString(addSBCConfig.managementgroups ?? [],',')}'`,
+      "6_addusertogroups",argumentsCommandCliNormal);
+    taskQueue.push(taskRunScript);
+    // ********************************************************************
+    // 8_changeconfigssh.sh
+    // force: if it fails, then pass
+    taskRunScript = new TaskRunScript(
+      `Changing OpenSSH settings`,
+      "8_changeconfigssh",undefined,
+      undefined,undefined,
+      undefined,true);
+    taskQueue.push(taskRunScript);
+    // ********************************************************************
+    // Copying the udev rules file
+    // put file 20-gpio-fastiot.rules in folder /etc/udev/rules.d
+    const filenameudevrules = addSBCConfig.filenameudevrules;
+    if(filenameudevrules!="None") {
+      result = app.Config.Sbc.GetFileUdevRules(filenameudevrules);
+      if(result.Status==StatusResult.Ok) {
+        //event unsubscription
+        const dataFile=<string>result.returnObject;
+        const destFilePath=
+          `${Constants.folderDestForFileUdevRules}/${filenameudevrules}`;
+        taskPutFile = new TaskPutFile("Copying the udev rules file",
+          destFilePath, dataFile);
+        //
+        taskQueue.push(taskPutFile);
+      }else {
+        this.CreateEvent(result);
+      }
     }
-    //parse
+    // ********************************************************************
+    // 9_applyudevrules.sh
+    // force: if it fails, then pass
+    taskRunScript = new TaskRunScript(
+      `Apply udev rules`,
+      "9_applyudevrules",undefined,
+      undefined,undefined,
+      undefined,true);
+    taskQueue.push(taskRunScript);
+    // run taskQueue
+    result = await taskQueue.Run(sshClient,token);
+    //report
+    result.AddMessage(taskQueue.GetReport());
+    if(result.Status==StatusResult.Ok) {
+      //TODO: check debugvscode ROOT == managementvscode ROOT
 
 
-
-
-
+      result=new IotResult(StatusResult.Ok,`Single-board computer profile created`);
+    }else {
+      result.AddMessage("Single-board computer profile creation error");
+    }
+    //Dispose
+    taskQueue.Dispose();
     //result
     //event unsubscription    
     sshClient.OnChangedStateUnsubscribe(handler);
     await sshClient.Close();
     await sshClient.Dispose();
-    result=new IotResult(StatusResult.Ok,`Device added successfully 🎉! Device: ${this.Label}`);
     return Promise.resolve(result);
-
-    
-
-
-      /*
-     result = await device.Create(hostName,port,userName, password,accountNameDebug);
-     if(result.Status==StatusResult.Error) {
-       result.AddMessage(`Device not added!`);
-       return Promise.resolve(result);
-     }
-     //Rename. checking for matching names.
-     device.label= this.GetUniqueLabel(<string>device.label,'#',undefined);      
-    //
-     this.RootItems.push(device);
-     //save in config      
-     this.SaveDevices()
-     //Refresh treeView
-     this.Refresh();
-     //event unsubscription
-     device.Client.OnChangedStateUnsubscribe(handler);
-     //
-     result=new IotResult(StatusResult.Ok,`Device added successfully 🎉! Device: ${device.label}`);
-     //return new device
-     result.returnObject=device;
-     return Promise.resolve(result);   
-
-     */
-
-    throw new Error("This is an example exception.");
-
   }
 
   private async RunScriptAsManagementAccount(fileNameScript:string): Promise<IotResult> {
@@ -374,6 +454,56 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       //Armbian
       this._armbian.FromJSON(obj.armbian);
     } catch (err: any){}
+  }
+
+  //************************ Parse ************************
+
+  public ParseGetInfo(data:string,fileNameScript:string,argumentScript?: ArgumentsCommandCli):IotResult {
+    let result:IotResult;
+    result=new IotResult(StatusResult.Ok);
+    try {
+      throw new Error("This is an example exception.");
+    } catch (err: any){
+      result=new IotResult(StatusResult.Error,"Parse error, ParseGetInfo function",err);
+    }
+    //result
+    return result;
+  }
+
+  public ParseGetBoardName(data:string,fileNameScript:string,argumentScript?: ArgumentsCommandCli):IotResult {
+    let result:IotResult;
+    result=new IotResult(StatusResult.Ok);
+    try {
+      throw new Error("This is an example exception.");
+    } catch (err: any){
+      result=new IotResult(StatusResult.Error,"Parse error, ParseGetBoardName function",err);
+    }
+    //result
+    return result;
+  }
+
+  public ParseGetInfoArmbian(data:string,fileNameScript:string,argumentScript?: ArgumentsCommandCli):IotResult {
+    let result:IotResult;
+    result=new IotResult(StatusResult.Ok);
+    try {
+      throw new Error("This is an example exception.");
+    } catch (err: any){
+      result=new IotResult(StatusResult.Error,"Parse error, ParseGetInfoArmbian function",err);
+    }
+    //result
+    return result;
+  }
+
+  public ParseGetSshKeyOfAccount(data:string,fileNameScript:string,argumentScript?: ArgumentsCommandCli):IotResult {
+    let result:IotResult;
+    result=new IotResult(StatusResult.Ok);
+    try {
+      throw new Error("This is an example exception.");
+    } catch (err: any){
+      result=new IotResult(StatusResult.Error,"Parse error, ParseGetSshKeyOfAccount function",err);
+    }
+    //result
+    return result;
   }
 
 }

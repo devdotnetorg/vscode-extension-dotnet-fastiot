@@ -94,7 +94,7 @@ export class SshConnection implements ISshConnection {
     return result;
   }
 
-  public ToSshConfig(force?:boolean):SSHConfig {
+  public ToSshConfig(forceMode?:boolean):SSHConfig {
     //shared
     let sshconfig:SSHConfig = {
       host: this._host,
@@ -104,7 +104,7 @@ export class SshConnection implements ISshConnection {
       readyTimeout: 7000
     };
     //force
-    if(force) {
+    if(forceMode) {
       sshconfig.readyTimeout=99999;
       sshconfig.reconnectTries=3;
       sshconfig.timeout=99999;

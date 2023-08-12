@@ -17,6 +17,8 @@ import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
 import { ISbc } from '../Sbc/ISbc';
 import { IoTSbc } from '../Sbc/IoTSbc';
 import { AppDomain } from '../AppDomain';
+import { ISshConnection } from '../Shared/ISshConnection';
+import { SshConnection } from '../Shared/SshConnection';
 
 export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem_d>,
     dialogType:Dialog, host?:string, port?:number): Promise<void> {
@@ -71,14 +73,37 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
                     if(event.status)
                         progress.report({ message: event.status });
                     //output
-                    if(event.message) app.UI.Output(event.message);
+                    if(event.message) {
+                        if(event.logLevel) app.UI.Output(event.message,event.logLevel);
+                            else app.UI.Output(event.message);
+                    }
                 });
-                //run
                 if(!addSBCConfig) {
                     resolve(undefined);
                     return;
                 }
-                const result = await sbc.Create(addSBCConfig);
+                //Checking the network connection
+                progress.report({ message: "checking the network connection" });
+                let sshConnection:ISshConnection = new SshConnection();
+                sshConnection.fromLoginPass(
+                    addSBCConfig.host, addSBCConfig.port,
+                    addSBCConfig.username, addSBCConfig.password ?? "None");
+                let resultConTest = await sshConnection.ConnectionTest();
+                app.UI.Output(resultConTest);
+                let forceMode=false;
+                if(resultConTest.Status!=StatusResult.Ok) {
+                    // Force mode
+                    const answer = await vscode.window.showWarningMessage(
+                        `⚠️ Failed to connect. Enable force add mode?`, ...["Yes", "No"]);
+                    if(answer=="Yes") {
+                        forceMode=true;
+                    } else {
+                        resolve(resultConTest);
+                        return;
+                    }
+                }
+                //run
+                const result = await sbc.Create(addSBCConfig,token,forceMode);
                 //event unsubscription    
                 sbc.OnChangedStateUnsubscribe(handler);
                 resolve(result);

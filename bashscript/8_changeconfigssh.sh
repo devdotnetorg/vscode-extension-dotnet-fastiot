@@ -1,11 +1,11 @@
 #!/bin/bash
 # Run: 
-# chmod +x 7_changeconfigssh.sh
-# ./7_changeconfigssh.sh
+# chmod +x 8_changeconfigssh.sh
+# ./8_changeconfigssh.sh
 
 set -e #Exit immediately if a comman returns a non-zero status
 
-echo "Run: 7_changeconfigssh.sh"
+echo "Run: 8_changeconfigssh.sh"
 
 # definition of variables
 # check inside docker container

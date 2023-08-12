@@ -24,6 +24,6 @@ export interface ISshConnection {
   GetSshKeyPath():string| undefined;
   /** OK - file exists, No - if the file does not exist, Error - no data */
   IsExistsSshKey():IotResult;
-  ToSshConfig(force?:boolean):SSHConfig;
+  ToSshConfig(forceMode?:boolean):SSHConfig;
   ConnectionTest(withSshConnectionTest?:boolean): Promise<IotResult>;
 }

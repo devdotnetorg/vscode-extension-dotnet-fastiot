@@ -1,11 +1,11 @@
 #!/bin/bash
 # Run: 
-# chmod +x 8_addudevrules.sh
-# ./8_addudevrules.sh
+# chmod +x 9_applyudevrules.sh
+# ./9_applyudevrules.sh
 
 set -e #Exit immediately if a comman returns a non-zero status
 
-echo "Run: 8_addudevrules.sh"
+echo "Run: 9_applyudevrules.sh"
 
 #reload udev rules
 echo "Reload udev rules"
