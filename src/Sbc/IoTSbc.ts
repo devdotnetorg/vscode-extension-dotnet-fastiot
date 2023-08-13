@@ -119,7 +119,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       1) 1_pregetinfo.sh
       force: 1_pregetinfo_force.sh
       2) 2_getinfo.sh
-      3) 3_getinfoboardname.sh
+      3) 3_getboardname.sh
       force: if it fails, then pass
       4) 4_getinfoarmbian.sh
       force: if it fails, then pass
@@ -131,6 +131,9 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       9) 9_applyudevrules.sh
       force: if it fails, then pass
      *******************************/
+    //set
+    this._host=addSBCConfig.host;
+    this._port=addSBCConfig.port;
     //
     let result:IotResult;
     const app = AppDomain.getInstance().CurrentApp;
@@ -149,6 +152,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
               else app.UI.Output(event.message);
       }
     });
+    this.CreateEventProgress(`host connection ${sshConnection.Host}:${sshConnection.Port}`);
     result = await sshClient.Connect(sshConnection.ToSshConfig(forceMode),token);
     if(result.Status!=StatusResult.Ok) {
       //event unsubscription
@@ -158,7 +162,17 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     //Tasks Queue
     let taskQueue:TaskQueue<TaskRunScript|TaskPutFile>;
     taskQueue = new TaskQueue<TaskRunScript|TaskPutFile>();
-    taskQueue.SetCallbacks(this.CreateEvent,this.CreateEventProgress);
+    //event subscription
+    let handlerTaskQueue=taskQueue.OnChangedStateSubscribe(event => {
+      //Progress
+      if(event.status)
+        this.CreateEventProgress(event.status);
+      //output
+      if(event.message) {
+        if(event.logLevel) app.UI.Output(event.message,event.logLevel);
+          else app.UI.Output(event.message);
+      }
+    });
     let taskRunScript:TaskRunScript;
     let taskPutFile:TaskPutFile;
     let argumentsCommandCliNormal:ArgumentsCommandCli;
@@ -170,7 +184,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "Installing utilities",
       "1_pregetinfo",undefined,
       "1_pregetinfo_force",undefined);
-    taskQueue.push(taskRunScript);
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 2_getinfo.sh
     taskRunScript = new TaskRunScript(
@@ -178,16 +192,16 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "2_getinfo",undefined,
       undefined,undefined,
       this.ParseGetInfo);
-    taskQueue.push(taskRunScript);
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
-    // 3_getinfoboardname.sh
+    // 3_getboardname.sh
     // force: if it fails, then pass
     taskRunScript = new TaskRunScript(
       "Getting board name",
-      "3_getinfoboardname",undefined,
+      "3_getboardname",undefined,
       undefined,undefined,
       this.ParseGetBoardName,true);
-    taskQueue.push(taskRunScript);
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 4_getinfoarmbian.sh
     // force: if it fails, then pass
@@ -196,7 +210,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "4_getinfoarmbian",undefined,
       undefined,undefined,
       this.ParseGetInfoArmbian,true);
-    taskQueue.push(taskRunScript);
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 5_createaccount.sh
     // debugvscode
@@ -205,7 +219,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     taskRunScript = new TaskRunScript(
       `Create an account '${addSBCConfig.debugusername}'`,
       "5_createaccount",argumentsCommandCliNormal);
-    taskQueue.push(taskRunScript);
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 6_getsshkeyofaccount.sh
     // debugvscode
@@ -215,7 +229,16 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "6_getsshkeyofaccount",argumentsCommandCliNormal,
       undefined,undefined,
       this.ParseGetSshKeyOfAccount);
-    taskQueue.push(taskRunScript);
+    // obj.username:string, obj.sshkeytypebits:string,
+    // obj.keyssbcpath:string, obj.assignment:AccountAssignment
+    let objForDataCallback = {
+      username:addSBCConfig.debugusername,
+      sshkeytypebits:addSBCConfig.sshkeytypebits,
+      keyssbcpath:app.Config.Folder.KeysSbc,
+      assignment:AccountAssignment.debug
+    }
+    taskRunScript.ObjForDataCallback=objForDataCallback;
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 5_createaccount.sh
     // managementvscode
@@ -223,10 +246,8 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     argumentsCommandCliNormal.AddArgument("username",addSBCConfig.managementusername);
     taskRunScript = new TaskRunScript(
       `Create an account '${addSBCConfig.managementusername}'`,
-      "5_createaccount",argumentsCommandCliNormal,
-      undefined,undefined,
-      this.ParseGetSshKeyOfAccount);
-    taskQueue.push(taskRunScript);
+      "5_createaccount",argumentsCommandCliNormal);
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 6_getsshkeyofaccount.sh
     // managementvscode
@@ -236,7 +257,12 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "6_getsshkeyofaccount",argumentsCommandCliNormal,
       undefined,undefined,
       this.ParseGetSshKeyOfAccount);
-    taskQueue.push(taskRunScript);
+    // obj.username:string, obj.sshkeytypebits:string,
+    // obj.keyssbcpath:string, obj.assignment:AccountAssignment
+    objForDataCallback.username=addSBCConfig.managementusername;
+    objForDataCallback.assignment=AccountAssignment.management;
+    taskRunScript.ObjForDataCallback=objForDataCallback;
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 7_addusertogroups.sh
     // debugvscode
@@ -247,7 +273,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     taskRunScript = new TaskRunScript(
       `Adding the user '${addSBCConfig.debugusername}' to the group(s) '${IoTHelper.ArrayToString(addSBCConfig.debuggroups ?? [],',')}'`,
       "6_addusertogroups",argumentsCommandCliNormal);
-    taskQueue.push(taskRunScript);
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 7_addusertogroups.sh
     // managementvscode
@@ -257,7 +283,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     taskRunScript = new TaskRunScript(
       `Adding the user '${addSBCConfig.managementusername}' to the group(s) '${IoTHelper.ArrayToString(addSBCConfig.managementgroups ?? [],',')}'`,
       "6_addusertogroups",argumentsCommandCliNormal);
-    taskQueue.push(taskRunScript);
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 8_changeconfigssh.sh
     // force: if it fails, then pass
@@ -266,7 +292,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "8_changeconfigssh",undefined,
       undefined,undefined,
       undefined,true);
-    taskQueue.push(taskRunScript);
+    taskQueue.Push(taskRunScript);
     // ********************************************************************
     // Copying the udev rules file
     // put file 20-gpio-fastiot.rules in folder /etc/udev/rules.d
@@ -281,7 +307,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
         taskPutFile = new TaskPutFile("Copying the udev rules file",
           destFilePath, dataFile);
         //
-        taskQueue.push(taskPutFile);
+        taskQueue.Push(taskPutFile);
       }else {
         this.CreateEvent(result);
       }
@@ -294,7 +320,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "9_applyudevrules",undefined,
       undefined,undefined,
       undefined,true);
-    taskQueue.push(taskRunScript);
+    taskQueue.Push(taskRunScript);
     // run taskQueue
     result = await taskQueue.Run(sshClient,token);
     //report
@@ -307,10 +333,12 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     }else {
       result.AddMessage("Single-board computer profile creation error");
     }
+    //event unsubscription    
+    taskQueue.OnChangedStateUnsubscribe(handlerTaskQueue);
     //Dispose
     taskQueue.Dispose();
     //result
-    //event unsubscription    
+    //event unsubscription
     sshClient.OnChangedStateUnsubscribe(handler);
     await sshClient.Close();
     await sshClient.Dispose();
@@ -458,49 +486,81 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
 
   //************************ Parse ************************
 
-  public ParseGetInfo(data:string,fileNameScript:string,argumentScript?: ArgumentsCommandCli):IotResult {
+  public ParseGetInfo(data:string):IotResult {
     let result:IotResult;
     result=new IotResult(StatusResult.Ok);
     try {
-      throw new Error("This is an example exception.");
+      const obj = JSON.parse(data);
+      this._hostName=obj.hostname;
+      this._architecture=obj.architecture;
+      this._osKernel=obj.oskernel;
+      this._osName=obj.osname;
+      this._osDescription=obj.osdescription;
+      this._osRelease=obj.osrelease;
+      this._osCodename=obj.oscodename;
     } catch (err: any){
-      result=new IotResult(StatusResult.Error,"Parse error, ParseGetInfo function",err);
+      result=new IotResult(StatusResult.Error,"JSON parse error, ParseGetInfo function",err);
     }
     //result
     return result;
   }
 
-  public ParseGetBoardName(data:string,fileNameScript:string,argumentScript?: ArgumentsCommandCli):IotResult {
+  public ParseGetBoardName(data:string):IotResult {
     let result:IotResult;
     result=new IotResult(StatusResult.Ok);
     try {
-      throw new Error("This is an example exception.");
+      const obj = JSON.parse(data);
+      let boardName:string| undefined =obj.boardname;
+      if (boardName) {
+        boardName=IoTHelper.StringTrim(boardName);
+        if (boardName!=""&&boardName.length>2) {
+          this._boardName=boardName;
+        }
+      }
     } catch (err: any){
-      result=new IotResult(StatusResult.Error,"Parse error, ParseGetBoardName function",err);
+      result=new IotResult(StatusResult.Error,"JSON parse error, ParseGetBoardName function",err);
     }
     //result
     return result;
   }
 
-  public ParseGetInfoArmbian(data:string,fileNameScript:string,argumentScript?: ArgumentsCommandCli):IotResult {
+  public ParseGetInfoArmbian(data:string):IotResult {
     let result:IotResult;
     result=new IotResult(StatusResult.Ok);
     try {
-      throw new Error("This is an example exception.");
+      const obj = JSON.parse(data);
+      this._armbian= new IotSbcArmbian();
+      result = this._armbian.Parse(obj);
     } catch (err: any){
-      result=new IotResult(StatusResult.Error,"Parse error, ParseGetInfoArmbian function",err);
+      result=new IotResult(StatusResult.Error,"JSON parse error, ParseGetInfoArmbian function",err);
     }
     //result
     return result;
   }
 
-  public ParseGetSshKeyOfAccount(data:string,fileNameScript:string,argumentScript?: ArgumentsCommandCli):IotResult {
+  public ParseGetSshKeyOfAccount(data:string,obj?:any):IotResult {
+    // obj.username:string, obj.sshkeytypebits:string,
+    // obj.keyssbcpath:string, obj.assignment:AccountAssignment
     let result:IotResult;
     result=new IotResult(StatusResult.Ok);
     try {
-      throw new Error("This is an example exception.");
+      const userName = <string>obj.username;
+      const sshKeyTypeBits = <string>obj.sshkeytypebits;
+      const keysSbcPath=<string>obj.keyssbcpath;
+      const assignment=<AccountAssignment> obj.assignment;
+      // fileName: b61e0cdc-orangepipc-debugvscode-ed25519-256
+      const fileName=`${this.Id}-${this.HostName}-${userName}-${sshKeyTypeBits}`;
+      var keyFilePath = path.join(keysSbcPath, fileName);
+      //write key
+      fs.writeFileSync(keyFilePath,data,undefined);
+      //create account
+      const account:ISbcAccount = new IoTSbcAccount(
+        this.Host,this.Port,keysSbcPath);
+      account.fromLoginSshKey(this.Host,this.Port,userName,keysSbcPath,fileName,assignment);
+      //add account
+      this.Accounts.push(account);
     } catch (err: any){
-      result=new IotResult(StatusResult.Error,"Parse error, ParseGetSshKeyOfAccount function",err);
+      result=new IotResult(StatusResult.Error,"JSON parse error, ParseGetSshKeyOfAccount function",err);
     }
     //result
     return result;

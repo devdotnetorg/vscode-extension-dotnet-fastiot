@@ -48,7 +48,7 @@ export class SshConnection implements ISshConnection {
     this._sshKeyFileName="None";     
   }
 
-  private Init(host:string, port:number,
+  protected Init(host:string, port:number,
     userName:string, password?:string,
     sshKeystorePath?:string, sshKeyFileName?:string) {
     this._host=host;
@@ -191,8 +191,7 @@ export class SshConnection implements ISshConnection {
         `✔️ Host availability. Command: "ping";\n`+
         `✔️ Port ${sshconfig.port} availability;\n`+
         `❌ Authorization via ssh protocol.\n`+
-        `${trubleshootingText}.\n`+
-        `${result.toString()}`);
+        `${trubleshootingText}`);
     } else {
       //OK
       result.AddMessage(

@@ -7,32 +7,35 @@ import LogLevel = IoT.Enums.LogLevel;
 import { SshClient } from '../Shared/SshClient';
 import { TaskRunScript } from './TaskRunScript';
 import { TaskPutFile } from '../Shared/TaskPutFile';
+import { AddSBCConfigType } from '../Types/AddSBCConfigType';
+import { ClassWithEvent } from './ClassWithEvent';
+import { IoTHelper } from '../Helper/IoTHelper';
 
 export enum TasResult { None="None", OkNormal="OkNormal", OkForce="OkForce", Error="Error" };
 
-export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends Array<T> {
-
+export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends ClassWithEvent {
+  private _data:Array<T>;
+  public get Length(): number {
+    return  this._data.length;}
   /** Id, result */
   private _executionResult:Map<string,TasResult>= new Map<string,TasResult>();
 
-  private _createEvent:((message:string|IotResult,logLevel?:LogLevel) =>void)|undefined;
-  private _createEventProgress:((status:string,increment?:number) =>void)|undefined;
+  public constructor() {
+    super();
+    this._data=[];
+  }
 
-  public SetCallbacks(createEvent:((message:string|IotResult,logLevel?:LogLevel) =>void),
-                    createEventProgress:((status:string,increment?:number) =>void)) {
-    this._createEvent=createEvent;
-    this._createEventProgress=createEventProgress;
+  public Push(item:T): number {
+    return this._data.push(item);
   }
 
   public async Run(sshClient:SshClient,token?:vscode.CancellationToken): Promise<IotResult> {
     let result:IotResult| undefined;
-    for(var i = 0;i<this.length;i++) {
-      let task = this[i];
+    for(var i = 0;i<this.Length;i++) {
+      let task = this._data[i];
       //Event
-      if (this._createEvent)
-        this._createEvent(`step ${i+1} of ${this.length}. ${task.Label}`);
-      if (this._createEventProgress)
-        this._createEventProgress(`step ${i+1} of ${this.length}. ${task.Label}`);
+      this.CreateEvent( IoTHelper.FirstLetter(`step ${i+1} of ${this.Length}. ${task.Label}`));
+      this.CreateEventProgress(`step ${i+1} of ${this.Length}. ${task.Label}`);
       //***************************************************/
       //TaskRunScript
       if(task instanceof TaskRunScript ) {
@@ -43,8 +46,7 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends Array<T> {
         //Normal
         result = await sshClient.RunScript(
           fileNameScript,argumentScript,token,isStdout);
-        if (this._createEvent)
-          this._createEvent(result);
+        this.CreateEvent(result);
         if(result.Status==StatusResult.Ok) {
           //NormalMode Ok
           this._executionResult.set(task.Id,TasResult.OkNormal);
@@ -52,14 +54,12 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends Array<T> {
           //NormalMode Error
           //check force mode
           if(task.ForceModeFileNameScript) {
-            if (this._createEvent)
-              this._createEvent("********  Forced mode enabled ********");
+            this.CreateEvent("********  Forced mode enabled ********");
             fileNameScript=task.ForceModeFileNameScript;
             argumentScript=task.ForceModeArgumentScript;
             result = await sshClient.RunScript(
               fileNameScript,argumentScript,token,isStdout);
-            if (this._createEvent)
-              this._createEvent(result);
+            this.CreateEvent(result);
             if(result.Status==StatusResult.Ok)
               //ForceMode Ok
               this._executionResult.set(task.Id,TasResult.OkForce);
@@ -67,10 +67,8 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends Array<T> {
         }
         //Callback
         if(result.Status==StatusResult.Ok && task.ParseDataCallback) {
-          result = task.ParseDataCallback(
-            result.SystemMessage ?? "",fileNameScript,argumentScript);
-          if (this._createEvent)
-            this._createEvent(result);
+          result = task.ParseDataCallback(result.SystemMessage ?? "",task.ObjForDataCallback);
+          if(result.Status!=StatusResult.Ok) this.CreateEvent(result);
         }
       }
       //***************************************************/
@@ -78,8 +76,7 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends Array<T> {
       if(task instanceof TaskPutFile) {
         result = await sshClient.PutFile(
           task.DestFilePath,task.DataFile,task.FileType);
-        if (this._createEvent)
-          this._createEvent(result);
+        this.CreateEvent(result);
         if(result.Status==StatusResult.Ok)
           this._executionResult.set(task.Id,TasResult.OkNormal);
       }
@@ -109,34 +106,37 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends Array<T> {
     let str:string="";
     let counterTaskOk:number=0;
     result=`Task Checklist:\n`;
-    for(var i = 0;i<this.length;i++) {
-      let task = this[i];
+    for(var i = 0;i<this.Length;i++) {
+      let task = this._data[i];
       const taskResult = this._executionResult.get(task.Id);
       if (taskResult) {
         switch(taskResult) { 
           case TasResult.OkNormal: {
-            str=`✔️ ${i+1}) ${task.Label};\n`;
+            str=`🟢 ${i+1}. ${task.Label};`;
             counterTaskOk++;
             break; 
           } 
           case TasResult.OkForce: { 
-            str=`🟡 ${i+1}) ${task.Label} (in forced mode);\n`;
+            str=`🟡 ${i+1}. ${task.Label} (in forced mode);`;
             break; 
           }
           case TasResult.Error: { 
-            str=`❌ ${i+1}) ${task.Label};\n`;
+            str=`🔴 ${i+1}. ${task.Label};`;
             break; 
           } 
           default: { 
-            str=`⛔ ${i+1}) ${task.Label};\n`;
+            str=`⛔ ${i+1}. ${task.Label};`;
             break; 
           } 
         }
-        //add
-        result=`${str}\n`;
+      } else {
+        //not start
+        str=`⚪ ${i+1}. ${task.Label} (not start);`;
       }
+      //add
+      result=`${result}${str}\n`;
     }
-    result=`${result}Successfully completed ${counterTaskOk} out of ${this.length} tasks.`;
+    result=`${result}Successfully completed ${counterTaskOk} out of ${this.Length} tasks.`;
     //result
     return  result;
   }
@@ -146,10 +146,8 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends Array<T> {
    */
   public Dispose () {
     this._executionResult= new Map<string,TasResult>();
-    this._createEvent = undefined;
-    this._createEventProgress = undefined;
-    this.splice(0);
+    this._data.splice(0);
   }
 
- }
+}
   

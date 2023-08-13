@@ -64,7 +64,7 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
             cancellable: true
         }, (progress, token) => {
             token.onCancellationRequested(() => {
-                vscode.window.showWarningMessage(`${IoTHelper.FirstLetter(labelTask)}: cancel operation requested`);
+                vscode.window.showWarningMessage(`${IoTHelper.FirstLetter(labelTask)}: cancel operation requested. Wait for the operation to stop.`);
             });
             return new Promise(async (resolve, reject) => {
                 //event subscription
@@ -89,12 +89,11 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
                     addSBCConfig.host, addSBCConfig.port,
                     addSBCConfig.username, addSBCConfig.password ?? "None");
                 let resultConTest = await sshConnection.ConnectionTest();
-                app.UI.Output(resultConTest);
                 let forceMode=false;
                 if(resultConTest.Status!=StatusResult.Ok) {
                     // Force mode
                     const answer = await vscode.window.showWarningMessage(
-                        `⚠️ Failed to connect. Enable force add mode?`, ...["Yes", "No"]);
+                        `Failed to connect. Enable force add mode?`, ...["Yes", "No"]);
                     if(answer=="Yes") {
                         forceMode=true;
                     } else {
@@ -102,6 +101,7 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
                         return;
                     }
                 }
+                app.UI.Output(resultConTest);
                 //run
                 const result = await sbc.Create(addSBCConfig,token,forceMode);
                 //event unsubscription    

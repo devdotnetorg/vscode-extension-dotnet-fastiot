@@ -14,16 +14,17 @@ export abstract class TaskBase {
   private _label:string;
   public get Label(): string {
     return this._label;}
-  public ParseDataCallback:((data:string,fileNameScript:string,argumentScript?: ArgumentsCommandCli) =>IotResult)|undefined;
+  public ParseDataCallback:((data:string,obj?:any) =>IotResult)|undefined;
   private _isPossibleToSkip?:boolean;
   public get IsPossibleToSkip(): boolean| undefined {
     return this._isPossibleToSkip;}
   private _errorMessage?:string;
   public get ErrorMessage(): string| undefined {
     return this._errorMessage;}
+  public ObjForDataCallback?:any;
 
   constructor(label:string,
-    parseDataCallback:((data:string,fileNameScript:string,argumentScript?: ArgumentsCommandCli) =>IotResult)|undefined=undefined,
+    parseDataCallback:((data:string,obj?:any) =>IotResult)|undefined=undefined,
     isPossibleToSkip?:boolean, errorMessage?: string
     ){
       this._id=IoTHelper.CreateGuid();

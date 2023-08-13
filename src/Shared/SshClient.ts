@@ -33,6 +33,7 @@ export class SshClient extends ClassWithEvent {
   }
 
   public async Connect(sshConfig:SSHConfig,token?:vscode.CancellationToken): Promise<IotResult> {
+    // TODO: use token
     //connect
     let result:IotResult;
     //check IsActive IsConnected

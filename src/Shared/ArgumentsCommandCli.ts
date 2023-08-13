@@ -19,6 +19,10 @@ export class ArgumentsCommandCli {
     this._arguments.set(name,value);
   }
 
+  public GetArgument(name:string):string| undefined {
+    return this._arguments.get(name);
+  }
+
   public toString():string {
     let result:string="";
     this._arguments.forEach((value, key) => {

@@ -39,6 +39,13 @@ export class IoTSbcAccount extends SshConnection implements ISbcAccount {
     this._sshKeyTypeBits = "None";
   }
 
+  public fromLoginSshKey(host:string, port:number,
+    userName:string,
+    sshKeystorePath:string, sshKeyFileName:string,assignment?:AccountAssignment) {
+    this.Init(host,port,userName,undefined,sshKeystorePath,sshKeyFileName);
+    this._assignment=assignment ?? AccountAssignment.none;
+  }
+
   public ToJSON():SbcAccountType {
     //blank
     let obj:SbcAccountType = {
@@ -71,10 +78,12 @@ export class IoTSbcAccount extends SshConnection implements ISbcAccount {
       //get
       const userName= obj.username;
       const sshkeyfileName= obj.sshkeyfileName;
-      this.fromLoginSshKey(this.Host,this.Port,userName,this.SshKeystorePath ?? "None",sshkeyfileName);
+      this.fromLoginSshKey(
+        this.Host,this.Port,userName,
+        this.SshKeystorePath ?? "None",sshkeyfileName,
+        assignment);
       //
       this._groups=groupsAccount;
-      this._assignment=assignment;
       this._sshKeyTypeBits=obj.sshkeytypebits;
     } catch (err: any){}
   }

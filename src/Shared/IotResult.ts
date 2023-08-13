@@ -33,11 +33,21 @@ export class IotResult {
       this.logLevel=logLevel;
     }
 
-  public AddMessage = (value?: string) =>
-    {if(value) this._message=`${this._message}\n${value}`};
+  public AddMessage (value: string) {
+    if(this._message) {
+      this._message=`${this._message}\n${value}`;
+    }else {
+      this._message=value;
+    }
+  }
 
-  public AddSystemMessage= (value?: string) =>
-    {if(value) this._systemMessage=`${this._systemMessage}\n${value}`};
+  public AddSystemMessage (value: string) {
+    if(this._systemMessage) {
+      this._systemMessage=`${this._systemMessage}\n${value}`;
+    }else {
+      this._systemMessage=value;
+    }
+  }
 
   public toString():string{
     let msg=``;
