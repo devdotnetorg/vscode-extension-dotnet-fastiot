@@ -14,23 +14,24 @@ export abstract class TaskBase {
   private _label:string;
   public get Label(): string {
     return this._label;}
-  public ParseDataCallback:((data:string,obj?:any) =>IotResult)|undefined;
+  private _funcNameParseData?:string;
+  public get FuncNameParseData(): string| undefined {
+    return this._funcNameParseData;}
   private _isPossibleToSkip?:boolean;
   public get IsPossibleToSkip(): boolean| undefined {
     return this._isPossibleToSkip;}
   private _errorMessage?:string;
   public get ErrorMessage(): string| undefined {
     return this._errorMessage;}
-  public ObjForDataCallback?:any;
+  public ObjForFuncParseData?:any;
 
-  constructor(label:string,
-    parseDataCallback:((data:string,obj?:any) =>IotResult)|undefined=undefined,
+  constructor(label:string, funcNameParseData?:string,
     isPossibleToSkip?:boolean, errorMessage?: string
     ){
       this._id=IoTHelper.CreateGuid();
       this._label=label;
       //
-      this.ParseDataCallback=parseDataCallback;
+      this._funcNameParseData=funcNameParseData;
       this._isPossibleToSkip=isPossibleToSkip;
       this._errorMessage=errorMessage;
     }

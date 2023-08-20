@@ -42,6 +42,12 @@ export interface ISbc {
 
   ToJSON():SbcType;
   FromJSON(obj:SbcType):void;
+  
+  ParseGetInfo(data:string):IotResult;
+  ParseGetBoardName(data:string):IotResult;
+  ParseGetInfoArmbian(data:string):IotResult;
+  ParseGetSshKeyOfAccount(data:string,obj?:any):IotResult;
+  
   //ClassWithEvent
   OnChangedStateSubscribe(handler: Handler<IChangedStateEvent>):Handler<IChangedStateEvent>;
   OnChangedStateUnsubscribe(handler: Handler<IChangedStateEvent>):void;

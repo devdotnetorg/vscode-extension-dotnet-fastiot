@@ -10,6 +10,7 @@ import { TaskPutFile } from '../Shared/TaskPutFile';
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { ClassWithEvent } from './ClassWithEvent';
 import { IoTHelper } from '../Helper/IoTHelper';
+import { ISbc } from '../Sbc/ISbc';
 
 export enum TasResult { None="None", OkNormal="OkNormal", OkForce="OkForce", Error="Error" };
 
@@ -29,7 +30,7 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends ClassWithEv
     return this._data.push(item);
   }
 
-  public async Run(sshClient:SshClient,token?:vscode.CancellationToken): Promise<IotResult> {
+  public async Run(sshClient:SshClient, sbc: ISbc, token?:vscode.CancellationToken): Promise<IotResult> {
     let result:IotResult| undefined;
     for(var i = 0;i<this.Length;i++) {
       let task = this._data[i];
@@ -42,7 +43,7 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends ClassWithEv
         let fileNameScript=task.NormalModeFileNameScript;
         let argumentScript=task.NormalModeArgumentScript;
         let isStdout:boolean=false;
-        if(task.ParseDataCallback) isStdout=true;
+        if(task.FuncNameParseData) isStdout=true;
         //Normal
         result = await sshClient.RunScript(
           fileNameScript,argumentScript,token,isStdout);
@@ -66,8 +67,15 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends ClassWithEv
           }
         }
         //Callback
-        if(result.Status==StatusResult.Ok && task.ParseDataCallback) {
-          result = task.ParseDataCallback(result.SystemMessage ?? "",task.ObjForDataCallback);
+        if(result.Status==StatusResult.Ok && task.FuncNameParseData) {
+          //
+          let functionName:string;
+          if(!task.ObjForFuncParseData) {
+            functionName=`sbc.${task.FuncNameParseData}(result.SystemMessage ?? "")`;
+          }else {
+            functionName= `sbc.${task.FuncNameParseData}(result.SystemMessage ?? "",task.ObjForFuncParseData)`;
+          }
+          result = <IotResult> eval(functionName);
           if(result.Status!=StatusResult.Ok) this.CreateEvent(result);
         }
       }

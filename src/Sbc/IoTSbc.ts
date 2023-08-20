@@ -191,7 +191,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "Getting data",
       "2_getinfo",undefined,
       undefined,undefined,
-      this.ParseGetInfo);
+      "ParseGetInfo");
     taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 3_getboardname.sh
@@ -200,7 +200,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "Getting board name",
       "3_getboardname",undefined,
       undefined,undefined,
-      this.ParseGetBoardName,true);
+      "ParseGetBoardName",true);
     taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 4_getinfoarmbian.sh
@@ -209,13 +209,14 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "Getting information about Armbian",
       "4_getinfoarmbian",undefined,
       undefined,undefined,
-      this.ParseGetInfoArmbian,true);
+      "ParseGetInfoArmbian",true);
     taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 5_createaccount.sh
     // debugvscode
     argumentsCommandCliNormal = new ArgumentsCommandCli();
     argumentsCommandCliNormal.AddArgument("username",addSBCConfig.debugusername);
+    argumentsCommandCliNormal.AddArgument("sshkeytypebits",addSBCConfig.sshkeytypebits ?? "");
     taskRunScript = new TaskRunScript(
       `Create an account '${addSBCConfig.debugusername}'`,
       "5_createaccount",argumentsCommandCliNormal);
@@ -228,22 +229,22 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       `Get ssh key of account '${addSBCConfig.debugusername}'`,
       "6_getsshkeyofaccount",argumentsCommandCliNormal,
       undefined,undefined,
-      this.ParseGetSshKeyOfAccount);
+      "ParseGetSshKeyOfAccount");
     // obj.username:string, obj.sshkeytypebits:string,
     // obj.keyssbcpath:string, obj.assignment:AccountAssignment
-    let objForDataCallback = {
-      username:addSBCConfig.debugusername,
-      sshkeytypebits:addSBCConfig.sshkeytypebits,
-      keyssbcpath:app.Config.Folder.KeysSbc,
-      assignment:AccountAssignment.debug
-    }
-    taskRunScript.ObjForDataCallback=objForDataCallback;
+    taskRunScript.ObjForFuncParseData={
+        username:addSBCConfig.debugusername,
+        sshkeytypebits:addSBCConfig.sshkeytypebits,
+        keyssbcpath:app.Config.Folder.KeysSbc,
+        assignment:AccountAssignment.debug
+      };
     taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 5_createaccount.sh
     // managementvscode
     argumentsCommandCliNormal = new ArgumentsCommandCli();
     argumentsCommandCliNormal.AddArgument("username",addSBCConfig.managementusername);
+    argumentsCommandCliNormal.AddArgument("sshkeytypebits",addSBCConfig.sshkeytypebits ?? "");
     taskRunScript = new TaskRunScript(
       `Create an account '${addSBCConfig.managementusername}'`,
       "5_createaccount",argumentsCommandCliNormal);
@@ -256,12 +257,15 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       `Get ssh key of account '${addSBCConfig.managementusername}'`,
       "6_getsshkeyofaccount",argumentsCommandCliNormal,
       undefined,undefined,
-      this.ParseGetSshKeyOfAccount);
+      "ParseGetSshKeyOfAccount");
     // obj.username:string, obj.sshkeytypebits:string,
     // obj.keyssbcpath:string, obj.assignment:AccountAssignment
-    objForDataCallback.username=addSBCConfig.managementusername;
-    objForDataCallback.assignment=AccountAssignment.management;
-    taskRunScript.ObjForDataCallback=objForDataCallback;
+    taskRunScript.ObjForFuncParseData={
+      username:addSBCConfig.managementusername,
+      sshkeytypebits:addSBCConfig.sshkeytypebits,
+      keyssbcpath:app.Config.Folder.KeysSbc,
+      assignment:AccountAssignment.management
+    };
     taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 7_addusertogroups.sh
@@ -272,7 +276,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     argumentsCommandCliNormal.AddArgument("creategroup","yes");
     taskRunScript = new TaskRunScript(
       `Adding the user '${addSBCConfig.debugusername}' to the group(s) '${IoTHelper.ArrayToString(addSBCConfig.debuggroups ?? [],',')}'`,
-      "6_addusertogroups",argumentsCommandCliNormal);
+      "7_addusertogroups",argumentsCommandCliNormal);
     taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 7_addusertogroups.sh
@@ -282,7 +286,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     argumentsCommandCliNormal.AddArgument("groups", IoTHelper.ArrayToString(addSBCConfig.managementgroups ?? [],','));
     taskRunScript = new TaskRunScript(
       `Adding the user '${addSBCConfig.managementusername}' to the group(s) '${IoTHelper.ArrayToString(addSBCConfig.managementgroups ?? [],',')}'`,
-      "6_addusertogroups",argumentsCommandCliNormal);
+      "7_addusertogroups",argumentsCommandCliNormal);
     taskQueue.Push(taskRunScript);
     // ********************************************************************
     // 8_changeconfigssh.sh
@@ -293,42 +297,41 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       undefined,undefined,
       undefined,true);
     taskQueue.Push(taskRunScript);
-    // ********************************************************************
-    // Copying the udev rules file
-    // put file 20-gpio-fastiot.rules in folder /etc/udev/rules.d
+    // udev rules
     const filenameudevrules = addSBCConfig.filenameudevrules;
     if(filenameudevrules!="None") {
+      // ********************************************************************
+      // Copying the udev rules file
+      // put file 20-gpio-fastiot.rules in folder /etc/udev/rules.d
       result = app.Config.Sbc.GetFileUdevRules(filenameudevrules);
       if(result.Status==StatusResult.Ok) {
         //event unsubscription
         const dataFile=<string>result.returnObject;
         const destFilePath=
           `${Constants.folderDestForFileUdevRules}/${filenameudevrules}`;
-        taskPutFile = new TaskPutFile("Copying the udev rules file",
+        taskPutFile = new TaskPutFile(`Copying the udev rules file '${filenameudevrules}'`,
           destFilePath, dataFile);
         //
         taskQueue.Push(taskPutFile);
       }else {
         this.CreateEvent(result);
       }
+      // ********************************************************************
+      // 9_applyudevrules.sh
+      // force: if it fails, then pass
+      taskRunScript = new TaskRunScript(
+        `Apply udev rules`,
+        "9_applyudevrules",undefined,
+        undefined,undefined,
+        undefined,true);
+      taskQueue.Push(taskRunScript);
     }
-    // ********************************************************************
-    // 9_applyudevrules.sh
-    // force: if it fails, then pass
-    taskRunScript = new TaskRunScript(
-      `Apply udev rules`,
-      "9_applyudevrules",undefined,
-      undefined,undefined,
-      undefined,true);
-    taskQueue.Push(taskRunScript);
     // run taskQueue
-    result = await taskQueue.Run(sshClient,token);
-    //report
-    result.AddMessage(taskQueue.GetReport());
+    result = await taskQueue.Run(sshClient,this,token);
+    //
     if(result.Status==StatusResult.Ok) {
-      //TODO: check debugvscode ROOT == managementvscode ROOT
-
-
+      //report
+      this.CreateEvent(taskQueue.GetReport());
       result=new IotResult(StatusResult.Ok,`Single-board computer profile created`);
     }else {
       result.AddMessage("Single-board computer profile creation error");
@@ -549,7 +552,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       const keysSbcPath=<string>obj.keyssbcpath;
       const assignment=<AccountAssignment> obj.assignment;
       // fileName: b61e0cdc-orangepipc-debugvscode-ed25519-256
-      const fileName=`${this.Id}-${this.HostName}-${userName}-${sshKeyTypeBits}`;
+      const fileName=`key-${this.Id}-${this.HostName}-${userName}-${sshKeyTypeBits}`;
       var keyFilePath = path.join(keysSbcPath, fileName);
       //write key
       fs.writeFileSync(keyFilePath,data,undefined);

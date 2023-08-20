@@ -24,10 +24,10 @@ export class TaskRunScript extends TaskBase {
   constructor(label:string,
     normalModeFileNameScript:string, normalModeArgumentScript?:ArgumentsCommandCli,
     forceModeFileNameScript?:string, forceModeArgumentScript?: ArgumentsCommandCli,
-    parseDataCallback:((data:string,obj?:any) =>IotResult)|undefined=undefined,
+    funcNameParseData?:string,
     isPossibleToSkip?:boolean, errorMessage?: string
     ){
-      super(label,parseDataCallback,isPossibleToSkip,errorMessage);
+      super(label,funcNameParseData,isPossibleToSkip,errorMessage);
       //
       this._normalModeFileNameScript=normalModeFileNameScript;
       this._normalModeArgumentScript=normalModeArgumentScript;
