@@ -41,9 +41,10 @@ export class IoTSbcAccount extends SshConnection implements ISbcAccount {
 
   public fromLoginSshKey(host:string, port:number,
     userName:string,
-    sshKeystorePath:string, sshKeyFileName:string,assignment?:AccountAssignment) {
+    sshKeystorePath:string, sshKeyFileName:string,assignment?:AccountAssignment,groups?:Array<string>) {
     this.Init(host,port,userName,undefined,sshKeystorePath,sshKeyFileName);
     this._assignment=assignment ?? AccountAssignment.none;
+    this._groups = groups ?? [];
   }
 
   public ToJSON():SbcAccountType {
@@ -53,7 +54,7 @@ export class IoTSbcAccount extends SshConnection implements ISbcAccount {
       groups: "None",
       assignment: "None",
       sshkeytypebits: "None",
-      sshkeyfileName: "None"
+      sshkeyfilename: "None"
     };
     try {
       const groupsAccount = IoTHelper.ArrayToString(this.Groups,',');
@@ -64,7 +65,7 @@ export class IoTSbcAccount extends SshConnection implements ISbcAccount {
         groups:groupsAccount,
         assignment:assignmentStr,
         sshkeytypebits: this.SshKeyTypeBits,
-        sshkeyfileName: this.SshKeyFileName?? "None"
+        sshkeyfilename: this.SshKeyFileName?? "None"
       };
   } catch (err: any){}
     //result
@@ -77,7 +78,7 @@ export class IoTSbcAccount extends SshConnection implements ISbcAccount {
       const assignment = enumHelper.GetAccountAssignmentByName(obj.assignment);
       //get
       const userName= obj.username;
-      const sshkeyfileName= obj.sshkeyfileName;
+      const sshkeyfileName= obj.sshkeyfilename;
       this.fromLoginSshKey(
         this.Host,this.Port,userName,
         this.SshKeystorePath ?? "None",sshkeyfileName,

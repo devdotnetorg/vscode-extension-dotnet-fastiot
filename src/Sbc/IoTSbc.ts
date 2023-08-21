@@ -39,9 +39,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   private _id:string;
   public get Id(): string {
     return this._id;}
-  private _label:string;
-  public get  Label(): string {
-    return this._label;}
+  public Label: string;
   private _host:string;
   public get Host(): string {
     return this._host;}
@@ -90,7 +88,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   constructor() {
     super();
 		this._id = IoTHelper.CreateGuid();
-    this._label = "None";
+    this.Label = "None";
     this._host = "None";
     this._port = 0;
     this._existence = Existence.none;
@@ -232,11 +230,13 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       "ParseGetSshKeyOfAccount");
     // obj.username:string, obj.sshkeytypebits:string,
     // obj.keyssbcpath:string, obj.assignment:AccountAssignment
+    addSBCConfig.managementgroups
     taskRunScript.ObjForFuncParseData={
         username:addSBCConfig.debugusername,
         sshkeytypebits:addSBCConfig.sshkeytypebits,
         keyssbcpath:app.Config.Folder.KeysSbc,
-        assignment:AccountAssignment.debug
+        assignment:AccountAssignment.debug,
+        groups: addSBCConfig.debuggroups ?? []
       };
     taskQueue.Push(taskRunScript);
     // ********************************************************************
@@ -264,7 +264,8 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       username:addSBCConfig.managementusername,
       sshkeytypebits:addSBCConfig.sshkeytypebits,
       keyssbcpath:app.Config.Folder.KeysSbc,
-      assignment:AccountAssignment.management
+      assignment:AccountAssignment.management,
+      groups: addSBCConfig.managementgroups ?? []
     };
     taskQueue.Push(taskRunScript);
     // ********************************************************************
@@ -330,6 +331,9 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     result = await taskQueue.Run(sshClient,this,token);
     //
     if(result.Status==StatusResult.Ok) {
+      //set
+      this.Label=this.HostName;
+      this._existence=Existence.native;
       //report
       this.CreateEvent(taskQueue.GetReport());
       result=new IotResult(StatusResult.Ok,`Single-board computer profile created`);
@@ -459,7 +463,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   public FromJSON(obj:SbcType) {
     try {
       this._id = obj.id;
-      this._label = obj.label;
+      this.Label = obj.label;
       this._host = obj.host;
       this._port = obj.port;
       const existence = enumHelper.GetExistenceByName(obj.existence);
@@ -551,6 +555,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       const sshKeyTypeBits = <string>obj.sshkeytypebits;
       const keysSbcPath=<string>obj.keyssbcpath;
       const assignment=<AccountAssignment> obj.assignment;
+      const groups=<string[]> obj.groups;
       // fileName: b61e0cdc-orangepipc-debugvscode-ed25519-256
       const fileName=`key-${this.Id}-${this.HostName}-${userName}-${sshKeyTypeBits}`;
       var keyFilePath = path.join(keysSbcPath, fileName);
@@ -559,7 +564,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       //create account
       const account:ISbcAccount = new IoTSbcAccount(
         this.Host,this.Port,keysSbcPath);
-      account.fromLoginSshKey(this.Host,this.Port,userName,keysSbcPath,fileName,assignment);
+      account.fromLoginSshKey(this.Host,this.Port,userName,keysSbcPath,fileName,assignment,groups);
       //add account
       this.Accounts.push(account);
     } catch (err: any){

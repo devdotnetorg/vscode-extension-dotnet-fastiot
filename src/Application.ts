@@ -14,6 +14,10 @@ import { Constants } from "./Constants";
 import { UI } from './ui/UI';
 import { IoT } from './Types/Enums';
 import EntityEnum = IoT.Enums.Entity;
+import { IoTSbcCollection } from './Sbc/IoTSbcCollection';
+import { ISbc } from './Sbc/ISbc';
+import { IoTSbc } from './Sbc/IoTSbc';
+import { IConfigSbcCollection } from './Sbc/IConfigSbcCollection';
 
 export class ApplicationBuilder {
   private _instance: IoTApplication;
@@ -25,6 +29,7 @@ export class ApplicationBuilder {
   public BuildUI = (value:IContexUI) => this._instance.UI=value;
   public BuildConfig = (value:IConfiguration) => this._instance.Config=value;
   public BuildTemplates = (value:IotTemplateCollection) => this._instance.Templates=value;
+  public BuildSBCs = (value:IoTSbcCollection<ISbc>) => this._instance.SBCs=value;
   /**
    * Get instance IoTApplication
    */
@@ -73,13 +78,27 @@ export function BuildApplication(context: vscode.ExtensionContext):IoTApplicatio
 		saveLastUpdateHours:saveLastUpdateHours
 	};
 
-
 	let templates= new IotTemplateCollection(configTemplateCollection);
+
+	//SBCs
+	const getProfilesSBC = ():string => {
+		return config.Sbc.ProfilesSBCJson;
+	};
+  
+	const setProfilesSBC = (value:string):void=> {config.Sbc.ProfilesSBCJson=value};
+  
+	const configSbcCollection :IConfigSbcCollection = {
+		getProfilesSBCJson: getProfilesSBC,
+		setProfilesSBCJson: setProfilesSBC
+	};
+
+	let SBCs = new IoTSbcCollection<ISbc>(IoTSbc,configSbcCollection);
 	//Build
 	let applicationBuilder = new ApplicationBuilder();
 	applicationBuilder.BuildUI(contextUI);
 	applicationBuilder.BuildConfig(config);
 	applicationBuilder.BuildTemplates(templates);
+	applicationBuilder.BuildSBCs(SBCs);
 	let app = applicationBuilder.getInstance();
 	//Init AppDomain
 	const appDomain = AppDomain.getInstance();

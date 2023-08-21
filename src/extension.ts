@@ -89,6 +89,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	app.UI.Output("GitHub: https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot");
 	app.UI.Output("----------------------------------");
 
+	//SBCs
+	let result:IotResult;
+	result=app.SBCs.Load();
+	if(StatusResult.Ok!=result.Status) app.UI.Output(result);
 	//Templates
 	const loadTemplatesExt = async () => {
 		//Checking if templates need to be updated after updating an extension

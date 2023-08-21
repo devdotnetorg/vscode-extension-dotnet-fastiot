@@ -16,7 +16,7 @@ import { IotConfigurationEntity } from './IotConfigurationEntity';
 import { IotConfigurationExtension } from './IotConfigurationExtension';
 import { IotConfigurationFolder } from './IotConfigurationFolder';
 import { IotConfigurationTemplate } from './IotConfigurationTemplate';
-//
+import { SbcType } from '../Types/SbcType';
 
 export class IotConfigurationSbc implements IConfigurationSbc{
   private _builtInConfig: IotBuiltInConfig;
@@ -59,10 +59,10 @@ export class IotConfigurationSbc implements IConfigurationSbc{
     this._builtInConfig.PreviousHostSbcWhenAdding=value;
     this._builtInConfig.Save();}
   //SBCs storage
-  public get ProfilesSBCJson():any {
-    return <string>vscode.workspace.getConfiguration().get('fastiot.sbc.profiles.JSON');}
-  public set ProfilesSBCJson(data:any) {
-      vscode.workspace.getConfiguration().update('fastiot.sbc.profiles.JSON',data,true);}
+  public get ProfilesSBCJson():string {
+    return this.GetProfilesSBCJson();}
+  public set ProfilesSBCJson(data:string) {
+    this.SetProfilesSBCJson(data);}
 
   constructor(builtInConfig: IotBuiltInConfig, configurationFolder: IConfigurationFolder) {
     this._builtInConfig=builtInConfig;
@@ -142,6 +142,42 @@ export class IotConfigurationSbc implements IConfigurationSbc{
     }
     //result
     return result;
+  }
+
+  /** obj.sbcs: SbcType[],
+   * return string
+  */
+  private GetProfilesSBCJson():string {
+    let result = "{}";
+    try {
+      let objJSON = <string>vscode.workspace.getConfiguration().get('fastiot.sbc.profiles.JSON');
+      result=JSON.stringify(objJSON);
+    } catch (err: any){}
+    return result;
+  }
+
+  /** obj.sbcs: SbcType[],
+   * return string
+  */
+  private SetProfilesSBCJson(data:string) {
+    try {
+      let inputObj = JSON.parse(data);
+      //form old version
+      let newObj = JSON.parse(this.ProfilesSBCJson);
+      //obj.sbcs
+      if(inputObj.sbcs) {
+        //remove previous version
+        if(newObj.sbcs) {
+          newObj.sbcs = undefined;
+        }
+        //add
+        newObj.sbcs=inputObj.sbcs;
+      }
+      //result
+      vscode.workspace.getConfiguration().update('fastiot.sbc.profiles.JSON',newObj,true);
+    } catch (err: any){
+      let aa=err;
+    }
   }
 
 }

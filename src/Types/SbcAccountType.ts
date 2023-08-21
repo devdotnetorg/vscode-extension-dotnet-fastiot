@@ -6,5 +6,5 @@ export type SbcAccountType = {
    groups:string;
    assignment:string;
    sshkeytypebits: string;
-   sshkeyfileName: string;
+   sshkeyfilename: string;
 };

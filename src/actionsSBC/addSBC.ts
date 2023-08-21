@@ -103,7 +103,7 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
                 }
                 app.UI.Output(resultConTest);
                 //run
-                const result = await sbc.Create(addSBCConfig,token,forceMode);
+                let result = await sbc.Create(addSBCConfig,token,forceMode);
                 //event unsubscription    
                 sbc.OnChangedStateUnsubscribe(handler);
                 resolve(result);
@@ -116,17 +116,21 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
         app.UI.Output(result.toStringWithHead());
         //Message
         app.UI.ShowNotification(result);
-        /*
         if(result.Status==StatusResult.Ok) {
-            //get device
-            const newDevice=<IotDevice>result.returnObject;
-            //Connection test
-            connectionTestDevice(treeData,newDevice, app.UI);
-            //Set focus
-            treeView.reveal(newDevice, {focus: true});
+            //add in collection
+            result=app.SBCs.Add(sbc);
+            if(result.Status==StatusResult.Ok) {
+                //save
+                app.SBCs.Save();
+                //Connection test
+                //connectionTestDevice(treeData,newDevice, app.UI);
+                //Set focus
+                //treeView.reveal(newDevice, {focus: true});
+            }else {
+                app.UI.Output(result);
+            }  
+          
         }
-        */
-       //Mode: force
        
 }
 

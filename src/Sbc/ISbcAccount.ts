@@ -16,7 +16,7 @@ export interface ISbcAccount extends ISshConnection {
   SshKeyTypeBits: string;
   fromLoginSshKey(host:string, port:number,
     userName:string,
-    sshKeystorePath:string, sshKeyFileName:string,assignment?:AccountAssignment):void;
+    sshKeystorePath:string, sshKeyFileName:string,assignment?:AccountAssignment,groups?:Array<string>):void;
   ToJSON():SbcAccountType;
   FromJSON(obj:SbcAccountType):void;
 }
