@@ -7,6 +7,7 @@ import LogLevel = IoT.Enums.LogLevel;
 import { SshClient } from '../Shared/SshClient';
 import { TaskRunScript } from './TaskRunScript';
 import { TaskPutFile } from '../Shared/TaskPutFile';
+import { TaskGetFile } from '../Shared/TaskGetFile';
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { ClassWithEvent } from './ClassWithEvent';
 import { IoTHelper } from '../Helper/IoTHelper';
@@ -14,7 +15,7 @@ import { ISbc } from '../Sbc/ISbc';
 
 export enum TasResult { None="None", OkNormal="OkNormal", OkForce="OkForce", Error="Error" };
 
-export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends ClassWithEvent {
+export class TaskQueue <T extends TaskRunScript|TaskPutFile|TaskGetFile> extends ClassWithEvent {
   private _data:Array<T>;
   public get Length(): number {
     return  this._data.length;}
@@ -68,7 +69,6 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends ClassWithEv
         }
         //Callback
         if(result.Status==StatusResult.Ok && task.FuncNameParseData) {
-          //
           let functionName:string;
           if(!task.ObjForFuncParseData) {
             functionName=`sbc.${task.FuncNameParseData}(result.SystemMessage ?? "")`;
@@ -87,6 +87,24 @@ export class TaskQueue <T extends TaskRunScript|TaskPutFile> extends ClassWithEv
         this.CreateEvent(result);
         if(result.Status==StatusResult.Ok)
           this._executionResult.set(task.Id,TasResult.OkNormal);
+      }
+      //***************************************************/
+      //TaskGetFile
+      if(task instanceof TaskGetFile) {
+        result = await sshClient.GetFile(task.FilePath);
+        //Callback
+        if(result.Status==StatusResult.Ok && task.FuncNameParseData) {
+          let functionName:string;
+          if(!task.ObjForFuncParseData) {
+            functionName=`sbc.${task.FuncNameParseData}(result.SystemMessage ?? "")`;
+          }else {
+            functionName= `sbc.${task.FuncNameParseData}(result.SystemMessage ?? "",task.ObjForFuncParseData)`;
+          }
+          result = <IotResult> eval(functionName);
+          if(result.Status!=StatusResult.Ok) this.CreateEvent(result);
+        }
+        if(result.Status==StatusResult.Ok)
+          this._executionResult.set(task.Id,TasResult.OkNormal); 
       }
       //***************************************************/
       //result

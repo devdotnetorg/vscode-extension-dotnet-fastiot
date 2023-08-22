@@ -19,8 +19,7 @@ export interface ISshConnection {
   fromLoginPass(host:string, port:number,
     userName:string, password:string): void;
   fromLoginSshKey(host:string, port:number,
-    userName:string,
-    sshKeystorePath:string, sshKeyFileName:string): void;
+    userName:string, sshKeystorePath:string, sshKeyFileName:string): void;
   GetSshKeyPath():string| undefined;
   /** OK - file exists, No - if the file does not exist, Error - no data */
   IsExistsSshKey():IotResult;

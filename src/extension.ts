@@ -27,13 +27,14 @@ import { IotDevice } from './IotDevice';
 import { IotDevicePackage } from './IotDevicePackage';
 import { IotDeviceDTO } from './IotDeviceDTO';
 import { IotDeviceGpiochip } from './IotDeviceGpiochip';
-//Devices.actions
+//SBCs.actions
 import { addSBC } from './actionsSBC/addSBC';
 import { discoverySBC } from './actionsSBC/discoverySBC';
+import { connectionTestSBC } from './actionsSBC/connectionTestSBC';
+
 import { refreshDevices } from './actionsDevice/refreshDevices';
 import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
 import { deleteDevice } from './actionsDevice/deleteDevice';
-import { connectionTestDevice } from './actionsDevice/connectionTestDevice';
 import { rebootDevice } from './actionsDevice/rebootDevice';
 import { shutdownDevice } from './actionsDevice/shutdownDevice';
 import { renameDevice } from './actionsDevice/renameDevice';
@@ -156,11 +157,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	//Add new SBC
 	let commandAddSbc = vscode.commands.registerCommand('viewDevices.AddSbc', () => {	
-		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,Dialog.standard);	
+		addSBC(Dialog.standard);	
 	});
 	//Add new SBC ExtMode
 	let commandAddSbcExtMode = vscode.commands.registerCommand('viewDevices.AddSbcExtMode', () => {	
-		addSBC(treeDataDevicesProvider,vscodeTreeViewDevices,Dialog.webview);	
+		addSBC(Dialog.webview);	
 	});
 	//Sbc discovery
 	let commandDiscoverySbc = vscode.commands.registerCommand('viewDevices.DiscoverySbc', () => {
@@ -184,7 +185,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Ping Device
 	let commandPingDevice = vscode.commands.registerCommand("viewDevices.ConnectionTestDevice", (item:IotDevice) => {
-		connectionTestDevice(treeDataDevicesProvider,item,app.UI);
+		//connectionTestSBC(treeDataDevicesProvider,item,app.UI);
 	});
 	//Reboot Device
 	let commandRebootDevice = vscode.commands.registerCommand("viewDevices.RebootDevice", (item:IotDevice) => {

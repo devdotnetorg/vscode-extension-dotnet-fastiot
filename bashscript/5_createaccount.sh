@@ -86,6 +86,9 @@ NAMEHOST="$(uname -n)"
 ssh-keygen -t $TYPEKEY -b $BITS -f $HOMEDIR/.ssh/id_$TYPEKEY -C $NEWUSERNAME@$NAMEHOST -N ""
 cat $HOMEDIR/.ssh/id_$TYPEKEY.pub > $HOMEDIR/.ssh/authorized_keys
 
+#copy file for get
+cp $HOMEDIR/.ssh/id_$TYPEKEY ~/vscode_authorized_key
+
 echo "Created access keys '$HOMEDIR/.ssh/id_$TYPEKEY' and '$HOMEDIR/.ssh/id_$TYPEKEY.pub' for account '$NEWUSERNAME'"
 
 echo "Successfully"

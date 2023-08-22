@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run: 
-# chmod +x 9_applyudevrules.sh
-# ./9_applyudevrules.sh
+# chmod +x 8_applyudevrules.sh
+# ./8_applyudevrules.sh
 
 set -e #Exit immediately if a comman returns a non-zero status
 

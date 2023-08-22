@@ -162,7 +162,7 @@ export class IoTSbcCollection <T extends ISbc> {
           }
           //next position
           index=index+1;
-        }else break;      
+        }else break;
       } while(true)
       //result
       result = new IotResult(StatusResult.Ok,`Imported ${importedSbcs} of ${index} SBCs.`);

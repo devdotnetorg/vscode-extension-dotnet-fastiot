@@ -1,8 +1,8 @@
 #!/bin/bash
 # Run: 
-# chmod +x 7_addusertogroups.sh
-# ./7_addusertogroups.sh --username debugvscode --groups gpio,video,i2c --creategroup yes
-# ./7_addusertogroups.sh --username managementvscode --groups sudo
+# chmod +x 6_addusertogroups.sh
+# ./6_addusertogroups.sh --username debugvscode --groups gpio,video,i2c --creategroup yes
+# ./6_addusertogroups.sh --username managementvscode --groups sudo
 # arguments:
 # -c|--creategroup: yes or no, create group if they don't exist
 
@@ -11,7 +11,7 @@
 
 set -e #Exit immediately if a comman returns a non-zero status
 
-echo "Run: 7_addusertogroups.sh"
+echo "Run: 6_addusertogroups.sh"
 
 # definition of variables
 declare ID_OS=("$(cat /etc/*release | grep '^ID=' | sed 's/.*=\s*//')") # ubuntu, debian, alpine

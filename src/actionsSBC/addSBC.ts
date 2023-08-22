@@ -13,15 +13,14 @@ import Dialog = IoT.Enums.Dialog;
 import { IoTApplication } from '../IoTApplication';
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { AddSBCPanelSingleton } from '../Panels/AddSBCPanelSingleton';
-import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
+import { connectionTestSBC } from './connectionTestSBC';
 import { ISbc } from '../Sbc/ISbc';
 import { IoTSbc } from '../Sbc/IoTSbc';
 import { AppDomain } from '../AppDomain';
 import { ISshConnection } from '../Shared/ISshConnection';
 import { SshConnection } from '../Shared/SshConnection';
 
-export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem_d>,
-    dialogType:Dialog, host?:string, port?:number): Promise<void> {
+export async function addSBC(dialogType:Dialog, host?:string, port?:number): Promise<void> {
         const app = AppDomain.getInstance().CurrentApp;
         //fill host, port
         if(!host) host= app.Config.Sbc.PreviousHostWhenAdding;
@@ -110,26 +109,28 @@ export async function addSBC(treeData: TreeDataDevicesProvider,treeView:vscode.T
                 //end
             });
         });
-        if(!result) return;
         if(guidBadge) app.UI.BadgeDeleteItem(guidBadge);
+        if(!result) return;
         //Output
         app.UI.Output(result.toStringWithHead());
-        //Message
-        app.UI.ShowNotification(result);
         if(result.Status==StatusResult.Ok) {
             //add in collection
             result=app.SBCs.Add(sbc);
             if(result.Status==StatusResult.Ok) {
                 //save
                 app.SBCs.Save();
+                //Message
+                result=new IotResult(StatusResult.Ok,`SBC added successfully 🎉! SBC: ${sbc.Label}`);
+                app.UI.ShowNotification(result);
                 //Connection test
-                //connectionTestDevice(treeData,newDevice, app.UI);
+                connectionTestSBC(sbc.Accounts);
                 //Set focus
                 //treeView.reveal(newDevice, {focus: true});
             }else {
+                //Message
+                app.UI.ShowNotification(result);
                 app.UI.Output(result);
-            }  
-          
+            }
         }
        
 }

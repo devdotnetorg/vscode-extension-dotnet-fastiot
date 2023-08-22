@@ -7,7 +7,7 @@ import { IDevice } from 'local-devices'
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
+//import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
 import { IotDevice } from '../IotDevice';
 import { BaseTreeItem_d } from '../shared/BaseTreeItem_d';
 import { ItemQuickPick } from '../Helper/actionHelper';
@@ -162,7 +162,7 @@ export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vs
         //add Sbc
         const nameHost=SELECTED_ITEM.value;
         const portHost=+SELECTED_ITEM.tag;
-        addSBC(treeData,treeView,Dialog.webview,nameHost,portHost);
+        addSBC(Dialog.webview,nameHost,portHost);
     } catch (err: any){
         vscode.window.showErrorMessage(`⚠️ Error: ${err}.`);
     }
