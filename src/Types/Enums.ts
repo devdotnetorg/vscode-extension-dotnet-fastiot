@@ -66,4 +66,12 @@ export namespace IoT.Enums
         debug  = "debug",
         management = "management"
     }
+
+    export enum ChangeCommand {
+        none = "none",
+        add  = "add",
+        remove = "remove",
+        update = "update",
+        clear = "clear"
+    }
 }

@@ -5,6 +5,8 @@ import { SbcTreeItemNode } from './SbcTreeItemNode';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { ISbc } from '../Sbc/ISbc';
 import { IoTHelper } from '../Helper/IoTHelper';
+import { IoT } from '../Types/Enums';
+import AccountAssignment = IoT.Enums.AccountAssignment;
 
 export class SbcNode extends SbcTreeItemNode {
   public Parent: undefined;
@@ -18,6 +20,7 @@ export class SbcNode extends SbcTreeItemNode {
     //view
     this.IdSbc=sbc.Id;
     this.label=sbc.Label;
+    this.description=sbc.Architecture;
     this.iconPath = new vscode.ThemeIcon("circuit-board");
     this.contextValue="iotsbc";
     //Childs
@@ -29,8 +32,8 @@ export class SbcNode extends SbcTreeItemNode {
     this.Information = new SbcTreeItemNode("Information",undefined,"Sbc info",
       vscode.TreeItemCollapsibleState.Collapsed,this);
     this.Information.iconPath = {
-      light: path.join(__filename, '..', '..', 'resources', 'light', 'info_20.svg'),
-      dark: path.join(__filename, '..', '..', 'resources', 'dark', 'info_20.svg')
+      light: path.join(__filename, '..', '..', '..', 'resources', 'light', 'info_20.svg'),
+      dark: path.join(__filename,'..', '..', '..', 'resources', 'dark', 'info_20.svg')
     };
     //Added in childs
     this.Childs.push(this.Connection);
@@ -51,8 +54,8 @@ export class SbcNode extends SbcTreeItemNode {
   private BuildConnection(sbc: ISbc) {
     //main
     const iconError = {
-      light: path.join(__filename, '..', '..', 'resources', 'light', 'error.svg'),
-      dark: path.join(__filename, '..', '..', 'resources', 'dark', 'error.svg')
+      light: path.join(__filename,'..', '..', '..', 'resources', 'light', 'error.svg'),
+      dark: path.join(__filename,'..', '..', '..', 'resources', 'dark', 'error.svg')
     };
     //create child elements
     this.Connection.Childs=[];
@@ -64,10 +67,30 @@ export class SbcNode extends SbcTreeItemNode {
     this.Connection.Childs.push(item);
     //Accounts
     sbc.Accounts.forEach((account) => {
-      const assignment = account.Assignment.toString();
-      let label = `${assignment} Account`;
-      let accountNode = new SbcTreeItemNode(label,label,
-        label,vscode.TreeItemCollapsibleState.None,this.Connection);
+      let label = IoTHelper.FirstLetter(account.Assignment.toString());
+      let accountNode = new SbcTreeItemNode("Account",label,
+        label,vscode.TreeItemCollapsibleState.Collapsed,this.Connection);
+      switch(account.Assignment) {
+        case AccountAssignment.management: {
+          accountNode.iconPath = new vscode.ThemeIcon("settings");
+          //settings-gear
+          //settings
+          //tools
+          //gear
+          break;
+        }
+        case AccountAssignment.debug: {
+          accountNode.iconPath = new vscode.ThemeIcon("play");
+          //play
+          //debug-alt
+          //debug-console
+          break;
+        }
+        default: {
+          //statements;
+          break;
+        } 
+      }
       //Childs
       //SSH Key SSH Key type
       item = new SbcTreeItemNode("Username",account.UserName,account.UserName,vscode.TreeItemCollapsibleState.None,accountNode);
@@ -82,8 +105,10 @@ export class SbcNode extends SbcTreeItemNode {
         const msg=`Error. SSH key not found: ${account.GetSshKeyPath()}. Sbc: ${sbc.Label}`;
         item.tooltip=msg;          
         item.iconPath = iconError;
+        //warning
+        this.iconPath = new vscode.ThemeIcon("warning");
+        accountNode.iconPath = new vscode.ThemeIcon("warning");
         vscode.window.showErrorMessage(msg);
-        this.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
       }
       accountNode.Childs.push(item);
       //accountNode
@@ -99,17 +124,21 @@ export class SbcNode extends SbcTreeItemNode {
     //Items
     item = new SbcTreeItemNode("Id sbc",sbc.Id,sbc.Id,vscode.TreeItemCollapsibleState.None,this.Information);
     this.Information.Childs.push(item);
-
     item = new SbcTreeItemNode("Board name",sbc.BoardName,sbc.BoardName,vscode.TreeItemCollapsibleState.None,this.Information);
+    this.Information.Childs.push(item);
     item = new SbcTreeItemNode("Architecture",sbc.Architecture,sbc.Architecture,vscode.TreeItemCollapsibleState.None,this.Information);
+    this.Information.Childs.push(item);
     let label:string;
     label = sbc.OsDescription;
     if(sbc.OsCodename) label = `${label} (${sbc.OsCodename})`;
     item = new SbcTreeItemNode("OS",label,label,vscode.TreeItemCollapsibleState.None,this.Information);
+    this.Information.Childs.push(item);
     item = new SbcTreeItemNode("Linux kernel",sbc.OsKernel,sbc.OsKernel,vscode.TreeItemCollapsibleState.None,this.Information);
+    this.Information.Childs.push(item);
     if(sbc.Armbian.Version) {
       label = `${sbc.Armbian.Version}`;
       item = new SbcTreeItemNode("Armbian",label,label,vscode.TreeItemCollapsibleState.None,this.Information);
+      this.Information.Childs.push(item);
     } 
   }
 

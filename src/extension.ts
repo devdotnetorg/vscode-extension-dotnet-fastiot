@@ -21,6 +21,8 @@ import EntityEnum = IoT.Enums.Entity;
 //UI
 import { UI } from './ui/UI';
 import { IContexUI } from './ui/IContexUI';
+//SBCs
+import { TreeDataSbcProvider } from './SbcView/TreeDataSbcProvider';
 //Devices
 import { TreeDataDevicesProvider } from './TreeDataDevicesProvider';
 import { IotDevice } from './IotDevice';
@@ -113,8 +115,14 @@ export async function activate(context: vscode.ExtensionContext) {
     let vscodeTreeViewDevices=vscode.window.createTreeView('viewDevices', {
 		treeDataProvider: treeDataDevicesProvider
 	});
+
+	let treeDataSbcProvider = new TreeDataSbcProvider(app.SBCs);
+    let vscodeTreeDataSbcs=vscode.window.createTreeView('viewSBCs', {
+		treeDataProvider: treeDataSbcProvider
+	});
+
 	//ViewBadge
-	app.UI.BadgeInit("Active tasks", vscodeTreeViewDevices);
+	app.UI.BadgeInit("Active tasks", vscodeTreeDataSbcs);
 	//TreeView Launchs
     let treeDataLaunchsProvider = new TreeDataLaunchsProvider(app.Config,treeDataDevicesProvider.RootItems);
 	const loadLaunchs = async () => {
@@ -157,15 +165,15 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	//Add new SBC
 	let commandAddSbc = vscode.commands.registerCommand('viewDevices.AddSbc', () => {	
-		addSBC(Dialog.standard);	
+		addSBC(treeDataSbcProvider, vscodeTreeDataSbcs, Dialog.standard);
 	});
 	//Add new SBC ExtMode
 	let commandAddSbcExtMode = vscode.commands.registerCommand('viewDevices.AddSbcExtMode', () => {	
-		addSBC(Dialog.webview);	
+		addSBC(treeDataSbcProvider, vscodeTreeDataSbcs,Dialog.webview);	
 	});
 	//Sbc discovery
 	let commandDiscoverySbc = vscode.commands.registerCommand('viewDevices.DiscoverySbc', () => {
-		discoverySBC(treeDataDevicesProvider,vscodeTreeViewDevices,app);	
+		discoverySBC(treeDataSbcProvider, vscodeTreeDataSbcs);	
 	});
 	//Refresh Devices
 	let commandRefreshDevices = vscode.commands.registerCommand('viewDevices.RefreshDevices', () => {
@@ -366,6 +374,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
  	//Subscriptions
 	context.subscriptions.push(vscodeTreeViewDevices);
+	context.subscriptions.push(vscodeTreeDataSbcs);
 	context.subscriptions.push(vscodeTreeViewLaunchs);
 	context.subscriptions.push(vscodeTreeViewTemplates);
 	//Commands

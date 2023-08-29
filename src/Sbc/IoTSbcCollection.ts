@@ -7,15 +7,16 @@ import { IoT } from '../Types/Enums';
 import LogLevel = IoT.Enums.LogLevel;
 import Contain = IoT.Enums.Contain;
 import EntityEnum = IoT.Enums.Entity;
+import ChangeCommand = IoT.Enums.ChangeCommand;
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IConfiguration } from '../Configuration/IConfiguration';
-import { ClassWithEvent } from '../Shared/ClassWithEvent';
+import {ClassMVCWithEvent } from '../Shared/ClassMVCWithEvent';
 import { ISbc } from './ISbc';
 import { SbcType } from '../Types/SbcType';
 import { IoTSbc } from './IoTSbc';
 import { IConfigSbcCollection } from './IConfigSbcCollection';
 
-export class IoTSbcCollection <T extends ISbc> {
+export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
   private _items:Array<T>;
   private _config:IConfigSbcCollection;
   private _TCreator: new() => T;
@@ -27,6 +28,7 @@ export class IoTSbcCollection <T extends ISbc> {
     TCreator: new() => T,
     config: IConfigSbcCollection 
   ){
+    super();
     this._items = new Array<T>();
     this._TCreator=TCreator;
     this. _config=config;
@@ -62,6 +64,7 @@ export class IoTSbcCollection <T extends ISbc> {
         //add
         this._items.push(value);
         result = new IotResult(StatusResult.Ok);
+        this.Trigger(ChangeCommand.add,value.Id);
       }else {
         result = new IotResult(StatusResult.Error,"SBC is already in the collection");
       }
@@ -80,6 +83,7 @@ export class IoTSbcCollection <T extends ISbc> {
       if (index > -1) {
         this._items.splice(index, 1);
         result = new IotResult(StatusResult.Ok);
+        this.Trigger(ChangeCommand.remove,id);
       } 
     }
     return result;
@@ -96,6 +100,7 @@ export class IoTSbcCollection <T extends ISbc> {
 
   public Clear() {
     this._items=[];
+    this.Trigger(ChangeCommand.clear);
   }
 
   public Load():IotResult {
@@ -175,9 +180,13 @@ export class IoTSbcCollection <T extends ISbc> {
   }
 
   public *getValues() { // you can put the return type Generator<number>, but it is ot necessary as ts will infer 
-    for (var item of this._items) {
-      // some item manipulation
-      yield item;
+    let index = 0;
+    while(true) {
+        yield this._items[index];
+        index = index + 1;
+        if (index >= this.Count) {
+            break;
+        }
     }
 
   }

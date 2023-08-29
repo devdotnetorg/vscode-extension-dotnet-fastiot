@@ -7,10 +7,15 @@ import { ISbc } from '../Sbc/ISbc';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { SbcNode } from './SbcNode';
+import { IoT } from '../Types/Enums';
+import LogLevel = IoT.Enums.LogLevel;
+import Dialog = IoT.Enums.Dialog;
+import Contain = IoT.Enums.Contain;
+import ChangeCommand = IoT.Enums.ChangeCommand;
 
 export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemNode> {    
-  private RootItems:Array<SbcNode>=[];
-  private SBCs:IoTSbcCollection<ISbc>;
+  private _rootItems:Array<SbcNode>=[];
+  private _SBCs:IoTSbcCollection<ISbc>;
 
   private _onDidChangeTreeData: vscode.EventEmitter<SbcTreeItemNode| undefined | null | void> = 
     new vscode.EventEmitter<SbcTreeItemNode| undefined | null | void>();
@@ -18,10 +23,10 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
     this._onDidChangeTreeData.event;
     
   constructor(SBCs:IoTSbcCollection<ISbc>) {
-    this.SBCs=SBCs;
-    this.CreateRootItems();
+    this._SBCs=SBCs;
     this.Build();
     this.Refresh();
+    this.EventHandler();
   }
 
   public getTreeItem(element: SbcTreeItemNode): vscode.TreeItem | Thenable<SbcTreeItemNode> {
@@ -38,7 +43,7 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
       return Promise.resolve(objArray);
     }else {
       //Creating a root structure            
-      return Promise.resolve(this.RootItems);        
+      return Promise.resolve(this._rootItems);        
     }    
   }
 
@@ -50,22 +55,61 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
     this._onDidChangeTreeData.fire();    
   }
 
-  private CreateRootItems() {
-    this.RootItems=[];
-    while(true) {
-      const sbc = this.SBCs.getValues().next().value;
-      if(!sbc) break;
+  private Build() {
+    this._rootItems=[];
+    for (const sbc of  this._SBCs.getValues()) {
       //create node
       let sbcNode = new SbcNode(sbc);
-      this.RootItems.push(sbcNode);
+      this._rootItems.push(sbcNode);
     }
   }
 
-  private Build() {
-   
-    
-    
+  public FindById(id:string): SbcNode| undefined {
+    let sbc = this._rootItems.find(x=>x.IdSbc==id);
+    return sbc;
+  }
 
+  private EventHandler() {
+    //event subscription
+    const handler=this._SBCs.OnChangedStateSubscribe(event => {
+      switch(event.command) {
+        case ChangeCommand.add: {
+          const sbc = this._SBCs.FindById(event.argument??"None");
+          if(!sbc) break;
+          //create node
+          const sbcNode = new SbcNode(sbc);
+          this._rootItems.push(sbcNode);
+          break; 
+        }
+        case ChangeCommand.remove: {
+          const sbcNode = this.FindById(event.argument??"None");
+          if(!sbcNode) break;
+          const index=this._rootItems.indexOf(sbcNode);
+          this._rootItems.splice(index,1);
+          break; 
+        }
+        case ChangeCommand.update: {
+          const newSbc = this._SBCs.FindById(event.argument??"None");
+          if(!newSbc) break;
+          //create node
+          const newSbcNode = new SbcNode(newSbc);
+          //search for previous version
+          const oldSbcNode = this.FindById(event.argument??"None");
+          if(!oldSbcNode) break;
+          const index=this._rootItems.indexOf(oldSbcNode);
+          this._rootItems[index]=newSbcNode;
+          break; 
+        }
+        case ChangeCommand.clear: {
+          this._rootItems=[];
+          break; 
+        }
+        default: {
+          //statements;
+          break; 
+        } 
+      }
+    });
   }
 
 }

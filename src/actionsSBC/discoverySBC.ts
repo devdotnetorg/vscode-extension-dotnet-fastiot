@@ -14,12 +14,15 @@ import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoTApplication } from '../IoTApplication';
 import { networkHelper } from '../Helper/networkHelper';
+import { AppDomain } from '../AppDomain';
 import { addSBC } from './addSBC';
+import { TreeDataSbcProvider } from '../SbcView/TreeDataSbcProvider';
+import { SbcTreeItemNode } from '../SbcView/SbcTreeItemNode';
 import { IoT } from '../Types/Enums';
 import LogLevel = IoT.Enums.LogLevel;
 import Dialog = IoT.Enums.Dialog;
 
-export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vscode.TreeView<BaseTreeItem_d>,app:IoTApplication): Promise<void> {
+export async function discoverySBC(treeData: TreeDataSbcProvider, treeView: vscode.TreeView<SbcTreeItemNode>): Promise<void> {
         
     const labelTask="Board discovery";
     const checkPort=22;
@@ -54,6 +57,7 @@ export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vs
             answerAction=SELECTED_ITEM.value as string;
         }
         //main
+        const app = AppDomain.getInstance().CurrentApp;
         const guidBadge=app.UI.BadgeAddItem(labelTask);
         //progress
         const itemDevices:ItemQuickPick[]|undefined = await vscode.window.withProgress({
@@ -162,7 +166,7 @@ export async function discoverySBC(treeData: TreeDataDevicesProvider,treeView:vs
         //add Sbc
         const nameHost=SELECTED_ITEM.value;
         const portHost=+SELECTED_ITEM.tag;
-        addSBC(Dialog.webview,nameHost,portHost);
+        addSBC(treeData, treeView, Dialog.webview,nameHost,portHost);
     } catch (err: any){
         vscode.window.showErrorMessage(`⚠️ Error: ${err}.`);
     }

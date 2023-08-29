@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { BaseTreeItemNode } from '../shared/BaseTreeItemNode';
+import { SbcNode } from './SbcNode';
 
 export class SbcTreeItemNode extends BaseTreeItemNode {
   public IdSbc:string|undefined;

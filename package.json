@@ -219,65 +219,65 @@
 		],
 		"commands": [
 			{
-				"command": "viewDevices.AddSbc",
+				"command": "viewSBCs.AddSbc",
 				"title": "Add ...",
 				"category": "FastIoT",
 				"icon": "$(add)"
 			},
 			{
-				"command": "viewDevices.AddSbcExtMode",
+				"command": "viewSBCs.AddSbcExtMode",
 				"title": "Add ... (extended mode)",
 				"category": "FastIoT",
 				"icon": "$(diff-added)"
 			},
 			{
-				"command": "viewDevices.DiscoverySbc",
+				"command": "viewSBCs.DiscoverySbc",
 				"title": "Discovery",
 				"category": "FastIoT",
 				"icon": "$(search)"
 			},
 			{
-				"command": "viewDevices.RefreshDevices",
+				"command": "viewSBCs.RefreshDevices",
 				"title": "Refresh"
 			},
 			{
-				"command": "viewDevices.ExportDevices",
+				"command": "viewSBCs.ExportDevices",
 				"title": "Export"
 			},
 			{
-				"command": "viewDevices.ImportDevices",
+				"command": "viewSBCs.ImportDevices",
 				"title": "Import"
 			},
 			{
-				"command": "viewDevices.RenameDevice",
+				"command": "viewSBCs.RenameDevice",
 				"title": "Rename"
 			},
 			{
-				"command": "viewDevices.DeleteDevice",
+				"command": "viewSBCs.DeleteDevice",
 				"title": "Delete"
 			},
 			{
-				"command": "viewDevices.ConnectionTestDevice",
+				"command": "viewSBCs.ConnectionTestDevice",
 				"title": "Connection test"
 			},
 			{
-				"command": "viewDevices.RebootDevice",
+				"command": "viewSBCs.RebootDevice",
 				"title": "Reboot"
 			},
 			{
-				"command": "viewDevices.ShutdownDevice",
+				"command": "viewSBCs.ShutdownDevice",
 				"title": "Shutdown"
 			},
 			{
-				"command": "viewDevices.OpenSshTerminal",
+				"command": "viewSBCs.OpenSshTerminal",
 				"title": "Open SSH terminal"
 			},
 			{
-				"command": "viewDevices.CopyToClipboard",
+				"command": "viewSBCs.CopyToClipboard",
 				"title": "Copy to Clipboard"
 			},
 			{
-				"command": "viewDevices.CheckAllPackages",
+				"command": "viewSBCs.CheckAllPackages",
 				"title": "Check all packages",
 				"icon": {
 					"light": "resources/light/refresh.svg",
@@ -285,7 +285,7 @@
 				}
 			},
 			{
-				"command": "viewDevices.InstallationPackage",
+				"command": "viewSBCs.InstallationPackage",
 				"title": "Package installation",
 				"icon": {
 					"light": "resources/light/setup.svg",
@@ -293,19 +293,19 @@
 				}
 			},
 			{
-				"command": "viewDevices.UpgradePackage",
+				"command": "viewSBCs.UpgradePackage",
 				"title": "Upgrade"
 			},
 			{
-				"command": "viewDevices.RemovePackage",
+				"command": "viewSBCs.RemovePackage",
 				"title": "Remove"
 			},
 			{
-				"command": "viewDevices.TestPackage",
+				"command": "viewSBCs.TestPackage",
 				"title": "Test"
 			},
 			{
-				"command": "viewDevices.UpdateDTO",
+				"command": "viewSBCs.UpdateDTO",
 				"title": "Update DTO",
 				"icon": {
 					"light": "resources/light/refresh.svg",
@@ -313,16 +313,16 @@
 				}
 			},
 			{
-				"command": "viewDevices.AddDTO",
+				"command": "viewSBCs.AddDTO",
 				"title": "Add DTO",
 				"icon": "$(add)"
 			},
 			{
-				"command": "viewDevices.DeleteDTO",
+				"command": "viewSBCs.DeleteDTO",
 				"title": "Delete DTO"
 			},
 			{
-				"command": "viewDevices.EnableDTO",
+				"command": "viewSBCs.EnableDTO",
 				"title": "Enable DTO",
 				"icon": {
 					"light": "resources/light/include.svg",
@@ -330,7 +330,7 @@
 				}
 			},
 			{
-				"command": "viewDevices.DisableDTO",
+				"command": "viewSBCs.DisableDTO",
 				"title": "Disable DTO",
 				"icon": {
 					"light": "resources/light/exclude.svg",
@@ -338,7 +338,7 @@
 				}
 			},
 			{
-				"command": "viewDevices.DetectGpiochips",
+				"command": "viewSBCs.DetectGpiochips",
 				"title": "GPIO detect",
 				"icon": {
 					"light": "resources/light/refresh.svg",
@@ -346,7 +346,7 @@
 				}
 			},
 			{
-				"command": "viewDevices.OpenFolderSshKeys",
+				"command": "viewSBCs.OpenFolderSshKeys",
 				"title": "Open folder with ssh keys",
 				"category": "FastIoT"
 			},
@@ -426,7 +426,7 @@
 		],
 		"keybindings": [
 			{
-				"command": "viewDevices.AddSbc",
+				"command": "viewSBCs.AddSbc",
 				"key": "ctrl+f1",
 				"mac": "cmd+f1"
 			},
@@ -448,7 +448,7 @@
 		"views": {
 			"bar-sbc-explorer": [
 				{
-					"id": "viewDevices",
+					"id": "viewSBCs",
 					"name": "Boards",
 					"contextualTitle": "Single-board computers"
 				},
@@ -468,38 +468,38 @@
 		"menus": {
 			"view/title": [
 				{
-					"command": "viewDevices.AddSbc",
-					"when": "view == viewDevices",
+					"command": "viewSBCs.AddSbc",
+					"when": "view == viewSBCs",
 					"group": "navigation"
 				},
 				{
-					"command": "viewDevices.AddSbcExtMode",
-					"when": "view == viewDevices",
+					"command": "viewSBCs.AddSbcExtMode",
+					"when": "view == viewSBCs",
 					"group": "navigation"
 				},
 				{
-					"command": "viewDevices.DiscoverySbc",
-					"when": "view == viewDevices",
+					"command": "viewSBCs.DiscoverySbc",
+					"when": "view == viewSBCs",
 					"group": "navigation"
 				},
 				{
-					"command": "viewDevices.RefreshDevices",
-					"when": "view == viewDevices",
+					"command": "viewSBCs.RefreshDevices",
+					"when": "view == viewSBCs",
 					"group": "7_modification"
 				},
 				{
-					"command": "viewDevices.ExportDevices",
-					"when": "view == viewDevices",
+					"command": "viewSBCs.ExportDevices",
+					"when": "view == viewSBCs",
 					"group": "7_modification"
 				},
 				{
-					"command": "viewDevices.ImportDevices",
-					"when": "view == viewDevices",
+					"command": "viewSBCs.ImportDevices",
+					"when": "view == viewSBCs",
 					"group": "7_modification"
 				},
 				{
-					"command": "viewDevices.OpenFolderSshKeys",
-					"when": "view == viewDevices",
+					"command": "viewSBCs.OpenFolderSshKeys",
+					"when": "view == viewSBCs",
 					"group": "2_workspace"
 				},
 				{
@@ -534,94 +534,94 @@
 			],
 			"view/item/context": [
 				{
-					"command": "viewDevices.RenameDevice",
-					"when": "view == viewDevices && viewItem == iotdevice",
+					"command": "viewSBCs.RenameDevice",
+					"when": "view == viewSBCs && viewItem == iotdevice",
 					"group": "5_cutcopypaste"
 				},
 				{
-					"command": "viewDevices.DeleteDevice",
-					"when": "view == viewDevices && viewItem == iotdevice",
+					"command": "viewSBCs.DeleteDevice",
+					"when": "view == viewSBCs && viewItem == iotdevice",
 					"group": "5_cutcopypaste"
 				},
 				{
-					"command": "viewDevices.ConnectionTestDevice",
-					"when": "view == viewDevices && viewItem == iotdevice",
+					"command": "viewSBCs.ConnectionTestDevice",
+					"when": "view == viewSBCs && viewItem == iotdevice",
 					"group": "navigation"
 				},
 				{
-					"command": "viewDevices.RebootDevice",
-					"when": "view == viewDevices && viewItem == iotdevice",
+					"command": "viewSBCs.RebootDevice",
+					"when": "view == viewSBCs && viewItem == iotdevice",
 					"group": "7_modification"
 				},
 				{
-					"command": "viewDevices.ShutdownDevice",
-					"when": "view == viewDevices && viewItem == iotdevice",
+					"command": "viewSBCs.ShutdownDevice",
+					"when": "view == viewSBCs && viewItem == iotdevice",
 					"group": "7_modification"
 				},
 				{
-					"command": "viewDevices.OpenSshTerminal",
-					"when": "view == viewDevices && viewItem == iotdevice",
+					"command": "viewSBCs.OpenSshTerminal",
+					"when": "view == viewSBCs && viewItem == iotdevice",
 					"group": "navigation"
 				},
 				{
-					"command": "viewDevices.CopyToClipboard",
-					"when": "view == viewDevices && viewItem == iotitemtree",
+					"command": "viewSBCs.CopyToClipboard",
+					"when": "view == viewSBCs && viewItem == iotitemtree",
 					"group": "navigation"
 				},
 				{
-					"command": "viewDevices.CheckAllPackages",
-					"when": "view == viewDevices && viewItem == iotpackages",
+					"command": "viewSBCs.CheckAllPackages",
+					"when": "view == viewSBCs && viewItem == iotpackages",
 					"group": "inline"
 				},
 				{
-					"command": "viewDevices.InstallationPackage",
-					"when": "view == viewDevices && viewItem == iotpackages_not_installed",
+					"command": "viewSBCs.InstallationPackage",
+					"when": "view == viewSBCs && viewItem == iotpackages_not_installed",
 					"group": "inline"
 				},
 				{
-					"command": "viewDevices.UpgradePackage",
-					"when": "view == viewDevices && viewItem == iotpackage_installed"
+					"command": "viewSBCs.UpgradePackage",
+					"when": "view == viewSBCs && viewItem == iotpackage_installed"
 				},
 				{
-					"command": "viewDevices.RemovePackage",
-					"when": "view == viewDevices && viewItem == iotpackage_installed"
+					"command": "viewSBCs.RemovePackage",
+					"when": "view == viewSBCs && viewItem == iotpackage_installed"
 				},
 				{
-					"command": "viewDevices.TestPackage",
-					"when": "view == viewDevices && viewItem == iotpackage_installed"
+					"command": "viewSBCs.TestPackage",
+					"when": "view == viewSBCs && viewItem == iotpackage_installed"
 				},
 				{
-					"command": "viewDevices.CopyToClipboard",
-					"when": "view == viewDevices && viewItem == iotpackage_installed",
+					"command": "viewSBCs.CopyToClipboard",
+					"when": "view == viewSBCs && viewItem == iotpackage_installed",
 					"group": "navigation"
 				},
 				{
-					"command": "viewDevices.UpdateDTO",
-					"when": "view == viewDevices && viewItem == iotdtos",
+					"command": "viewSBCs.UpdateDTO",
+					"when": "view == viewSBCs && viewItem == iotdtos",
 					"group": "inline"
 				},
 				{
-					"command": "viewDevices.AddDTO",
-					"when": "view == viewDevices && viewItem == iotdtos",
+					"command": "viewSBCs.AddDTO",
+					"when": "view == viewSBCs && viewItem == iotdtos",
 					"group": "inline"
 				},
 				{
-					"command": "viewDevices.DeleteDTO",
-					"when": "view == viewDevices && viewItem == iotdto_off"
+					"command": "viewSBCs.DeleteDTO",
+					"when": "view == viewSBCs && viewItem == iotdto_off"
 				},
 				{
-					"command": "viewDevices.EnableDTO",
-					"when": "view == viewDevices && viewItem == iotdto_off",
+					"command": "viewSBCs.EnableDTO",
+					"when": "view == viewSBCs && viewItem == iotdto_off",
 					"group": "inline"
 				},
 				{
-					"command": "viewDevices.DisableDTO",
-					"when": "view == viewDevices && viewItem == iotdto_on",
+					"command": "viewSBCs.DisableDTO",
+					"when": "view == viewSBCs && viewItem == iotdto_on",
 					"group": "inline"
 				},
 				{
-					"command": "viewDevices.DetectGpiochips",
-					"when": "view == viewDevices && viewItem == iotgpios",
+					"command": "viewSBCs.DetectGpiochips",
+					"when": "view == viewSBCs && viewItem == iotgpios",
 					"group": "inline"
 				},
 				{
@@ -667,12 +667,12 @@
 					"when": "view == viewLaunchs && viewItem == iotenviromentitem"
 				},
 				{
-					"command": "viewDevices.CopyToClipboard",
+					"command": "viewSBCs.CopyToClipboard",
 					"when": "view == viewLaunchs && viewItem == iotenviromentitem",
 					"group": "navigation"
 				},
 				{
-					"command": "viewDevices.CopyToClipboard",
+					"command": "viewSBCs.CopyToClipboard",
 					"when": "view == viewLaunchs && viewItem == iotenviromentoption",
 					"group": "navigation"
 				}
@@ -680,8 +680,8 @@
 		},
 		"viewsWelcome": [
 			{
-				"view": "viewDevices",
-				"contents": "No devices. How to add device see [Adding a device](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device).\n[Add Device](command:viewDevices.AddSbc)"
+				"view": "viewSBCs",
+				"contents": "No devices. How to add device see [Adding a device](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device).\n[Add Device](command:viewSBCs.AddSbc)"
 			},
 			{
 				"view": "viewLaunchs",
@@ -697,7 +697,7 @@
 			},
 			{
 				"view": "workbench.explorer.emptyView",
-				"contents": "[Add device](command:viewDevices.AddSbc)"
+				"contents": "[Add device](command:viewSBCs.AddSbc)"
 			}
 		]
 	},

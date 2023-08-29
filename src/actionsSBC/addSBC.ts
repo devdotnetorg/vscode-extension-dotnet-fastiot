@@ -19,8 +19,10 @@ import { IoTSbc } from '../Sbc/IoTSbc';
 import { AppDomain } from '../AppDomain';
 import { ISshConnection } from '../Shared/ISshConnection';
 import { SshConnection } from '../Shared/SshConnection';
+import { TreeDataSbcProvider } from '../SbcView/TreeDataSbcProvider';
+import { SbcTreeItemNode } from '../SbcView/SbcTreeItemNode';
 
-export async function addSBC(dialogType:Dialog, host?:string, port?:number): Promise<void> {
+export async function addSBC(treeData: TreeDataSbcProvider, treeView: vscode.TreeView<SbcTreeItemNode>, dialogType:Dialog, host?:string, port?:number): Promise<void> {
         const app = AppDomain.getInstance().CurrentApp;
         //fill host, port
         if(!host) host= app.Config.Sbc.PreviousHostWhenAdding;
@@ -125,7 +127,11 @@ export async function addSBC(dialogType:Dialog, host?:string, port?:number): Pro
                 //Connection test
                 connectionTestSBC(sbc.Accounts);
                 //Set focus
-                //treeView.reveal(newDevice, {focus: true});
+                const sbcNode = treeData.FindById(sbc.Id);
+                if (sbcNode) {
+                    treeView.reveal(sbcNode, {focus: true});
+                    sbcNode.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
+                }
             }else {
                 //Message
                 app.UI.ShowNotification(result);
