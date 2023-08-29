@@ -174,4 +174,12 @@ export class IoTSbcCollection <T extends ISbc> {
     return result
   }
 
+  public *getValues() { // you can put the return type Generator<number>, but it is ot necessary as ts will infer 
+    for (var item of this._items) {
+      // some item manipulation
+      yield item;
+    }
+
+  }
+
 }

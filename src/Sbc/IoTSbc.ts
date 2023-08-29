@@ -193,7 +193,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     // ********************************************************************
     // 2_getinfo.sh
     taskRunScript = new TaskRunScript(
-      "Getting data",
+      "Getting information about SBC",
       "2_getinfo",undefined,
       undefined,undefined,
       "ParseGetInfo");
@@ -508,6 +508,8 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     let result:IotResult;
     result=new IotResult(StatusResult.Ok);
     try {
+      //Trim
+      data = IoTHelper.StringTrim(data);
       const obj = JSON.parse(data);
       this._hostName=obj.hostname;
       this._architecture=obj.architecture;
@@ -529,6 +531,8 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     let result:IotResult;
     result=new IotResult(StatusResult.Ok);
     try {
+      //Trim
+      data = IoTHelper.StringTrim(data);
       const obj = JSON.parse(data);
       let boardName:string| undefined =obj.boardname;
       if (boardName) {
@@ -548,6 +552,8 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     let result:IotResult;
     result=new IotResult(StatusResult.Ok);
     try {
+      //Trim
+      data = IoTHelper.StringTrim(data);
       const obj = JSON.parse(data);
       this._armbian= new IotSbcArmbian();
       result = this._armbian.Parse(obj);
@@ -595,6 +601,8 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     let result:IotResult;
     result=new IotResult(StatusResult.Ok);
     try {
+      //Trim
+      data = IoTHelper.StringTrim(data);
       const obj = JSON.parse(data);
       //obj.platformsbc
       /*
