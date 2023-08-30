@@ -91,11 +91,39 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
 
   public Update(newValue:T):IotResult {
     let result :IotResult;
-    result = this.Remove(newValue.Id);
-    if(result.Status==StatusResult.Ok) {
-      result = this.Add(newValue);
+    //Remove
+    result = new IotResult(StatusResult.Error,"No SBC found in collection");
+    const sbc = this.FindById(newValue.Id);
+    if(sbc) {
+      const index = this._items.indexOf(sbc, 0);
+      if (index > -1) {
+        this._items.splice(index, 1);
+        result = new IotResult(StatusResult.Ok);
+      } 
     }
-    return result;
+    if(result.Status!=StatusResult.Ok) {
+      return result;
+    }
+    //Add
+    try {
+      //unique SBC Check
+      const sbc = this.FindById(newValue.Id);
+      if(!sbc) {
+        //unique label
+        let label = newValue.Label;
+        label = this.GetUniqueLabel(label,'#');
+        newValue.Label=label;
+        //add
+        this._items.push(newValue);
+        result = new IotResult(StatusResult.Ok);
+        this.Trigger(ChangeCommand.update,newValue.Id);
+      }else {
+        result = new IotResult(StatusResult.Error,"SBC is already in the collection");
+      }
+    } catch (err: any){
+      result = new IotResult(StatusResult.Error,"Error adding SBC to collection",err);
+    }
+    return result; 
   }
 
   public Clear() {
@@ -188,7 +216,26 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
             break;
         }
     }
-
   }
+
+  public Rename(id:string, newLabel:string):IotResult {
+    let result :IotResult;
+    result = new IotResult(StatusResult.Error,"No SBC found in collection");
+    const sbc = this.FindById(id);
+    if(sbc) {
+      const newLabel2=this.GetUniqueLabel(newLabel,'#');
+      if(newLabel!=newLabel2||sbc.Label==newLabel) {
+        result = new IotResult(StatusResult.Error,`SBC with the name '${newLabel}' already exists`);
+        return result;
+      }
+      sbc.Label=newLabel;
+      result = new IotResult(StatusResult.Ok);
+      this.Trigger(ChangeCommand.update,id);
+    }
+    return result;
+  }
+
+
+
 
 }

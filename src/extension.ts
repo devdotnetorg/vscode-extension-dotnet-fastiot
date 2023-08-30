@@ -10,7 +10,7 @@ import { AppDomain } from './AppDomain';
 import { ApplicationBuilder, BuildApplication } from './Application';
 import { IoTHelper } from './Helper/IoTHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
-import { IotItemTree_d } from './shared/IotItemTree_d';
+import { BaseTreeItemNode } from './shared/BaseTreeItemNode';
 import { IotResult,StatusResult } from './Shared/IotResult';
 import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 import { IConfigEntityCollection } from './Entity/IConfigEntityCollection';
@@ -18,6 +18,7 @@ import { Constants } from "./Constants";
 import { IoT } from './Types/Enums';
 import Dialog = IoT.Enums.Dialog;
 import EntityEnum = IoT.Enums.Entity;
+import { SbcTreeItemNode } from './SbcView/SbcTreeItemNode';
 //UI
 import { UI } from './ui/UI';
 import { IContexUI } from './ui/IContexUI';
@@ -33,15 +34,16 @@ import { IotDeviceGpiochip } from './IotDeviceGpiochip';
 import { addSBC } from './actionsSBC/addSBC';
 import { discoverySBC } from './actionsSBC/discoverySBC';
 import { connectionTestSBC } from './actionsSBC/connectionTestSBC';
+import { renameSBC } from './actionsSBC/renameSBC';
+import { copyTexttoClipboard } from './actionsSBC/copyTexttoClipboard';
 
 import { refreshDevices } from './actionsDevice/refreshDevices';
 import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
 import { deleteDevice } from './actionsDevice/deleteDevice';
 import { rebootDevice } from './actionsDevice/rebootDevice';
 import { shutdownDevice } from './actionsDevice/shutdownDevice';
-import { renameDevice } from './actionsDevice/renameDevice';
+
 import { detectGpiochips } from './actionsDevice/detectGpiochips';
-import { copyTexttoClipboard } from './actionsDevice/copyTexttoClipboard';
 import { openFolderKeys } from './actionsDevice/openFolderKeys';
 import { openSshTerminal } from './actionsDevice/openSshTerminal';
 import { checkAllPackages } from './actionsDevice/checkAllPackages';
@@ -117,7 +119,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	let treeDataSbcProvider = new TreeDataSbcProvider(app.SBCs);
-    let vscodeTreeDataSbcs=vscode.window.createTreeView('viewSBCs', {
+    let vscodeTreeDataSbcs=vscode.window.createTreeView('viewSBC', {
 		treeDataProvider: treeDataSbcProvider
 	});
 
@@ -175,6 +177,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandDiscoverySbc = vscode.commands.registerCommand('viewDevices.DiscoverySbc', () => {
 		discoverySBC(treeDataSbcProvider, vscodeTreeDataSbcs);	
 	});
+	//Rename SBC
+	let commandRenameSBC = vscode.commands.registerCommand("viewDevices.RenameSbc", (item:SbcTreeItemNode) => {
+		renameSBC(item);
+	});
 	//Refresh Devices
 	let commandRefreshDevices = vscode.commands.registerCommand('viewDevices.RefreshDevices', () => {
 		refreshDevices(treeDataDevicesProvider);	
@@ -187,10 +193,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandImportDevices = vscode.commands.registerCommand('viewDevices.ImportDevices', () => {					
 		importDevices(treeDataDevicesProvider,app.UI);
 	});
-	//Rename Device
-	let commandRenameDevice = vscode.commands.registerCommand("viewDevices.RenameDevice", (item:IotDevice) => {
-		renameDevice(treeDataDevicesProvider,item);
-	});
+	
 	//Ping Device
 	let commandPingDevice = vscode.commands.registerCommand("viewDevices.ConnectionTestDevice", (item:IotDevice) => {
 		//connectionTestSBC(treeDataDevicesProvider,item,app.UI);
@@ -216,7 +219,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		openSshTerminal(item,app.Config);
 	});
 	//Copy To Clipboard
-	let commandCopyToClipboard = vscode.commands.registerCommand("viewDevices.CopyToClipboard", (item:IotItemTree_d) => {
+	let commandCopyToClipboard = vscode.commands.registerCommand("viewDevices.CopyToClipboard", (item:BaseTreeItemNode) => {
 		copyTexttoClipboard(item);
 	});
 	//Check all packages
@@ -386,7 +389,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandRefreshDevices);
 	context.subscriptions.push(commandExportDevices);
 	context.subscriptions.push(commandImportDevices);
-	context.subscriptions.push(commandRenameDevice);
+	context.subscriptions.push(commandRenameSBC);
 	context.subscriptions.push(commandPingDevice);
 	context.subscriptions.push(commandRebootDevice);
 	context.subscriptions.push(commandShutdownDevice);

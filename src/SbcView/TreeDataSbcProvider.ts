@@ -25,7 +25,6 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
   constructor(SBCs:IoTSbcCollection<ISbc>) {
     this._SBCs=SBCs;
     this.Build();
-    this.Refresh();
     this.EventHandler();
   }
 
@@ -62,6 +61,7 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
       let sbcNode = new SbcNode(sbc);
       this._rootItems.push(sbcNode);
     }
+    this.Refresh();
   }
 
   public FindById(id:string): SbcNode| undefined {
@@ -79,6 +79,7 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
           //create node
           const sbcNode = new SbcNode(sbc);
           this._rootItems.push(sbcNode);
+          this.Refresh();
           break; 
         }
         case ChangeCommand.remove: {
@@ -86,6 +87,7 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
           if(!sbcNode) break;
           const index=this._rootItems.indexOf(sbcNode);
           this._rootItems.splice(index,1);
+          this.Refresh();
           break; 
         }
         case ChangeCommand.update: {

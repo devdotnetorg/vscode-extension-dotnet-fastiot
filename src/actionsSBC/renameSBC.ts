@@ -4,21 +4,26 @@ import * as path from 'path';
 
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotDevice } from '../IotDevice';
+import { SbcTreeItemNode } from '../SbcView/SbcTreeItemNode';
 import { IoTHelper } from '../Helper/IoTHelper';
+import { AppDomain } from '../AppDomain';
 
-export async function renameDevice(treeData: TreeDataDevicesProvider,item:IotDevice): Promise<void> {                    
+export async function renameSBC(item:SbcTreeItemNode): Promise<void> {
+    let result:IotResult;              
     let newLabel = await vscode.window.showInputBox({				
         prompt: 'prompt',
-        title: 'Enter a new name device',
+        title: 'Enter a new name SBC',
         value:<string>item.label
     });
     if((newLabel==undefined)||(newLabel==item.label)) return;
     newLabel=IoTHelper.StringTrim(newLabel);
     //Rename
-    if(await treeData.RenameDevice(item,newLabel)) {
-        treeData.SaveDevices();
-        treeData.Refresh();    
-    }    
+    const app = AppDomain.getInstance().CurrentApp;
+    result=app.SBCs.Rename(item.IdSbc??"None",newLabel);
+    if(result.Status!=StatusResult.Ok) {
+        app.UI.ShowNotification(result);
+        return;
+    }
+    app.SBCs.Save();
 }
 
