@@ -5,7 +5,7 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IotDeviceDTO } from '../IotDeviceDTO';
-import { rebootDevice } from './rebootDevice';
+//import { rebootDevice } from './rebootDevice';
 import {IContexUI} from '../ui/IContexUI';
 
 export async function disableDTO(treeData: TreeDataDevicesProvider,item:IotDeviceDTO,contextUI:IContexUI): Promise<void> {
@@ -20,7 +20,7 @@ export async function disableDTO(treeData: TreeDataDevicesProvider,item:IotDevic
         treeData.Refresh(); 
         vscode.window.showInformationMessage(`DTO disabled successfully.`);
         //reboot
-        rebootDevice(treeData,item.Device,"You need to reboot the device to accept the changes",contextUI);
+        //rebootDevice(treeData,item.Device,"You need to reboot the device to accept the changes",contextUI);
     } else {        
         vscode.window.showErrorMessage(`Error. Error disabling DTO.`);      
     }

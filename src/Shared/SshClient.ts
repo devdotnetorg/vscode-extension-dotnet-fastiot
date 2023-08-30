@@ -63,7 +63,14 @@ export class SshClient extends ClassWithEvent {
       result=new IotResult(StatusResult.Ok,`Connection established via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}.`);
     }
     catch (err: any) {
-      let msg = `Unable to connect via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}.`;
+      //type input - identity (key) or password
+      const identity=sshConfig.identity;
+      let msg = `Unable to connect via SSH protocol. Host: ${sshConfig.host}, port: ${sshConfig.port}, login: '${sshConfig.username}'`;
+      if(identity){
+        msg = `${msg}, key 🔑 ${identity}.`;
+      } else {
+        msg = `${msg}, password ******.`;
+      }
       const sysMsg=`level: ${err.level}. message: ${err.message}.`;
       if (err.level&&err.level==`protocol`) msg=msg +` There is no ssh server running on port ${sshConfig.port}.`;
       result=new IotResult(StatusResult.Error,msg,sysMsg);
@@ -73,9 +80,9 @@ export class SshClient extends ClassWithEvent {
     const identity=sshConfig.identity;
     let msg:string;
     if(identity){
-      msg = `Login "${sshConfig.username}" and key 🔑 ${identity} were used to enter.`;
+      msg = `Login '${sshConfig.username}' and key 🔑 ${identity} were used to enter.`;
     } else {
-      msg = `The login was "${sshConfig.username}" and the password was ******.`;
+      msg = `The login was '${sshConfig.username}' and the password was ******.`;
     }
     result.AddMessage(msg);
     //end processing
@@ -83,7 +90,7 @@ export class SshClient extends ClassWithEvent {
   }
 
   public async RunScript(fileNameScript:string, argumentScript?:ArgumentsCommandCli,
-    token?:vscode.CancellationToken, getStdout?:boolean): Promise<IotResult> {            
+    token?:vscode.CancellationToken, getStdout?:boolean,doNotWaitRemovingScript?:boolean): Promise<IotResult> {            
       let result:IotResult;
       let msg:string| undefined;
       let flagExit:Boolean=false;
@@ -179,8 +186,8 @@ export class SshClient extends ClassWithEvent {
         return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${fileNameScript}.sh script ended with an error`,err));
       }    
       //delete script      
-      try {        
-        await this._ssh.exec(`rm vscode-dotnetfastiot.sh`);
+      try {
+        if(!doNotWaitRemovingScript) await this._ssh.exec(`rm vscode-dotnetfastiot.sh`);
       }
       catch (err) {}
       //end processing

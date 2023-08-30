@@ -363,7 +363,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     return Promise.resolve(result);
   }
 
-  private async RunScriptAsManagementAccount(fileNameScript:string): Promise<IotResult> {
+  private async RunScriptAsManagementAccount(fileNameScript:string,token?:vscode.CancellationToken): Promise<IotResult> {
     let result:IotResult;
     //Ping
     const AccountAssignmentType=AccountAssignment.management;
@@ -377,28 +377,28 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     //Ssh connection
     const app = AppDomain.getInstance().CurrentApp;
     let sshClient = new SshClient(app.Config.Folder.BashScripts);
-    result = await sshClient.Connect(account.ToSshConfig());
+    result = await sshClient.Connect(account.ToSshConfig(),token);
     if(result.Status!=StatusResult.Ok) {
       await sshClient.Close();
       await sshClient.Dispose();
       return Promise.resolve(result);
     }
     //run script
-    result=await sshClient.RunScript(fileNameScript, undefined, undefined, true);
+    result=await sshClient.RunScript(fileNameScript, undefined, token, true,true);
     await sshClient.Close();
     await sshClient.Dispose();
     return Promise.resolve(result);
   }
 
-  public async Reboot(): Promise<IotResult> {
+  public async Reboot(token?:vscode.CancellationToken): Promise<IotResult> {
     let result:IotResult;
-    result = await this.RunScriptAsManagementAccount("reboot");
+    result = await this.RunScriptAsManagementAccount("reboot",token);
     return Promise.resolve(result);
   }
 
-  public async Shutdown(): Promise<IotResult> {
+  public async Shutdown(token?:vscode.CancellationToken): Promise<IotResult> {
     let result:IotResult;
-    result = await this.RunScriptAsManagementAccount("shutdown");
+    result = await this.RunScriptAsManagementAccount("shutdown",token);
     return Promise.resolve(result);
   }
 

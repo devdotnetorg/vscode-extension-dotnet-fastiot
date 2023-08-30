@@ -100,10 +100,12 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
           if(!oldSbcNode) break;
           const index=this._rootItems.indexOf(oldSbcNode);
           this._rootItems[index]=newSbcNode;
+          this.Refresh();
           break; 
         }
         case ChangeCommand.clear: {
           this._rootItems=[];
+          this.Refresh();
           break; 
         }
         default: {

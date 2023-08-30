@@ -36,8 +36,8 @@ export interface ISbc {
   GetAccount(assignment: AccountAssignment): ISbcAccount| undefined;
   //
   Create(addSBCConfigType:AddSBCConfigType,token?:vscode.CancellationToken, forceMode?:boolean):Promise<IotResult>;
-  Reboot(): Promise<IotResult>;
-  Shutdown(): Promise<IotResult>;
+  Reboot(token?:vscode.CancellationToken): Promise<IotResult>;
+  Shutdown(token?:vscode.CancellationToken): Promise<IotResult>;
   Rename(newLabel:string): IotResult;
 
   ToJSON():SbcType;

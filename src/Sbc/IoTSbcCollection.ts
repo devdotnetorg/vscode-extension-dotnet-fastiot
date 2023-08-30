@@ -82,7 +82,7 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
       const index = this._items.indexOf(sbc, 0);
       if (index > -1) {
         this._items.splice(index, 1);
-        result = new IotResult(StatusResult.Ok);
+        result = new IotResult(StatusResult.Ok,`${sbc.Label} ${sbc.Architecture} SBC removed successfully.`);
         this.Trigger(ChangeCommand.remove,id);
       } 
     }
@@ -223,6 +223,10 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
     result = new IotResult(StatusResult.Error,"No SBC found in collection");
     const sbc = this.FindById(id);
     if(sbc) {
+      if(newLabel=="") {
+        result = new IotResult(StatusResult.Error,`The new name cannot be empty`);
+        return result;
+      }
       const newLabel2=this.GetUniqueLabel(newLabel,'#');
       if(newLabel!=newLabel2||sbc.Label==newLabel) {
         result = new IotResult(StatusResult.Error,`SBC with the name '${newLabel}' already exists`);

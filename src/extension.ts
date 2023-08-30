@@ -18,34 +18,35 @@ import { Constants } from "./Constants";
 import { IoT } from './Types/Enums';
 import Dialog = IoT.Enums.Dialog;
 import EntityEnum = IoT.Enums.Entity;
-import { SbcTreeItemNode } from './SbcView/SbcTreeItemNode';
-//UI
-import { UI } from './ui/UI';
-import { IContexUI } from './ui/IContexUI';
 //SBCs
+import { SbcTreeItemNode } from './SbcView/SbcTreeItemNode';
+import { SbcNode } from './SbcView/SbcNode';
 import { TreeDataSbcProvider } from './SbcView/TreeDataSbcProvider';
+
 //Devices
 import { TreeDataDevicesProvider } from './TreeDataDevicesProvider';
+/*
 import { IotDevice } from './IotDevice';
 import { IotDevicePackage } from './IotDevicePackage';
 import { IotDeviceDTO } from './IotDeviceDTO';
 import { IotDeviceGpiochip } from './IotDeviceGpiochip';
+*/
 //SBCs.actions
 import { addSBC } from './actionsSBC/addSBC';
 import { discoverySBC } from './actionsSBC/discoverySBC';
 import { connectionTestSBC } from './actionsSBC/connectionTestSBC';
 import { renameSBC } from './actionsSBC/renameSBC';
 import { copyTexttoClipboard } from './actionsSBC/copyTexttoClipboard';
+import { deleteSBC } from './actionsSBC/deleteSBC';
+import { openFolderKeys } from './actionsSBC/openFolderKeys';
+import { openSshTerminal } from './actionsSBC/openSshTerminal';
+import { rebootSBC } from './actionsSBC/rebootSBC';
+import { refreshSBC } from './actionsSBC/refreshSBC';
+import { shutdownSBC } from './actionsSBC/shutdownSBC';
 
-import { refreshDevices } from './actionsDevice/refreshDevices';
+/*
 import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
-import { deleteDevice } from './actionsDevice/deleteDevice';
-import { rebootDevice } from './actionsDevice/rebootDevice';
-import { shutdownDevice } from './actionsDevice/shutdownDevice';
-
 import { detectGpiochips } from './actionsDevice/detectGpiochips';
-import { openFolderKeys } from './actionsDevice/openFolderKeys';
-import { openSshTerminal } from './actionsDevice/openSshTerminal';
 import { checkAllPackages } from './actionsDevice/checkAllPackages';
 import { installPackage } from './actionsDevice/installPackage';
 import { upgradePackage } from './actionsDevice/upgradePackage';
@@ -57,6 +58,7 @@ import { addDTO } from './actionsDevice/addDTO';
 import { deleteDTO } from './actionsDevice/deleteDTO';
 import { enableDTO } from './actionsDevice/enableDTO';
 import { disableDTO } from './actionsDevice/disableDTO';
+*/
 //Launchs
 import { TreeDataLaunchsProvider } from './TreeDataLaunchsProvider';
 import { TreeDataTemplatesProvider } from './TreeDataTemplatesProvider';
@@ -112,11 +114,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	};
 	loadTemplatesExt();
-	//TreeView Devices
+	//TreeView SBC
+	//OLD
     let treeDataDevicesProvider = new TreeDataDevicesProvider(app);
     let vscodeTreeViewDevices=vscode.window.createTreeView('viewDevices', {
 		treeDataProvider: treeDataDevicesProvider
 	});
+	
 
 	let treeDataSbcProvider = new TreeDataSbcProvider(app.SBCs);
     let vscodeTreeDataSbcs=vscode.window.createTreeView('viewSBC', {
@@ -166,25 +170,66 @@ export async function activate(context: vscode.ExtensionContext) {
 	*/
 
 	//Add new SBC
-	let commandAddSbc = vscode.commands.registerCommand('viewDevices.AddSbc', () => {	
+	let commandAddSbc = vscode.commands.registerCommand('viewSBC.Add', () => {	
 		addSBC(treeDataSbcProvider, vscodeTreeDataSbcs, Dialog.standard);
 	});
 	//Add new SBC ExtMode
-	let commandAddSbcExtMode = vscode.commands.registerCommand('viewDevices.AddSbcExtMode', () => {	
+	let commandAddSbcExtMode = vscode.commands.registerCommand('viewSBC.AddExtMode', () => {	
 		addSBC(treeDataSbcProvider, vscodeTreeDataSbcs,Dialog.webview);	
 	});
 	//Sbc discovery
-	let commandDiscoverySbc = vscode.commands.registerCommand('viewDevices.DiscoverySbc', () => {
+	let commandDiscoverySbc = vscode.commands.registerCommand('viewSBC.Discovery', () => {
 		discoverySBC(treeDataSbcProvider, vscodeTreeDataSbcs);	
 	});
 	//Rename SBC
-	let commandRenameSBC = vscode.commands.registerCommand("viewDevices.RenameSbc", (item:SbcTreeItemNode) => {
+	let commandRenameSBC = vscode.commands.registerCommand("viewSBC.Rename", (item:SbcTreeItemNode) => {
 		renameSBC(item);
 	});
-	//Refresh Devices
-	let commandRefreshDevices = vscode.commands.registerCommand('viewDevices.RefreshDevices', () => {
-		refreshDevices(treeDataDevicesProvider);	
+
+	//Copy To Clipboard
+	let commandCopyToClipboard = vscode.commands.registerCommand("viewSBC.CopyToClipboard", (item:BaseTreeItemNode) => {
+		copyTexttoClipboard(item);
 	});
+
+	//Ping SBC
+	let commandPingSBC = vscode.commands.registerCommand("viewSBC.ConnectionTest", (item:SbcTreeItemNode) => {
+		const sbcNode = item as SbcNode;
+		const sbc = app.SBCs.FindById(sbcNode.IdSbc??"None");
+		if(sbc) connectionTestSBC(sbc.Accounts);
+	});
+
+	//Delete SBC
+	let commandDeleteSBC = vscode.commands.registerCommand("viewSBC.Delete", (item:SbcTreeItemNode) => {
+		deleteSBC(item);
+	});
+
+	//Open folder with ssh keys
+	let commandOpenFolderKeys = vscode.commands.registerCommand("viewSBC.OpenFolderSshKeys", () => {
+		openFolderKeys(app.Config.Folder.KeysSbc);
+	});
+
+	//Open ssh-terminal in New Window
+	let commandOpenSshTerminal = vscode.commands.registerCommand("viewSBC.OpenSshTerminal", (item:SbcTreeItemNode) => {
+		openSshTerminal(item);
+	});
+
+	//Reboot SBC
+	let commandRebootSBC = vscode.commands.registerCommand("viewSBC.Reboot", (item:SbcTreeItemNode) => {
+		rebootSBC(item);
+	});
+
+	//Refresh SBC
+	let commandRefreshSBC = vscode.commands.registerCommand('viewSBC.Refresh', () => {
+		refreshSBC(treeDataSbcProvider);	
+	});
+
+	//Shutdown SBC
+	let commandShutdownSBC = vscode.commands.registerCommand("viewSBC.Shutdown", (item:SbcTreeItemNode) => {
+		shutdownSBC(item);
+	});
+
+	/*
+	
 	//Export devices
 	let commandExportDevices = vscode.commands.registerCommand('viewDevices.ExportDevices', () => {					
 		exportDevices(treeDataDevicesProvider);
@@ -194,34 +239,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		importDevices(treeDataDevicesProvider,app.UI);
 	});
 	
-	//Ping Device
-	let commandPingDevice = vscode.commands.registerCommand("viewDevices.ConnectionTestDevice", (item:IotDevice) => {
-		//connectionTestSBC(treeDataDevicesProvider,item,app.UI);
-	});
-	//Reboot Device
-	let commandRebootDevice = vscode.commands.registerCommand("viewDevices.RebootDevice", (item:IotDevice) => {
-		rebootDevice(treeDataDevicesProvider,item,undefined,app.UI);
-	});
-	//Shutdown Device
-	let commandShutdownDevice = vscode.commands.registerCommand("viewDevices.ShutdownDevice", (item:IotDevice) => {
-		shutdownDevice(treeDataDevicesProvider,item,undefined,app.UI);
-	});
-	//Delete Device
-	let commandDeleteDevice = vscode.commands.registerCommand("viewDevices.DeleteDevice", (item:IotDevice) => {
-		deleteDevice(treeDataDevicesProvider,item,app.UI);
-	});
-	//Open folder with ssh keys
-	let commandOpenFolderKeys = vscode.commands.registerCommand("viewDevices.OpenFolderSshKeys", () => {
-		openFolderKeys(app.Config.Folder.KeysSbc);
-	});
-	//Open ssh-terminal in New Window
-	let commandOpenSshTerminal = vscode.commands.registerCommand("viewDevices.OpenSshTerminal", (item:IotDevice) => {
-		openSshTerminal(item,app.Config);
-	});
-	//Copy To Clipboard
-	let commandCopyToClipboard = vscode.commands.registerCommand("viewDevices.CopyToClipboard", (item:BaseTreeItemNode) => {
-		copyTexttoClipboard(item);
-	});
 	//Check all packages
 	let commandCheckAllPackages = vscode.commands.registerCommand("viewDevices.CheckAllPackages", (item:IotDevicePackage) => {
 		checkAllPackages(treeDataDevicesProvider,item.Device,app.UI);		 
@@ -262,6 +279,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandDetectGpiochips = vscode.commands.registerCommand("viewDevices.DetectGpiochips", (item:IotDeviceGpiochip) => {
 		detectGpiochips(treeDataDevicesProvider,item.Device,app.UI);
 	});
+	*/
+
 	//Add new launch		  
 	let commandAddLaunch = vscode.commands.registerCommand('viewLaunchs.Add', () => {	
 		addLaunch(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,app);	
@@ -386,17 +405,19 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandAddSbc);
 	context.subscriptions.push(commandAddSbcExtMode);
 	context.subscriptions.push(commandDiscoverySbc);
-	context.subscriptions.push(commandRefreshDevices);
-	context.subscriptions.push(commandExportDevices);
-	context.subscriptions.push(commandImportDevices);
 	context.subscriptions.push(commandRenameSBC);
-	context.subscriptions.push(commandPingDevice);
-	context.subscriptions.push(commandRebootDevice);
-	context.subscriptions.push(commandShutdownDevice);
-	context.subscriptions.push(commandDeleteDevice);
+	context.subscriptions.push(commandCopyToClipboard);
+	context.subscriptions.push(commandPingSBC);
+	context.subscriptions.push(commandDeleteSBC);
 	context.subscriptions.push(commandOpenFolderKeys);
 	context.subscriptions.push(commandOpenSshTerminal);
-	context.subscriptions.push(commandCopyToClipboard);
+	context.subscriptions.push(commandRebootSBC);
+	context.subscriptions.push(commandRefreshSBC);
+	context.subscriptions.push(commandShutdownSBC);
+	
+	/*
+	context.subscriptions.push(commandExportDevices);
+	context.subscriptions.push(commandImportDevices);
 	context.subscriptions.push(commandCheckAllPackages);
 	context.subscriptions.push(commandInstallationPackage);
 	context.subscriptions.push(commandUpgradePackage);
@@ -408,6 +429,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandEnableDTO);
 	context.subscriptions.push(commandDisableDTO);
 	context.subscriptions.push(commandDetectGpiochips);
+	*/
 	//Launchs
 	context.subscriptions.push(commandAddLaunch);
 	context.subscriptions.push(commandRefreshLaunch);
