@@ -51,28 +51,28 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   public get Existence(): Existence {
     return this._existence;}
   //Info about Board and OS
-  private _hostName:string;
+  private _hostName:string; //$uname -n = bananapim64
   public get HostName(): string {
     return this._hostName;}
-  private _boardName:string;
+  private _boardName:string; //BOARD_NAME="Banana Pi M64" from cat /etc/armbian-release
   public get BoardName(): string {
     return this._boardName;}
-  private _architecture:string;
+  private _architecture:string; //$uname -m = aarch64
   public get Architecture(): string {
     return this._architecture;}
-  private _osKernel:string;
+  private _osKernel:string; //$uname -r = 5.10.34-sunxi64
   public get OsKernel(): string {
     return this._osKernel;}
-  private _osName:string;
+  private _osName:string; //$lsb_release -i = Distributor ID: Ubuntu
   public get OsName(): string {
     return this._osName;}
-  private _osDescription:string;
+  private _osDescription:string; //$lsb_release -d = Description: Ubuntu 18.04.5 LTS
   public get OsDescription(): string {
     return this._osDescription;}
-  private _osRelease:string;
+  private _osRelease:string; //$lsb_release -r = Release: 18.04
   public get OsRelease(): string {
     return this._osRelease;}
-  private _osCodename:string;
+  private _osCodename:string; //$lsb_release c = Codename: bionic
   public get OsCodename(): string {
     return this._osCodename;}
   // Parts
@@ -315,7 +315,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
         const destFilePath=
           `${Constants.folderDestForFileUdevRules}/${filenameudevrules}`;
         taskPutFile = new TaskPutFile(`Copying the udev rules file '${filenameudevrules}'`,
-          destFilePath, dataFile);
+          destFilePath, dataFile,undefined,true);
         //
         taskQueue.Push(taskPutFile);
       }else {
@@ -536,7 +536,10 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       const obj = JSON.parse(data);
       let boardName:string| undefined =obj.boardname;
       if (boardName) {
+        //trim
         boardName=IoTHelper.StringTrim(boardName);
+        boardName=IoTHelper.ConvertToValidFilename(boardName,"");
+        //
         if (boardName!=""&&boardName.length>2) {
           this._boardName=boardName;
         }
