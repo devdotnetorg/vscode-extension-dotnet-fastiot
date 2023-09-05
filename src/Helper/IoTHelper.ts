@@ -7,6 +7,9 @@ import * as cp from "child_process";
 import { v4 as uuidv4 } from 'uuid';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { utimesSync } from 'utimes';
+import { ISbc } from '../Sbc/ISbc';
+import { IoTDTOAdapters } from "../Sbc/IoTDTOAdapters"
+import { SbcDtoAdapterType } from "../Types/SbcDtoAdapterType"
 
 export class IoTHelper {
 
@@ -298,6 +301,16 @@ export class IoTHelper {
   /** "canada" => "Canada" */
   static FirstLetter(str: string): string {
     return str.slice(0, 1).toUpperCase() + str.slice(1);
+  }
+
+  static DefinitionDTOAdapterForSbc(sbc:ISbc):SbcDtoAdapterType|undefined {
+    let adapter:SbcDtoAdapterType|undefined;
+    //Armbian
+    if (sbc.Armbian) {
+      adapter=IoTDTOAdapters.Armbian;
+    }
+    //result
+    return adapter;
   }
 
 

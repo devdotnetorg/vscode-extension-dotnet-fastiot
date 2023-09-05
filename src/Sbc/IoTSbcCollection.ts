@@ -10,16 +10,17 @@ import EntityEnum = IoT.Enums.Entity;
 import ChangeCommand = IoT.Enums.ChangeCommand;
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IConfiguration } from '../Configuration/IConfiguration';
-import {ClassMVCWithEvent } from '../Shared/ClassMVCWithEvent';
+import { ClassWithEvent, ITriggerEvent, Handler } from '../Shared/ClassWithEvent';
 import { ISbc } from './ISbc';
 import { SbcType } from '../Types/SbcType';
 import { IoTSbc } from './IoTSbc';
 import { IConfigSbcCollection } from './IConfigSbcCollection';
 
-export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
+export class IoTSbcCollection <T extends ISbc> extends ClassWithEvent {
   private _items:Array<T>;
   private _config:IConfigSbcCollection;
   private _TCreator: new() => T;
+  private _eventHandlerSbcDictionary:Map<string, Handler<ITriggerEvent>>;
 
   public get Count(): number {
       return this._items.length;}
@@ -30,8 +31,9 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
   ){
     super();
     this._items = new Array<T>();
-    this._TCreator=TCreator;
-    this. _config=config;
+    this._TCreator = TCreator;
+    this. _config = config;
+    this._eventHandlerSbcDictionary = new Map<string,Handler<ITriggerEvent>>();
   }
 
   public FindById(id:string): T|undefined {
@@ -60,7 +62,14 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
         //unique label
         let label = value.Label;
         label = this.GetUniqueLabel(label,'#');
-        value.Label=label;
+        value.SetLabel(label);
+        //UniqueLabelCallback
+        const getUniqueLabelCallback = (newlabel:string,suffix:string):string=> {
+          return this.GetUniqueLabel(newlabel,suffix);
+        };
+        value.SetUniqueLabelCallback(getUniqueLabelCallback);
+        //event subscription
+        this.EventHandler(value);
         //add
         this._items.push(value);
         result = new IotResult(StatusResult.Ok);
@@ -74,6 +83,16 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
     return result; 
   }
 
+  private EventHandler(value:T) {
+    //event subscription
+    const handler=value.OnTriggerSubscribe(event => {
+      this.Trigger(event.command,event.argument,event.obj);
+    });
+    //add
+    //IdSbc, Handler<ITriggerEvent>
+    this._eventHandlerSbcDictionary.set(value.Id,handler);
+  }
+
   public Remove(id:string):IotResult {
     let result :IotResult;
     result = new IotResult(StatusResult.Error,"No SBC found in collection");
@@ -81,6 +100,13 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
     if(sbc) {
       const index = this._items.indexOf(sbc, 0);
       if (index > -1) {
+        //event unsubscription
+        const handler=this._eventHandlerSbcDictionary.get(sbc.Id);
+        if(handler) {
+          sbc.OnTriggerUnsubscribe(handler);
+          this._eventHandlerSbcDictionary.delete(sbc.Id);
+        } 
+        //remove
         this._items.splice(index, 1);
         result = new IotResult(StatusResult.Ok,`${sbc.Label} ${sbc.Architecture} SBC removed successfully.`);
         this.Trigger(ChangeCommand.remove,id);
@@ -127,6 +153,15 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
   }
 
   public Clear() {
+    //event unsubscription
+    this._items.forEach(sbc => {
+      const handler=this._eventHandlerSbcDictionary.get(sbc.Id);
+      if(handler) {
+        sbc.OnTriggerUnsubscribe(handler);
+        this._eventHandlerSbcDictionary.delete(sbc.Id);
+      }
+    });
+    //clear
     this._items=[];
     this.Trigger(ChangeCommand.clear);
   }
@@ -218,6 +253,7 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
     }
   }
 
+  /*
   public Rename(id:string, newLabel:string):IotResult {
     let result :IotResult;
     result = new IotResult(StatusResult.Error,"No SBC found in collection");
@@ -238,6 +274,7 @@ export class IoTSbcCollection <T extends ISbc> extends  ClassMVCWithEvent {
     }
     return result;
   }
+  */
 
 
 

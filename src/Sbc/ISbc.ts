@@ -13,7 +13,7 @@ import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { IotSbcArmbian } from './IotSbcArmbian';
 import { ClassWithEvent,Handler,IChangedStateEvent } from '../Shared/ClassWithEvent';
 
-export interface ISbc {
+export interface ISbc extends ClassWithEvent {
   Id: string;
   Label: string;
   Host: string;
@@ -38,8 +38,10 @@ export interface ISbc {
   Create(addSBCConfigType:AddSBCConfigType,token?:vscode.CancellationToken, forceMode?:boolean):Promise<IotResult>;
   Reboot(token?:vscode.CancellationToken): Promise<IotResult>;
   Shutdown(token?:vscode.CancellationToken): Promise<IotResult>;
-  Rename(newLabel:string): IotResult;
-
+  SetLabel(newLabel:string): IotResult;
+  SetUniqueLabelCallback(
+    getUniqueLabelCallback: (newlabel:string,suffix:string) => string
+    ):void;
   ToJSON():SbcType;
   FromJSON(obj:SbcType):void;
   
@@ -49,6 +51,6 @@ export interface ISbc {
   ParseGetSshKeyOfAccount(data:string,obj?:any):IotResult;
   
   //ClassWithEvent
-  OnChangedStateSubscribe(handler: Handler<IChangedStateEvent>):Handler<IChangedStateEvent>;
-  OnChangedStateUnsubscribe(handler: Handler<IChangedStateEvent>):void;
+  //OnChangedStateSubscribe(handler: Handler<IChangedStateEvent>):Handler<IChangedStateEvent>;
+  //OnChangedStateUnsubscribe(handler: Handler<IChangedStateEvent>):void;
 }

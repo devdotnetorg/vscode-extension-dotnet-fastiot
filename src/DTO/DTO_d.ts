@@ -2,13 +2,13 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { IotDevice } from '../IotDevice';
-import { IDtoAdapter } from './IDtoAdapter';
-import { DTOArmbianAdapter } from './DTOArmbianAdapter';
+import { IDtoAdapter_d } from './IDtoAdapter_d';
+import { DTOArmbianAdapter_d } from './DTOArmbianAdapter_d';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 
-export class DTO {  
+export class DTO_d {  
   private _device: IotDevice;
-  private _adapterDTO?:IDtoAdapter;
+  private _adapterDTO?:IDtoAdapter_d;
 
   private _compatible:boolean=false;
   public get Compatible(): boolean { 
@@ -38,13 +38,13 @@ export class DTO {
     this._fsPath=fsPath;  
   }
 
-  public GetAdapter():IDtoAdapter| undefined
+  public GetAdapter():IDtoAdapter_d| undefined
   {
     const device = this._device;    
-    let adapter:IDtoAdapter| undefined;
+    let adapter:IDtoAdapter_d| undefined;
     //Select adapter - Armbian
     if(device.Information.ArmbianVersion)
-      adapter=new DTOArmbianAdapter(device);
+      adapter=new DTOArmbianAdapter_d(device);
     //Select adapter - other OS
     //using only - device
 
@@ -59,7 +59,7 @@ export class DTO {
       if(result.Status==StatusResult.Ok)
       {
         //sort
-        result.returnObject=(<Array<DTO>>result.returnObject).sort(compare);
+        result.returnObject=(<Array<DTO_d>>result.returnObject).sort(compare);
         //
         const jsonObj=this._adapterDTO.WriteConfig();
         this._device.DtoLinux.Config=jsonObj;
@@ -131,7 +131,7 @@ export class DTO {
   }
 }
 
-export function compare( a:DTO, b:DTO ) {
+export function compare( a:DTO_d, b:DTO_d ) {
   if(a.Name && b.Name){
     if ( a.Name < b.Name ){
       return -1;

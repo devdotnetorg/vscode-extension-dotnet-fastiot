@@ -16,6 +16,10 @@ import { SbcAccountType } from '../Types/SbcAccountType';
 import { IoT } from '../Types/Enums';
 import AccountAssignment = IoT.Enums.AccountAssignment;
 import Existence = IoT.Enums.Existence;
+import LogLevel = IoT.Enums.LogLevel;
+import Contain = IoT.Enums.Contain;
+import EntityEnum = IoT.Enums.Entity;
+import ChangeCommand = IoT.Enums.ChangeCommand;
 import { ISbc } from './ISbc';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { AddSBCConfigType } from '../Types/AddSBCConfigType';
@@ -40,7 +44,9 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   private _id:string;
   public get Id(): string {
     return this._id;}
-  public Label: string;
+  private _label:string;
+  public get Label(): string {
+    return this._label;}
   private _host:string;
   public get Host(): string {
     return this._host;}
@@ -86,10 +92,12 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   //Format Version JSON
   private readonly _formatVersion = 2;
 
+  private _getUniqueLabelCallback:((newlabel:string,suffix:string) => string)|undefined;
+  
   constructor() {
     super();
 		this._id = IoTHelper.CreateGuid();
-    this.Label = "None";
+    this._label = "None";
     this._host = "None";
     this._port = 0;
     this._existence = Existence.none;
@@ -402,17 +410,30 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     return Promise.resolve(result);
   }
 
-  public Rename(newLabel:string): IotResult {
+  public SetLabel(newLabel:string): IotResult {
     let result:IotResult;
     newLabel = IoTHelper.StringTrim(newLabel);
-    if(newLabel!="") {
-      //ok
-      result = new IotResult(StatusResult.Ok);
-    }else {
-      //not
-      result = new IotResult(StatusResult.Error);
+    if(newLabel=="") {
+      result = new IotResult(StatusResult.Error,`The new name cannot be empty`);
+      return result;
     }
+    let newLabel2="None";
+    if(this._getUniqueLabelCallback) 
+      newLabel2=this._getUniqueLabelCallback(newLabel,'#');
+    if(newLabel!=newLabel2||this.Label==newLabel) {
+      result = new IotResult(StatusResult.Error,`SBC with the name '${newLabel}' already exists`);
+      return result;
+    }
+    this._label=newLabel;
+    result = new IotResult(StatusResult.Ok);
+    this.Trigger(ChangeCommand.rename,this.Id);
     return result;
+  }
+
+  public SetUniqueLabelCallback(
+    getUniqueLabelCallback: (newlabel:string,suffix:string) => string
+    ) {
+    this._getUniqueLabelCallback=getUniqueLabelCallback;
   }
 
   public ToJSON():SbcType {
@@ -474,7 +495,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   public FromJSON(obj:SbcType) {
     try {
       this._id = obj.id;
-      this.Label = obj.label;
+      this._label = obj.label;
       this._host = obj.host;
       this._port = obj.port;
       const existence = enumHelper.GetExistenceByName(obj.existence);
@@ -519,7 +540,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       this._osRelease=obj.osrelease;
       this._osCodename=obj.oscodename;
       //Label
-      this.Label=this.HostName;
+      this._label=this.HostName;
     } catch (err: any){
       result=new IotResult(StatusResult.Error,"JSON parse error, ParseGetInfo function",err);
     }
@@ -620,7 +641,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
         if(platformSbc.includes("VMware")) platformSbc="VMware";
         if(platformSbc!="None") {
           //set Label
-          this.Label=`${this.Label} ${platformSbc}`;
+          this._label=`${this.Label} ${platformSbc}`;
         }
       }
     } catch (err: any){

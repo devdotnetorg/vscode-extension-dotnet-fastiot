@@ -4,7 +4,7 @@ import * as path from 'path';
 import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
 import {IotDevice} from './IotDevice';
 import { IotResult,StatusResult } from './Shared/IotResult';
-import { DTO } from './Dto/DTO';
+import { DTO_d } from './Dto/DTO_d';
 
 export class IotDeviceDTO extends BaseTreeItem_d {
   public Parent: IotDevice| IotDeviceDTO;
@@ -13,12 +13,12 @@ export class IotDeviceDTO extends BaseTreeItem_d {
 
   public Config:any;
 
-  public Items: Array<DTO>=[];
+  public Items: Array<DTO_d>=[];
 
-  private _dto: DTO| undefined;
-  private get Dto(): DTO| undefined {
+  private _dto: DTO_d| undefined;
+  private get Dto(): DTO_d| undefined {
     return this._dto;};
-  private set Dto(dto: DTO| undefined) {
+  private set Dto(dto: DTO_d| undefined) {
       this._dto=dto;
       //      
       this.label= this._dto?.Name;      
@@ -76,14 +76,14 @@ export class IotDeviceDTO extends BaseTreeItem_d {
     this.iconPath = new vscode.ThemeIcon("layers");
   }
 
-  public InitDTO( dto: DTO)
+  public InitDTO( dto: DTO_d)
   {    
     //Dto
     this.Dto=dto;
   }  
 
   public async GetAll(): Promise<IotResult> {
-    if(!this._dto) this._dto= new DTO(this.Device);
+    if(!this._dto) this._dto= new DTO_d(this.Device);
     if(!this._dto.Compatible)
       return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));
     //Ping
@@ -96,7 +96,7 @@ export class IotDeviceDTO extends BaseTreeItem_d {
     let result = await this._dto.GetAll();
     if(result.Status==StatusResult.Ok)
       {
-        this.Items=<Array<DTO>>result.returnObject;
+        this.Items=<Array<DTO_d>>result.returnObject;
         //create child elements
         this.Build();
       }
@@ -105,7 +105,7 @@ export class IotDeviceDTO extends BaseTreeItem_d {
   }
 
   public async Put(fileName:string, fileData:string,fileType:string):Promise<IotResult>{
-    if(!this._dto) this._dto= new DTO(this.Device);
+    if(!this._dto) this._dto= new DTO_d(this.Device);
     if(!this._dto.Compatible)
       return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));    
     //Ping
@@ -124,7 +124,7 @@ export class IotDeviceDTO extends BaseTreeItem_d {
   }
 
   public async Delete():Promise<IotResult>{
-    if(!this._dto) this._dto= new DTO(this.Device);
+    if(!this._dto) this._dto= new DTO_d(this.Device);
     if(!this._dto.Compatible)
       return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));    
     //Ping
@@ -143,7 +143,7 @@ export class IotDeviceDTO extends BaseTreeItem_d {
   }
 
   public async Enable():Promise<IotResult>{
-    if(!this._dto) this._dto= new DTO(this.Device);
+    if(!this._dto) this._dto= new DTO_d(this.Device);
     if(!this._dto.Compatible)
       return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));    
     //Ping
@@ -162,7 +162,7 @@ export class IotDeviceDTO extends BaseTreeItem_d {
   }
 
   public async Disable():Promise<IotResult>{
-    if(!this._dto) this._dto= new DTO(this.Device);
+    if(!this._dto) this._dto= new DTO_d(this.Device);
     if(!this._dto.Compatible)
       return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this device",undefined));    
     //Ping
@@ -232,7 +232,7 @@ export class IotDeviceDTO extends BaseTreeItem_d {
           let dtoName = <string> item.name;
           let dtoEnabled = <boolean> item.enabled;
           let dtofsPath = <string> item.fspath;
-          let dto = new DTO(this.Device);
+          let dto = new DTO_d(this.Device);
           dto.Init(dtoEnabled,dtoName,dtofsPath);
           //push
           this.Items.push(dto);

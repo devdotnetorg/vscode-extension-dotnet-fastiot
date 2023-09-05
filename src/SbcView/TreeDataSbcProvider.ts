@@ -71,7 +71,7 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
 
   private EventHandler() {
     //event subscription
-    const handler=this._SBCs.OnChangedStateSubscribe(event => {
+    const handler=this._SBCs.OnTriggerSubscribe(event => {
       switch(event.command) {
         case ChangeCommand.add: {
           const sbc = this._SBCs.FindById(event.argument??"None");
@@ -105,6 +105,16 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
         }
         case ChangeCommand.clear: {
           this._rootItems=[];
+          this.Refresh();
+          break; 
+        }
+        case ChangeCommand.rename: {
+          const sbc = this._SBCs.FindById(event.argument??"None");
+          if(!sbc) break;
+          // node
+          const sbcNode = this.FindById(sbc.Id);
+          if(!sbcNode) break;
+          sbcNode.label=sbc.Label;
           this.Refresh();
           break; 
         }

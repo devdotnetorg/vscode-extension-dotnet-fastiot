@@ -6,10 +6,13 @@ import { IoT } from '../Types/Enums';
 import LogLevel = IoT.Enums.LogLevel;
 import Dialog = IoT.Enums.Dialog;
 import Contain = IoT.Enums.Contain;
+import ChangeCommand = IoT.Enums.ChangeCommand;
+
 
 export abstract class ClassWithEvent {
   
   //Event--------------------------------------
+  //Changed State
   protected ChangedStateDispatcher = new EventDispatcher<IChangedStateEvent>();
 
   public OnChangedStateSubscribe(handler: Handler<IChangedStateEvent>):Handler<IChangedStateEvent> {
@@ -23,6 +26,21 @@ export abstract class ClassWithEvent {
 
   protected FireChangedState(event: IChangedStateEvent) { 
       this.ChangedStateDispatcher.Fire(event);
+  }
+  //Trigger
+  protected TriggerDispatcher = new EventDispatcher<ITriggerEvent>();
+
+  public OnTriggerSubscribe(handler: Handler<ITriggerEvent>):Handler<ITriggerEvent> {
+    this.TriggerDispatcher.Register(handler);
+    return handler;
+  }
+
+  public OnTriggerUnsubscribe (handler: Handler<ITriggerEvent>) {
+    this.TriggerDispatcher.Unregister(handler);
+  }
+
+  protected FireTrigger(event: ITriggerEvent) { 
+      this.TriggerDispatcher.Fire(event);
   }
   //-------------------------------------------
   constructor() {}
@@ -43,6 +61,18 @@ export abstract class ClassWithEvent {
     });
   }
 
+  protected Trigger(
+    command:ChangeCommand,
+    argument?:string,
+    obj?:any) {
+    //Event
+    this.FireTrigger({
+      command:command,
+      argument:argument,
+      obj:obj
+    });
+  }
+
 }
 
 export interface IChangedStateEvent {
@@ -50,6 +80,12 @@ export interface IChangedStateEvent {
   logLevel?:LogLevel,
   status?:string
   increment?:number
+}
+
+export interface ITriggerEvent {
+  command:ChangeCommand,
+  argument?:string,
+  obj?:any
 }
 
 export type Handler<E> = (event: E) => void;

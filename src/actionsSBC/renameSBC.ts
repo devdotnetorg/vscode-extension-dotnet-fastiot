@@ -16,10 +16,11 @@ export async function renameSBC(item:SbcTreeItemNode): Promise<void> {
         value:<string>item.label
     });
     if((newLabel==undefined)||(newLabel==item.label)) return;
-    newLabel=IoTHelper.StringTrim(newLabel);
     //Rename
     const app = AppDomain.getInstance().CurrentApp;
-    result=app.SBCs.Rename(item.IdSbc??"None",newLabel);
+    const sbc = app.SBCs.FindById(item.IdSbc??"None");
+    if (!sbc) return;
+    result=sbc.SetLabel(newLabel);
     if(result.Status!=StatusResult.Ok) {
         app.UI.ShowNotification(result);
         return;
