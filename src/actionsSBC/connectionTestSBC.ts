@@ -48,7 +48,7 @@ export async function connectionTestSBC(accounts:ISbcAccount[]): Promise<void> {
                 }else break;
             } while(true)
             resolve(undefined);
-            return;       
+            return;
             //end
         });
     });

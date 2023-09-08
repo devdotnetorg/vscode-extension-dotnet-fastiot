@@ -48,7 +48,7 @@ export class IoTSbcDTOCollection<SbcDtoType> extends ClassWithEvent {
     this._adapter=adapter;
   }
 
-  public async Load(token?:vscode.CancellationToken): Promise<IotResult> {
+  private async GetSshClient(token?:vscode.CancellationToken): Promise<IotResult> {
     //base
     let result:IotResult;
     if(!this._adapter||!this._account)
@@ -61,18 +61,38 @@ export class IoTSbcDTOCollection<SbcDtoType> extends ClassWithEvent {
     //SshClient
     let sshClient = new SshClient(app.Config.Folder.BashScripts);
     result = await sshClient.Connect(this._account.ToSshConfig(),token);
-    if(result.Status!=StatusResult.Ok)
+    if(result.Status==StatusResult.Ok) result.returnObject=sshClient;
+    //result
+    return Promise.resolve(result);
+  }
+
+  public async Load(token?:vscode.CancellationToken): Promise<IotResult> {
+    //base
+    if(!this._adapter||!this._account)
+      return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this SBC"));
+    let result:IotResult;
+    const msgErr="Error getting DTOs";
+    result = await this.GetSshClient(token);
+    if(result.Status!=StatusResult.Ok) {
+      result.AddMessage(msgErr);
       return Promise.resolve(result);
+    }
+    let sshClient = <SshClient>result.returnObject;
     //main
     result = await sshClient.RunScript(
       path.join(this._nameFolderDtoScripts,this._adapter.GetallOverlayNameScript),
       undefined,token,true);
-    if(result.Status!=StatusResult.Ok)
-      return Promise.resolve(result); 
+    if(result.Status!=StatusResult.Ok) {
+      result.AddMessage(msgErr);
+      return Promise.resolve(result);
+    }
     //parse
     result = this.ParseLoad(result.SystemMessage??"None");
-    if(result.Status!=StatusResult.Ok)
-      return Promise.resolve(result); 
+    if(result.Status!=StatusResult.Ok) {
+      result.AddMessage(msgErr);
+      return Promise.resolve(result);
+    }
+    result = new IotResult(StatusResult.Ok,"All DTOs have been successfully received");
     //Trigger
     this.Trigger(ChangeCommand.changedDto)
     //result
@@ -106,54 +126,11 @@ export class IoTSbcDTOCollection<SbcDtoType> extends ClassWithEvent {
   }
 
   public ToJSON():SbcDtoType[] {
-
-    throw new Error("This is an example exception.");
-
-    /*
-    //blank
-    let obj:SbcAccountType = {
-      username: "None",
-      groups: "None",
-      assignment: "None",
-      sshkeytypebits: "None",
-      sshkeyfilename: "None"
-    };
-    try {
-      const groupsAccount = IoTHelper.ArrayToString(this.Groups,',');
-      const assignmentStr = enumHelper.GetNameAccountAssignmentByType(this.Assignment) ?? AccountAssignment.none;
-      //Fill
-      obj = {
-        username:this.UserName,
-        groups:groupsAccount,
-        assignment:assignmentStr,
-        sshkeytypebits: this.SshKeyTypeBits,
-        sshkeyfilename: this.SshKeyFileName?? "None"
-      };
-  } catch (err: any){}
-    //result
-    return obj;
-    */
+    return this._items;
   }
 
   public FromJSON(objs:SbcDtoType[]) {
-
-    throw new Error("This is an example exception.");
-
-    /*
-    try {
-      //get
-      const userName= obj.username;
-      const groupsAccount = IoTHelper.StringToArray(obj.groups,',');
-      const assignment = enumHelper.GetAccountAssignmentByName(obj.assignment);
-      const sshKeyTypeBits = obj.sshkeytypebits;
-      const sshKeyFileName= obj.sshkeyfilename;
-      //build
-      this.fromLoginSshKey(
-        this.Host,this.Port,
-        userName, this.SshKeystorePath ?? "None",sshKeyFileName,
-        groupsAccount,sshKeyTypeBits,assignment);
-    } catch (err: any){}
-    */
+    this._items=objs;
   }
 
   public *getValues() { // you can put the return type Generator<number>, but it is ot necessary as ts will infer 

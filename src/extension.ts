@@ -246,7 +246,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	//Update DTO
 	let commandUpdateDTO = vscode.commands.registerCommand("viewSBC.UpdateDTO", (item:SbcTreeItemNode) => {
-		LoadDTO(item);
+		LoadDTO(treeDataSbcProvider, vscodeTreeDataSbcs,item);
 	});
 
 	/*

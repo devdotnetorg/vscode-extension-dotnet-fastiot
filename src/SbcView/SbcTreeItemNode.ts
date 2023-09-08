@@ -8,6 +8,7 @@ export class SbcTreeItemNode extends BaseTreeItemNode {
   public IdSbc:string|undefined;
   public Parent?: SbcTreeItemNode;
   public Childs: Array<SbcTreeItemNode>=[];
+  public Tag?:string;
   
   constructor(
     label: string,  

@@ -7,6 +7,7 @@ import { AddSBCConfigType } from './AddSBCConfigType';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { SbcAccountType } from './SbcAccountType';
 import { SbcArmbianType } from './SbcArmbianType';
+import { SbcDtoType } from '../Types/SbcDtoType';
 
 /**
  * Custom type to the SBC.
@@ -23,11 +24,12 @@ export type SbcType = {
    boardname: string;
    architecture: string;
    oskernel: string;
-   osname:string;
+   osname: string;
    osdescription: string;
    osrelease: string;
    oscodename: string;
    // Parts
    accounts: SbcAccountType[];
    armbian: SbcArmbianType;
+   dto: SbcDtoType[];
 };

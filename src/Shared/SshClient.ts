@@ -94,6 +94,8 @@ export class SshClient extends ClassWithEvent {
       let result:IotResult;
       let msg:string| undefined;
       let flagExit:Boolean=false;
+      let stackErr:string[]=[];
+      stackErr.push("Error stack");
       if(token) {
         token.onCancellationRequested(() => {
           flagExit=true;
@@ -120,10 +122,13 @@ export class SshClient extends ClassWithEvent {
       dataFile=IoTHelper.SetLineEnding(dataFile);
       //Event
       this.CreateEvent("--------------------------------------------");
+      stackErr.push("--------------------------------------------");
       msg=`Run: ${fileNameScript}.sh`;
       if (argumentScript) msg=`${msg} Arguments: ${argumentScript.toString()}`;
       this.CreateEvent(msg);
+      stackErr.push(msg);
       this.CreateEvent("--------------------------------------------");
+      stackErr.push("--------------------------------------------");
       //put script
 	    var sftp = this._ssh.sftp();		
       try {
@@ -168,17 +173,31 @@ export class SshClient extends ClassWithEvent {
           return Promise.resolve(new IotResult(StatusResult.Error,msg));
         }
         //output
+        stackErr.push(outSystemMessage);
         if(stdErr!="") {
           stdErr=stdErr.replace(`W: `,`WARNING: `).replace(`E: `,`ERROR: `);
           stdErr=IoTHelper.StringTrim(stdErr);
           this.CreateEvent(`STDERR: ${stdErr}`);
+          stackErr.push(`STDERR: ${stdErr}`);
         } 
-        if(codeErr) this.CreateEvent(`CODEERR: ${codeErr}`);
+        if(codeErr) {
+          this.CreateEvent(`CODEERR: ${codeErr}`);
+          stackErr.push(`CODEERR: ${codeErr}`);
+        } 
         //Check "Successfully" OR codeErr
         lastConsoleLine=IoTHelper.StringTrim(lastConsoleLine);
         if (!lastConsoleLine.includes("Successfully")||!lastConsoleLine.includes("successfully")) {
           if(codeErr) {
-            return Promise.resolve(new IotResult(StatusResult.Error,`The execution of the ${fileNameScript}.sh script ended with an error`,lastConsoleLine));
+            msg=`The execution of the ${fileNameScript}.sh script ended with an error`;
+            if(!getStdout) {
+              //as stream
+              return Promise.resolve(new IotResult(StatusResult.Error, msg, lastConsoleLine));
+            }else {
+              //as out
+              const msgStackErr = IoTHelper.ArrayToString(stackErr,'\n');
+              return Promise.resolve(new IotResult(StatusResult.Error, msg, msgStackErr));
+            }
+            
           }
         }
       }

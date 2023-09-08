@@ -52,6 +52,11 @@ export class SbcNode extends SbcTreeItemNode {
     this.Build(sbc);
   }
 
+  public FindByTag(tag:string): SbcTreeItemNode| undefined {
+    let node = this.Childs.find(x=>x.Tag==tag);
+    return node;
+  }
+
   public Refresh(sbc: ISbc) {  
     this.Build(sbc);
   }
@@ -160,7 +165,7 @@ export class SbcNode extends SbcTreeItemNode {
     for (const dto of sbc.DTOs.getValues()) {
       //create node
       let tooltip:vscode.MarkdownString;
-      tooltip= new vscode.MarkdownString(`Name: ${dto.name}   \nClass: ${dto.type}   \nLocation: ${dto.path}`,true);
+      tooltip= new vscode.MarkdownString(`Name: ${dto.name}   \nClass: ${dto.type}   \nState: ${dto.active?"on":"off"}   \nLocation: ${dto.path}`,true);
       let dtoNode = new SbcTreeItemNode(dto.name,dto.type.toString(),tooltip,vscode.TreeItemCollapsibleState.None,this.DTOs);
       dtoNode.IdSbc=sbc.Id;
       dtoNode.contextValue="iotsbc";

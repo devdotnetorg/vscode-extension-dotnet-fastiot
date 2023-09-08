@@ -477,7 +477,8 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       oscodename: "None",
       // Parts
       accounts: accounts,
-      armbian: {}
+      armbian: {},
+      dto:[]
     };
     try {
       const existence = enumHelper.GetNameExistenceByType(this.Existence) ?? "none";
@@ -505,7 +506,8 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
         oscodename: this.OsCodename,
         // Parts
         accounts: accounts,
-        armbian: armbian
+        armbian: armbian,
+        dto: this.DTOs.ToJSON()
       };
     } catch (err: any){}
     //result
@@ -542,6 +544,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       this._armbian.FromJSON(obj.armbian);
       //check DTO
       this.InitDTO();
+      this.DTOs.FromJSON(obj.dto);
     } catch (err: any){}
   }
 

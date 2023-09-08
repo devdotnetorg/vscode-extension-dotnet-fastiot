@@ -127,8 +127,9 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
           const sbcNode = this.FindById(sbc.Id);
           if(!sbcNode) break;
           sbcNode.BuildDTOs(sbc);
-          this.Refresh();
           sbcNode.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
+          sbcNode.DTOs.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
+          this.Refresh();
           break; 
         }
         default: {
