@@ -14,37 +14,71 @@ import { FilesValidator } from '../Validator/FilesValidator';
 import { SbcAccountType } from '../Types/SbcAccountType';
 import { IoT } from '../Types/Enums';
 import AccountAssignment = IoT.Enums.AccountAssignment;
-import { ISbcDTOCollection } from './ISbcDTOCollection';
+import ChangeCommand = IoT.Enums.ChangeCommand;
 import { ISbcAccount } from './ISbcAccount';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { enumHelper } from '../Helper/enumHelper';
-import { SbcDtoType } from '../Types/SbcDtoType';
 import { SshConnection } from '../Shared/SshConnection';
 import { ClassWithEvent } from '../Shared/ClassWithEvent';
 import { ISbc } from './ISbc';
 import { IoTDTOAdapters } from "./IoTDTOAdapters"
 import { SbcDtoAdapterType } from "../Types/SbcDtoAdapterType"
+import { AppDomain } from '../AppDomain';
+import { ISshConnection } from '../Shared/ISshConnection';
+import { SshClient } from '../Shared/SshClient';
+import { SbcDtoType } from '../Types/SbcDtoType';
 
-export class IoTSbcDTOCollection<SbcDtoType> extends ClassWithEvent implements ISbcDTOCollection<SbcDtoType> {
+export class IoTSbcDTOCollection<SbcDtoType> extends ClassWithEvent {
+  private readonly _nameFolderDtoScripts="dto";
+
   private _items:Array<SbcDtoType>;
-  private _adapter:SbcDtoAdapterType|undefined;
+  private _adapter?:SbcDtoAdapterType;
+  private _account?: ISbcAccount;
+
+  public get Count(): number {
+    return this._items.length;}
   
-  constructor(
-    adapter?:SbcDtoAdapterType
-  ) {
+  constructor() {
     super();
     this._items = new Array<SbcDtoType>();
-    //adapter
+  }
+
+  public Init(account: ISbcAccount, adapter:SbcDtoAdapterType) {
+    this._account= account;
     this._adapter=adapter;
   }
 
   public async Load(token?:vscode.CancellationToken): Promise<IotResult> {
-    if(!this._adapter)
+    //base
+    let result:IotResult;
+    if(!this._adapter||!this._account)
       return Promise.resolve(new IotResult(StatusResult.Error,"There is no supported DTO adapter for this SBC"));
-    //next
-
-    throw new Error("This is an example exception.");
-  
+    const app = AppDomain.getInstance().CurrentApp;
+    //test connection
+    result = await this._account.ConnectionTest();
+    if(result.Status!=StatusResult.Ok)
+      return Promise.resolve(result);
+    //SshClient
+    let sshClient = new SshClient(app.Config.Folder.BashScripts);
+    result = await sshClient.Connect(this._account.ToSshConfig(),token);
+    if(result.Status!=StatusResult.Ok)
+      return Promise.resolve(result);
+    //main
+    result = await sshClient.RunScript(
+      path.join(this._nameFolderDtoScripts,this._adapter.GetallOverlayNameScript),
+      undefined,token,true);
+    if(result.Status!=StatusResult.Ok)
+      return Promise.resolve(result); 
+    //parse
+    result = this.ParseLoad(result.SystemMessage??"None");
+    if(result.Status!=StatusResult.Ok)
+      return Promise.resolve(result); 
+    //Trigger
+    this.Trigger(ChangeCommand.changedDto)
+    //result
+    await sshClient.Close();
+    await sshClient.Dispose();
+    return Promise.resolve(result);
   }
 
   public async Put(fileName:string, fileData:string, fileType:string,token?:vscode.CancellationToken): Promise<IotResult> {
@@ -120,6 +154,55 @@ export class IoTSbcDTOCollection<SbcDtoType> extends ClassWithEvent implements I
         groupsAccount,sshKeyTypeBits,assignment);
     } catch (err: any){}
     */
+  }
+
+  public *getValues() { // you can put the return type Generator<number>, but it is ot necessary as ts will infer 
+    let index = 0;
+    while(true) {
+        yield this._items[index];
+        index = index + 1;
+        if (index >= this.Count) {
+            break;
+        }
+    }
+  }
+
+  //************************ Parse ************************
+
+  public ParseLoad(data:string):IotResult {
+    let result:IotResult;
+    result=new IotResult(StatusResult.Ok);
+    try {
+      //Trim
+      data = IoTHelper.StringTrim(data);
+      const obj = JSON.parse(data);
+      let index=0;
+      this._items=[]; 
+      do {
+        let jsonDto=obj.overlays[index];
+        if(jsonDto) {
+          //parse
+          let isActive=false;
+          let typeDto = IoT.Enums.Entity.user;
+          if(jsonDto.active == "true")  isActive=true;
+          if(jsonDto.type == "system") typeDto = IoT.Enums.Entity.system;
+          const dto = {
+            name:<string>jsonDto.name,
+            path:<string>jsonDto.path,
+            active:isActive,
+            type:typeDto
+          };
+          //add
+          this._items.push(<SbcDtoType>dto);
+          //next position
+          index=index+1;
+        }else break;
+      } while(true)
+    } catch (err: any){
+      result=new IotResult(StatusResult.Error,"JSON parse error, ParseLoad function",err);
+    }
+    //result
+    return result;
   }
 
 }

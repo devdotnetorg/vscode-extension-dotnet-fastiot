@@ -65,7 +65,8 @@ export class IoTSbcCollection <T extends ISbc> extends ClassWithEvent {
         value.SetLabel(label);
         //UniqueLabelCallback
         const getUniqueLabelCallback = (newlabel:string,suffix:string):string=> {
-          return this.GetUniqueLabel(newlabel,suffix);
+          const label = this.GetUniqueLabel(newlabel,suffix);
+          return label;
         };
         value.SetUniqueLabelCallback(getUniqueLabelCallback);
         //event subscription
@@ -86,7 +87,7 @@ export class IoTSbcCollection <T extends ISbc> extends ClassWithEvent {
   private EventHandler(value:T) {
     //event subscription
     const handler=value.OnTriggerSubscribe(event => {
-      this.Trigger(event.command,event.argument,event.obj);
+      this.Trigger(event.command,event.argument??value.Id,event.obj);
     });
     //add
     //IdSbc, Handler<ITriggerEvent>
@@ -138,7 +139,7 @@ export class IoTSbcCollection <T extends ISbc> extends ClassWithEvent {
         //unique label
         let label = newValue.Label;
         label = this.GetUniqueLabel(label,'#');
-        newValue.Label=label;
+        newValue.SetLabel(label);
         //add
         this._items.push(newValue);
         result = new IotResult(StatusResult.Ok);
@@ -164,6 +165,10 @@ export class IoTSbcCollection <T extends ISbc> extends ClassWithEvent {
     //clear
     this._items=[];
     this.Trigger(ChangeCommand.clear);
+  }
+
+  public Dispose () {
+    this.Clear();
   }
 
   public Load():IotResult {

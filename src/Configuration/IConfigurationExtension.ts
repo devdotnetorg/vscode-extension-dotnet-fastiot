@@ -6,9 +6,9 @@ import LogLevel = IoT.Enums.LogLevel;
 import Dialog = IoT.Enums.Dialog;
 
 export interface IConfigurationExtension {
-  Version: string;
+  readonly Version: string;
   PreviousVersion: string;
-  Mode: vscode.ExtensionMode;
-  Loglevel:LogLevel;
+  readonly Mode: vscode.ExtensionMode;
+  readonly Loglevel:LogLevel;
   Subscriptions: { dispose(): any }[];
 }

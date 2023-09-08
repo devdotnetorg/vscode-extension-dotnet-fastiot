@@ -47,6 +47,7 @@ declare arraypaths=($(ls ${overlaydir}/${overlay_prefix}-* -d))
 
 declare JSON_STRING=""
 declare JSON_STRING_LINE=""
+declare overlaytype="user" # type DTO: system, user
 
 IFS=' ' read -r -a arrayoverlays <<< "$overlays"
 
@@ -64,7 +65,7 @@ for (( i=0; i<${#arraypaths[@]}; i=i+1)); do
 		fi
 	done
 	# json
-	JSON_STRING_LINE=$( jq -n --arg name "${overlay}" --arg path "${arraypaths[i]}" --arg active "${overlayactive}" '{name: $name, path: $path,active: $active}' )
+	JSON_STRING_LINE=$( jq -n --arg name "${overlay}" --arg path "${arraypaths[i]}" --arg active "${overlayactive}" --arg type "${overlaytype}" '{name: $name, path: $path, active: $active, type: $type}' )
 	JSON_STRING="${JSON_STRING}${JSON_STRING_LINE} "
 done
 

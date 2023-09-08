@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export interface IConfigurationEntity {
-  IsUpdate:boolean;
-  UpdateIntervalInHours:number;
-  DebugMode:boolean;
+  readonly IsUpdate:boolean;
+  readonly UpdateIntervalInHours:number;
+  readonly DebugMode:boolean;
 }

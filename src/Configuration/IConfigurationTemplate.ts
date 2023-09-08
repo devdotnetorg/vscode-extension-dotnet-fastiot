@@ -3,8 +3,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export interface IConfigurationTemplate {
-  TitleLaunch:string;
-  ListSourceUpdateCommunity: string[];
-  LoadOnStart:boolean;
+  readonly TitleLaunch:string;
+  readonly ListSourceUpdateCommunity: string[];
+  readonly LoadOnStart:boolean;
   LastUpdateTimeInHours: number;
 }

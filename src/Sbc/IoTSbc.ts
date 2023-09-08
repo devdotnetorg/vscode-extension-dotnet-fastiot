@@ -29,7 +29,6 @@ import { ISshConnection } from '../Shared/ISshConnection';
 import { SshConnection } from '../Shared/SshConnection';
 import { AppDomain } from '../AppDomain';
 import { SbcType } from '../Types/SbcType';
-import { ClassWithEvent } from '../Shared/ClassWithEvent';
 import { TaskQueue } from '../Shared/TaskQueue';
 import { TaskRunScript } from '../Shared/TaskRunScript';
 import { TaskPutFile } from '../Shared/TaskPutFile';
@@ -39,6 +38,9 @@ import { IotSbcArmbian } from './IotSbcArmbian';
 import { IoTSbcAccount } from './IoTSbcAccount';
 import { enumHelper } from '../Helper/enumHelper';
 import { Constants } from "../Constants"
+import { IoTSbcDTOCollection } from './IoTSbcDTOCollection';
+import { SbcDtoType } from '../Types/SbcDtoType';
+import { ClassWithEvent, ITriggerEvent, Handler } from '../Shared/ClassWithEvent';
 
 export class IoTSbc extends ClassWithEvent implements ISbc {
   private _id:string;
@@ -88,12 +90,13 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   private _armbian:IotSbcArmbian
   public get Armbian(): IotSbcArmbian {
     return this._armbian;}
-
+  public DTOs: IoTSbcDTOCollection<SbcDtoType>;
   //Format Version JSON
   private readonly _formatVersion = 2;
 
   private _getUniqueLabelCallback:((newlabel:string,suffix:string) => string)|undefined;
-  
+  private _eventHandlerDictionary:Map<string, Handler<ITriggerEvent>>;
+
   constructor() {
     super();
 		this._id = IoTHelper.CreateGuid();
@@ -113,6 +116,21 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     // Parts
     this._accounts = [];
     this._armbian = new IotSbcArmbian();
+    this.DTOs = new IoTSbcDTOCollection<SbcDtoType>();
+    // handlers event 
+    this._eventHandlerDictionary = new Map<string,Handler<ITriggerEvent>>();
+    //event subscription
+    this.EventHandler();
+  }
+
+  private EventHandler() {
+    //event subscription
+    let handler=this.DTOs.OnTriggerSubscribe(event => {
+      this.Trigger(event.command,event.argument??this.Id,event.obj);
+    });
+    //add
+    //IdSbc, Handler<ITriggerEvent>
+    this._eventHandlerDictionary.set("DTOs",handler);
   }
 
   public GetAccount(assignment: AccountAssignment): ISbcAccount| undefined {
@@ -359,6 +377,8 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     }else {
       result.AddMessage("Single-board computer profile creation error");
     }
+    //check DTO
+    this.InitDTO();
     //event unsubscription    
     taskQueue.OnChangedStateUnsubscribe(handlerTaskQueue);
     //Dispose
@@ -417,16 +437,16 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       result = new IotResult(StatusResult.Error,`The new name cannot be empty`);
       return result;
     }
-    let newLabel2="None";
+    let newLabel2=newLabel;
     if(this._getUniqueLabelCallback) 
       newLabel2=this._getUniqueLabelCallback(newLabel,'#');
-    if(newLabel!=newLabel2||this.Label==newLabel) {
+    if(newLabel!=newLabel2) {
       result = new IotResult(StatusResult.Error,`SBC with the name '${newLabel}' already exists`);
       return result;
     }
     this._label=newLabel;
     result = new IotResult(StatusResult.Ok);
-    this.Trigger(ChangeCommand.rename,this.Id);
+    this.Trigger(ChangeCommand.rename);
     return result;
   }
 
@@ -457,7 +477,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       oscodename: "None",
       // Parts
       accounts: accounts,
-      armbian: new IotSbcArmbian().ToJSON()
+      armbian: {}
     };
     try {
       const existence = enumHelper.GetNameExistenceByType(this.Existence) ?? "none";
@@ -520,7 +540,24 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
       });
       //Armbian
       this._armbian.FromJSON(obj.armbian);
+      //check DTO
+      this.InitDTO();
     } catch (err: any){}
+  }
+
+  private InitDTO() {
+    const adapter = IoTHelper.DefinitionDTOAdapterForSbc(this);
+    if (!adapter) return;
+    const AccountAssignmentType=AccountAssignment.management;
+    const account = this.GetAccount(AccountAssignmentType);
+    if(!account) return;
+    //Init 
+    this.DTOs.Init(account,adapter);
+  }
+
+  public Dispose () {
+    let handler =  this._eventHandlerDictionary.get("DTOs");
+    if(handler) this.DTOs.OnTriggerUnsubscribe(handler);
   }
 
   //************************ Parse ************************

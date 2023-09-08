@@ -5,12 +5,12 @@ import * as path from 'path';
 import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IotDevice } from '../IotDevice';
-import { refreshDTO } from './refreshDTO';
+//import { refreshDTO } from './refreshDTO';
 import {IContexUI} from '../ui/IContexUI';
 
 export async function addDTO(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IContexUI): Promise<void> {       
-    if(item.DtoLinux.Items.length==0)
-        await refreshDTO(treeData,item,contextUI);        
+    //if(item.DtoLinux.Items.length==0)
+    //    await refreshDTO(treeData,item,contextUI);        
     if(item.DtoLinux.Items.length==0) return;
     const options: vscode.OpenDialogOptions = {
         defaultUri: vscode.Uri.file(`overlay.dts`),

@@ -305,7 +305,7 @@
 				"title": "Test"
 			},
 			{
-				"command": "_viewSBC.UpdateDTO",
+				"command": "viewSBC.UpdateDTO",
 				"title": "Update DTO",
 				"icon": {
 					"light": "resources/light/refresh.svg",
@@ -596,7 +596,7 @@
 					"group": "navigation"
 				},
 				{
-					"command": "_viewSBC.UpdateDTO",
+					"command": "viewSBC.UpdateDTO",
 					"when": "view == viewSBC && viewItem == iotdtos",
 					"group": "inline"
 				},

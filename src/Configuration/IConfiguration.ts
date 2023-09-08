@@ -8,7 +8,7 @@ import { IConfigurationEntity } from './IConfigurationEntity';
 import { IConfigurationTemplate } from './IConfigurationTemplate';
 
 export interface IConfiguration {
-  Folder: IConfigurationFolder;
+  readonly Folder: IConfigurationFolder;
   Extension: IConfigurationExtension;
   Sbc: IConfigurationSbc;
   Entity: IConfigurationEntity;

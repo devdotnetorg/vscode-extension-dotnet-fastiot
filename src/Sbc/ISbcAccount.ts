@@ -11,9 +11,9 @@ import { ISshConnection } from '../Shared/ISshConnection';
 import { SshConnection } from '../Shared/SshConnection';
 
 export interface ISbcAccount extends ISshConnection {
-  Groups: Array<string>;
-  Assignment: AccountAssignment;
-  SshKeyTypeBits: string;
+  readonly Groups: Array<string>;
+  readonly Assignment: AccountAssignment;
+  readonly SshKeyTypeBits: string;
   fromLoginSshKey(host:string, port:number,
     userName:string, sshKeystorePath:string, sshKeyFileName:string,
     groups?:Array<string>,sshKeyTypeBits?:string,assignment?:AccountAssignment

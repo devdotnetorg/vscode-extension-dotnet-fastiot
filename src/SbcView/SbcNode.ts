@@ -14,6 +14,7 @@ export class SbcNode extends SbcTreeItemNode {
  
   public Connection:SbcTreeItemNode;
   public Information:SbcTreeItemNode;
+  public DTOs:SbcTreeItemNode;
 
   constructor(sbc: ISbc){
     super("sbc",undefined, undefined,vscode.TreeItemCollapsibleState.Collapsed,undefined);
@@ -24,20 +25,29 @@ export class SbcNode extends SbcTreeItemNode {
     this.iconPath = new vscode.ThemeIcon("circuit-board");
     this.contextValue="iotsbc";
     //Childs
+    //Connection
     let tooltip:vscode.MarkdownString;
     tooltip = new vscode.MarkdownString(`Ssh connection parameters Ssh  \nsuch as host, port, username, key`, true);
     this.Connection = new SbcTreeItemNode("Connection",undefined,tooltip,
       vscode.TreeItemCollapsibleState.Collapsed,this);
     this.Connection.iconPath = new vscode.ThemeIcon("account");
+    //Information
     this.Information = new SbcTreeItemNode("Information",undefined,"Sbc info",
       vscode.TreeItemCollapsibleState.Collapsed,this);
     this.Information.iconPath = {
       light: path.join(__filename, '..', '..', '..', 'resources', 'light', 'info_20.svg'),
       dark: path.join(__filename,'..', '..', '..', 'resources', 'dark', 'info_20.svg')
     };
+    //DTOs
+    this.DTOs = new SbcTreeItemNode("Device Tree Overlays",undefined,"This is data structure describing a system's hardware",
+    vscode.TreeItemCollapsibleState.Collapsed,this);
+    this.DTOs.contextValue="iotdtos";
+    this.DTOs.iconPath = new vscode.ThemeIcon("layers");
+    this.DTOs.IdSbc=sbc.Id;
     //Added in childs
     this.Childs.push(this.Connection);
     this.Childs.push(this.Information);
+    this.Childs.push(this.DTOs);
     //Build
     this.Build(sbc);
   }
@@ -49,6 +59,7 @@ export class SbcNode extends SbcTreeItemNode {
   private Build(sbc: ISbc) {
     this.BuildConnection(sbc);
     this.BuildInformation(sbc);
+    this.BuildDTOs(sbc);
   }
 
   private BuildConnection(sbc: ISbc) {
@@ -140,6 +151,37 @@ export class SbcNode extends SbcTreeItemNode {
       item = new SbcTreeItemNode("Armbian",label,label,vscode.TreeItemCollapsibleState.None,this.Information);
       this.Information.Childs.push(item);
     } 
+  }
+
+  public BuildDTOs(sbc: ISbc) {
+    if(sbc.DTOs.Count==0) return;
+    //main
+    this.DTOs.Childs=[];
+    for (const dto of sbc.DTOs.getValues()) {
+      //create node
+      let tooltip:vscode.MarkdownString;
+      tooltip= new vscode.MarkdownString(`Name: ${dto.name}   \nClass: ${dto.type}   \nLocation: ${dto.path}`,true);
+      let dtoNode = new SbcTreeItemNode(dto.name,dto.type.toString(),tooltip,vscode.TreeItemCollapsibleState.None,this.DTOs);
+      dtoNode.IdSbc=sbc.Id;
+      dtoNode.contextValue="iotsbc";
+      if(dto.active) {
+        dtoNode.iconPath = {
+          light: path.join(__filename, '..', '..', '..', 'resources', 'light', 'yes.svg'),
+          dark: path.join(__filename, '..', '..', '..', 'resources', 'dark', 'yes.svg')
+        };
+        //view
+        dtoNode.contextValue="iotdto_on";
+      }else {
+        dtoNode.iconPath = {
+          light: path.join(__filename, '..', '..', '..', 'resources', 'light', 'no.svg'),
+          dark: path.join(__filename, '..', '..', '..', 'resources', 'dark', 'no.svg')
+        };
+        //view
+        dtoNode.contextValue="iotdto_off";
+      }
+      //add
+      this.DTOs.Childs.push(dtoNode);
+    }
   }
 
 }

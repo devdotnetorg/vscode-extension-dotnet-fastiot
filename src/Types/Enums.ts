@@ -73,6 +73,7 @@ export namespace IoT.Enums
         remove = "remove",
         update = "update",
         clear = "clear",
-        rename = "rename" 
+        rename = "rename",
+        changedDto = "changedDto" 
     }
 }

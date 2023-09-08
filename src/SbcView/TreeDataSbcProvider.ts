@@ -12,10 +12,12 @@ import LogLevel = IoT.Enums.LogLevel;
 import Dialog = IoT.Enums.Dialog;
 import Contain = IoT.Enums.Contain;
 import ChangeCommand = IoT.Enums.ChangeCommand;
+import { ClassWithEvent, ITriggerEvent, Handler } from '../Shared/ClassWithEvent';
 
 export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemNode> {    
   private _rootItems:Array<SbcNode>=[];
   private _SBCs:IoTSbcCollection<ISbc>;
+  private _handlerSBC:(Handler<ITriggerEvent>)| undefined;
 
   private _onDidChangeTreeData: vscode.EventEmitter<SbcTreeItemNode| undefined | null | void> = 
     new vscode.EventEmitter<SbcTreeItemNode| undefined | null | void>();
@@ -71,7 +73,7 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
 
   private EventHandler() {
     //event subscription
-    const handler=this._SBCs.OnTriggerSubscribe(event => {
+    this._handlerSBC=this._SBCs.OnTriggerSubscribe(event => {
       switch(event.command) {
         case ChangeCommand.add: {
           const sbc = this._SBCs.FindById(event.argument??"None");
@@ -104,7 +106,7 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
           break; 
         }
         case ChangeCommand.clear: {
-          this._rootItems=[];
+          this.Clear();
           this.Refresh();
           break; 
         }
@@ -118,12 +120,35 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
           this.Refresh();
           break; 
         }
+        case ChangeCommand.changedDto: {
+          const sbc = this._SBCs.FindById(event.argument??"None");
+          if(!sbc) break;
+          // node
+          const sbcNode = this.FindById(sbc.Id);
+          if(!sbcNode) break;
+          sbcNode.BuildDTOs(sbc);
+          this.Refresh();
+          sbcNode.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
+          break; 
+        }
         default: {
-          //statements;
+          //statements;dler
           break; 
         } 
       }
     });
+  }
+
+  public Clear() {
+    //clear
+    this._rootItems=[];
+    this.Refresh();
+  }
+
+  public Dispose () {
+    this.Clear();
+    //event unsubscription
+    if(this._handlerSBC) this._SBCs.OnTriggerUnsubscribe(this._handlerSBC);
   }
 
 }

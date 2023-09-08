@@ -44,6 +44,8 @@ import { rebootSBC } from './actionsSBC/rebootSBC';
 import { refreshSBC } from './actionsSBC/refreshSBC';
 import { shutdownSBC } from './actionsSBC/shutdownSBC';
 
+import { LoadDTO } from './actionsSBC/LoadDTO';
+
 /*
 import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
 import { detectGpiochips } from './actionsDevice/detectGpiochips';
@@ -228,6 +230,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		shutdownSBC(item);
 	});
 
+
+
 	/*
 	
 	//Export devices
@@ -238,7 +242,14 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandImportDevices = vscode.commands.registerCommand('viewDevices.ImportDevices', () => {					
 		importDevices(treeDataDevicesProvider,app.UI);
 	});
-	
+	*/
+
+	//Update DTO
+	let commandUpdateDTO = vscode.commands.registerCommand("viewSBC.UpdateDTO", (item:SbcTreeItemNode) => {
+		LoadDTO(item);
+	});
+
+	/*
 	//Check all packages
 	let commandCheckAllPackages = vscode.commands.registerCommand("viewDevices.CheckAllPackages", (item:IotDevicePackage) => {
 		checkAllPackages(treeDataDevicesProvider,item.Device,app.UI);		 
@@ -259,10 +270,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandTestPackage = vscode.commands.registerCommand("viewDevices.TestPackage", (item:IotDevicePackage) => {		
 		testPackage(treeDataDevicesProvider,item,app.UI); 
 	});
-	//Update DTO
-	let commandUpdateDTO = vscode.commands.registerCommand("viewDevices.UpdateDTO", (item:IotDeviceDTO) => {
-		refreshDTO(treeDataDevicesProvider,item.Device,app.UI); 
-	});
+	
 	let commandAddDTO = vscode.commands.registerCommand("viewDevices.AddDTO", (item:IotDeviceDTO) => {
 		addDTO(treeDataDevicesProvider,item.Device,app.UI);		
 	});
@@ -414,6 +422,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandRebootSBC);
 	context.subscriptions.push(commandRefreshSBC);
 	context.subscriptions.push(commandShutdownSBC);
+
+	context.subscriptions.push(commandUpdateDTO);
 	
 	/*
 	context.subscriptions.push(commandExportDevices);
@@ -423,7 +433,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandUpgradePackage);
 	context.subscriptions.push(commandRemovePackage);
 	context.subscriptions.push(commandTestPackage );
-	context.subscriptions.push(commandUpdateDTO);
 	context.subscriptions.push(commandAddDTO);
 	context.subscriptions.push(commandDeleteDTO);	
 	context.subscriptions.push(commandEnableDTO);

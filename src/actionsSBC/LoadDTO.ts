@@ -1,15 +1,24 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
+import { AppDomain } from '../AppDomain';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotDevice } from '../IotDevice';
-import {IContexUI} from '../ui/IContexUI';
+import { SbcTreeItemNode } from '../SbcView/SbcTreeItemNode';
+import { SbcNode } from '../SbcView/SbcNode';
 
-export async function refreshDTO(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IContexUI): Promise<void> {   
-    contextUI.Output("Action: retrieving all DTOs");
-    contextUI.ShowBackgroundNotification("Retrieving all DTOs");              
+
+export async function LoadDTO(item:SbcTreeItemNode): Promise<void> {
+    const app = AppDomain.getInstance().CurrentApp;
+    const node = item as SbcTreeItemNode;
+	const sbc = app.SBCs.FindById(node.IdSbc??"None");
+	if(!sbc) return;
+    app.UI.Output(`Action: retrieving all DTOs`);
+    let result:IotResult;
+    result = await sbc.DTOs.Load();
+    app.UI.Output(result);
+
+
+    /*
     const result=await treeData.GetAllDTO(<string>item.IdDevice);
     contextUI.HideBackgroundNotification();
     //Output 
@@ -22,4 +31,5 @@ export async function refreshDTO(treeData: TreeDataDevicesProvider,item:IotDevic
     } else {        
         vscode.window.showErrorMessage(`Error. Error getting DTOs. ${result.Message}.`);            
     }
+    */
 }

@@ -5,16 +5,16 @@ import { IoT } from '../Types/Enums';
 import EntityEnum = IoT.Enums.Entity;
 
 export interface IConfigEntityCollection {
-  extVersion: string;
-  extMode: vscode.ExtensionMode;
-  recoverySourcePath: string;
-  schemasFolderPath: string;
-  tempFolderPath:string;
-	lastUpdateTimeInHours:number;
-  isUpdate:boolean;
-  updateIntervalInHours:number;
-  urlsUpdateEntitiesCommunity:string[];
-  urlUpdateEntitiesSystem:string;
+  readonly extVersion: string;
+  readonly extMode: vscode.ExtensionMode;
+  readonly recoverySourcePath: string;
+  readonly schemasFolderPath: string;
+  readonly tempFolderPath:string;
+	readonly lastUpdateTimeInHours:number;
+  readonly isUpdate:boolean;
+  readonly updateIntervalInHours:number;
+  readonly urlsUpdateEntitiesCommunity:string[];
+  readonly urlUpdateEntitiesSystem:string;
   getDirEntitiesCallback(type:EntityEnum): string;
   saveLastUpdateHours(value:number):void
 }

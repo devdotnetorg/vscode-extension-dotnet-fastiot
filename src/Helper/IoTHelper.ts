@@ -306,9 +306,7 @@ export class IoTHelper {
   static DefinitionDTOAdapterForSbc(sbc:ISbc):SbcDtoAdapterType|undefined {
     let adapter:SbcDtoAdapterType|undefined;
     //Armbian
-    if (sbc.Armbian) {
-      adapter=IoTDTOAdapters.Armbian;
-    }
+    if (sbc.Armbian.Version) adapter=IoTDTOAdapters.Armbian;
     //result
     return adapter;
   }

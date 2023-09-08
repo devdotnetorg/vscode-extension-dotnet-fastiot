@@ -13,9 +13,7 @@ import { FilesValidator } from '../Validator/FilesValidator';
 
 import { SbcArmbianType } from '../Types/SbcArmbianType';
 
-import { ISbcArmbian } from './ISbcArmbian';
-
-export class IotSbcArmbian implements ISbcArmbian {
+export class IotSbcArmbian  {
   private _boardFamily?:string; //BOARDFAMILY=sun50iw1 from cat /etc/armbian-release
   public get BoardFamily(): string| undefined {
     return this._boardFamily;}
@@ -32,8 +30,8 @@ export class IotSbcArmbian implements ISbcArmbian {
     let result:IotResult;
     try {
       if (obj.version) {
-        this._boardFamily=obj.boardfamily;
         this._version=obj.version;
+        this._boardFamily=obj.boardfamily;
         this._linuxFamily=obj.linuxfamily;
       }
       result = new IotResult(StatusResult.Ok);
@@ -52,7 +50,7 @@ export class IotSbcArmbian implements ISbcArmbian {
     };
     try {
       //Fill
-      if (obj.version) {
+      if (this._version) {
         obj = {
           boardfamily: this.BoardFamily,
           version: this.Version,

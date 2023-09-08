@@ -7,15 +7,15 @@ import { IotResult,StatusResult } from '../Shared/IotResult';
 import { SbcType } from '../Types/SbcType';
 
 export interface IConfigurationSbc {
-  DebugUserNameAccount:string;
-  DebugGroupsAccount:string[];
-  ManagementUserNameAccount:string;
-  ManagementGroupsAccount:string[];
-  SshKeyType:string;
-  SshKeyBits:number;
-  DebugAppFolder:string;
-  FileNameUdevRules:string;
-  ListFilesUdevRules:string[];
+  readonly DebugUserNameAccount:string;
+  readonly DebugGroupsAccount:string[];
+  readonly ManagementUserNameAccount:string;
+  readonly ManagementGroupsAccount:string[];
+  readonly SshKeyType:string;
+  readonly SshKeyBits:number;
+  readonly DebugAppFolder:string;
+  readonly FileNameUdevRules:string;
+  readonly ListFilesUdevRules:string[];
   PreviousHostWhenAdding: string;
   /** obj.sbcs: SbcType[],
    * return string
