@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { utimesSync } from 'utimes';
 import { ISbc } from '../Sbc/ISbc';
-import { IoTDTOAdapters } from "../Sbc/IoTDTOAdapters"
+import { IoTDTOAdapters } from "../SbcTools/IoTDTOAdapters"
 import { SbcDtoAdapterType } from "../Types/SbcDtoAdapterType"
 
 export class IoTHelper {

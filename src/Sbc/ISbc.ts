@@ -11,7 +11,7 @@ import { AddSBCConfigType } from '../Types/AddSBCConfigType';
 import { SbcType } from '../Types/SbcType';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { IotSbcArmbian } from './IotSbcArmbian';
-import { IoTSbcDTOCollection } from './IoTSbcDTOCollection';
+import { IoTSbcDTOCollection } from '../SbcTools/IoTSbcDTOCollection';
 import { SbcDtoType } from '../Types/SbcDtoType';
 import { ClassWithEvent,Handler,IChangedStateEvent } from '../Shared/ClassWithEvent';
 

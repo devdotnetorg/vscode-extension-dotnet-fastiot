@@ -15,12 +15,12 @@ import { SbcAccountType } from '../Types/SbcAccountType';
 import { IoT } from '../Types/Enums';
 import AccountAssignment = IoT.Enums.AccountAssignment;
 import ChangeCommand = IoT.Enums.ChangeCommand;
-import { ISbcAccount } from './ISbcAccount';
+import { ISbcAccount } from '../Sbc/ISbcAccount';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import { enumHelper } from '../Helper/enumHelper';
 import { SshConnection } from '../Shared/SshConnection';
 import { ClassWithEvent } from '../Shared/ClassWithEvent';
-import { ISbc } from './ISbc';
+import { ISbc } from '../Sbc/ISbc';
 import { IoTDTOAdapters } from "./IoTDTOAdapters"
 import { SbcDtoAdapterType } from "../Types/SbcDtoAdapterType"
 import { AppDomain } from '../AppDomain';

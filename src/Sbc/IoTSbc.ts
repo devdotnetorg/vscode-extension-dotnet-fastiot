@@ -38,7 +38,7 @@ import { IotSbcArmbian } from './IotSbcArmbian';
 import { IoTSbcAccount } from './IoTSbcAccount';
 import { enumHelper } from '../Helper/enumHelper';
 import { Constants } from "../Constants"
-import { IoTSbcDTOCollection } from './IoTSbcDTOCollection';
+import { IoTSbcDTOCollection } from '../SbcTools/IoTSbcDTOCollection';
 import { SbcDtoType } from '../Types/SbcDtoType';
 import { ClassWithEvent, ITriggerEvent, Handler } from '../Shared/ClassWithEvent';
 
