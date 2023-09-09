@@ -34,7 +34,7 @@ export interface ISbc extends ClassWithEvent {
   // Parts
   Accounts: ISbcAccount[];
   Armbian: IotSbcArmbian;
-  DTOs: IoTSbcDTOCollection<SbcDtoType>;
+  DTOs: IoTSbcDTOCollection;
   //
   GetAccount(assignment: AccountAssignment): ISbcAccount| undefined;
   //

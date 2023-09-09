@@ -187,6 +187,16 @@ export class SbcNode extends SbcTreeItemNode {
       //add
       this.DTOs.Childs.push(dtoNode);
     }
+    //sort
+    this.DTOs.Childs=this.SortNodes(this.DTOs.Childs);
+  }
+
+  private SortNodes(items:SbcTreeItemNode[]):SbcTreeItemNode[] {
+    return items.sort((a, b)=>{
+      if((a.label ?? "non") < (b.label ?? "non")) { return -1; }
+      if((a.label ?? "non") > (b.label ?? "non")) { return 1; }
+      return 0;
+    });
   }
 
 }

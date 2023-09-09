@@ -305,24 +305,24 @@
 				"title": "Test"
 			},
 			{
-				"command": "viewSBC.UpdateDTO",
-				"title": "Update DTO",
+				"command": "viewSBC.LoadDTO",
+				"title": "Load DTO",
 				"icon": {
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
 				}
 			},
 			{
-				"command": "_viewSBC.AddDTO",
+				"command": "viewSBC.AddDTO",
 				"title": "Add DTO",
 				"icon": "$(add)"
 			},
 			{
-				"command": "_viewSBC.DeleteDTO",
-				"title": "Delete DTO"
+				"command": "viewSBC.RemoveDTO",
+				"title": "Remove DTO"
 			},
 			{
-				"command": "_viewSBC.EnableDTO",
+				"command": "viewSBC.EnableDTO",
 				"title": "Enable DTO",
 				"icon": {
 					"light": "resources/light/include.svg",
@@ -330,7 +330,7 @@
 				}
 			},
 			{
-				"command": "_viewSBC.DisableDTO",
+				"command": "viewSBC.DisableDTO",
 				"title": "Disable DTO",
 				"icon": {
 					"light": "resources/light/exclude.svg",
@@ -596,26 +596,26 @@
 					"group": "navigation"
 				},
 				{
-					"command": "viewSBC.UpdateDTO",
+					"command": "viewSBC.LoadDTO",
 					"when": "view == viewSBC && viewItem == iotdtos",
 					"group": "inline"
 				},
 				{
-					"command": "_viewSBC.AddDTO",
+					"command": "viewSBC.AddDTO",
 					"when": "view == viewSBC && viewItem == iotdtos",
 					"group": "inline"
 				},
 				{
-					"command": "_viewSBC.DeleteDTO",
+					"command": "viewSBC.RemoveDTO",
 					"when": "view == viewSBC && viewItem == iotdto_off"
 				},
 				{
-					"command": "_viewSBC.EnableDTO",
+					"command": "viewSBC.EnableDTO",
 					"when": "view == viewSBC && viewItem == iotdto_off",
 					"group": "inline"
 				},
 				{
-					"command": "_viewSBC.DisableDTO",
+					"command": "viewSBC.DisableDTO",
 					"when": "view == viewSBC && viewItem == iotdto_on",
 					"group": "inline"
 				},

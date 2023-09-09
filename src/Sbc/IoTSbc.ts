@@ -90,7 +90,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
   private _armbian:IotSbcArmbian
   public get Armbian(): IotSbcArmbian {
     return this._armbian;}
-  public DTOs: IoTSbcDTOCollection<SbcDtoType>;
+  public DTOs: IoTSbcDTOCollection;
   //Format Version JSON
   private readonly _formatVersion = 2;
 
@@ -116,7 +116,7 @@ export class IoTSbc extends ClassWithEvent implements ISbc {
     // Parts
     this._accounts = [];
     this._armbian = new IotSbcArmbian();
-    this.DTOs = new IoTSbcDTOCollection<SbcDtoType>();
+    this.DTOs = new IoTSbcDTOCollection();
     // handlers event 
     this._eventHandlerDictionary = new Map<string,Handler<ITriggerEvent>>();
     //event subscription

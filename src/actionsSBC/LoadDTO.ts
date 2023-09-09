@@ -8,7 +8,7 @@ import { SbcNode } from '../SbcView/SbcNode';
 import { TreeDataSbcProvider } from '../SbcView/TreeDataSbcProvider';
 import { IoTHelper } from '../Helper/IoTHelper';
 
-export async function LoadDTO(treeData: TreeDataSbcProvider, treeView: vscode.TreeView<SbcTreeItemNode>, item:SbcTreeItemNode): Promise<void> {
+export async function loadDTO(treeData: TreeDataSbcProvider, treeView: vscode.TreeView<SbcTreeItemNode>, item:SbcTreeItemNode): Promise<void> {
     const app = AppDomain.getInstance().CurrentApp;
     const node = item as SbcTreeItemNode;
 	const sbc = app.SBCs.FindById(node.IdSbc??"None");

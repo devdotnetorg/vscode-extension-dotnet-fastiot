@@ -241,8 +241,8 @@ export class SshClient extends ClassWithEvent {
     return Promise.resolve(result);
   }
 
-  /** fileType - The encoding can be 'utf8', 'ascii', or 'base64'. */
-  public async PutFile(destFilePath:string, dataFile:string, fileType:string="utf8"): Promise<IotResult> {
+  /** typeFile - The encoding can be 'utf8', 'ascii', or 'base64'. */
+  public async PutFile(destFilePath:string, dataFile:string, typeFile:string="utf8"): Promise<IotResult> {
     let result:IotResult;
     //check ssh
     if(!this._ssh||!this.IsActive||!this.IsConnected) {
@@ -252,9 +252,9 @@ export class SshClient extends ClassWithEvent {
     }
     //put file
     var sftp = this._ssh.sftp();
-    //fileType
+    //typeFile
     const jsonOptions = {
-      encoding:fileType,
+      encoding:typeFile,
       flag:"w"
     };
     //

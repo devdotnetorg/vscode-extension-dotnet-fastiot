@@ -76,4 +76,13 @@ export namespace IoT.Enums
         rename = "rename",
         changedDto = "changedDto" 
     }
+
+    export enum Action {
+        none = "none",
+        add  = "add",
+        remove = "remove",
+        enable = "enable",
+        disable = "update"
+    }
+
 }

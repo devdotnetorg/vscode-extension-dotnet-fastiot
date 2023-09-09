@@ -18,6 +18,7 @@ import { Constants } from "./Constants";
 import { IoT } from './Types/Enums';
 import Dialog = IoT.Enums.Dialog;
 import EntityEnum = IoT.Enums.Entity;
+import ActionUser = IoT.Enums.Action;
 //SBCs
 import { SbcTreeItemNode } from './SbcView/SbcTreeItemNode';
 import { SbcNode } from './SbcView/SbcNode';
@@ -43,8 +44,8 @@ import { openSshTerminal } from './actionsSBC/openSshTerminal';
 import { rebootSBC } from './actionsSBC/rebootSBC';
 import { refreshSBC } from './actionsSBC/refreshSBC';
 import { shutdownSBC } from './actionsSBC/shutdownSBC';
-
-import { LoadDTO } from './actionsSBC/LoadDTO';
+import { loadDTO } from './actionsSBC/loadDTO';
+import { managementDTO } from './actionsSBC/managementDTO';
 
 /*
 import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
@@ -55,11 +56,6 @@ import { upgradePackage } from './actionsDevice/upgradePackage';
 import { uninstallPackage } from './actionsDevice/uninstallPackage';
 import { testPackage } from './actionsDevice/testPackage';
 
-import { refreshDTO } from './actionsDevice/refreshDTO';
-import { addDTO } from './actionsDevice/addDTO';
-import { deleteDTO } from './actionsDevice/deleteDTO';
-import { enableDTO } from './actionsDevice/enableDTO';
-import { disableDTO } from './actionsDevice/disableDTO';
 */
 //Launchs
 import { TreeDataLaunchsProvider } from './TreeDataLaunchsProvider';
@@ -244,9 +240,29 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	*/
 
-	//Update DTO
-	let commandUpdateDTO = vscode.commands.registerCommand("viewSBC.UpdateDTO", (item:SbcTreeItemNode) => {
-		LoadDTO(treeDataSbcProvider, vscodeTreeDataSbcs,item);
+	//Load DTO
+	let commandLoadDTO = vscode.commands.registerCommand("viewSBC.LoadDTO", (item:SbcTreeItemNode) => {
+		loadDTO(treeDataSbcProvider, vscodeTreeDataSbcs,item);
+	});
+
+	//Add DTO
+	let commandAddDTO = vscode.commands.registerCommand("viewSBC.AddDTO", (item:SbcTreeItemNode) => {
+		managementDTO(item,ActionUser.add);
+	});
+
+	//Remove DTO
+	let commandRemoveDTO = vscode.commands.registerCommand("viewSBC.RemoveDTO", (item:SbcTreeItemNode) => {
+		managementDTO(item,ActionUser.remove);
+	});
+
+	//Enable DTO
+	let commandEnableDTO = vscode.commands.registerCommand("viewSBC.EnableDTO", (item:SbcTreeItemNode) => {
+		managementDTO(item,ActionUser.enable);
+	});
+
+	//Disable DTO
+	let commandDisableDTO = vscode.commands.registerCommand("viewSBC.DisableDTO", (item:SbcTreeItemNode) => {
+		managementDTO(item,ActionUser.disable);
 	});
 
 	/*
@@ -269,19 +285,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Test package 
 	let commandTestPackage = vscode.commands.registerCommand("viewDevices.TestPackage", (item:IotDevicePackage) => {		
 		testPackage(treeDataDevicesProvider,item,app.UI); 
-	});
-	
-	let commandAddDTO = vscode.commands.registerCommand("viewDevices.AddDTO", (item:IotDeviceDTO) => {
-		addDTO(treeDataDevicesProvider,item.Device,app.UI);		
-	});
-	let commandDeleteDTO = vscode.commands.registerCommand("viewDevices.DeleteDTO", (item:IotDeviceDTO) => {
-		deleteDTO(treeDataDevicesProvider,item,app.UI);
-	});
-	let commandEnableDTO = vscode.commands.registerCommand("viewDevices.EnableDTO", (item:IotDeviceDTO) => {
-		enableDTO(treeDataDevicesProvider,item,app.UI);
-	});
-	let commandDisableDTO = vscode.commands.registerCommand("viewDevices.DisableDTO", (item:IotDeviceDTO) => {
-		disableDTO(treeDataDevicesProvider,item,app.UI);
 	});
 	//GPIO detect
 	let commandDetectGpiochips = vscode.commands.registerCommand("viewDevices.DetectGpiochips", (item:IotDeviceGpiochip) => {
@@ -423,7 +426,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandRefreshSBC);
 	context.subscriptions.push(commandShutdownSBC);
 
-	context.subscriptions.push(commandUpdateDTO);
+	context.subscriptions.push(commandLoadDTO);
+	context.subscriptions.push(commandAddDTO);
+	context.subscriptions.push(commandRemoveDTO);
+	context.subscriptions.push(commandEnableDTO);
+	context.subscriptions.push(commandDisableDTO);
 	
 	/*
 	context.subscriptions.push(commandExportDevices);
@@ -433,10 +440,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandUpgradePackage);
 	context.subscriptions.push(commandRemovePackage);
 	context.subscriptions.push(commandTestPackage );
-	context.subscriptions.push(commandAddDTO);
-	context.subscriptions.push(commandDeleteDTO);	
-	context.subscriptions.push(commandEnableDTO);
-	context.subscriptions.push(commandDisableDTO);
 	context.subscriptions.push(commandDetectGpiochips);
 	*/
 	//Launchs
