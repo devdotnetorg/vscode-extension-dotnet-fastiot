@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { IContexUI } from './ui/IContexUI';
-import { IotTemplateCollection } from './Templates/IotTemplateCollection';
+import { IotTemplateCollection } from './Template/IotTemplateCollection';
 import { IoTApplication } from './IoTApplication';
 import { IConfiguration } from './Configuration/IConfiguration';
 import { AppDomain } from './AppDomain';

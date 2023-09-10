@@ -5,11 +5,8 @@ import find from 'local-devices'
 import ip from 'ip';
 import { IDevice } from 'local-devices'
 
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 //import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
-import { IotDevice } from '../IotDevice';
-import { BaseTreeItem_d } from '../shared/BaseTreeItem_d';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoTApplication } from '../IoTApplication';

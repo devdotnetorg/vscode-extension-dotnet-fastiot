@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IotResult,StatusResult } from './Shared/IotResult';
 import { IContexUI } from './ui/IContexUI';
-import { IotTemplateCollection } from './Templates/IotTemplateCollection';
+import { IotTemplateCollection } from './Template/IotTemplateCollection';
 import { IConfiguration } from './Configuration/IConfiguration';
 import { IoT } from './Types/Enums';
 import EntityEnum = IoT.Enums.Entity;

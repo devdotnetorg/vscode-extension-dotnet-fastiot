@@ -2,15 +2,15 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
+import { TreeDataLaunchsProvider } from '../LaunchView/TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotDevice } from '../IotDevice';
+import { IotDevice } from '../Deprecated/IotDevice';
 import { ItemQuickPick } from '../Helper/actionHelper';
-import { IotTemplate } from '../Templates/IotTemplate';
-import { IotTemplateAttribute } from '../Templates/IotTemplateAttribute';
+import { IotTemplate } from '../Template/IotTemplate';
+import { IotTemplateAttribute } from '../Template/IotTemplateAttribute';
 import { IoTApplication } from '../IoTApplication';
-import { loadTemplates } from '../actionsTemplates/loadTemplates';
+import { loadTemplates } from '../actionsTemplate/loadTemplates';
 
 export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,app:IoTApplication): Promise<void> {
     let result:IotResult;
@@ -102,11 +102,11 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     values.set("%{project.name}",projectName);
     //Main process
     app.UI.Output(`Action: adding Launch to the ${selectProject} project, template ${selectTemplate.Attributes.Id}, device ${selectDevice.Information.BoardName} ${selectDevice.Information.Architecture}`);
-    app.UI.ShowBackgroundNotification(`Adding Launch to the ${selectProject} project`);
+    //app.UI.ShowBackgroundNotification(`Adding Launch to the ${selectProject} project`);
     result = 
         selectTemplate.AddConfigurationVscode(selectDevice,app.Config,
             workspaceDirectory,values);
-            app.UI.HideBackgroundNotification();
+            //app.UI.HideBackgroundNotification();
     //Output
     app.UI.Output(result.toStringWithHead());
     //Message

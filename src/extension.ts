@@ -12,7 +12,6 @@ import { IoTHelper } from './Helper/IoTHelper';
 import { IotConfiguration } from './Configuration/IotConfiguration';
 import { BaseTreeItemNode } from './shared/BaseTreeItemNode';
 import { IotResult,StatusResult } from './Shared/IotResult';
-import { IotTemplateCollection } from './Templates/IotTemplateCollection';
 import { IConfigEntityCollection } from './Entity/IConfigEntityCollection';
 import { Constants } from "./Constants";
 import { IoT } from './Types/Enums';
@@ -25,7 +24,7 @@ import { SbcNode } from './SbcView/SbcNode';
 import { TreeDataSbcProvider } from './SbcView/TreeDataSbcProvider';
 
 //Devices
-import { TreeDataDevicesProvider } from './TreeDataDevicesProvider';
+import { TreeDataDevicesProvider } from './Deprecated/TreeDataDevicesProvider';
 /*
 import { IotDevice } from './IotDevice';
 import { IotDevicePackage } from './IotDevicePackage';
@@ -58,11 +57,11 @@ import { testPackage } from './actionsDevice/testPackage';
 
 */
 //Launchs
-import { TreeDataLaunchsProvider } from './TreeDataLaunchsProvider';
-import { TreeDataTemplatesProvider } from './TreeDataTemplatesProvider';
-import { LaunchNode } from './LaunchNode';
-import { LaunchTreeItemNode } from './LaunchTreeItemNode';
-import { LaunchOptionNode } from './LaunchOptionNode';
+import { TreeDataLaunchsProvider } from './LaunchView/TreeDataLaunchsProvider';
+import { TreeDataTemplatesProvider } from './Ui/TreeDataTemplatesProvider';
+import { LaunchNode } from './LaunchView/LaunchNode';
+import { LaunchTreeItemNode } from './LaunchView/LaunchTreeItemNode';
+import { LaunchOptionNode } from './LaunchView/LaunchOptionNode';
 //actionsLaunch.actions
 import { addLaunch } from './actionsLaunch/addLaunch';
 import { addEnviroment,renameEnviroment,editEnviroment,deleteEnviroment } from './actionsLaunch/managementEnviroment';
@@ -73,10 +72,10 @@ import { deleteLaunch } from './actionsLaunch/deleteLaunch';
 import { rebuildLaunch } from './actionsLaunch/rebuildLaunch';
 import { changeOption } from './actionsLaunch/changeOption';
 //Template.actions
-import { createProject } from './actionsTemplates/createProject';
-import { loadTemplates } from './actionsTemplates/loadTemplates';
-import { openTemplateFolder } from './actionsTemplates/openTemplateFolder';
-import { importTemplate } from './actionsTemplates/importTemplate';
+import { createProject } from './actionsTemplate/createProject';
+import { loadTemplates } from './actionsTemplate/loadTemplates';
+import { openTemplateFolder } from './actionsTemplate/openTemplateFolder';
+import { importTemplate } from './actionsTemplate/importTemplate';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

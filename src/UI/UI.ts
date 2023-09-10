@@ -1,11 +1,10 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { StatusBarBackground_d } from './StatusBarBackground_d';
 import { IContexUI } from './IContexUI';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotDevice } from '../IotDevice';
-import { IotTemplate } from '../Templates/IotTemplate';
+import { IotDevice } from '../Deprecated/IotDevice';
+import { IotTemplate } from '../Template/IotTemplate';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoT } from '../Types/Enums';
 import LogLevel = IoT.Enums.LogLevel;
@@ -15,16 +14,12 @@ import { BadgeActivityBar  } from './BadgeActivityBar';
 
 export class UI implements IContexUI {
   private _outputChannel:vscode.OutputChannel;
-  private _statusBarBackground: StatusBarBackground_d;
   private readonly _currentLogLevel:LogLevel;
   private _badgeActivityBar?:BadgeActivityBar;
   
   constructor(logLevel:LogLevel){
     //OutputChannel
 	  this._outputChannel = vscode.window.createOutputChannel(".NET FastIoT");
-	  //StatusBar
-	  this._statusBarBackground= new StatusBarBackground_d(
-		  vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000));
     //LogLevel
     this._currentLogLevel=logLevel;
   }
@@ -64,12 +59,6 @@ export class UI implements IContexUI {
     //Output
     if(logLevel>=this._currentLogLevel) this._outputChannel.appendLine(msg);
   }
-
-  public ShowBackgroundNotification(text:string, tooltip?:string | vscode.MarkdownString) {
-    this._statusBarBackground.showAnimation(text,tooltip);
-  }
-
-  public HideBackgroundNotification = () => this._statusBarBackground.hide();
 
   public ShowNotification(value:IotResult) {
     if (!value.Message) return;

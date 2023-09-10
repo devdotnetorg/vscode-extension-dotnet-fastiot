@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
+import { TreeDataLaunchsProvider } from '../LaunchView/TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IContexUI } from '../ui/IContexUI';
 

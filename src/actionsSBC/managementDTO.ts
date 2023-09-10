@@ -2,11 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotDeviceDTO } from '../IotDeviceDTO';
-import {IContexUI} from '../ui/IContexUI';
-import { IotDevice } from '../IotDevice';
 //import { refreshDTO } from './refreshDTO';
 import { AppDomain } from '../AppDomain';
 import { SbcTreeItemNode } from '../SbcView/SbcTreeItemNode';

@@ -7,7 +7,6 @@ import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { launchHelper } from '../Helper/launchHelper';
 import { dotnetHelper } from '../Helper/dotnetHelper';
-import { IotDevice } from '../IotDevice';
 import { IConfiguration } from '../Configuration/IConfiguration';
 import { FilesValidator } from '../Validator/FilesValidator';
 

@@ -2,10 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotDevice } from '../IotDevice';
-import { BaseTreeItem_d } from '../shared/BaseTreeItem_d';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoT } from '../Types/Enums';
 import LogLevel = IoT.Enums.LogLevel;

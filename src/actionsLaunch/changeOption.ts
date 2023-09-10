@@ -2,13 +2,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
+import { TreeDataLaunchsProvider } from '../LaunchView/TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { LaunchOptionNode } from '../LaunchOptionNode';
+import { LaunchOptionNode } from '../LaunchView/LaunchOptionNode';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IContexUI } from '../ui/IContexUI';
-import { IotDevice } from '../IotDevice';
-import { IotTemplate } from '../Templates/IotTemplate';
 import { ItemQuickPick } from '../Helper/actionHelper';
 
 export async function changeOption(treeData: TreeDataLaunchsProvider,node:LaunchOptionNode): Promise<void> {                    

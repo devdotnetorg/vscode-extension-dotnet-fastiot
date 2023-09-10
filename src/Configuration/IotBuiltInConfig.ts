@@ -4,7 +4,6 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotTemplateCollection } from '../Templates/IotTemplateCollection';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IContexUI } from '../ui/IContexUI';
 import { compare } from 'compare-versions';

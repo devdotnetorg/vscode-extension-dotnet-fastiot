@@ -2,11 +2,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotDevice } from '../IotDevice';
 import { IoTHelper } from '../Helper/IoTHelper';
-import {IContexUI} from '../ui/IContexUI';
 import { ISbcAccount } from '../Sbc/ISbcAccount';
 import { AppDomain } from '../AppDomain';
 

@@ -2,12 +2,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { BaseTreeItem_d } from '../shared/BaseTreeItem_d';
-import { LaunchNode } from '../LaunchNode';
-import { LaunchTreeItemNode } from '../LaunchTreeItemNode';
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
+import { BaseTreeItem_d } from '../Deprecated/shared/BaseTreeItem_d';
+import { LaunchNode } from '../LaunchView/LaunchNode';
+import { TreeDataDevicesProvider } from '../Deprecated/TreeDataDevicesProvider';
 
 
 export async function gotoDevice(item:LaunchNode,treeViewDevices:vscode.TreeView<BaseTreeItem_d>,treeDataDevicesProvider:TreeDataDevicesProvider): Promise<void> {                    

@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { SbcTreeItemNode } from '../SbcView/SbcTreeItemNode';
 import { IoTHelper } from '../Helper/IoTHelper';

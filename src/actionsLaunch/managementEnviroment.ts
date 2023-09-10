@@ -2,13 +2,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
+import { TreeDataLaunchsProvider } from '../LaunchView/TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotLaunch } from '../IotLaunch';
-import { LaunchNode } from '../LaunchNode';
-import { LaunchTreeItemNode } from '../LaunchTreeItemNode';
-import { IotLaunchEnvironment } from '../IotLaunchEnvironment';
+import { LaunchNode } from '../LaunchView/LaunchNode';
+import { LaunchTreeItemNode } from '../LaunchView/LaunchTreeItemNode';
 import { IContexUI } from '../ui/IContexUI';
 
 export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode,contextUI:IContexUI):

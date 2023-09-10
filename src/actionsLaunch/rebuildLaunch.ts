@@ -2,12 +2,12 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataLaunchsProvider } from '../TreeDataLaunchsProvider';
+import { TreeDataLaunchsProvider } from '../LaunchView/TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { LaunchNode } from '../LaunchNode';
+import { LaunchNode } from '../LaunchView/LaunchNode';
 import { IoTApplication } from '../IoTApplication';
-import { IotDevice } from '../IotDevice';
-import { loadTemplates } from '../actionsTemplates/loadTemplates';
+import { IotDevice } from '../Deprecated/IotDevice';
+import { loadTemplates } from '../actionsTemplate/loadTemplates';
 
 export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,devices: Array<IotDevice>,item:LaunchNode,app:IoTApplication): Promise<void> {
    let result:IotResult;
@@ -22,9 +22,9 @@ export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,devices: A
    }
    //Main process
    app.UI.Output(`Action: rebuild Launch. Launch: ${item.label}`);
-   app.UI.ShowBackgroundNotification(`Rebuild Launch. Launch: ${item.label}`);
+   //app.UI.ShowBackgroundNotification(`Rebuild Launch. Launch: ${item.label}`);
    result = item.Launch.RebuildLaunch(app.Config,app.Templates,devices);
-   app.UI.HideBackgroundNotification();
+   //app.UI.HideBackgroundNotification();
    //Output
    app.UI.Output(result.toStringWithHead());
    //Message
