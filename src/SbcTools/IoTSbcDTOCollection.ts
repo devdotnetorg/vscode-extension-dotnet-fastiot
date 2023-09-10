@@ -138,7 +138,7 @@ export class IoTSbcDTOCollection extends ClassWithEvent {
     }
     //refresh
     // TODO: сделать без Load
-    this.Load(token);
+    result= await this.Load(token);
     if(result.Status!=StatusResult.Ok) {
       result.AddMessage(msgErr);
       return Promise.resolve(result);
@@ -177,7 +177,7 @@ export class IoTSbcDTOCollection extends ClassWithEvent {
     }
     //refresh
     // TODO: сделать без Load
-    this.Load(token);
+    result= await this.Load(token);
     if(result.Status!=StatusResult.Ok) {
       result.AddMessage(msgErr);
       return Promise.resolve(result);
@@ -216,7 +216,7 @@ export class IoTSbcDTOCollection extends ClassWithEvent {
     }
     //refresh
     // TODO: сделать без Load
-    this.Load(token);
+    result= await this.Load(token);
     if(result.Status!=StatusResult.Ok) {
       result.AddMessage(msgErr);
       return Promise.resolve(result);
@@ -255,7 +255,7 @@ export class IoTSbcDTOCollection extends ClassWithEvent {
     }
     //refresh
     // TODO: сделать без Load
-    this.Load(token);
+    result= await this.Load(token);
     if(result.Status!=StatusResult.Ok) {
       result.AddMessage(msgErr);
       return Promise.resolve(result);

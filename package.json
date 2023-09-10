@@ -569,6 +569,16 @@
 					"group": "navigation"
 				},
 				{
+					"command": "viewSBC.CopyToClipboard",
+					"when": "view == viewSBC && viewItem == iotdto_on",
+					"group": "navigation"
+				},
+				{
+					"command": "viewSBC.CopyToClipboard",
+					"when": "view == viewSBC && viewItem == iotdto_off",
+					"group": "navigation"
+				},
+				{
 					"command": "_viewSBC.CheckAllPackages",
 					"when": "view == viewSBC && viewItem == iotpackages",
 					"group": "inline"

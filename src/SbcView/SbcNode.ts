@@ -30,10 +30,12 @@ export class SbcNode extends SbcTreeItemNode {
     tooltip = new vscode.MarkdownString(`Ssh connection parameters Ssh  \nsuch as host, port, username, key`, true);
     this.Connection = new SbcTreeItemNode("Connection",undefined,tooltip,
       vscode.TreeItemCollapsibleState.Collapsed,this);
+    this.Connection.contextValue="iotsbcconnection";
     this.Connection.iconPath = new vscode.ThemeIcon("account");
     //Information
     this.Information = new SbcTreeItemNode("Information",undefined,"Sbc info",
       vscode.TreeItemCollapsibleState.Collapsed,this);
+    this.Information.contextValue="iotsbcinfo";
     this.Information.iconPath = {
       light: path.join(__filename, '..', '..', '..', 'resources', 'light', 'info_20.svg'),
       dark: path.join(__filename,'..', '..', '..', 'resources', 'dark', 'info_20.svg')
@@ -168,7 +170,6 @@ export class SbcNode extends SbcTreeItemNode {
       tooltip= new vscode.MarkdownString(`Name: ${dto.name}   \nClass: ${dto.type}   \nState: ${dto.active?"on":"off"}   \nLocation: ${dto.path}`,true);
       let dtoNode = new SbcTreeItemNode(dto.name,dto.type.toString(),tooltip,vscode.TreeItemCollapsibleState.None,this.DTOs);
       dtoNode.IdSbc=sbc.Id;
-      dtoNode.contextValue="iotsbc";
       if(dto.active) {
         dtoNode.iconPath = {
           light: path.join(__filename, '..', '..', '..', 'resources', 'light', 'yes.svg'),

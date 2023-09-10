@@ -141,7 +141,8 @@ export async function removeEnableDisableDTO(item:SbcTreeItemNode, actionUser:Ac
         app.SBCs.Save();
         //reboot
         if (actionUser==ActionUser.enable||actionUser==ActionUser.disable) {
-            rebootSBC(item,"You need to reboot the SBC to accept the changes");
+            const sbcNode = item.Parent?.Parent?? new SbcTreeItemNode("None");
+            rebootSBC(sbcNode,"You need to reboot the SBC to accept the changes");
         }
     }else {
         //Message

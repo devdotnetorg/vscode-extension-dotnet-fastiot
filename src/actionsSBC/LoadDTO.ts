@@ -13,6 +13,8 @@ export async function loadDTO(treeData: TreeDataSbcProvider, treeView: vscode.Tr
     const node = item as SbcTreeItemNode;
 	const sbc = app.SBCs.FindById(node.IdSbc??"None");
 	if(!sbc) return;
+    //need focus
+    const setFocus = (item.Childs.length>0) ? true:false;
     //Main process
     const labelTask="retrieving all DTOs";
     app.UI.Output(`Action: ${labelTask}`);
@@ -44,7 +46,7 @@ export async function loadDTO(treeData: TreeDataSbcProvider, treeView: vscode.Tr
         const sbcNode = treeData.FindById(sbc.Id);
         if (sbcNode) {
             //sbcNode.DTOs.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
-            treeView.reveal(sbcNode.DTOs, {focus: true});
+            if (setFocus) treeView.reveal(sbcNode.DTOs, {focus: true});
             //treeData.Refresh();
         }
     }else {
