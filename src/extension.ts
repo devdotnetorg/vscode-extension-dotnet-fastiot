@@ -45,9 +45,9 @@ import { refreshSBC } from './actionsSBC/refreshSBC';
 import { shutdownSBC } from './actionsSBC/shutdownSBC';
 import { loadDTO } from './actionsSBC/loadDTO';
 import { managementDTO } from './actionsSBC/managementDTO';
+import { exportSBC, importSBC } from './actionsSBC/exportImportSBC';
 
 /*
-import { exportDevices,importDevices } from './actionsDevice/exportImportDevices';
 import { detectGpiochips } from './actionsDevice/detectGpiochips';
 import { checkAllPackages } from './actionsDevice/checkAllPackages';
 import { installPackage } from './actionsDevice/installPackage';
@@ -182,63 +182,48 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandRenameSBC = vscode.commands.registerCommand("viewSBC.Rename", (item:SbcTreeItemNode) => {
 		renameSBC(item);
 	});
-
 	//Copy To Clipboard
 	let commandCopyToClipboard = vscode.commands.registerCommand("viewSBC.CopyToClipboard", (item:BaseTreeItemNode) => {
 		copyTexttoClipboard(item);
 	});
-
 	//Ping SBC
 	let commandPingSBC = vscode.commands.registerCommand("viewSBC.ConnectionTest", (item:SbcTreeItemNode) => {
 		const sbcNode = item as SbcNode;
 		const sbc = app.SBCs.FindById(sbcNode.IdSbc??"None");
 		if(sbc) connectionTestSBC(sbc.Accounts);
 	});
-
 	//Delete SBC
 	let commandDeleteSBC = vscode.commands.registerCommand("viewSBC.Delete", (item:SbcTreeItemNode) => {
 		deleteSBC(item);
 	});
-
 	//Open folder with ssh keys
 	let commandOpenFolderKeys = vscode.commands.registerCommand("viewSBC.OpenFolderSshKeys", () => {
 		openFolderKeys(app.Config.Folder.KeysSbc);
 	});
-
 	//Open ssh-terminal in New Window
 	let commandOpenSshTerminal = vscode.commands.registerCommand("viewSBC.OpenSshTerminal", (item:SbcTreeItemNode) => {
 		openSshTerminal(item);
 	});
-
 	//Reboot SBC
 	let commandRebootSBC = vscode.commands.registerCommand("viewSBC.Reboot", (item:SbcTreeItemNode) => {
 		rebootSBC(item);
 	});
-
 	//Refresh SBC
 	let commandRefreshSBC = vscode.commands.registerCommand('viewSBC.Refresh', () => {
 		refreshSBC(treeDataSbcProvider);	
 	});
-
 	//Shutdown SBC
 	let commandShutdownSBC = vscode.commands.registerCommand("viewSBC.Shutdown", (item:SbcTreeItemNode) => {
 		shutdownSBC(item);
 	});
-
-
-
-	/*
-	
-	//Export devices
-	let commandExportDevices = vscode.commands.registerCommand('viewDevices.ExportDevices', () => {					
-		exportDevices(treeDataDevicesProvider);
+	//Export SBC
+	let commandExportSBC = vscode.commands.registerCommand('viewSBC.Export', () => {					
+		exportSBC();
 	});
-	//Import devices	
-	let commandImportDevices = vscode.commands.registerCommand('viewDevices.ImportDevices', () => {					
-		importDevices(treeDataDevicesProvider,app.UI);
+	//Import SBC
+	let commandImportSBC = vscode.commands.registerCommand('viewSBC.Import', () => {					
+		importSBC();
 	});
-	*/
-
 	//Load DTO
 	let commandLoadDTO = vscode.commands.registerCommand("viewSBC.LoadDTO", (item:SbcTreeItemNode) => {
 		loadDTO(treeDataSbcProvider, vscodeTreeDataSbcs,item);
@@ -424,7 +409,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandRebootSBC);
 	context.subscriptions.push(commandRefreshSBC);
 	context.subscriptions.push(commandShutdownSBC);
-
+	context.subscriptions.push(commandExportSBC);
+	context.subscriptions.push(commandImportSBC);
 	context.subscriptions.push(commandLoadDTO);
 	context.subscriptions.push(commandAddDTO);
 	context.subscriptions.push(commandRemoveDTO);
@@ -432,8 +418,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandDisableDTO);
 	
 	/*
-	context.subscriptions.push(commandExportDevices);
-	context.subscriptions.push(commandImportDevices);
 	context.subscriptions.push(commandCheckAllPackages);
 	context.subscriptions.push(commandInstallationPackage);
 	context.subscriptions.push(commandUpgradePackage);
