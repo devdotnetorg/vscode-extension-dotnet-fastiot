@@ -12,9 +12,13 @@ import { IoTHelper } from '../Helper/IoTHelper';
 import { IConfiguration } from '../Configuration/IConfiguration';
 import { ClassWithEvent, ITriggerEvent, Handler } from '../Shared/ClassWithEvent';
 import { ISbc } from './ISbc';
-import { SbcType } from '../Types/SbcType';
-import { IoTSbc } from './IoTSbc';
 import { IConfigSbcCollection } from './IConfigSbcCollection';
+import { SbcType } from '../Types/SbcType';
+import { FormatV1DeviceType } from '../Types/FormatV1DeviceType';
+import { FormatV2SbcType } from '../Types/FormatV2SbcType';
+import { SbcAccountType } from '../Types/SbcAccountType';
+import { SbcArmbianType } from '../Types/SbcArmbianType';
+import { SbcDtoType } from '../Types/SbcDtoType';
 
 export class IoTSbcCollection <T extends ISbc> extends ClassWithEvent {
   private _items:Array<T>;
@@ -214,6 +218,101 @@ export class IoTSbcCollection <T extends ISbc> extends ClassWithEvent {
       return jsonObj;
     } catch (err: any){}
     return {};
+  }
+
+  public ImportFromJSON(jsonObj:any):IotResult{
+    let result:IotResult;
+    let sbcs:SbcType[]=[];
+    try {
+      //check format V1, V2
+      //if V1 to need convert in V2
+      if(jsonObj.IotDevices) {
+        const jsonObjV1 = jsonObj.IotDevices as FormatV1DeviceType[];
+        const jsonObjV2 = this.ConvertFormatV1toV2(jsonObjV1);
+        sbcs = jsonObjV2 as SbcType[];
+      }
+      //V2
+      if(jsonObj.sbcs) {
+        sbcs = jsonObj.sbcs as SbcType[];
+      }
+      result = this.FromJSON(sbcs);
+    }
+    catch (err:any) {
+      result = new IotResult(StatusResult.Error,`Error parsing JSON`,err);
+    }
+    //result
+    return result
+  }
+
+  private ConvertFormatV1toV2(jsonObjV1:FormatV1DeviceType[]):FormatV2SbcType[] {
+    let jsonObjV2:FormatV2SbcType[]=[];
+    try {
+      jsonObjV1.forEach(device => {
+        // Parts
+        let accounts: SbcAccountType[]=[];
+        let armbian: SbcArmbianType;
+        let dtos: SbcDtoType[]=[];;
+        //Fill
+        //debugvscode
+        const accountDebug:SbcAccountType = {
+          username: device.IotDeviceAccount.userName,
+          groups: IoTHelper.ArrayToString(device.IotDeviceAccount.groups,','),
+          assignment: "debug",
+          sshkeytypebits: "unknown",
+          sshkeyfilename: device.IotDeviceAccount.identity
+        }
+        //managementvscode
+        const accountManagement:SbcAccountType = {
+          username: device.IotDeviceAccount.userName,
+          groups: IoTHelper.ArrayToString(device.IotDeviceAccount.groups,','),
+          assignment: "management",
+          sshkeytypebits: "unknown",
+          sshkeyfilename: device.IotDeviceAccount.identity
+        }
+        accounts.push(accountDebug);
+        accounts.push(accountManagement);
+        armbian = {
+          boardfamily: device.IotDeviceInformation.boardFamily,
+          version: device.IotDeviceInformation.armbianVersion,
+          linuxfamily: device.IotDeviceInformation.linuxFamily
+        };
+        device.IotDTO.items.forEach(dtoV1 => {
+          const dto:SbcDtoType = {
+            name:dtoV1.name,
+            path:dtoV1.fspath,
+            active:dtoV1.enabled,
+            type:EntityEnum.user
+          };
+          dtos.push(dto);
+        });
+        // Sbc
+        const jsonSbc:FormatV2SbcType = {
+          id: device.idDevice,
+          label: `${device.label} From FormatV1`,
+          host: device.IotDeviceAccount.host,
+          port: +device.IotDeviceAccount.port,
+          existence: "native",
+          formatversion: 2,
+          //Info
+          hostname: device.IotDeviceInformation.hostname,
+          boardname: device.IotDeviceInformation.boardName ?? "Embedded device",
+          architecture: device.IotDeviceInformation.architecture,
+          oskernel: device.IotDeviceInformation.osKernel,
+          osname:  device.IotDeviceInformation.osName,
+          osdescription: device.IotDeviceInformation.osDescription,
+          osrelease: device.IotDeviceInformation.osRelease,
+          oscodename: device.IotDeviceInformation.osCodename,
+          // Parts
+          accounts: accounts,
+          armbian: armbian,
+          dto: dtos
+        };
+        //add
+        jsonObjV2.push(jsonSbc);
+      });
+    } catch (err: any){}
+    //result
+    return jsonObjV2;
   }
 
   public FromJSON(jsonObj:SbcType[]):IotResult{

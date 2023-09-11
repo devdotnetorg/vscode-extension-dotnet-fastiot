@@ -67,8 +67,7 @@ export async function importSBC(): Promise<void> {
     const guidBadge=app.UI.BadgeAddItem(labelTask); 
     try {
         const jsonObj = JSON.parse(fs.readFileSync(file[0].fsPath, 'utf-8'));
-        const sbcs = jsonObj.sbcs as SbcType[];
-        result = app.SBCs.FromJSON(sbcs);
+        result = app.SBCs.ImportFromJSON(jsonObj);
     }catch (err:any) {
         result = new IotResult(StatusResult.Error,err);
     }
