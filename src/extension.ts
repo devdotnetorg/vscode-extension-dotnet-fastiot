@@ -97,6 +97,17 @@ export async function activate(context: vscode.ExtensionContext) {
 	let result:IotResult;
 	result=app.SBCs.Load();
 	if(StatusResult.Ok!=result.Status) app.UI.Output(result);
+	//import from FormatV1
+	const devices = app.Config.JsonDevices_d;
+	if(devices&&devices.IotDevices) {
+		result=app.SBCs.ImportFromJSON(devices);
+		if(StatusResult.Ok==result.Status) {
+			app.SBCs.Save();
+			app.Config.JsonDevices_d = {};
+		}else {
+			app.UI.Output(result);
+		}
+	}
 	//Templates
 	const loadTemplatesExt = async () => {
 		//Checking if templates need to be updated after updating an extension
