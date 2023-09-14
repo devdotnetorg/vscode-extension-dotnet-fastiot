@@ -30,7 +30,7 @@ export async function importTemplate(app:IoTApplication): Promise<void> {
     fileZipPath=destPath;
     //load templates
     if(app.Templates.Count==0)
-        await loadTemplates(app);
+        await loadTemplates();
     //import
     const labelTask="Import template";
     //Main process

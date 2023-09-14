@@ -123,7 +123,7 @@
 					},
 					"fastiot.launch.templatetitle": {
 						"type": "string",
-						"default": "Launch on %{device.label} (%{project.name}, %{device.board.name}, %{device.user.debug})",
+						"default": "Launch on %{sbc.label} (%{project.name}, %{sbc.board.name}, %{sbc.user.debug})",
 						"markdownDescription": "Template for creating a launch title. Variable names see [link](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Launch-title-template.md)."
 					},
 					"fastiot.device.all.JSON": {
@@ -373,8 +373,8 @@
 				"title": "Rebuild"
 			},
 			{
-				"command": "viewLaunchs.GoToDevice",
-				"title": "Go to device"
+				"command": "viewLaunchs.GoToSbc",
+				"title": "Go to SBC"
 			},
 			{
 				"command": "viewLaunchs.AddEnviroment",
@@ -650,7 +650,7 @@
 					"group": "7_modification"
 				},
 				{
-					"command": "viewLaunchs.GoToDevice",
+					"command": "viewLaunchs.GoToSbc",
 					"when": "view == viewLaunchs && viewItem == iotlaunch",
 					"group": "navigation"
 				},
@@ -691,7 +691,7 @@
 		"viewsWelcome": [
 			{
 				"view": "viewSBC",
-				"contents": "No devices. How to add SBC see [Adding a SBC](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device).\n[Add SBC](command:viewSBC.Add)"
+				"contents": "No SBCs. How to add SBC see [Adding a SBC](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#step-2---adding-a-device).\n[Add SBC](command:viewSBC.Add)"
 			},
 			{
 				"view": "viewLaunchs",

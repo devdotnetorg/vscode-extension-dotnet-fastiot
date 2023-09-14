@@ -157,9 +157,9 @@ export abstract class EntityBase<T extends EntityBaseAttribute> {
     return result;
   }
 
-  public IsCompatibleByEndDeviceArchitecture(endDeviceArchitecture:string):boolean
+  public IsCompatibleByEndSbcArchitecture(endDSbcArchitecture:string):boolean
   {
-    const result=this.Attributes.EndDeviceArchitecture.find(x=>x==endDeviceArchitecture);
+    const result=this.Attributes.EndSbcArchitecture.find(x=>x==endDSbcArchitecture);
     if(result) return true; else  return false;
   }
 }

@@ -2,15 +2,15 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
-import {IotDevice} from './IotDevice';
+import {IotDevice_d} from './IotDevice_d';
 import {IotDevicePackage,TypePackage} from './IotDevicePackage';
 import {IotDeviceDTO} from './IotDeviceDTO';
 import { IotResult,StatusResult } from '.././Shared/IotResult';
 import { IoTApplication } from '.././IoTApplication';
 import { AddSBCConfigType } from '.././Types/AddSBCConfigType';
 
-export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTreeItem_d> {    
-  public RootItems:Array<IotDevice>=[];
+export class TreeDataDevicesProvider_d implements vscode.TreeDataProvider<BaseTreeItem_d> {    
+  public RootItems:Array<IotDevice_d>=[];
 
   private _app:IoTApplication
 
@@ -101,7 +101,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
             if(jsonDevice)
             {
               //parse
-              let device = new IotDevice(this._app.Config);
+              let device = new IotDevice_d(this._app.Config);
               device.collapsibleState=vscode.TreeItemCollapsibleState.Collapsed;
               device.FromJSON(jsonDevice);              
               if(device.IdDevice){
@@ -138,7 +138,7 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     const password=addSBCConfig.password ?? "";
     const accountNameDebug=addSBCConfig.debugusername;
     //
-    let device = new IotDevice(this._app.Config);
+    let device = new IotDevice_d(this._app.Config);
     //Connection test device
     //this._app.UI.ShowBackgroundNotification("Checking the network connection");
     let result=await device.ConnectionTest(hostName,port,userName,password);
@@ -188,12 +188,12 @@ export class TreeDataDevicesProvider implements vscode.TreeDataProvider<BaseTree
     this.Refresh();
   }
 
-  public FindbyIdDevice(idDevice:string): IotDevice|undefined {
+  public FindbyIdDevice(idDevice:string): IotDevice_d|undefined {
     let device = this.RootItems.find(x=>x.IdDevice==idDevice);
     return device;
   }  
 
-  public async RenameDevice(item:IotDevice,newLabel:string): Promise<boolean> {
+  public async RenameDevice(item:IotDevice_d,newLabel:string): Promise<boolean> {
     if(this.RootItems.find(x=>x.label==newLabel)) return Promise.resolve(false);     
     let device = this.FindbyIdDevice(<string>item.IdDevice);
     if(device){

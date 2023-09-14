@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { IotDevice } from '../IotDevice';
+import { IotDevice_d } from '../IotDevice_d';
 import { DTO_d } from './DTO_d';
 import { IotResult,StatusResult } from '../../Shared/IotResult';
 
 export interface IDtoAdapter_d {  
-  readonly Device:IotDevice;  
+  readonly Device:IotDevice_d;  
   ReadConfig(jsonObj:any):void;
   WriteConfig():any;
   //  

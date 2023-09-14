@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IContexUI } from '../UI/IContexUI';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotDevice } from '../Deprecated/IotDevice';
+import { ISbc } from '../Sbc/ISbc';
 import { IotTemplate } from '../Template/IotTemplate';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoT } from '../Types/Enums';
@@ -24,11 +24,11 @@ export class UIFake implements IContexUI {
 
   public ShowNotification(value:IotResult) {}
 
-  public async ShowDeviceDialog(devices:Array<IotDevice>,title = 'Choose a device'):Promise<IotDevice | undefined> {
+  public async ShowSbcDialog(sbcs:Array<ISbc>,title = 'Choose a device'):Promise<ISbc| undefined> {
     return Promise.resolve(undefined);
   }
 
-  public async ShowTemplateDialog(templates:Array<IotTemplate>,title = 'Choose a template'):Promise<IotTemplate | undefined> {
+  public async ShowTemplateDialog(templates:Array<IotTemplate>,title = 'Choose a template'):Promise<IotTemplate| undefined> {
     return Promise.resolve(undefined);
   }
 

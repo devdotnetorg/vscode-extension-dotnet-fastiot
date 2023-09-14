@@ -6,9 +6,9 @@ import { TreeDataLaunchsProvider } from '../LaunchView/TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { LaunchNode } from '../LaunchView/LaunchNode';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IContexUI } from '../ui/IContexUI';
+import { AppDomain } from '../AppDomain';
 
-export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:LaunchNode,contextUI:IContexUI): Promise<void> {                    
+export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:LaunchNode): Promise<void> {                    
     let newLabel = await vscode.window.showInputBox({				
         prompt: 'prompt',
         title: 'Enter a new name launch',
@@ -17,18 +17,19 @@ export async function renameLaunch(treeData: TreeDataLaunchsProvider,item:Launch
     if((!newLabel)||(newLabel==item.label)) return;
     newLabel=IoTHelper.StringTrim(newLabel);
     let result:IotResult;
+    const app = AppDomain.getInstance().CurrentApp;
     if(newLabel==""){
         result=new IotResult(StatusResult.Error,`Empty name specified`);
-        contextUI.ShowNotification(result);
+        app.UI.ShowNotification(result);
         return;
     } 
     //Main process
-    contextUI.Output(`Action: launch rename. Old name: ${item.label}. New name: ${newLabel}`);
+    app.UI.Output(`Action: launch rename. Old name: ${item.label}. New name: ${newLabel}`);
     //contextUI.ShowBackgroundNotification(`Launch rename. Old name: ${item.label}. New name: ${newLabel}`);
     result = item.Launch.Rename(newLabel);
     //contextUI.HideBackgroundNotification();
     //Output
-    contextUI.Output(result.toStringWithHead());
+    app.UI.Output(result.toStringWithHead());
     //Message
     //contextUI.ShowNotification(result);
     //Refresh

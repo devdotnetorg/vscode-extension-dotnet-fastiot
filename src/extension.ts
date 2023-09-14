@@ -24,9 +24,7 @@ import { SbcNode } from './SbcView/SbcNode';
 import { TreeDataSbcProvider } from './SbcView/TreeDataSbcProvider';
 
 //Devices
-import { TreeDataDevicesProvider } from './Deprecated/TreeDataDevicesProvider';
 /*
-import { IotDevice } from './IotDevice';
 import { IotDevicePackage } from './IotDevicePackage';
 import { IotDeviceDTO } from './IotDeviceDTO';
 import { IotDeviceGpiochip } from './IotDeviceGpiochip';
@@ -54,7 +52,6 @@ import { installPackage } from './actionsDevice/installPackage';
 import { upgradePackage } from './actionsDevice/upgradePackage';
 import { uninstallPackage } from './actionsDevice/uninstallPackage';
 import { testPackage } from './actionsDevice/testPackage';
-
 */
 //Launchs
 import { TreeDataLaunchsProvider } from './LaunchView/TreeDataLaunchsProvider';
@@ -65,7 +62,7 @@ import { LaunchOptionNode } from './LaunchView/LaunchOptionNode';
 //actionsLaunch.actions
 import { addLaunch } from './actionsLaunch/addLaunch';
 import { addEnviroment,renameEnviroment,editEnviroment,deleteEnviroment } from './actionsLaunch/managementEnviroment';
-import { gotoDevice } from './actionsLaunch/gotoDevice';
+import { gotoSbc } from './actionsLaunch/gotoSbc';
 import { renameLaunch } from './actionsLaunch/renameLaunch';
 import { refreshLaunch } from './actionsLaunch/refreshLaunch';
 import { deleteLaunch } from './actionsLaunch/deleteLaunch';
@@ -92,7 +89,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	app.UI.Output("Site: https://devdotnet.org/tag/fastiot/");
 	app.UI.Output("GitHub: https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot");
 	app.UI.Output("----------------------------------");
-
 	//SBCs
 	let result:IotResult;
 	result=app.SBCs.Load();
@@ -114,31 +110,23 @@ export async function activate(context: vscode.ExtensionContext) {
 		const isNeedUpgrade=compare(`${app.Config.Extension.Version}`,`${app.Config.Extension.PreviousVersion}`, '>');
 		if(isNeedUpgrade) {
 			app.Templates.DeletingSystemEntities();
-			loadTemplates(app,true);
+			loadTemplates(true);
 			//BuiltInConfig
 			app.Config.Extension.PreviousVersion=app.Config.Extension.Version;
 		}else {
-			if(app.Config.Template.LoadOnStart) loadTemplates(app);
+			if(app.Config.Template.LoadOnStart) loadTemplates();
 		}
 	};
 	loadTemplatesExt();
 	//TreeView SBC
-	//OLD
-    let treeDataDevicesProvider = new TreeDataDevicesProvider(app);
-    let vscodeTreeViewDevices=vscode.window.createTreeView('viewDevices', {
-		treeDataProvider: treeDataDevicesProvider
-	});
-	
-
 	let treeDataSbcProvider = new TreeDataSbcProvider(app.SBCs);
     let vscodeTreeDataSbcs=vscode.window.createTreeView('viewSBC', {
 		treeDataProvider: treeDataSbcProvider
 	});
-
 	//ViewBadge
 	app.UI.BadgeInit("Active tasks", vscodeTreeDataSbcs);
 	//TreeView Launchs
-    let treeDataLaunchsProvider = new TreeDataLaunchsProvider(app.Config,treeDataDevicesProvider.RootItems);
+    let treeDataLaunchsProvider = new TreeDataLaunchsProvider();
 	const loadLaunchs = async () => {
 		const result= treeDataLaunchsProvider.LoadLaunches();
 		if(result.Status==StatusResult.Error) {
@@ -289,52 +277,51 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	//Add new launch		  
 	let commandAddLaunch = vscode.commands.registerCommand('viewLaunchs.Add', () => {	
-		addLaunch(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,app);	
+		addLaunch(treeDataLaunchsProvider);	
 	});
 	//Refresh Launchs
 	let commandRefreshLaunch = vscode.commands.registerCommand('viewLaunchs.Refresh', () => {
-		refreshLaunch(treeDataLaunchsProvider,app.UI);		
+		refreshLaunch(treeDataLaunchsProvider);		
 	});
 	//Rename Launch
 	let commandRenameLaunch = vscode.commands.registerCommand('viewLaunchs.Rename', 
 		(item:LaunchNode) => {
-			renameLaunch(treeDataLaunchsProvider,item,app.UI);
+			renameLaunch(treeDataLaunchsProvider,item);
 	});
 	//Delete Launch
 	let commandDeleteLaunch = vscode.commands.registerCommand('viewLaunchs.Delete', 
 		(item:LaunchNode) => {
-			deleteLaunch(treeDataLaunchsProvider,item,app.UI);
+			deleteLaunch(treeDataLaunchsProvider,item);
 	});
 	//Rebuild Launch
 	let commandRebuildLaunch = vscode.commands.registerCommand('viewLaunchs.Rebuild', 
 		(item:LaunchNode) => {
-			rebuildLaunch(treeDataLaunchsProvider,treeDataDevicesProvider.RootItems,
-				item,app);
+			rebuildLaunch(treeDataLaunchsProvider,item);
 	});
 	//Go to device 
-	let commandGoToDevice = vscode.commands.registerCommand('viewLaunchs.GoToDevice', 
+	let commandGoToDevice = vscode.commands.registerCommand('viewLaunchs.GoToSbc', 
 		(item:LaunchNode) => {
-			gotoDevice(item,vscodeTreeViewDevices,treeDataDevicesProvider);
+			gotoSbc(item,treeDataSbcProvider,vscodeTreeDataSbcs);
 	});
 	//Add Enviroment
 	let commandAddEnviroment = vscode.commands.registerCommand('viewLaunchs.AddEnviroment',
 		(item:LaunchTreeItemNode) => {
-			addEnviroment(treeDataLaunchsProvider,item,app.UI);
+			addEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Rename Enviroment
 	let commandRenameEnviroment = vscode.commands.registerCommand('viewLaunchs.RenameEnviroment',
 		(item:LaunchTreeItemNode) => {
-			renameEnviroment(treeDataLaunchsProvider,item,app.UI);
+			renameEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Edit Enviroment
 	let commandEditEnviroment = vscode.commands.registerCommand('viewLaunchs.EditEnviroment', 
 		(item:LaunchTreeItemNode) => {
-			editEnviroment(treeDataLaunchsProvider,item,app.UI);
+			editEnviroment(treeDataLaunchsProvider,item);
 	});
 	//Delete Enviroment
 	let commandDeleteEnviroment = vscode.commands.registerCommand('viewLaunchs.DeleteEnviroment', 
 		(item:LaunchTreeItemNode) => {
-			deleteEnviroment(treeDataLaunchsProvider,item,app.UI);		
+			deleteEnviroment(treeDataLaunchsProvider,item);		
 	});
 	//Change Option
 	let commandChangeOptionLaunch = vscode.commands.registerCommand('viewLaunchs.ChangeOption', 
@@ -343,11 +330,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	//Create project
 	let commandCreateProject = vscode.commands.registerCommand('viewTemplates.CreateProject', () => {	
-			createProject(app,treeDataDevicesProvider.RootItems);	
+			createProject();	
 	});
 	//Reload templates
 	let commandReloadTemplates = vscode.commands.registerCommand('viewTemplates.ReloadTemplates', () => {	
-			loadTemplates(app,true);	
+			loadTemplates(true);	
 	});
 	//Open template folder
 	let commandOpenTemplateFolder = vscode.commands.registerCommand('viewTemplates.OpenTemplateFolder', () => {	
@@ -360,7 +347,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	//Restore/upgrade system templates
 	let commandRestoreSystemTemplates = vscode.commands.registerCommand('viewTemplates.RestoreSystemTemplates', async () => {
 		app.Templates.DeletingSystemEntities();
-		loadTemplates(app);
+		loadTemplates();
 		vscode.window.showInformationMessage("Restore/upgrade system templates completed successfully");
 	});
 	//Events
@@ -401,7 +388,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		reloadLaunchs();
 	});
  	//Subscriptions
-	context.subscriptions.push(vscodeTreeViewDevices);
 	context.subscriptions.push(vscodeTreeDataSbcs);
 	context.subscriptions.push(vscodeTreeViewLaunchs);
 	context.subscriptions.push(vscodeTreeViewTemplates);

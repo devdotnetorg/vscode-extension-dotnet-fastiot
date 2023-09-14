@@ -5,15 +5,17 @@ import * as path from 'path';
 import { TreeDataLaunchsProvider } from '../LaunchView/TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { IotDevice } from '../Deprecated/IotDevice';
+import { ISbc } from '../Sbc/ISbc';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IotTemplate } from '../Template/IotTemplate';
 import { IotTemplateAttribute } from '../Template/IotTemplateAttribute';
 import { IoTApplication } from '../IoTApplication';
 import { loadTemplates } from '../actionsTemplate/loadTemplates';
+import { AppDomain } from '../AppDomain';
 
-export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<IotDevice>,app:IoTApplication): Promise<void> {
+export async function addLaunch(treeData:TreeDataLaunchsProvider): Promise<void> {
     let result:IotResult;
+    const app = AppDomain.getInstance().CurrentApp;
     const workspaceDirectory=app.Config.Folder.WorkspaceVSCode;
     if(!workspaceDirectory) {
         result=new IotResult(StatusResult.No,`No Workspace. Open the menu: File -> Open Folder ... or create a project`);
@@ -22,22 +24,22 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     }
     //Load template
     if(app.Templates.Count==0)
-        await loadTemplates(app);
+        await loadTemplates();
     //repeat
     if(app.Templates.Count==0) {
         result=new IotResult(StatusResult.No,`No templates available`);
         app.UI.ShowNotification(result);
         return;
     }
-    //Devices
-    if(devices.length==0) {
-        result=new IotResult(StatusResult.No,`No devices. Add device`);
+    //SBCs
+    if(app.SBCs.Count==0) {
+        result=new IotResult(StatusResult.No,`No SBCs. Add SBC`);
         app.UI.ShowNotification(result);
         return;
     }
-    //Select Device
-    const selectDevice = await app.UI.ShowDeviceDialog(devices,'Choose a single-board computer (1/4)');
-    if(!selectDevice) return;
+    //Select SBC
+    const selectSbc = await app.UI.ShowSbcDialog(app.SBCs.ToArray(),'Choose a single-board computer (1/4)');
+    if(!selectSbc) return;
     //Select template
     //get id template
     let idTemplate=new IotTemplateAttribute("","").ForceGetID(path.join(workspaceDirectory, "template.fastiot.yaml"));
@@ -46,7 +48,7 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
         selectTemplate=app.Templates.FindById(idTemplate);
     if(selectTemplate) {
         //check platform
-        const isCompatible=selectTemplate.IsCompatibleByEndDeviceArchitecture(`${selectDevice.Information.Architecture}`);
+        const isCompatible=selectTemplate.IsCompatibleByEndSbcArchitecture(`${selectSbc.Architecture}`);
         if(!isCompatible) selectTemplate=undefined;
     }
     if(selectTemplate) {
@@ -63,9 +65,9 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     }
     if(!selectTemplate) {
         //select template
-        const listTemplates= app.Templates.SelectByEndDeviceArchitecture(selectDevice.Information.Architecture);
+        const listTemplates= app.Templates.SelectByEndSbcArchitecture(selectSbc.Architecture);
         if(listTemplates.length==0) {
-            result=new IotResult(StatusResult.No,`No templates compatible with ${selectDevice.label} ${selectDevice.Information.Architecture} device`);
+            result=new IotResult(StatusResult.No,`No templates compatible with ${selectSbc.Label} ${selectSbc.Architecture} SBC`);
             app.UI.ShowNotification(result);
             return;
         }
@@ -101,10 +103,10 @@ export async function addLaunch(treeData:TreeDataLaunchsProvider,devices:Array<I
     values.set("%{project.mainfile.path.full.aswindows}",selectProject);
     values.set("%{project.name}",projectName);
     //Main process
-    app.UI.Output(`Action: adding Launch to the ${selectProject} project, template ${selectTemplate.Attributes.Id}, device ${selectDevice.Information.BoardName} ${selectDevice.Information.Architecture}`);
+    app.UI.Output(`Action: adding Launch to the ${selectProject} project, template ${selectTemplate.Attributes.Id}, SBC ${selectSbc.BoardName} ${selectSbc.Architecture}`);
     //app.UI.ShowBackgroundNotification(`Adding Launch to the ${selectProject} project`);
     result = 
-        selectTemplate.AddConfigurationVscode(selectDevice,app.Config,
+        selectTemplate.AddConfigurationVscode(selectSbc,app.Config,
             workspaceDirectory,values);
             //app.UI.HideBackgroundNotification();
     //Output

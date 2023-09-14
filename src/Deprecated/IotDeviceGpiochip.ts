@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
-import {IotDevice} from './IotDevice';
+import {IotDevice_d} from './IotDevice_d';
 import {Gpiochip} from './GPIO/Gpiochip';
 import { IotResult,StatusResult } from '.././Shared/IotResult';
 import {TypePackage} from './IotDevicePackage';
@@ -10,9 +10,9 @@ import {TypePackage} from './IotDevicePackage';
 export class IotDeviceGpiochip extends BaseTreeItem_d {
   public Items: Array<Gpiochip>=[];
 
-  public Parent: IotDevice| IotDeviceGpiochip;
+  public Parent: IotDevice_d| IotDeviceGpiochip;
   public Childs: Array<IotDeviceGpiochip>=[]; 
-  public Device: IotDevice;
+  public Device: IotDevice_d;
     
   private _gpiochip: Gpiochip| undefined; 
   public get Gpiochip(): Gpiochip| undefined {
@@ -27,8 +27,8 @@ export class IotDeviceGpiochip extends BaseTreeItem_d {
   
   constructor(            
     collapsibleState: vscode.TreeItemCollapsibleState,
-    parent: IotDevice| IotDeviceGpiochip,
-    device: IotDevice
+    parent: IotDevice_d| IotDeviceGpiochip,
+    device: IotDevice_d
   ){
     super("label",undefined,undefined,collapsibleState);
     this.Parent=parent;

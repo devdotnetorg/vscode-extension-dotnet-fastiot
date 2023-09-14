@@ -6,14 +6,16 @@ import { TreeDataLaunchsProvider } from '../LaunchView/TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { LaunchNode } from '../LaunchView/LaunchNode';
 import { IoTApplication } from '../IoTApplication';
-import { IotDevice } from '../Deprecated/IotDevice';
+import { ISbc } from '../Sbc/ISbc';
 import { loadTemplates } from '../actionsTemplate/loadTemplates';
+import { AppDomain } from '../AppDomain';
 
-export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,devices: Array<IotDevice>,item:LaunchNode,app:IoTApplication): Promise<void> {
+export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,item:LaunchNode): Promise<void> {
    let result:IotResult;
+   const app = AppDomain.getInstance().CurrentApp;
    //Load template
    if(app.Templates.Count==0)
-      await loadTemplates(app);
+      await loadTemplates();
    //repeat
    if(app.Templates.Count==0) {
       result=new IotResult(StatusResult.No,`No templates available`);
@@ -23,7 +25,7 @@ export async function rebuildLaunch(treeData: TreeDataLaunchsProvider,devices: A
    //Main process
    app.UI.Output(`Action: rebuild Launch. Launch: ${item.label}`);
    //app.UI.ShowBackgroundNotification(`Rebuild Launch. Launch: ${item.label}`);
-   result = item.Launch.RebuildLaunch(app.Config,app.Templates,devices);
+   result = item.Launch.RebuildLaunch(app.Config,app.Templates,app.SBCs.ToArray());
    //app.UI.HideBackgroundNotification();
    //Output
    app.UI.Output(result.toStringWithHead());

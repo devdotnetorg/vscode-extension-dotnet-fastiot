@@ -15,7 +15,7 @@ export async function deleteSBC(item:SbcTreeItemNode): Promise<void> {
         const sbcNode = item as SbcNode;
 		const sbc = app.SBCs.FindById(sbcNode.IdSbc??"None");
 		if(!sbc) return;
-        app.UI.Output(`Action: remove device ${sbc.Label} ${sbc.Id}`);
+        app.UI.Output(`Action: remove sbc ${sbc.Label} ${sbc.Id}`);
         let result:IotResult;
         result=app.SBCs.Remove(sbc.Id);
         //Output 

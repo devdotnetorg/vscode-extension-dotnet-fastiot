@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotDevice } from '../Deprecated/IotDevice';
+import { ISbc } from '../Sbc/ISbc';
 import { IotLaunchEnvironment } from './IotLaunchEnvironment';
 import { TreeItem } from '../shared/TreeItem';
 import { IoTHelper } from '../Helper/IoTHelper';
@@ -36,9 +36,9 @@ export class IotLaunch {
   public get TasksFilePath(): string {
     return this._tasksFilePath;}
 
-  private _device?:IotDevice|string;
-  public get Device(): IotDevice|string| undefined {
-    return this._device;}
+  private _sbc?:ISbc|string;
+  public get Sbc(): ISbc|string| undefined {
+    return this._sbc;}
 
   private _pathProject?:string;
   public get PathProject(): string| undefined {
@@ -59,7 +59,7 @@ export class IotLaunch {
     this._environment = new IotLaunchEnvironment();  
   }
 
-  public Load(idLaunch:string,devices: Array<IotDevice>): IotResult {  
+  public Load(idLaunch:string,sbcs: Array<ISbc>): IotResult {  
     let result:IotResult;
     const errorMsg=`Unable to load Launch IdLaunch: ${idLaunch}`;
     try {
@@ -72,7 +72,7 @@ export class IotLaunch {
       let jsonLaunch = result.returnObject;
       const launch=jsonLaunch.configurations.find((x:any) => x.fastiotIdLaunch ==idLaunch);
       if (launch) {
-        result=this.FromJSON(launch,devices);
+        result=this.FromJSON(launch,sbcs);
         if(result.Status==StatusResult.Error) {
           result.AddMessage(errorMsg);
           return result;
@@ -87,7 +87,7 @@ export class IotLaunch {
     return result;
   }
 
-  public GetAllLaunchs(devices: Array<IotDevice>): IotResult {
+  public GetAllLaunchs(sbcs: Array<ISbc>): IotResult {
     let launchs:IotLaunch[]=[];
     let result:IotResult;
     try {
@@ -103,7 +103,7 @@ export class IotLaunch {
         if(jsonLaunchConf) {
           //parse
           let launch = new IotLaunch(this._workspaceDirectory);
-          result=launch.FromJSON(jsonLaunchConf,devices);
+          result=launch.FromJSON(jsonLaunchConf,sbcs);
           if(result.Status==StatusResult.Ok){
             //Add
             launchs.push(launch);
@@ -121,23 +121,24 @@ export class IotLaunch {
     return result;
   }
 
-  public FromJSON(jsonObj:any,devices: Array<IotDevice>):IotResult{
+  public FromJSON(jsonObj:any,sbcs: Array<ISbc>):IotResult{
     let result:IotResult;
-    try
-    {        
+    try {        
       //verification - fastiotIdLaunch
       if(!jsonObj.fastiotIdLaunch)
         return new IotResult(StatusResult.No,`This Launch is not for FastIoT. jsonObj: ${jsonObj}`);
-      //reading variables - fastiotIdLaunch, fastiotIdDevice, fastiotProject, fastiotIdTemplate
+      //reading variables - fastiotIdLaunch, fastiotIdSbc (fastiotIdDevice), fastiotProject, fastiotIdTemplate
       //fastiotIdLaunch
       this._idLaunch=jsonObj.fastiotIdLaunch;
-      //fastiotIdDevice
-      //find device
-      const idDevice:string=jsonObj.fastiotIdDevice;
-      const device=devices.find(x=>x.IdDevice==idDevice);
-      if(device)
-        this._device=device;
-        else this._device=idDevice;
+      //fastiotIdSbc (fastiotIdDevice)
+      //find sbc
+      let idSbc:string="None";
+      if(jsonObj.fastiotIdDevice) idSbc = jsonObj.fastiotIdDevice;
+      if(jsonObj.fastiotIdSbc) idSbc = jsonObj.fastiotIdSbc;
+      const sbc=sbcs.find(x=>x.Id==idSbc);
+      if(sbc)
+        this._sbc=sbc;
+        else this._sbc=idSbc;
       //fastiotProject
       this._pathProject=jsonObj.fastiotProject;
       //fastiotIdTemplate
@@ -150,9 +151,7 @@ export class IotLaunch {
       this._description=jsonObj.fastiotDescription;
       //
       result=new IotResult(StatusResult.Ok,`Launch successfully loaded ${this._idLaunch}`);
-    }
-    catch (err:any)
-    {
+    } catch (err:any) {
       result=new IotResult(StatusResult.Error,`Launch FromJSON. jsonObj: ${jsonObj}`,err);
     }
     return result;
@@ -191,25 +190,25 @@ export class IotLaunch {
         item=new TreeItem("Template","not found","Template not found",StatusResult.Error);
         items.push(item);
       }
-      //IdDevice - IotDevice|string| undefined
-      if(this.Device) {
-        //IotDevice or string
-        if(typeof this.Device === "string") {
-          //string - device not found
-          item=new TreeItem("Device",this.Device,`${this.Device} not found`,StatusResult.Error);
+      //IdSbc - ISbc|string| undefined
+      if(this.Sbc) {
+        //ISbc or string
+        if(typeof this.Sbc === "string") {
+          //string - sbc not found
+          item=new TreeItem("SBC",this.Sbc,`${this.Sbc} not found`,StatusResult.Error);
           items.push(item);
         } else{
-          //IotDevice
-          const description=`${this.Device?.label} ${this.Device?.Information.Architecture}`;
-          const tooltip=`label: ${this.Device?.label}. Id device: ${this.Device?.IdDevice}`;
-          item=new TreeItem("Device",description,tooltip);
+          //ISbc
+          const description=`${this.Sbc.Label} ${this.Sbc?.Architecture}`;
+          const tooltip=`label: ${this.Sbc.Label}. Id sbc: ${this.Sbc.Id}`;
+          item=new TreeItem("SBC",description,tooltip);
           items.push(item);
           //Username
           //option=new IotOption("Username",this.Device?.Account.UserName);
           //options.push(option);
         }
       } else {
-        item=new TreeItem("Device","not found","Device not found",StatusResult.Error);
+        item=new TreeItem("SBC","not found","SBC not found",StatusResult.Error);
         items.push(item);
       }
       result= new IotResult(StatusResult.Ok, "GetOptions");
@@ -593,18 +592,18 @@ export class IotLaunch {
     */
   }
 
-  public RebuildLaunch(config:IConfiguration, templates:IotTemplateCollection, devices: Array<IotDevice>): IotResult {
+  public RebuildLaunch(config:IConfiguration, templates:IotTemplateCollection, sbcs: Array<ISbc>): IotResult {
     const errorMsg=`Unable to execute RebuildLaunch. IdLaunch: ${this.IdLaunch}`;
     let result:IotResult;
     //--------------Checks--------------
-    //check device
-    if(!this.Device) {
-      result= new IotResult(StatusResult.Error,`Missing device for idLaunch: ${this.IdLaunch}`);
+    //check sbc
+    if(!this.Sbc) {
+      result= new IotResult(StatusResult.Error,`Missing SBC for idLaunch: ${this.IdLaunch}`);
       result.AddMessage(errorMsg);
       return result;
     }
-    if(typeof this.Device === "string") {
-      result= new IotResult(StatusResult.Error,`Missing device for idLaunch: ${this.IdLaunch}`);
+    if(typeof this.Sbc === "string") {
+      result= new IotResult(StatusResult.Error,`Missing SBC for idLaunch: ${this.IdLaunch}`);
       result.AddMessage(errorMsg);
       return result;
     }
@@ -638,7 +637,7 @@ export class IotLaunch {
     let index=1;
     jsonLinkedLaunchs.forEach((item:any) => {
       let launchItem = new IotLaunch(this._workspaceDirectory);
-      result=launchItem.FromJSON(item,devices);
+      result=launchItem.FromJSON(item,sbcs);
       if(result.Status==StatusResult.Error) {
         result.AddMessage(errorMsg);
         return result;
@@ -664,7 +663,7 @@ export class IotLaunch {
     const projectName=baseName.substring(0,baseName.length-template.Attributes.ExtMainFileProj.length);
     values.set("%{project.mainfile.path.full.aswindows}",projectMainfilePath);
     values.set("%{project.name}",projectName);
-    result = template.AddConfigurationVscode(this.Device,config,this._workspaceDirectory,values);
+    result = template.AddConfigurationVscode(this.Sbc,config,this._workspaceDirectory,values);
     if(result.Status==StatusResult.Error) {
       result.AddMessage(errorMsg);
       return result;

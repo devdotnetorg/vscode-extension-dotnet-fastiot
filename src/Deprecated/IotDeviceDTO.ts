@@ -2,14 +2,14 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
-import {IotDevice} from './IotDevice';
+import {IotDevice_d} from './IotDevice_d';
 import { IotResult,StatusResult } from '.././Shared/IotResult';
 import { DTO_d } from './Dto/DTO_d';
 
 export class IotDeviceDTO extends BaseTreeItem_d {
-  public Parent: IotDevice| IotDeviceDTO;
+  public Parent: IotDevice_d| IotDeviceDTO;
   public Childs: Array<IotDeviceDTO>=[];
-  public Device: IotDevice;
+  public Device: IotDevice_d;
 
   public Config:any;
 
@@ -45,8 +45,8 @@ export class IotDeviceDTO extends BaseTreeItem_d {
     
   constructor(            
     collapsibleState: vscode.TreeItemCollapsibleState,
-    parent: IotDevice| IotDeviceDTO,
-    device: IotDevice
+    parent: IotDevice_d| IotDeviceDTO,
+    device: IotDevice_d
   ){
     super("label",undefined,undefined,collapsibleState);
     this.Parent=parent;

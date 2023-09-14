@@ -11,14 +11,11 @@ import { IotTemplateAttribute } from './IotTemplateAttribute';
 
 export class IotTemplateCollection extends EntityCollection<IotTemplateAttribute,IotTemplate> {
 
-  constructor(
-    config:IConfigEntityCollection
-    ){
-      super("template","templates",IotTemplate,config);
+  constructor(config:IConfigEntityCollection) {
+    super("template","templates",IotTemplate,config);
   }
 
-  public async ImportTemplateUserFromZip(fileZipPath:string):Promise<IotResult>
-  {
+  public async ImportTemplateUserFromZip(fileZipPath:string):Promise<IotResult> {
     return super.ImportEntityFromZip(fileZipPath,EntityEnum.user);
   }
 

@@ -2,15 +2,15 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
-import {IotDevice} from './IotDevice';
+import {IotDevice_d} from './IotDevice_d';
 import {IotItemTree_d} from './shared/IotItemTree_d';
 import { IotResult,StatusResult } from '.././Shared/IotResult';
 
 export class IotDeviceInformation extends BaseTreeItem_d{  
    
-  public Parent: IotDevice;
+  public Parent: IotDevice_d;
   public Childs: Array<IotItemTree_d>=[];
-  public Device: IotDevice;
+  public Device: IotDevice_d;
 
   //apt-get install lsb-release
   public Hostname: string| undefined; //$uname -n = bananapim64  
@@ -35,8 +35,8 @@ export class IotDeviceInformation extends BaseTreeItem_d{
     description: string|  undefined,
     tooltip: string | vscode.MarkdownString | undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,
-    parent: IotDevice,
-    device: IotDevice    
+    parent: IotDevice_d,
+    device: IotDevice_d    
   ){
     super(label,description,tooltip,collapsibleState);
     this.Parent=parent;

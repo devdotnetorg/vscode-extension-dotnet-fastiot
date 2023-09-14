@@ -2,12 +2,12 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
+import { TreeDataDevicesProvider_d } from '../TreeDataDevicesProvider_d';
 import { IotResult,StatusResult } from '../../Shared/IotResult';
-import { IotDevice } from '../IotDevice';
+import { IotDevice_d } from '../IotDevice_d';
 import {IContexUI} from '../../ui/IContexUI';
 
-export async function detectGpiochips(treeData: TreeDataDevicesProvider,item:IotDevice,contextUI:IContexUI): Promise<void> {
+export async function detectGpiochips(treeData: TreeDataDevicesProvider_d,item:IotDevice_d,contextUI:IContexUI): Promise<void> {
     contextUI.Output("Action: detecting all GPIO chips");
     //contextUI.ShowBackgroundNotification("Detecting all GPIO chips");              
     const result=await treeData.DetectGpiochips(<string>item.IdDevice);

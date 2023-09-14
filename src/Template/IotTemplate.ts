@@ -4,15 +4,20 @@ import * as path from 'path';
 import * as os from 'os';
 import { IoT } from '../Types/Enums';
 import EntityEnum = IoT.Enums.Entity;
+import LogLevel = IoT.Enums.LogLevel;
+import Existence = IoT.Enums.Existence;
+import AccountAssignment = IoT.Enums.AccountAssignment;
 import { EntityBase } from '../Entity/EntityBase';
 import { IotTemplateAttribute } from './IotTemplateAttribute';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { launchHelper } from '../Helper/launchHelper';
 import { dotnetHelper } from '../Helper/dotnetHelper';
-import { IotDevice } from '../Deprecated/IotDevice';
+import { ISbc } from '../Sbc/ISbc';
+import { IoTSbc } from '../Sbc/IoTSbc';
 import { IConfiguration } from '../Configuration/IConfiguration';
 import { FilesValidator } from '../Validator/FilesValidator';
+import { AppDomain } from '../AppDomain';
 
 /*
 load order:
@@ -48,13 +53,11 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   constructor(pathFolderSchema: string
     ){
       super("template","templates",IotTemplateAttribute,
-      pathFolderSchema,"template.fastiot.schema.validator-fork.yaml","template.fastiot.files.schema.json");
+        pathFolderSchema,"template.fastiot.schema.validator-fork.yaml","template.fastiot.files.schema.json");
   }
 
-  public Init(type:EntityEnum,yamlFilePath:string,recoverySourcePath?:string)
-  {
+  public Init(type:EntityEnum,yamlFilePath:string,recoverySourcePath?:string) {
     super.Init(type,yamlFilePath,recoverySourcePath);
-    //
     if(!this.IsValid) return;
     //Attributes
     const isValidAttributes = this.Attributes.Init(yamlFilePath);
@@ -65,13 +68,13 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     this.Validate();
   }
 
-  protected Validate(){
+  protected Validate() {
     this._validationErrors=[];
     // TODO: проверка наличия файлов для dotnetapp.csproj которые внутри
   }
 
   //------------ Project ------------
-  public CreateProject(device:IotDevice, config:IConfiguration, dstPath:string,
+  public CreateProject(sbc:ISbc, config:IConfiguration, dstPath:string,
     values:Map<string,string>):IotResult {
     let result:IotResult;
     const errorMsg=`Project not created!`;
@@ -85,9 +88,9 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //Create MergeDictionary---------------------------------
       this.CreateDictionaryStep1CopyValues(values);
       if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step1CopyValues");
-      this.CreateDictionaryStep2AddDeviceInfo(device,config);
-      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step2AddDeviceInfo");
-      this.CreateDictionaryStep3DependencyProjectType(device);
+      this.CreateDictionaryStep2AddSbcInfo(sbc,config);
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step2AddSbcInfo");
+      this.CreateDictionaryStep3DependencyProjectType(sbc);
       if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step3DependencyProjectType");
       this.CreateDictionaryStep4Additional(config);
       if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step4Additional");
@@ -141,7 +144,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     return result;
   }
 
-  public AddConfigurationVscode(device:IotDevice, config:IConfiguration, dstPath:string,
+  public AddConfigurationVscode(sbc:ISbc, config:IConfiguration, dstPath:string,
     values:Map<string,string>):IotResult {
     let result:IotResult;
     const errorMsg=`Launch and tasks not added!`;
@@ -155,9 +158,9 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       //Create MergeDictionary---------------------------------
       this.CreateDictionaryStep1CopyValues(values);
       if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step1CopyValues");
-      this.CreateDictionaryStep2AddDeviceInfo(device,config);
-      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step2AddDeviceInfo");
-      this.CreateDictionaryStep3DependencyProjectType(device);
+      this.CreateDictionaryStep2AddSbcInfo(sbc,config);
+      if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step2AddSbcInfo");
+      this.CreateDictionaryStep3DependencyProjectType(sbc);
       if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step3DependencyProjectType");
       this.CreateDictionaryStep4Additional(config);
       if(config.Entity.DebugMode) this.CreateDumpDictionary(dstPath,"Step4Additional");
@@ -233,8 +236,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         let indexItem=this.Attributes.FilesToProcess.indexOf(key);
         if(indexItem>-1) this.Attributes.FilesToProcess[indexItem]=value;
         //tracking the renaming of the main project file
-        if(IoTHelper.GetFileExtensions(newPath)==this.Attributes.ExtMainFileProj)
-        {
+        if(IoTHelper.GetFileExtensions(newPath)==this.Attributes.ExtMainFileProj) {
           let projectMainfilePathFullWin = newPath;
           projectMainfilePathFullWin=IoTHelper.ReverseSeparatorReplacement(projectMainfilePathFullWin);
           this._mergeDictionary.set("%{project.mainfile.path.full.aswindows}",<string>projectMainfilePathFullWin);
@@ -270,14 +272,14 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       let index=0;    
       do {
         let jsonInsertDataEntity=jsonInsertDataEntities.values[index];
-        if(jsonInsertDataEntity)
-        {
+        if(jsonInsertDataEntity) {
           if(entity=="launch") {
-            //check - fastiotIdLaunch, fastiotIdDevice, fastiotProject, fastiotIdTemplate
+            //check - fastiotIdLaunch, fastiotIdSbc(fastiotIdDevice), fastiotProject, fastiotIdTemplate
             //suffix
             let suffix=""; if(index>0) suffix=`-n${index}`;
             if(!jsonInsertDataEntity.fastiotIdLaunch) jsonInsertDataEntity["fastiotIdLaunch"] = `%{launch.id}${suffix}`;
-            if(!jsonInsertDataEntity.fastiotIdDevice) jsonInsertDataEntity["fastiotIdDevice"]=`%{device.id}`;
+            if(!jsonInsertDataEntity.fastiotIdDevice) jsonInsertDataEntity["fastiotIdSbc"]=`%{sbc.id}`;
+            if(!jsonInsertDataEntity.fastiotIdSbc) jsonInsertDataEntity["fastiotIdSbc"]=`%{sbc.id}`;
             if(!jsonInsertDataEntity.fastiotProject) jsonInsertDataEntity["fastiotProject"]=`%{project.mainfile.path.relative.aslinux}`;
             if(!jsonInsertDataEntity.fastiotIdTemplate) jsonInsertDataEntity["fastiotIdTemplate"]=`%{template.id}`;
             //push
@@ -287,8 +289,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
           //next position
           index=index+1;
         }else break;      
-      } 
-      while(true)
+      } while(true)
       //toTXT
       let data=JSON.stringify(jsonDataEntity,null,2);
       //Merge
@@ -339,11 +340,10 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
         {/* skip */}else{
           //file
           const file=path.join(this.TemplatePath, ".vscode", name);
-          if(fs.lstatSync(file).isFile())
-          {
+          if(fs.lstatSync(file).isFile()) {
             const dstFile=path.join(dstPath, name);
             //check
-            if(!fs.existsSync(dstFile)){
+            if(!fs.existsSync(dstFile)) {
               //copy file
               fs.copyFileSync(file,dstFile);
             } 
@@ -364,20 +364,24 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     values.forEach((value,key) => this._mergeDictionary.set(key,value));
   }
 
-  private CreateDictionaryStep2AddDeviceInfo (device:IotDevice, config:IConfiguration) {
-      //device
-      this._mergeDictionary.set("%{device.id}",<string>device.IdDevice);
-      let ssh_key= path.join(config.Folder.KeysSbc, <string>device?.Account.Identity);
-      ssh_key=IoTHelper.ReverseSeparatorReplacement(ssh_key);
-      this._mergeDictionary.set("%{device.ssh.key.path.full.aswindows}",ssh_key);
-      this._mergeDictionary.set("%{device.ssh.port}",<string>device?.Account.Port);
-      this._mergeDictionary.set("%{device.user.debug}",<string>device?.Account.UserName);
-      this._mergeDictionary.set("%{device.host}",<string>device?.Account.Host);
-      this._mergeDictionary.set("%{device.label}",<string>device?.label);
-      this._mergeDictionary.set("%{device.board.name}",<string>device?.Information.BoardName);
+  private CreateDictionaryStep2AddSbcInfo (sbc:ISbc, config:IConfiguration) {
+      const app = AppDomain.getInstance().CurrentApp;
+      //sbc
+      this._mergeDictionary.set("%{sbc.id}",<string>sbc.Id);
+      const account = sbc.GetAccount(AccountAssignment.management);
+      if (account) {
+        let ssh_key= path.join(config.Folder.KeysSbc, <string>account.SshKeyFileName);
+        ssh_key=IoTHelper.ReverseSeparatorReplacement(ssh_key);
+        this._mergeDictionary.set("%{sbc.ssh.key.path.full.aswindows}",ssh_key);
+        this._mergeDictionary.set("%{sbc.user.debug}",<string>account.UserName);
+      }
+      this._mergeDictionary.set("%{sbc.ssh.port}",<string>sbc.Port.toString());
+      this._mergeDictionary.set("%{sbc.host}",<string>sbc.Host);
+      this._mergeDictionary.set("%{sbc.label}",<string>sbc.Label);
+      this._mergeDictionary.set("%{sbc.board.name}",<string>sbc.BoardName);
   }
 
-  private CreateDictionaryStep3DependencyProjectType(device:IotDevice) {
+  private CreateDictionaryStep3DependencyProjectType(sbc:ISbc) {
     this._mergeDictionary.set("%{project.type}",<string>this.Attributes.TypeProj);
     //dotnet
     if(this.Attributes.TypeProj=="dotnet"){
@@ -386,8 +390,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       if(projectName)
         this._mergeDictionary.set("%{project.dotnet.namespace}",<string>dotnetHelper.GetDotNetValidNamespace(projectName));
       //RID Catalog
-      const rid=dotnetHelper.GetDotNetRID(<string>device?.Information.OsName,<string>device?.Information.Architecture);
-      this._mergeDictionary.set("%{device.dotnet.rid}",<string>rid);
+      const rid=dotnetHelper.GetDotNetRID(<string>sbc.OsName,<string>sbc.Architecture);
+      this._mergeDictionary.set("%{sbc.dotnet.rid}",<string>rid);
       //target
       let targetFramework=this._mergeDictionary.get("%{project.dotnet.targetframework}");
       if(!targetFramework){

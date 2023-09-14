@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { IotDevice } from '../IotDevice';
+import { IotDevice_d } from '../IotDevice_d';
 import { IDtoAdapter_d } from './IDtoAdapter_d';
 import { DTOArmbianAdapter_d } from './DTOArmbianAdapter_d';
 import { IotResult,StatusResult } from '../../Shared/IotResult';
 
 export class DTO_d {  
-  private _device: IotDevice;
+  private _device: IotDevice_d;
   private _adapterDTO?:IDtoAdapter_d;
 
   private _compatible:boolean=false;
@@ -24,7 +24,7 @@ export class DTO_d {
   public get FsPath(): string| undefined {
     return this._fsPath;};  
   
-  constructor(device: IotDevice){    
+  constructor(device: IotDevice_d){    
     this._device=device;
     //select adapter
     this._adapterDTO=this.GetAdapter()

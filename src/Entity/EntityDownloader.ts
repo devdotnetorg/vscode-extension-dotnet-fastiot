@@ -12,11 +12,9 @@ export class EntityDownloader {
   protected readonly _pathFolderSchema;
   constructor(pathFolderSchema: string){
     this._pathFolderSchema=pathFolderSchema;
-
   }
 
-  public async DownloadEntity(item:EntityDownload,destPath:string):Promise<IotResult>
-  {
+  public async DownloadEntity(item:EntityDownload,destPath:string):Promise<IotResult> {
     let result:IotResult;
     try {
       //download *.zip
@@ -31,8 +29,7 @@ export class EntityDownloader {
     return Promise.resolve(result);
   }
 
-  public async GetDownloadListEntities(url:string):Promise<IotResult>
-  {
+  public async GetDownloadListEntities(url:string):Promise<IotResult> {
     let result:IotResult;
     const errMsg=`Error loading entity list ${url}`;
     try {
@@ -77,18 +74,17 @@ export class EntityDownloader {
       //parse templatelist.fastiot.yaml
       let index=0; 
       do { 				
-            let item=yamlObj.entities[index];
-            if(item) {
-              const downloadEntity=this.ParseEntityDownload(item,url);
-              if (downloadEntity) listDownload.push(downloadEntity);
-              //next position
-              index=index+1;
-            }else break;
-          }  
-      while(true)
+        let item=yamlObj.entities[index];
+        if(item) {
+          const downloadEntity=this.ParseEntityDownload(item,url);
+          if (downloadEntity) listDownload.push(downloadEntity);
+          //next position
+          index=index+1;
+        }else break;
+      } while(true)
     } catch (err: any){
-        result = new IotResult(StatusResult.Error,`File parsing error ${url}.`,err);
-        return Promise.resolve(result);
+      result = new IotResult(StatusResult.Error,`File parsing error ${url}.`,err);
+      return Promise.resolve(result);
     }
     //result
     result = new IotResult(StatusResult.Ok);
@@ -96,8 +92,7 @@ export class EntityDownloader {
     return Promise.resolve(result);
   }
 
-  protected ParseEntityDownload(obj:any,url:string):EntityDownload|undefined
-  {
+  protected ParseEntityDownload(obj:any,url:string):EntityDownload|undefined {
     let downloadEntity:EntityDownload|undefined;
     try {
       const objId=obj.id;
@@ -112,14 +107,13 @@ export class EntityDownloader {
       //platform
       index=0;
       do { 				
-            let item=obj.platform[index];
-            if(item) {
-              platform.push(<string>item);            
-              //next position
-              index=index+1;
-            }else break;      
-      } 
-      while(true)
+        let item=obj.platform[index];
+        if(item) {
+          platform.push(<string>item);            
+          //next position
+          index=index+1;
+        }else break;
+      } while(true)
       downloadEntity=new EntityDownload(objId,objVersion,objUrl,
           objforVersionExt,platform);
     } catch (err: any){}

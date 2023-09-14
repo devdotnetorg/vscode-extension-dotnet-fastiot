@@ -31,9 +31,9 @@ export class EntityBaseAttribute {
   private _platform:Array<string>=[];  
   public get platform(): Array<string> {
     return this._platform;}
-  private _endDeviceArchitecture:Array<string>=[]; 
-  public get EndDeviceArchitecture(): Array<string> {
-    return this._endDeviceArchitecture;}
+  private _endSbcArchitecture:Array<string>=[]; 
+  public get EndSbcArchitecture(): Array<string> {
+    return this._endSbcArchitecture;}
   private _tags:Array<string>=[]; 
   public get Tags(): Array<string> {
     return this._tags;}
@@ -54,13 +54,11 @@ export class EntityBaseAttribute {
       this._validationErrors.push("non");
     }
 
-  public InitBaseAttribute(yamlFilePath:string):boolean
-  {
+  public InitBaseAttribute(yamlFilePath:string):boolean {
     let result:boolean;
     result=this.ParseBaseAttribute(yamlFilePath);
     if(!result) false;
     result=this.PostCheckAfterParse(yamlFilePath);
-    //
     return result;
   }
 
@@ -69,7 +67,6 @@ export class EntityBaseAttribute {
       //validate
       this.ValidateBaseAttribute(yamlFilePath);
       if(!this.IsValid) return false;
-      //
       const file = fs.readFileSync(yamlFilePath, 'utf8');
       const obj=YAML.parse(file);
       //one value
@@ -86,34 +83,34 @@ export class EntityBaseAttribute {
       //platform
       index=0;
       do { 				
-            let item=obj.platform[index];
-            if(item) {
-              this._platform.push(<string>item);            
-              //next position
-              index=index+1;
-            }else break;      
-      } 
-      while(true)
-      //endDeviceArchitecture
+        let item=obj.platform[index];
+        if(item) {
+          this._platform.push(<string>item);            
+          //next position
+          index=index+1;
+        }else break;      
+      } while(true)
+      //endSbcArchitecture
       index=0;
-      do { 				
-            let item=obj.endDeviceArchitecture[index];
-            if(item) {
-              this._endDeviceArchitecture.push(<string>item);            
-              //next position
-              index=index+1;
-            }else break;      
-      } 
-      while(true)
+      do {
+        let item:any;
+        if(obj.endSbcArchitecture) item=obj.endSbcArchitecture[index];
+        if(obj.endDeviceArchitecture) item=obj.endDeviceArchitecture[index];
+        if(item) {
+          this._endSbcArchitecture.push(<string>item);            
+          //next position
+          index=index+1;
+        }else break;      
+      } while(true)
       //tags
       index=0;
       do { 				
-            let item=obj.tags[index];
-            if(item) {
-              this._tags.push(<string>item);            
-              //next position
-              index=index+1;
-            }else break;      
+        let item=obj.tags[index];
+        if(item) {
+          this._tags.push(<string>item);            
+          //next position
+          index=index+1;
+        }else break;      
       } 
       while(true)
       //next
@@ -133,12 +130,10 @@ export class EntityBaseAttribute {
     return this.IsValid;
   }
 
-  private ValidateBaseAttribute(yamlFilePath:string)
-  {
+  private ValidateBaseAttribute(yamlFilePath:string) {
     this._validationErrors=[];
     //exist
-    if (!fs.existsSync(yamlFilePath))
-    {
+    if (!fs.existsSync(yamlFilePath)) {
       this._validationErrors.push(`${yamlFilePath} file does not exist`);
       return;
     }
@@ -149,8 +144,7 @@ export class EntityBaseAttribute {
     this._validationErrors = validationErrors.slice();
   }
 
-  public ForceGetID(filePath:string):string|undefined
-  {
+  public ForceGetID(filePath:string):string|undefined {
     if(!fs.existsSync(filePath)) return undefined;
     try {
       const file = fs.readFileSync(filePath, 'utf8');

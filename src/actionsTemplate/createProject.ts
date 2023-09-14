@@ -3,7 +3,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotDevice } from '../Deprecated/IotDevice';
+import { ISbc } from '../Sbc/ISbc';
+import { IoTSbc } from '../Sbc/IoTSbc';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { dotnetHelper } from '../Helper/dotnetHelper';
@@ -12,31 +13,33 @@ import { IContexUI } from '../ui/IContexUI';
 import { stringify } from 'querystring';
 import { IoTApplication } from '../IoTApplication';
 import { loadTemplates } from '../actionsTemplate/loadTemplates';
+import { AppDomain } from '../AppDomain';
 
-export async function createProject(app:IoTApplication,devices:Array<IotDevice>): Promise<void> {
+export async function createProject(): Promise<void> {
     let result:IotResult;
     //Load template
+    const app = AppDomain.getInstance().CurrentApp;
     if(app.Templates.Count==0)
-        await loadTemplates(app);
+        await loadTemplates();
     //repeat
     if(app.Templates.Count==0) {
         result=new IotResult(StatusResult.No,`No templates available`);
         app.UI.ShowNotification(result);
         return;
     }
-    //Devices
-    if(devices.length==0) {
-        result=new IotResult(StatusResult.No,`No devices. Add device`);
+    //Sbcs
+    if(app.SBCs.Count==0) {
+        result=new IotResult(StatusResult.No,`No SBCs. Add SBC`);
         app.UI.ShowNotification(result);
         return;
     }
-    //Select Device
-    const selectDevice = await app.UI.ShowDeviceDialog(devices,'Choose a single-board computer (1/6)');
-    if(!selectDevice) return;
+    //Select Sbc
+    const selectSbc = await app.UI.ShowSbcDialog(app.SBCs.ToArray(),'Choose a single-board computer (1/6)');
+    if(!selectSbc) return;
     //Select template
-    const listTemplates= app.Templates.SelectByEndDeviceArchitecture(selectDevice.Information.Architecture);
+    const listTemplates= app.Templates.SelectByEndSbcArchitecture(selectSbc.Architecture);
     if(listTemplates.length==0) {
-        result=new IotResult(StatusResult.No,`No templates for device ${selectDevice.label} ${selectDevice.Information.Architecture}`);
+        result=new IotResult(StatusResult.No,`No templates for sbc ${selectSbc.Label} ${selectSbc.Architecture}`);
         app.UI.ShowNotification(result);
         return;
     }
@@ -122,10 +125,10 @@ export async function createProject(app:IoTApplication,devices:Array<IotDevice>)
     //values
     values.set("%{project.name}",nameProject);
     //Main process
-    app.UI.Output(`Action: create an ${nameProject} project, ${selectTemplate.Attributes.Id} template, path ${selectFolder}, device ${selectDevice.Information.BoardName} ${selectDevice.Information.Architecture}`);
+    app.UI.Output(`Action: create an ${nameProject} project, ${selectTemplate.Attributes.Id} template, path ${selectFolder}, sbc ${selectSbc.BoardName} ${selectSbc.Architecture}`);
     //app.UI.ShowBackgroundNotification(`Create an ${nameProject} project`);
     //Create project from a template
-    result=selectTemplate.CreateProject(selectDevice,app.Config,selectFolder,values);
+    result=selectTemplate.CreateProject(selectSbc,app.Config,selectFolder,values);
     //app.UI.HideBackgroundNotification();
     //Output       
     app.UI.Output(result.toStringWithHead());

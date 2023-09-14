@@ -4,9 +4,10 @@ import * as path from 'path';
 
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTApplication } from '../IoTApplication';
+import { AppDomain } from '../AppDomain';
 
-export async function loadTemplates(app:IoTApplication,force:boolean=false): Promise<void> {
-
+export async function loadTemplates(force:boolean=false): Promise<void> {
+    const app = AppDomain.getInstance().CurrentApp;
     const guidBadge=app.UI.BadgeAddItem("Loading templates");
     await vscode.window.withProgress({
         location: vscode.ProgressLocation.Notification,

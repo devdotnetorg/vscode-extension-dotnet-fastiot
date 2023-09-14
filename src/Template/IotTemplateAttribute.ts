@@ -31,28 +31,26 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
     //dotnetapp.csproj => .csproj
     return IoTHelper.GetFileExtensions(this.MainFileProj);}
   
-  constructor(pathFolderSchema:string,fileNameSchemaRootYaml:string){
+  constructor(pathFolderSchema:string,fileNameSchemaRootYaml:string) {
       super(pathFolderSchema,fileNameSchemaRootYaml);
   }
 
-  public Init(yamlFilePath:string):boolean
-  {
+  public Init(yamlFilePath:string):boolean {
     //Init
     return this.Parse(yamlFilePath);
   }
 
-  private Validate(yamlFilePath:string){
+  private Validate(yamlFilePath:string) {
     this._validationErrors=[];
     //custom Validator
 
   }
 
-  private Parse(yamlFilePath:string):boolean{
+  private Parse(yamlFilePath:string):boolean {
     try {
       //validate
       this.Validate(yamlFilePath);
       if(!this.IsValid) return false;
-      //
       const file = fs.readFileSync(yamlFilePath, 'utf8');
       const obj=YAML.parse(file);
       //one value
@@ -66,30 +64,28 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
       //filesToProcess
       this._filesToProcess=[];
       index=0;
-      do { 				
-            let item=obj.filesToProcess[index];
-            if(item) {
-              this._filesToProcess.push(<string>item);            
-              //next position
-              index=index+1;
-            }else break;      
-      } 
-      while(true)
+      do {
+        let item=obj.filesToProcess[index];
+        if(item) {
+          this._filesToProcess.push(<string>item);            
+          //next position
+          index=index+1;
+        }else break;
+      } while(true)
       //fileNameReplacement
       this._fileNameReplacement= new Map<string,string>();
       index=0;
-      do { 				
-            let item=obj.fileNameReplacement[index];
-            if(item) {
-              const values=(<string>item).split('=');
-              const key=values[0];
-              const value=values[1];
-              this._fileNameReplacement.set(key,value);          
-              //next position
-              index=index+1;
-            }else break;      
-      } 
-      while(true)
+      do {
+        let item=obj.fileNameReplacement[index];
+        if(item) {
+          const values=(<string>item).split('=');
+          const key=values[0];
+          const value=values[1];
+          this._fileNameReplacement.set(key,value);          
+          //next position
+          index=index+1;
+        }else break;      
+      } while(true)
       //next
     } catch (err: any){
       this._validationErrors.push(`File: ${yamlFilePath} Error parsing attributes: ${err}`);

@@ -4,13 +4,14 @@ import * as path from 'path';
 
 import { TreeDataLaunchsProvider } from '../LaunchView/TreeDataLaunchsProvider';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IContexUI } from '../ui/IContexUI';
+import { AppDomain } from '../AppDomain';
 
-export async function refreshLaunch(treeData: TreeDataLaunchsProvider,contextUI:IContexUI): Promise<void> {
+export async function refreshLaunch(treeData: TreeDataLaunchsProvider): Promise<void> {
+    const app = AppDomain.getInstance().CurrentApp;
     //Main process
     const result = treeData.LoadLaunches();
     //Output
-    if(result.Status==StatusResult.Error) contextUI.Output(result);
+    if(result.Status==StatusResult.Error) app.UI.Output(result);
     //Message
-    contextUI.ShowNotification(result);
+    app.UI.ShowNotification(result);
 }

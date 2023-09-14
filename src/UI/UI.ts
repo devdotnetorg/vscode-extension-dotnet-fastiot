@@ -3,13 +3,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IContexUI } from './IContexUI';
 import { IotResult,StatusResult } from '../Shared/IotResult';
-import { IotDevice } from '../Deprecated/IotDevice';
+import { ISbc } from '../Sbc/ISbc';
 import { IotTemplate } from '../Template/IotTemplate';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoT } from '../Types/Enums';
 import LogLevel = IoT.Enums.LogLevel;
 import Dialog = IoT.Enums.Dialog;
 import Contain = IoT.Enums.Contain;
+import AccountAssignment = IoT.Enums.AccountAssignment;
 import { BadgeActivityBar  } from './BadgeActivityBar';
 
 export class UI implements IContexUI {
@@ -82,12 +83,12 @@ export class UI implements IContexUI {
    }
   }
 
-  public async ShowDeviceDialog(devices:Array<IotDevice>,title = 'Choose a single-board computer'):Promise<IotDevice | undefined> {
+  public async ShowSbcDialog(sbcs:Array<ISbc>,title = 'Choose a single-board computer'):Promise<ISbc| undefined> {
     //Get all architectures
     let architectures:string[]=[];
-    devices.forEach((device) => {
-      if(device.Information.Architecture)
-      architectures.push(device.Information.Architecture);
+    sbcs.forEach((sbc) => {
+      if(sbc.Architecture)
+        architectures.push(sbc.Architecture);
     });
     //removing duplicate elements
     architectures=Array.from(new Set(architectures));
@@ -98,25 +99,25 @@ export class UI implements IContexUI {
       return 0;
     });
     //create a list
-    let itemDevices:Array<ItemQuickPick|vscode.QuickPickItem>=[];
+    let itemSbcs:Array<ItemQuickPick|vscode.QuickPickItem>=[];
     architectures.forEach((architecture) => {
       //make a separator
       const architectureSeparator:vscode.QuickPickItem = {
         label: architecture,
         kind: vscode.QuickPickItemKind.Separator
       };
-      //get devices for only one architecture
-      const devicesA=devices.filter((e:IotDevice) => e.Information.Architecture==architecture);
+      //get sbcss for only one architecture
+      const sbcsA=sbcs.filter((e:ISbc) => e.Architecture==architecture);
       //create block
-      itemDevices.push(architectureSeparator);
+      itemSbcs.push(architectureSeparator);
       //create a list
-      //let itemDevices:Array<ItemQuickPick>=[];
-      devicesA.forEach((device) => {
-        const label=`${device.label}`;
-        const description=`${device.Information.Architecture}`;
-        const detail=`$(circuit-board) ${device.Information.BoardName} $(terminal-linux) ${device.Information.OsDescription} $(circle-filled) ${device.Information.OsKernel} $(account) ${device.Account.UserName}`;
-        const item = new ItemQuickPick(label,description,device,detail);
-        itemDevices.push(item);
+      sbcsA.forEach((sbc) => {
+        const label=`${sbc.Label}`;
+        const description=`${sbc.Architecture}`;
+        const userName=sbc.GetAccount(AccountAssignment.debug)?.UserName??"None";
+        const detail=`$(circuit-board) ${sbc.BoardName} $(terminal-linux) ${sbc.OsDescription} $(circle-filled) ${sbc.OsKernel} $(account) ${userName}`;
+        const item = new ItemQuickPick(label,description,sbc,detail);
+        itemSbcs.push(item);
       });
     });
 
@@ -132,9 +133,9 @@ export class UI implements IContexUI {
     });
     */
     //Select
-    const SELECTED_ITEM = await vscode.window.showQuickPick(itemDevices,{title: title,placeHolder:`Single-board computer`});
+    const SELECTED_ITEM = await vscode.window.showQuickPick(itemSbcs,{title: title,placeHolder:`Single-board computer`});
     if(SELECTED_ITEM)
-      return Promise.resolve(<IotDevice>(SELECTED_ITEM as ItemQuickPick).value);
+      return Promise.resolve(<ISbc>(SELECTED_ITEM as ItemQuickPick).value);
       else Promise.resolve(undefined);
   }
 

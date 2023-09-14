@@ -47,7 +47,7 @@ export class AddSBCPanelSingleton extends BasePanelDialog<AddSBCConfigType>{
           <section class="component-container">
             <h2>SSH Credentials</h2>
             <p>Required to create a single-board computer management account and debugging.</p>
-            <p>The OpenSSH server must first be configured. How to do this in the <vscode-link href="https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#getting-started">Preparing the device</vscode-link>.</p>
+            <p>The OpenSSH server must first be configured. How to do this in the <vscode-link href="https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/blob/master/docs/Getting-started.md#getting-started">Preparing the SBC</vscode-link>.</p>
             <vscode-divider role="separator"></vscode-divider>
             <vscode-text-field id="host" placeholder="192.168.50.75">Host or IP address of the single-board computer:</vscode-text-field>
             <vscode-text-field id="port" value="22" placeholder="22">Port number:</vscode-text-field>

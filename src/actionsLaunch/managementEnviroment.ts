@@ -7,9 +7,9 @@ import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { LaunchNode } from '../LaunchView/LaunchNode';
 import { LaunchTreeItemNode } from '../LaunchView/LaunchTreeItemNode';
-import { IContexUI } from '../ui/IContexUI';
+import { AppDomain } from '../AppDomain';
 
-export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode,contextUI:IContexUI):
+export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode):
     Promise<void> {
         let launchNode=<LaunchNode>item.Parent;
         //name
@@ -21,9 +21,10 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:Launc
         if(!nameEnviroment) return;
         nameEnviroment=IoTHelper.StringTrim(nameEnviroment);
         let result:IotResult;
+        const app = AppDomain.getInstance().CurrentApp;
         if(nameEnviroment=="") {
             result=new IotResult(StatusResult.Error,`Empty name specified`);
-            contextUI.ShowNotification(result);
+            app.UI.ShowNotification(result);
             return;
         }
         //value
@@ -36,7 +37,7 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:Launc
         valueEnviroment=IoTHelper.StringTrim(valueEnviroment);
         if(valueEnviroment==""){
             result=new IotResult(StatusResult.Error,`Empty name specified`);
-            contextUI.ShowNotification(result);
+            app.UI.ShowNotification(result);
             return;
         }
         //Main process
@@ -44,15 +45,15 @@ export async function addEnviroment(treeData: TreeDataLaunchsProvider,item:Launc
         result=launchNode.Launch.WriteEnvironments();
         launchNode.BuildEnvironment();
         //Message
-        contextUI.ShowNotification(result);
+        app.UI.ShowNotification(result);
         //Output
         if(result.Status==StatusResult.Error)
-            contextUI.Output(result);
+            app.UI.Output(result);
         //Refresh
         treeData.Refresh();
 }
 
-export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode,contextUI:IContexUI):
+export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode):
     Promise<void> {
         let environmentsNode=<LaunchTreeItemNode>item.Parent;
         let launchNode=<LaunchNode>environmentsNode.Parent;
@@ -65,9 +66,10 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:La
         if(!newName) return;
         newName=IoTHelper.StringTrim(newName);
         let result:IotResult;
+        const app = AppDomain.getInstance().CurrentApp;
         if(newName=="") {
             result=new IotResult(StatusResult.Error,`Empty name specified`);
-            contextUI.ShowNotification(result);
+            app.UI.ShowNotification(result);
             return;
         }
         //Main process
@@ -78,12 +80,12 @@ export async function renameEnviroment(treeData: TreeDataLaunchsProvider,item:La
         //contextUI.ShowNotification(result);
         //Output
         if(result.Status==StatusResult.Error)
-            contextUI.Output(result);
+            app.UI.Output(result);
         //Refresh
         treeData.Refresh();
 }
 
-export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode,contextUI:IContexUI):
+export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode):
     Promise<void> {
         let environmentsNode=<LaunchTreeItemNode>item.Parent;
         let launchNode=<LaunchNode>environmentsNode.Parent;
@@ -96,9 +98,10 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:Laun
         if(!newValue) return;
         newValue=IoTHelper.StringTrim(newValue);
         let result:IotResult;
+        const app = AppDomain.getInstance().CurrentApp;
         if(newValue==""){
             result=new IotResult(StatusResult.Error,`Empty name specified`);
-            contextUI.ShowNotification(result);
+            app.UI.ShowNotification(result);
             return;
         }
         //Main process
@@ -109,12 +112,12 @@ export async function editEnviroment(treeData: TreeDataLaunchsProvider,item:Laun
         //contextUI.ShowNotification(result);
         //Output
         if(result.Status==StatusResult.Error)
-            contextUI.Output(result);
+            app.UI.Output(result);
         //Refresh
         treeData.Refresh();
 }
 
-export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode,contextUI:IContexUI):
+export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:LaunchTreeItemNode):
     Promise<void> {
         let environmentsNode=<LaunchTreeItemNode>item.Parent;
         let launchNode=<LaunchNode>environmentsNode.Parent;
@@ -126,8 +129,9 @@ export async function deleteEnviroment(treeData: TreeDataLaunchsProvider,item:La
         //Message
         //contextUI.ShowNotification(result);
         //Output
+        const app = AppDomain.getInstance().CurrentApp;
         if(result.Status==StatusResult.Error)
-            contextUI.Output(result);
+            app.UI.Output(result);
         //Refresh
         treeData.Refresh();
 

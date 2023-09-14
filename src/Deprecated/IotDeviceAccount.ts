@@ -2,15 +2,15 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
-import {IotDevice} from './IotDevice';
+import {IotDevice_d} from './IotDevice_d';
 import {IotItemTree_d} from './shared/IotItemTree_d';
 import { IotResult,StatusResult } from '.././Shared/IotResult';
 import SSHConfig from 'ssh2-promise/lib/sshConfig';
 
 export class IotDeviceAccount extends BaseTreeItem_d{  
-  public Parent: IotDevice| undefined;
+  public Parent: IotDevice_d| undefined;
   public Childs: Array<BaseTreeItem_d| any>=[];;
-  public Device: IotDevice;
+  public Device: IotDevice_d;
 
   public Host: string| undefined;
   public Port: string| undefined;
@@ -69,15 +69,13 @@ export class IotDeviceAccount extends BaseTreeItem_d{
     description: string|  undefined,
     tooltip: string| vscode.MarkdownString| undefined,
     collapsibleState: vscode.TreeItemCollapsibleState,
-    parent: IotDevice,
-    device: IotDevice
+    parent: IotDevice_d,
+    device: IotDevice_d
   ){
     super(label,description,tooltip,collapsibleState);
     this.Parent=parent;
     this.Device=device;
   }
-
-  
 
   public async Create(sshconfig:SSHConfig,accountNameDebug:string): Promise<IotResult>{
       //-------------------------------

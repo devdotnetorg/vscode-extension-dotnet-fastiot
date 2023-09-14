@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { IotDevice } from '../IotDevice';
+import { IotDevice_d } from '../IotDevice_d';
 import { IDtoAdapter_d } from './IDtoAdapter_d';
 import { DTO_d } from './DTO_d';
 import { IotResult,StatusResult } from '../../Shared/IotResult';
@@ -13,9 +13,9 @@ export class DTOArmbianAdapter_d implements IDtoAdapter_d {
     overlaydir: ""
   };
 
-  public readonly Device:IotDevice;
+  public readonly Device:IotDevice_d;
 
-  constructor(device: IotDevice){    
+  constructor(device: IotDevice_d){    
     this.Device=device;
     this.ReadConfig(device.DtoLinux.Config);
   }

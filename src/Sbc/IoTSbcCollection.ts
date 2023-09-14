@@ -357,6 +357,10 @@ export class IoTSbcCollection <T extends ISbc> extends ClassWithEvent {
     }
   }
 
+  public ToArray(): Array<T> {
+    return this._items
+  }
+
   /*
   public Rename(id:string, newLabel:string):IotResult {
     let result :IotResult;

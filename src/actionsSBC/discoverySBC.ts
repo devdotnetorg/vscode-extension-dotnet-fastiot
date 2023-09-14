@@ -6,7 +6,6 @@ import ip from 'ip';
 import { IDevice } from 'local-devices'
 
 import { IotResult,StatusResult } from '../Shared/IotResult';
-//import { connectionTestDevice } from '../actionsDevice/connectionTestDevice';
 import { ItemQuickPick } from '../Helper/actionHelper';
 import { IoTHelper } from '../Helper/IoTHelper';
 import { IoTApplication } from '../IoTApplication';
@@ -67,7 +66,6 @@ export async function discoverySBC(treeData: TreeDataSbcProvider, treeView: vsco
                 return;
             });
             return new Promise(async (resolve, reject) => {
-
                 let itemDevices:Array<ItemQuickPick>=[];
                 //get list devices
                 let devices:IDevice[]=[];
@@ -96,7 +94,7 @@ export async function discoverySBC(treeData: TreeDataSbcProvider, treeView: vsco
                     });
                 }
                 if(devices.length==0) {
-                    vscode.window.showInformationMessage(`⚠️ No network devices found.`);
+                    vscode.window.showInformationMessage(`⚠️ No network SBCs found.`);
                     resolve(undefined);
                     return;
                 }

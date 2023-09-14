@@ -2,32 +2,23 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { LaunchTreeItemNode } from './LaunchTreeItemNode';
-import { IotDevice } from '../Deprecated/IotDevice';
+import { ISbc } from '../Sbc/ISbc';
+import { IoTSbc } from '../Sbc/IoTSbc';
 import { LaunchNode } from './LaunchNode';
 import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IConfiguration } from '../Configuration/IConfiguration';
 import { IotLaunch } from '../Launch/IotLaunch';
+import { AppDomain } from '../AppDomain';
 
 export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTreeItemNode> {    
   public RootItems:Array<LaunchNode>=[];
-
-  private readonly _config: IConfiguration ;
     
   private _onDidChangeTreeData: vscode.EventEmitter<LaunchTreeItemNode| undefined | null | void> = 
     new vscode.EventEmitter<LaunchTreeItemNode| undefined | null | void>();
   public readonly onDidChangeTreeData: vscode.Event<LaunchTreeItemNode| undefined | null | void> = 
     this._onDidChangeTreeData.event;
 
-  private readonly _devices: Array<IotDevice>;
-
-  constructor(
-    config:IConfiguration,
-    devices: Array<IotDevice>
-  ) {
-      //Set config
-      this._config=config;
-      this._devices=devices;
-  }
+  constructor() {}
 
   public getTreeItem(element: LaunchTreeItemNode): vscode.TreeItem | Thenable<LaunchTreeItemNode> {
     return element;
@@ -37,21 +28,17 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
     if (element) {
       //Creating a child element
       let objArray: Array<LaunchTreeItemNode> =[];
-      element.Childs.forEach(child =>
-        {	
+      element.Childs.forEach(child => {	
           objArray.push(child)
         });
       return Promise.resolve(objArray);
-    }else
-    {
+    }else {
       //Creating a root structure            
       return Promise.resolve(this.RootItems);
-    }    
+    }
   }
 
-  public Refresh(): void {        
-    this._onDidChangeTreeData.fire();    
-  }
+  public Refresh = () => this._onDidChangeTreeData.fire();
   
   public async LoadLaunchesAsync(sortLaunchs:boolean=false): Promise<IotResult>{
     return Promise.resolve(this.LoadLaunches(sortLaunchs));  
@@ -59,20 +46,20 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
 
   public LoadLaunches(sortLaunchs:boolean=false):IotResult {
     let result:IotResult;
+    const app = AppDomain.getInstance().CurrentApp;
     //Check WorkspaceDirectory
-    if(!this._config.Folder.WorkspaceVSCode) {
+    if(!app.Config.Folder.WorkspaceVSCode) {
       result= new IotResult(StatusResult.No,`WorkspaceDirectory not open`);
       return result;
     }
-    try
-    {
+    try {
       //Clear
       this.RootItems = [];
       //Refresh treeView
       this.Refresh();
       //Recovery launchs from config in JSON format
-      let launch =new IotLaunch(this._config.Folder.WorkspaceVSCode);
-      result=launch.GetAllLaunchs(this._devices);
+      let launch =new IotLaunch(app.Config.Folder.WorkspaceVSCode);
+      result=launch.GetAllLaunchs(app.SBCs.ToArray());
       if(result.Status==StatusResult.No) {
         result.AddMessage(`No Launches.`);
         return result;
@@ -91,14 +78,12 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
       //Sort
       if(sortLaunchs) this.SortNodes();
       //check .lockreadlaunch
-      const lockFilePath=path.join(this._config.Folder.WorkspaceVSCode,".vscode",".lockreadlaunch");
+      const lockFilePath=path.join(app.Config.Folder.WorkspaceVSCode,".vscode",".lockreadlaunch");
       if (fs.existsSync(lockFilePath)) fs.removeSync(lockFilePath);
       //result
       result= new IotResult(StatusResult.Ok,`Launchs loaded successfully`);      
-    }
-    catch (err:any)
-    {
-      const launchPath=path.join(this._config.Folder.WorkspaceVSCode, ".vscode", "launch.json");
+    } catch (err:any) {
+      const launchPath=path.join(app.Config.Folder.WorkspaceVSCode, ".vscode", "launch.json");
       result= new IotResult(StatusResult.Error,`Launches loading error. Path: ${launchPath}`,err);
     }
     //Refresh treeView
@@ -110,8 +95,7 @@ export class TreeDataLaunchsProvider implements vscode.TreeDataProvider<LaunchTr
     this.RootItems=this.RootItems.sort((a, b)=>{
       if((a.label ?? "non") < (b.label ?? "non")) { return -1; }
       if((a.label ?? "non") > (b.label ?? "non")) { return 1; }
-      return 0;
-      });
+      return 0;});
   }
   
 }

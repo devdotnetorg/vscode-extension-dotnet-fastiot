@@ -16,7 +16,6 @@ import { ClassWithEvent } from '../Shared/ClassWithEvent';
 import { IConfigEntityCollection } from './IConfigEntityCollection';
  
 export abstract class EntityCollection <A extends EntityBaseAttribute, T extends EntityBase<A>> extends ClassWithEvent {
-  
   protected _items:Map<string,T>;
   protected readonly _entityLabel:string; //for understandable log
   protected readonly _entitiesLabel:string; //for understandable log
@@ -40,8 +39,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       this.Config=config;
     }
 
-  public Add(value:T):boolean
-  {
+  public Add(value:T):boolean {
     try {
       //unique label
       if(!this.isUniqueLabel(value.Attributes.Label)) {
@@ -54,31 +52,24 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     }
   }
 
-  public Remove(id:string):boolean
-  {
+  public Remove(id:string):boolean {
     return this._items.delete(id);
   }
 
-  public Update(newValue:T):boolean
-  {
+  public Update(newValue:T):boolean {
     this.Remove(newValue.Attributes.Id);
     return this.Add(newValue);
   }
 
-  public Clear()
-  {
-    this._items.clear();
-  }
+  public Clear = () => this._items.clear();
 
-  protected IsCompatibleByVersionExtAndPlatform(value:T):boolean
-  {
+  protected IsCompatibleByVersionExtAndPlatform(value:T):boolean {
     const forVersionExt=value.Attributes.ForVersionExt;
     const platform = value.Attributes.platform;
     return this.IsCompatibleByVersionExtAndPlatform2(forVersionExt,platform);
   }
 
-  protected IsCompatibleByVersionExtAndPlatform2(forVersionExt:string,platform:Array<string>):boolean
-  {
+  protected IsCompatibleByVersionExtAndPlatform2(forVersionExt:string,platform:Array<string>):boolean {
     const currentVersionExt=this.Config.extVersion;
     const isCompatibleVersion=compare(`${currentVersionExt}`,`${forVersionExt}`, '>=');
     const currentPlatform=process.platform.toString();
@@ -89,13 +80,11 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     //if(isCompatibleVersion&&isCompatiblePlatform) return true; else return false;
   }
 
-  protected Contains(value:T):Contain
-  {
+  protected Contains(value:T):Contain {
     return this.Contains2(value.Attributes.Id,value.Type,value.Attributes.Version);
   }
 
-  protected Contains2(id:string,type:EntityEnum,version:string):Contain
-  {
+  protected Contains2(id:string,type:EntityEnum,version:string):Contain {
     // type:EntityEnum, version:string
     if(!this._items.has(id)) return Contain.no;
     let element=this._items.get(id);
@@ -107,13 +96,12 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return Contain.yesNewerVersion;
   }
 
-  public SelectByEndDeviceArchitecture(endDeviceArchitecture?:string):Array<T>
-  {
+  public SelectByEndSbcArchitecture(endSbcArchitecture?:string):Array<T> {
     let listEntities:Array<T>=[];
-    if(!endDeviceArchitecture) return listEntities;
+    if(!endSbcArchitecture) return listEntities;
     this._items.forEach(entiny => {
       //Entiny
-      let found=entiny.Attributes.EndDeviceArchitecture.find(value=>value==endDeviceArchitecture);
+      let found=entiny.Attributes.EndSbcArchitecture.find(value=>value==endSbcArchitecture);
       if(found) listEntities.push(entiny);
     });
     return listEntities;

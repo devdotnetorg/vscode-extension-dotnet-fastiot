@@ -5,11 +5,9 @@ import { IotResult,StatusResult } from '../Shared/IotResult';
 import { IoTHelper } from '../Helper/IoTHelper';
 
 export class EntityRecovery {
-  constructor(
-    ){}
+  constructor(){}
 
-  public RestoryDirStructure(sourceDir:string,destDir:string):IotResult
-  {
+  public RestoryDirStructure(sourceDir:string,destDir:string):IotResult {
     let result:IotResult;
     try {
       this.GetListNameBuiltInEntity(sourceDir).forEach(name => {
@@ -25,21 +23,19 @@ export class EntityRecovery {
     return result;
   }
 
-  protected GetListNameBuiltInEntity(sourceDir:string):string[]
-  {
+  protected GetListNameBuiltInEntity(sourceDir:string):string[] {
     let listNames:Array<string>=[];
     //getting a list of entity files
     if (!fs.existsSync(sourceDir)) return listNames;
     const files = fs.readdirSync(sourceDir);
     files.forEach(name => {
       //file
-      if(fs.lstatSync(path.join(sourceDir, name)).isFile())
-      {
+      if(fs.lstatSync(path.join(sourceDir, name)).isFile()) {
         const extFile=IoTHelper.GetFileExtensions(name);
         if(extFile==".zip") {
             const nameTemplate=name.substring(0,name.length-4)
             listNames.push(nameTemplate);
-          }
+        }
       }
     });
     return listNames;

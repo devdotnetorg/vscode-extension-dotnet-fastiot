@@ -2,14 +2,14 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import {BaseTreeItem_d} from './shared/BaseTreeItem_d';
-import {IotDevice} from './IotDevice';
+import {IotDevice_d} from './IotDevice_d';
 import { IotResult,StatusResult } from '.././Shared/IotResult';
 import {IoTHelper} from '.././Helper/IoTHelper';
 
 export class IotDevicePackage extends BaseTreeItem_d {
-  public Parent: IotDevice| IotDevicePackage;
+  public Parent: IotDevice_d| IotDevicePackage;
   public Childs: Array<IotDevicePackage>=[];
-  public Device: IotDevice;
+  public Device: IotDevice_d;
   
   private _namePackage:TypePackage=TypePackage.none;  
   public get NamePackage(): TypePackage {
@@ -62,8 +62,8 @@ export class IotDevicePackage extends BaseTreeItem_d {
 
   constructor(            
     collapsibleState: vscode.TreeItemCollapsibleState,
-    parent: IotDevice| IotDevicePackage,
-    device: IotDevice
+    parent: IotDevice_d| IotDevicePackage,
+    device: IotDevice_d
   ){
     super("label",undefined,undefined,collapsibleState);   
     this.Parent=parent;

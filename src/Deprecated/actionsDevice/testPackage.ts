@@ -4,10 +4,10 @@ import * as path from 'path';
 
 import { IotResult,StatusResult } from '../../Shared/IotResult';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';         
+import { TreeDataDevicesProvider_d } from '../TreeDataDevicesProvider_d';         
 import {IContexUI} from '../../ui/IContexUI';
 
-export async function testPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage,contextUI:IContexUI): Promise<void> {      
+export async function testPackage(treeData: TreeDataDevicesProvider_d,item:IotDevicePackage,contextUI:IContexUI): Promise<void> {      
     //main process
     const labelTask=`${item.NamePackage} package test`;
     contextUI.Output(`Action: ${labelTask}`);

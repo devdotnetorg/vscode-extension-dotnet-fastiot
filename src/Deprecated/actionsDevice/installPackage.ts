@@ -5,13 +5,13 @@ import * as path from 'path';
 import { IotResult,StatusResult } from '../../Shared/IotResult';
 import { dotnetHelper } from '../../Helper/dotnetHelper';
 import { TypePackage,IotDevicePackage } from '../IotDevicePackage';
-import { TreeDataDevicesProvider } from '../TreeDataDevicesProvider';
+import { TreeDataDevicesProvider_d } from '../TreeDataDevicesProvider_d';
 import { ItemQuickPick } from '../../Helper/actionHelper';
 import {IContexUI} from '../../ui/IContexUI';
 
 // async InstallPackage(idDevice:string,itemPackage:typePackage,objJSON:any): Promise<IotResult> {            
 
-export async function installPackage(treeData: TreeDataDevicesProvider,item:IotDevicePackage,contextUI:IContexUI): Promise<void> {
+export async function installPackage(treeData: TreeDataDevicesProvider_d,item:IotDevicePackage,contextUI:IContexUI): Promise<void> {
     //catalogs
     //const catalogNetSDKChannel: Array<string>=["3.1","5.0","6.0","7.0"];
     //const catalogNetRuntimeChannel: Array<string>=["3.1","5.0","6.0","7.0"];

@@ -15,12 +15,12 @@ import SSHConfig from 'ssh2-promise/lib/sshConfig';
 import {IoTHelper} from '.././Helper/IoTHelper';
 import {networkHelper} from '.././Helper/networkHelper';
 
-export class IotDevice extends BaseTreeItem_d {    
+export class IotDevice_d extends BaseTreeItem_d {    
   public IdDevice:string|undefined;
 
   public Parent: undefined;
   public Childs: Array<IotDeviceAccount| IotDeviceInformation| IotDevicePackage| IotDeviceDTO| IotDeviceGpiochip>=[];
-  public Device: IotDevice=this;
+  public Device: IotDevice_d=this;
 
   public Config:IConfiguration 
   
