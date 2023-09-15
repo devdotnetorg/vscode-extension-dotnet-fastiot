@@ -173,6 +173,15 @@ export class IotConfigurationSbc implements IConfigurationSbc{
         //add
         newObj.sbcs=inputObj.sbcs;
       }
+      //obj.view
+      if(inputObj.view) {
+        //remove previous version
+        if(newObj.view) {
+          newObj.view = undefined;
+        }
+        //add
+        newObj.view=inputObj.view;
+      }
       //result
       vscode.workspace.getConfiguration().update('fastiot.sbc.profiles.JSON',newObj,true);
     } catch (err: any){

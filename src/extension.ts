@@ -119,9 +119,21 @@ export async function activate(context: vscode.ExtensionContext) {
 	};
 	loadTemplatesExt();
 	//TreeView SBC
-	let treeDataSbcProvider = new TreeDataSbcProvider(app.SBCs);
+	const saveSbcsViewCallback = (jsonObjView?:any):void => {
+		let newObj = {view:{}};
+		newObj.view = jsonObjView;
+		app.Config.Sbc.ProfilesSBCJson=JSON.stringify(newObj);	
+	};
+	let jsonObjView = JSON.parse(app.Config.Sbc.ProfilesSBCJson);
+	if(jsonObjView.view) {
+		jsonObjView = jsonObjView.view; 
+	}else {
+		jsonObjView = undefined;
+	} 
+	let treeDataSbcProvider = new TreeDataSbcProvider(app.SBCs,jsonObjView,saveSbcsViewCallback);
     let vscodeTreeDataSbcs=vscode.window.createTreeView('viewSBC', {
-		treeDataProvider: treeDataSbcProvider
+		treeDataProvider: treeDataSbcProvider,
+		dragAndDropController: treeDataSbcProvider
 	});
 	//ViewBadge
 	app.UI.BadgeInit("Active tasks", vscodeTreeDataSbcs);
