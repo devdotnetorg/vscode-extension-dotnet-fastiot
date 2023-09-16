@@ -139,7 +139,7 @@
 					"fastiot.sbc.udevfilename": {
 						"type": "string",
 						"default": "20-gpio-fastiot.rules",
-						"markdownDescription": "Udev rules (device permissions) name file for devices like GPIO. More details in [Linux udev](https://wiki.loliot.net/docs/linux/linux-tools/linux-udev/). File from `%userprofile%\\fastiot\\settings\\udevrules` directory."
+						"markdownDescription": "Udev rules (device permissions) name file for devices like GPIO. More details in [Linux udev](https://wiki.loliot.net/docs/linux/linux-tools/linux-udev/). File from `%userprofile%\\fastiot\\settings\\udevrules` directory. Default value:20-gpio-fastiot.rules"
 					},
 					"fastiot.entities.isupdate": {
 						"type": "boolean",
@@ -754,6 +754,7 @@
 		"compare-versions": "^6.0.0",
 		"fs-extra": "^11.1.1",
 		"ip": "^1.1.8",
+		"jsonschema": "^1.4.1",
 		"local-devices": "^4.0.0",
 		"pingman": "^2.0.0",
 		"platform-folders": "^0.6.0",
