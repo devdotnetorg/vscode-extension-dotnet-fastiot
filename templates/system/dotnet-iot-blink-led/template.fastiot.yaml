@@ -1,8 +1,8 @@
 #YAML
 #Base Entity
 id: dotnet-iot-blink-led # unique
-version: "0.3"
-releaseDate: "2023-07-09" # YYYY-MM-DD
+version: "0.4"
+releaseDate: "2023-09-18" # YYYY-MM-DD
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT
@@ -14,10 +14,10 @@ description: >
              In this sample, you used .NET and your developer board's GPIO pins
              to power an LED and blink it repeatedly. The application uses the
              Libgpiod library and compiled on the PC.
-forVersionExt: 0.4.1
+forVersionExt: 0.5.0
 platform: # win32, linux. Only Windows is currently supported
   - win32
-endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
+endSbcArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l
   - aarch64
   - x86_64

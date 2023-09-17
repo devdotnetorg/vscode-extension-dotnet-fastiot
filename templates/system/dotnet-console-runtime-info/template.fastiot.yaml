@@ -1,8 +1,8 @@
 #YAML
 #Base Entity
 id: dotnet-console-runtime-info # unique
-version: "0.3"
-releaseDate: "2023-07-09" # YYYY-MM-DD
+version: "0.4"
+releaseDate: "2023-09-18" # YYYY-MM-DD
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT
@@ -11,10 +11,10 @@ detail: Creates a console application with output runtime information
 description: >
              The application displays information about the OS, .NET version, environment variables.
              The application is compiled on the PC.
-forVersionExt: 0.4.1
+forVersionExt: 0.5.0
 platform: # win32, linux. Only Windows is currently supported
   - win32
-endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
+endSbcArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l
   - aarch64
   - x86_64

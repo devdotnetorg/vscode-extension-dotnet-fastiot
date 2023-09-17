@@ -2,7 +2,7 @@
 	"values": [
 		{
 			"fastiotIdLaunch": "%{launch.id}",
-			"fastiotIdDevice": "%{device.id}",
+			"fastiotIdSbc": "%{sbc.id}",
 			"fastiotProject":"%{project.mainfile.path.relative.aslinux}",
 			"fastiotIdTemplate": "%{template.id}",
 			"fastiotDescription": "Launch with logging.  \nRsync copying executable files - project_folder/rsync.log.  \nDebugger - /var/log/vsdbg.log.",
@@ -22,22 +22,22 @@
 				"pipeProgram": "%{template.storage.path.aswindows}\\apps\\cwrsync\\ssh.exe",
 				"pipeArgs": [
 					"-i",
-					"%{device.ssh.key.path.full.aswindows}",
+					"%{sbc.ssh.key.path.full.aswindows}",
 					"-o",
 					"StrictHostKeyChecking no",
 					"-o",
 					"UserKnownHostsFile /dev/null",
 					"-p",
-					"%{device.ssh.port}",
-					"%{device.user.debug}@%{device.host}"
+					"%{sbc.ssh.port}",
+					"%{sbc.user.debug}@%{sbc.host}"
 				],
 				"debuggerPath": "/usr/share/vsdbg/vsdbg --engineLogging=/var/log/vsdbg.log"
 			},            
-			"preLaunchTask": "fastiot-%{launch.id}-copy-app-to-device"
+			"preLaunchTask": "fastiot-%{launch.id}-copy-app-to-sbc"
 		},
 		{
 			"fastiotIdLaunch": "%{launch.id}-without-logs",
-			"fastiotIdDevice": "%{device.id}",
+			"fastiotIdSbc": "%{sbc.id}",
 			"fastiotProject":"%{project.mainfile.path.relative.aslinux}",
 			"fastiotIdTemplate": "%{template.id}",
 			"name": "%{launch.label} without logs",
@@ -56,18 +56,18 @@
 				"pipeProgram": "%{template.storage.path.aswindows}\\apps\\cwrsync\\ssh.exe",
 				"pipeArgs": [
 					"-i",
-					"%{device.ssh.key.path.full.aswindows}",
+					"%{sbc.ssh.key.path.full.aswindows}",
 					"-o",
 					"StrictHostKeyChecking no",
 					"-o",
 					"UserKnownHostsFile /dev/null",
 					"-p",
-					"%{device.ssh.port}",
-					"%{device.user.debug}@%{device.host}"
+					"%{sbc.ssh.port}",
+					"%{sbc.user.debug}@%{sbc.host}"
 				],
 				"debuggerPath": "/usr/share/vsdbg/vsdbg"
 			},            
-			"preLaunchTask": "fastiot-%{launch.id}-copy-app-to-device-without-logs"
+			"preLaunchTask": "fastiot-%{launch.id}-copy-app-to-sbc-without-logs"
 		}
     ]
 }

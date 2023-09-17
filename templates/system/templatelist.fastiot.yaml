@@ -1,17 +1,17 @@
 #YAML
 entities:
   - id: dotnet-console
-    version: "0.4"
-    forVersionExt: 0.4.1
+    version: "0.5"
+    forVersionExt: 0.5.0
     platform: # win32, linux. Only Windows is currently supported
       - win32
   - id: dotnet-console-runtime-info
-    version: "0.3"
-    forVersionExt: 0.4.1
+    version: "0.4"
+    forVersionExt: 0.5.0
     platform: # win32, linux. Only Windows is currently supported
       - win32
   - id: dotnet-iot-blink-led
-    version: "0.3"
-    forVersionExt: 0.4.1
+    version: "0.4"
+    forVersionExt: 0.5.0
     platform: # win32, linux. Only Windows is currently supported
       - win32

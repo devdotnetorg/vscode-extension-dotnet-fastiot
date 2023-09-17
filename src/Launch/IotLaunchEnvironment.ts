@@ -29,7 +29,7 @@ export class IotLaunchEnvironment {
   public ToJSON():any{    
     //Fill
     const json="{}";
-    let jsonObj = JSON.parse(json); 
+    let jsonObj = JSON.parse(json);
     this.Items.forEach((value,key) => { 
       jsonObj[key]=value;      
     }); 

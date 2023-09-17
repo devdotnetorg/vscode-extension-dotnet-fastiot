@@ -35,7 +35,7 @@ description:
 language:
   type: string
   required: true
-endDeviceArchitecture:
+endSbcArchitecture:
 - type: string
   required: true
 tags:

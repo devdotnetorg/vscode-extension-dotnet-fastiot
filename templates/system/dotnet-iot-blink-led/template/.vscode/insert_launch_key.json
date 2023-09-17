@@ -2,7 +2,7 @@
 	"values": [
 		{
 			"fastiotIdLaunch": "%{launch.id}",
-			"fastiotIdDevice": "%{device.id}",
+			"fastiotIdSbc": "%{sbc.id}",
 			"fastiotProject":"%{project.mainfile.path.relative.aslinux}",
 			"fastiotIdTemplate": "%{template.id}",
 			"name": "%{launch.label}",
@@ -21,18 +21,18 @@
 				"pipeProgram": "%{extension.apps.builtin.aswindows}\\cwrsync\\ssh.exe",
 				"pipeArgs": [
 					"-i",
-					"%{device.ssh.key.path.full.aswindows}",
+					"%{sbc.ssh.key.path.full.aswindows}",
 					"-o",
 					"StrictHostKeyChecking no",
 					"-o",
 					"UserKnownHostsFile /dev/null",
 					"-p",
-					"%{device.ssh.port}",
-					"%{device.user.debug}@%{device.host}"
+					"%{sbc.ssh.port}",
+					"%{sbc.user.debug}@%{sbc.host}"
 				],
 				"debuggerPath": "/usr/share/vsdbg/vsdbg"
 			},            
-			"preLaunchTask": "fastiot-%{launch.id}-copy-app-to-device"
+			"preLaunchTask": "fastiot-%{launch.id}-copy-app-to-sbc"
 		}
     ]
 }
