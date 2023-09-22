@@ -1,3 +1,5 @@
+# ! https://learn.microsoft.com/ru-ru/dotnet/iot/debugging?tabs=self-contained&pivots=vscode
+
 #!/bin/bash
 # Run: 
 # chmod +x installpackagedebugger.sh
