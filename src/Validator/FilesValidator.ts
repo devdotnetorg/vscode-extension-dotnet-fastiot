@@ -6,25 +6,26 @@ import { IoTHelper } from '../Helper/IoTHelper';
 import * as jsonschema from 'jsonschema';
 
 export class FilesValidator {
-  private readonly _schemasFolderPath: string;
+  private static _isValidSchemaofFilesValidator:boolean;
   
-  constructor(schemasFolderPath: string){
-      this._schemasFolderPath=schemasFolderPath;
-  }
+  private constructor() { }
   
-  public ValidateFiles (folderPath:string, schemaFileName:string, schemaOfSchemaFileName:string):IotResult
+  public static ValidateFiles (folderPath:string, schemasFolderPath: string, schemaFileName:string, schemaOfSchemaFileName:string):IotResult
   {
     let result:IotResult;
     let validationErrors:Array<string>=[];
     let msg="";
     try {
       //check valid schema
-      result = this.ValidateSchemaofFilesValidator(schemaFileName, schemaOfSchemaFileName);
-      if(result.Status!=StatusResult.Ok) {
-        throw new Error(result.toString());
+      if(!this._isValidSchemaofFilesValidator) {
+        result = this.ValidateSchemaofFilesValidator(schemasFolderPath,schemaFileName, schemaOfSchemaFileName);
+        if(result.Status!=StatusResult.Ok) {
+          throw new Error(result.toString());
+        }
+        this._isValidSchemaofFilesValidator=true;
       }
       //open schema
-      const schemaPath=path.join(this._schemasFolderPath, schemaFileName);
+      const schemaPath=path.join(schemasFolderPath, schemaFileName);
       let dataFile:string= fs.readFileSync(schemaPath, 'utf8');
       let jsonSchema = JSON.parse(dataFile);
       jsonSchema.files.forEach((element:any) => {
@@ -51,15 +52,15 @@ export class FilesValidator {
     return result;
   }
 
-  private ValidateSchemaofFilesValidator(schemaFileName:string, schemaOfSchemaFileName:string):IotResult {
+  private static ValidateSchemaofFilesValidator(schemasFolderPath: string, schemaFileName:string, schemaOfSchemaFileName:string):IotResult {
     let result:IotResult;
     try {
       //open schemaOfschema file
-      const schemaOfSchemaPath=path.join(this._schemasFolderPath, schemaOfSchemaFileName);
+      const schemaOfSchemaPath=path.join(schemasFolderPath, schemaOfSchemaFileName);
       const jsonSchemaOfSchemaData:string= fs.readFileSync(schemaOfSchemaPath, 'utf8');
       let jsonSchemaOfSchema = JSON.parse(jsonSchemaOfSchemaData);
       //open schema
-      const schemaPath=path.join(this._schemasFolderPath, schemaFileName);
+      const schemaPath=path.join(schemasFolderPath, schemaFileName);
       const schemaData:string= fs.readFileSync(schemaPath, 'utf8');
       const jsonSchema = JSON.parse(schemaData);
       //
