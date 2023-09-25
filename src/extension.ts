@@ -44,7 +44,6 @@ import { shutdownSBC } from './actionsSBC/shutdownSBC';
 import { loadDTO } from './actionsSBC/loadDTO';
 import { managementDTO } from './actionsSBC/managementDTO';
 import { exportSBC, importSBC } from './actionsSBC/exportImportSBC';
-import { installDotnetTerminal } from './actionsSBC/installDotnetTerminal';
 
 /*
 import { detectGpiochips } from './actionsDevice/detectGpiochips';
@@ -74,7 +73,8 @@ import { createProject } from './actionsTemplate/createProject';
 import { loadTemplates } from './actionsTemplate/loadTemplates';
 import { openTemplateFolder } from './actionsTemplate/openTemplateFolder';
 import { importTemplate } from './actionsTemplate/importTemplate';
-import { dotnetHelper } from './Helper/dotnetHelper';
+//Extension.actions
+import { checkRequirements } from './actionsExtension/checkRequirements';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -401,29 +401,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		watcher.onDidDelete((uri: vscode.Uri) => {
 			reloadLaunchs();
 		});
-		//Check minimum requirements
-		const CheckMinRequirements = async () => {
-			//dotnet-script need net6.0 or net7.0
-			let dotnetInstalled = await dotnetHelper.CheckDotNet("6.0");
-			if(!dotnetInstalled) {
-				//need install
-				//message
-				const resultDotnetInstalled = 
-					new IotResult(StatusResult.Error,`For the extension to work, you must install 'dotnet 6.0'`);
-				app.UI.Output(resultDotnetInstalled);
-				app.UI.ShowNotification(resultDotnetInstalled);
-				//install
-				const msg = "Installing dotnet 6.0. See the result in the terminal window."+
-					"After installation you need to restart VSCode!";
-				app.UI.Output(msg);
-				vscode.window.showInformationMessage(msg);
-				installDotnetTerminal("6.0");
-			}else {
-				//check dotnet-script
-				await dotnetHelper.CheckDotnetScript();
-			}
-		};
-		CheckMinRequirements();
+		//Check requirements
+		checkRequirements();
 		//Subscriptions
 		context.subscriptions.push(vscodeTreeDataSbcs);
 		context.subscriptions.push(vscodeTreeViewLaunchs);

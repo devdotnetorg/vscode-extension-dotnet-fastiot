@@ -93,18 +93,31 @@ export class dotnetHelper {
     return undefined;
   }
 
-  static async GetDotNetListRuntimes(isGlobal?:boolean):Promise<Array<string[]>> {
+  static GetPathDotNetOfLocalUser():string| undefined {
+    // https://github.com/mortend/dotnet-run/blob/master/index.js
     //location
     //local - C:\Users\Anton\AppData\Local\Microsoft\dotnet\dotnet.exe
-    //global - dotnet
-    let location:string;
-    if(isGlobal) {
-      location = "dotnet";
-    }else {
+    let location:string| undefined;
+    if (process.platform === "win32") {
+      // %LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe
       const userHomeDir = os.homedir();
       location=path.join(userHomeDir,"AppData","Local","Microsoft","dotnet","dotnet.exe");
+      if (!fs.existsSync(location)) location = undefined;
+    }else {
+      // ~/.dotnet/dotnet
+      //TODO: GetPathDotNetOfLocalUser for Linux
+      throw new Error("GetPathDotNetOfLocalUser for Linux.");
     }
+    //result
+    return location;
+  }
+
+  static GetDotNetListRuntimes(isGlobal?:boolean):Array<string[]> {
     let dictionary = new Array<string[]>
+    let location:string| undefined;
+    if(isGlobal)
+      location = "dotnet";else location=dotnetHelper.GetPathDotNetOfLocalUser();
+    if(!location) return dictionary;
     try {
       if (process.platform === "win32") {
         let ps = child_process.execSync(`${location} --list-runtimes`).toString();
@@ -118,86 +131,67 @@ export class dotnetHelper {
             if(name&&ver&&name!=''&&ver!='')
               dictionary.push([IoTHelper.StringTrim(name),IoTHelper.StringTrim(ver)]);
           }
-          
         });
       } else {
         //TODO: GetDotNetVer for Linux
         throw new Error("GetDotNetVer for Linux.");
       }
     } catch (err: any){}
-    return Promise.resolve(dictionary);
+    return dictionary;
   }
 
-  static async CheckDotNet(needVersion:string):Promise<boolean> {
+  static ExistsDotNetRuntime(version:string):boolean {
     const labelRuntime = "Microsoft.NETCore.App";
     let result = false;
     try {
-      let listRuntimes = await dotnetHelper.GetDotNetListRuntimes();
+      //global
+      let listRuntimes = dotnetHelper.GetDotNetListRuntimes(true);
       listRuntimes = listRuntimes.filter(item => item[0]== labelRuntime);
       if(listRuntimes.length==0) {
-        listRuntimes = await dotnetHelper.GetDotNetListRuntimes(true);
+        //local
+        listRuntimes = dotnetHelper.GetDotNetListRuntimes();
         listRuntimes = listRuntimes.filter(item => item[0]== labelRuntime);
-        if(listRuntimes.length==0) return Promise.resolve(result);
+        if(listRuntimes.length==0) return result;
       } 
       //check ver
       for (let i = 0; i < listRuntimes.length; i++) {
-        const ver = listRuntimes[i][1];
+        const versionAvailable = listRuntimes[i][1];
         //check
-        result=satisfies(`${ver}`,`~${needVersion}`);
+        result=satisfies(`${versionAvailable}`,`~${version}`);
         if(result) break;
       }
     } catch (err: any){}
-    return Promise.resolve(result);
+    return result;
   }
 
-  static async CheckDotnetScript():Promise<boolean> {
+  static ExistsToolDotnetScript():boolean {
+    const nameTool="dotnet-script";
+    let location:string| undefined="dotnet";
     let result = false;
-    //location
-    //local - C:\Users\Anton\AppData\Local\Microsoft\dotnet\dotnet.exe
-    //global - dotnet
-    const command1="dotnet tool list";
-    const userHomeDir = os.homedir();
-    const location = path.join(userHomeDir,"AppData","Local","Microsoft","dotnet","dotnet.exe");
-    const command2=`${location} tool list -g`;
+    let ps:string="";
+    let command=`${location} tool list -g`;
     if (process.platform === "win32") {
-      let ps:string="";
       try {
-        ps = child_process.execSync(command1).toString();
+        //global
+        ps = child_process.execSync(command).toString();
       } catch (err: any){}
-      if(!ps.includes("dotnet-script")) {
+      if(!ps.includes(nameTool)) {
         try {
-          ps = child_process.execSync(command2).toString();
-          } catch (err: any){}
+          //local
+          location = dotnetHelper.GetPathDotNetOfLocalUser();
+          if(location) {
+            command=`${location} tool list`;
+            ps = child_process.execSync(command).toString();
+          }
+        } catch (err: any){}
       }
-      result=ps.includes("dotnet-script");
-    }else {
-      //TODO: GetDotNetVer for Linux
-       throw new Error("GetDotNetVer for Linux.");
+    } else {
+      //TODO: ExistsToolDotnetScript for Linux
+      throw new Error("ExistsToolDotnetScript for Linux.");
     }
-    return Promise.resolve(result);
+    //result
+    result=ps.includes(nameTool);
+    return result;
   }
-
-  /*
-  static async InstallDotNet(channelDotNet:string):Promise<IotResult> {
-    const runtimeDotnet = "dotnet";
-    let result = new IotResult(StatusResult.Ok,`Installing dotnet version: '${channelDotNet}'`);
-    try {
-      // --runtime ${runtimeDotnet} --channel${channelDotNet}
-      const ps = child_process.spawnSync("powershell.exe", [
-        "-NoProfile", "-ExecutionPolicy", "unrestricted", "-Command",
-        `[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1')))`
-      ]);
-      if(ps.error) {
-        result= new IotResult(StatusResult.Error,`Error installing dotnet version: '${channelDotNet}'.`,ps.error.message);
-      }
-      if(ps.output) {
-        result.AddSystemMessage(ps.output.toString())
-      }
-    } catch (err: any){
-      result= new IotResult(StatusResult.Error,`Error installing dotnet version: '${channelDotNet}'.`,err);
-    }
-    return Promise.resolve(result);
-  }
-  */
 
 }

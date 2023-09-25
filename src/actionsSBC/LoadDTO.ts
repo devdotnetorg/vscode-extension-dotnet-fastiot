@@ -31,7 +31,7 @@ export async function loadDTO(treeData: TreeDataSbcProvider, treeView: vscode.Tr
         return new Promise(async (resolve, reject) => {
             const resultLoad = await sbc.DTOs.Load(token);
             resolve(resultLoad);
-            return;       
+            return;
             //end
         });
     });
