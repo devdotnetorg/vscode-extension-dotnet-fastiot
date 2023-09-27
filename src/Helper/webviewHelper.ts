@@ -42,7 +42,7 @@ export class webviewHelper {
 
   static FilterXSSForWebView(html:string):string {
     const options:xss.IFilterXSSOptions = {
-      whiteList: Constants.WhiteListForWebView,
+      whiteList: Constants.whiteListForWebView,
       stripIgnoreTag: true,
       stripIgnoreTagBody: ["script"],
       css: false
