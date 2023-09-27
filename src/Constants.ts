@@ -7,4 +7,9 @@ export namespace Constants {
   export const urlUpdateTemplatesSystemDebug = "https://raw.githubusercontent.com/devdotnetorg/vscode-extension-dotnet-fastiot/dev/templates/system/templatelist.fastiot.yaml";
   export const fileNameUdevRules = "20-gpio-fastiot.rules";
   export const folderDestForFileUdevRules = "/etc/udev/rules.d";
+  //
+  export const WhiteListForWebView = {
+    a: ["href", "title", "target"],
+    "vscode-text-field": ["id","placeholder"]
+  };
 }

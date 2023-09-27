@@ -3,7 +3,9 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
-import {IoTHelper} from './IoTHelper';
+import * as xss from 'xss';
+import { Constants } from "../Constants"
+import { IoTHelper } from './IoTHelper';
 
 export class webviewHelper {
   /**
@@ -36,6 +38,18 @@ export class webviewHelper {
    */
   static getUri(webview: vscode.Webview, extensionUri: vscode.Uri, pathList: string[]) {
     return webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
+  }
+
+  static FilterXSSForWebView(html:string):string {
+    const options:xss.IFilterXSSOptions = {
+      whiteList: Constants.WhiteListForWebView,
+      stripIgnoreTag: true,
+      stripIgnoreTagBody: ["script"],
+      css: false
+    }; // Custom rules
+    let myxss = new xss.FilterXSS(options);
+    html = myxss.process(html);
+    return html;
   }
 
 }

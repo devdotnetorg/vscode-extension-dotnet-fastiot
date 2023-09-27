@@ -765,6 +765,7 @@
 		"uuid": "^9.0.0",
 		"xmldom": "^0.6.0",
 		"xpath": "0.0.32",
+		"xss": "^1.0.14",
 		"yaml": "^2.3.1",
 		"yaml-schema-validator-fork": "^0.2.0"
 	}
