@@ -74,7 +74,7 @@ export namespace IoT.Enums
         update = "update",
         clear = "clear",
         rename = "rename",
-        changedDto = "changedDto" 
+        changedDto = "changedDto"
     }
 
     export enum Action {

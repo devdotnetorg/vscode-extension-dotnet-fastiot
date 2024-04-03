@@ -91,7 +91,7 @@ export class IotDevicePackage extends BaseTreeItem_d {
   )
   {
     this.NamePackage=namePackage;
-    this.VersionPackage=version;   
+    this.VersionPackage=version;
   }
 
   public async Upgrade(objJSON:any): Promise<IotResult>{

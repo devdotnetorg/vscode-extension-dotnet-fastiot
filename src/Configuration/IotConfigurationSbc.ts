@@ -159,7 +159,7 @@ export class IotConfigurationSbc implements IConfigurationSbc{
   /** obj.sbcs: SbcType[],
    * return string
   */
-  private SetProfilesSBCJson(data:string) {
+  private async SetProfilesSBCJson(data:string) {
     try {
       let inputObj = JSON.parse(data);
       //form old version
@@ -183,9 +183,9 @@ export class IotConfigurationSbc implements IConfigurationSbc{
         newObj.view=inputObj.view;
       }
       //result
-      vscode.workspace.getConfiguration().update('fastiot.sbc.profiles.JSON',newObj,true);
+      await vscode.workspace.getConfiguration().update('fastiot.sbc.profiles.JSON',newObj,true);
     } catch (err: any){
-       
+      console.log(err);
     }
   }
 

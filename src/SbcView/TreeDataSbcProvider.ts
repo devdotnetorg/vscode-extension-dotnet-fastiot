@@ -108,6 +108,7 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
     }
   }
   
+  //saving sbc positions in the tree
   private SaveView() {
     if(!this._saveSbcsViewCallback) return;
     try {
@@ -130,6 +131,9 @@ export class TreeDataSbcProvider implements vscode.TreeDataProvider<SbcTreeItemN
     } catch (err: any){}
 	}
 
+  public GetDisposable(): vscode.Disposable {
+		return new vscode.Disposable(() => {this.Dispose() });
+	}
 
 	public async handleDrag(source: SbcTreeItemNode[], treeDataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
     if (source.length==0) return;

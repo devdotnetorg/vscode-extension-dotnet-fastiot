@@ -124,7 +124,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		const saveSbcsViewCallback = (jsonObjView?:any):void => {
 			let newObj = {view:{}};
 			newObj.view = jsonObjView;
-			app.Config.Sbc.ProfilesSBCJson=JSON.stringify(newObj);	
+			app.Config.Sbc.ProfilesSBCJson=JSON.stringify(newObj);
 		};
 		let jsonObjView = JSON.parse(app.Config.Sbc.ProfilesSBCJson);
 		if(jsonObjView.view) {
@@ -404,6 +404,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		//Check requirements
 		checkRequirements();
 		//Subscriptions
+		context.subscriptions.push(treeDataSbcProvider.GetDisposable());
 		context.subscriptions.push(vscodeTreeDataSbcs);
 		context.subscriptions.push(vscodeTreeViewLaunchs);
 		context.subscriptions.push(vscodeTreeViewTemplates);
@@ -466,5 +467,7 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate(value:string) {}
+export function deactivate(value:string) {
+	//const app = AppDomain.getInstance().CurrentApp;
+}
 
