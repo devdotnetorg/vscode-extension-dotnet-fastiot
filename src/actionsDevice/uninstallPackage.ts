@@ -38,8 +38,7 @@ export async function uninstallPackage(treeData: TreeDataDevicesProvider,item:Io
                 break; 
             }
             case TypePackage.libgpiod: {              
-                //formation jsonObj             
-                jsonObj.installpath="/usr/share/libgpiod";
+                //formation jsonObj
                 break; 
             }
             case TypePackage.docker: {            
