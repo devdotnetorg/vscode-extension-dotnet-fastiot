@@ -42,7 +42,7 @@ Recommended additional extensions that improve the development process and inter
 
 ## System requirements for the device
 
-- **Processor.** ARMv7, ARMv8 или RISC-V;
+- **Processor.** ARMv7, ARMv8 or RISC-V;
 - **OS version.** Linux distribution based on Ubuntu 20.04 LTS or later (Focal Fossa), or Debian 10.11 or later (Buster). It is recommended to use the distribution kit [Armbian](https://www.armbian.com/ "Armbian - Linux for ARM development boards").
 - **Software.** OpenSSH SSH server.
 
