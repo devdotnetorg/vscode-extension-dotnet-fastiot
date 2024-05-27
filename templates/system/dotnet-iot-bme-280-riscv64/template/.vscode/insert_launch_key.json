@@ -1,0 +1,30 @@
+{
+	"values": [
+		{
+			"fastiotIdLaunch": "%{launch.id}",
+			"fastiotIdDevice": "%{device.id}",
+			"fastiotProject": "%{project.mainfile.path.relative.aslinux}",
+			"fastiotIdTemplate": "%{template.id}",
+			"name": "%{launch.label}",
+			"type": "coreclr",
+			"request": "launch",
+			"program": "%{extension.apps.builtin.aswindows}\\cwrsync\\ssh.exe",
+			"args": [
+				"-i",
+				"%{device.ssh.key.path.full.aswindows}",
+				"-o",
+				"StrictHostKeyChecking no",
+				"-p",
+				"%{device.ssh.port}",
+				"%{device.user.debug}@%{device.host}",
+				"cd %{debug.app.folder}/%{project.name} && dotnet ./%{project.name}.dll"
+			],
+			"stopAtEntry": false,
+			"console": "integratedTerminal",
+			"env": {
+				"FASTIOT": "easy"
+			},
+			"preLaunchTask": "fastiot-%{launch.id}-copy-app-to-device"
+		}
+	]
+}

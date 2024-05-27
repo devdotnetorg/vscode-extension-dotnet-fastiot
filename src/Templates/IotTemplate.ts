@@ -131,6 +131,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       }
       //Not necessary. Time setting
       IoTHelper.SetTimeFiles(IoTHelper.GetAllFile(dstPath));
+      //SetLineEndingWindows
+      IoTHelper.SetLineEndingFiles([`${dstPath}\\.vscode\\launch.json`,`${dstPath}\\.vscode\\tasks.json`])
       //
       result= new IotResult(StatusResult.Ok, `Project successfully created!`);
     } catch (err: any){
@@ -188,6 +190,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       }
       //Not necessary. Time setting
       IoTHelper.SetTimeFiles(IoTHelper.GetAllFile(`${dstPath}\\.vscode`));
+      //SetLineEndingWindows
+      IoTHelper.SetLineEndingFiles([`${dstPath}\\.vscode\\launch.json`,`${dstPath}\\.vscode\\tasks.json`])
       //
       result= new IotResult(StatusResult.Ok, `Launch and tasks added successfully`);
       //launch.id

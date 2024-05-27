@@ -229,15 +229,51 @@ export class IoTHelper {
     return result;
   }
 
+  //to Unix
   static SetLineEnding(content:string):string
   {
     //https://github.com/Neoklosch/crlf-helper/
+    //Unix(LF)
+    //Windows (CR LF)
     //CRLF: /\r\n/g
     const re = new RegExp("\r\n", 'g');
     //LF: '\n',
     const value='\n';
     content=content.replace(re,value);
     return content;
+  }
+
+  static SetLineEndingWindows(content:string):string
+  {
+    //https://github.com/Neoklosch/crlf-helper/
+    //Unix(LF)
+    //Windows (CR LF)
+    //CRLF: /\r\n/g
+    const re = new RegExp("\n", 'g');
+    //LF: '\n',
+    const value='\r\n';
+    content=content.replace(re,value);
+    return content;
+  }
+
+  static SetLineEndingFiles(filesPath:string[], targerEnd:string="windows"/*unix, windows*/):IotResult
+  {
+    let result:IotResult;
+    let lastFile:string|undefined;
+    try {
+      filesPath.forEach(path =>{
+        lastFile=path;
+        let data:string= fs.readFileSync(path,'utf8');
+        data=this.SetLineEndingWindows(data);
+        //save in file
+        fs.writeFileSync(path, data,undefined);
+      });
+      result= new IotResult(StatusResult.Ok, `SetLineEndingFiles OK.`);
+    } catch (err: any){
+      result = new IotResult(StatusResult.Error,`ERROR SetLineEndingFiles for file ${lastFile}.`,err);
+    }
+    //result
+    return result;
   }
 
   static ShowExplorer(path:string)

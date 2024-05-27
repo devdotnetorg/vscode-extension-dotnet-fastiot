@@ -1,16 +1,19 @@
 #YAML
 #Base Entity
-id: dotnet-console-native-riscv64 # unique
+id: dotnet-iot-blink-led-riscv64 # unique
 version: "0.1"
 releaseDate: "2024-04-14" # YYYY-MM-DD
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT
-label: .NET Console Application for RISC-V (assembly on RISC-V)
-detail: Creates a minimal console application sample. Debugging is not available, only copying to the device and launching.
+label: .NET IoT Blink an LED Application for RISC-V, max v1.6.4 libgpiod.
+detail: Console application for managing General-purpose I/O (GPIO). For .NET the maximum libgpiod version is v1.6.4.
 description: >
-             Minimal console application sample.
-             The application is compiled on the PC.
+             General-purpose I/O (GPIO) pins can be controlled individually.
+             This is useful for controlling LEDs, relays, and other stateful devices.
+             In this sample, you used .NET and your developer board's GPIO pins
+             to power an LED and blink it repeatedly. The application uses the
+             Libgpiod library and compiled on the PC.
 forVersionExt: 0.4.1
 platform: # win32, linux. Only Windows is currently supported
   - win32
@@ -22,10 +25,14 @@ dependOnPackages: # Coming in one of the next version
 tags:
   - console
   - dotnet
+  - iot
+  - gpio
+  - led
+  - blink
 #Template
 language: C#
 typeProj: dotnet # template type is related to processing logic
-projName: DotnetConsoleApp # default value shown to the user
+projName: DotnetBlinkLEDApp # default value shown to the user
 mainFileProj: dotnetapp.csproj # relative path to the project file as in Linux i.e. folder1/dotnetapp.csproj or dotnetapp.csproj
 mainFileProjLabel: Visual Studio C# Project
 filesToProcess:

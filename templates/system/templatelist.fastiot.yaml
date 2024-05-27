@@ -5,6 +5,26 @@ entities:
     forVersionExt: 0.4.1
     platform: # win32, linux. Only Windows is currently supported
       - win32
+  - id: dotnet-console-coreclr-cross-riscv64
+    version: "0.1"
+    forVersionExt: 0.4.1
+    platform: # win32, linux. Only Windows is currently supported
+      - win32
+  - id: dotnet-console-coreclr-native-riscv64
+    version: "0.1"
+    forVersionExt: 0.4.1
+    platform: # win32, linux. Only Windows is currently supported
+      - win32
+  - id: dotnet-console-cross-riscv64
+    version: "0.1"
+    forVersionExt: 0.4.1
+    platform: # win32, linux. Only Windows is currently supported
+      - win32
+  - id: dotnet-console-native-riscv64
+    version: "0.1"
+    forVersionExt: 0.4.1
+    platform: # win32, linux. Only Windows is currently supported
+      - win32
   - id: dotnet-console-runtime-info
     version: "0.3"
     forVersionExt: 0.4.1
@@ -15,3 +35,13 @@ entities:
     forVersionExt: 0.4.1
     platform: # win32, linux. Only Windows is currently supported
       - win32
+  - id: dotnet-iot-blink-led-riscv64
+    version: "0.1"
+    forVersionExt: 0.4.1
+    platform: # win32, linux. Only Windows is currently supported
+      - win32
+  - id: dotnet-iot-bme-280-riscv64
+    version: "0.1"
+    forVersionExt: 0.4.1
+    platform: # win32, linux. Only Windows is currently supported
+      - win32      
