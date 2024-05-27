@@ -1,4 +1,4 @@
-[![Version](https://vsmarketplacebadges.dev/version-short/devdotnetorg.vscode-extension-dotnet-fastiot.svg)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](LICENSE) [![Github Issues](https://img.shields.io/github/issues/devdotnetorg/vscode-extension-dotnet-fastiot.svg)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![GitHub Repo stars](https://img.shields.io/github/stars/devdotnetorg/vscode-extension-dotnet-fastiot)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Visual Studio Marketplace Last Updated](https://img.shields.io/visual-studio-marketplace/last-updated/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](LICENSE) [![Github Issues](https://img.shields.io/github/issues/devdotnetorg/vscode-extension-dotnet-fastiot.svg)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![GitHub Repo stars](https://img.shields.io/github/stars/devdotnetorg/vscode-extension-dotnet-fastiot)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Visual Studio Marketplace Last Updated](https://img.shields.io/visual-studio-marketplace/last-updated/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
 
 # .NET FastIoT VS Code Extension
 
@@ -6,7 +6,7 @@
 
 [README](README.md "README") in English | [README](README_ru.md "README") на русском языке | DevDotNet.ORG (Russian) - [latest news](https://devdotnet.org/tag/fastiot/ "devdotnet.org/tag/fastiot") | Habr.com (Russian) - [Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Easy development of IoT applications in C # for Raspberry Pi and other SBCs, on Linux").
 
-This extension allows you configures an ARMv7 or ARMv8 Linux embedded device to run .NET applications, and configures `*.csproj` projects for remote debugging via an ssh-tunnel. This has been tested on Windows (64 bits).
+This extension allows you configures an ARMv7, ARMv8 or RISC-V, Linux embedded device to run .NET applications, and configures `*.csproj` projects for remote debugging via an ssh-tunnel. This has been tested on Windows (64 bits).
 
 Devices supported: Raspberry Pi, Banana Pi, Orange Pi, Radxa, Tinkerboard, Odroid, Khadas VIM, NanoPi, Pine.
 
@@ -42,8 +42,9 @@ Recommended additional extensions that improve the development process and inter
 
 ## System requirements for the device
 
-- **Processor.** ARMv7 or ARMv8;
+- **Processor.** ARMv7, ARMv8 or RISC-V;
 - **OS version.** Linux distribution based on Ubuntu 20.04 LTS or later (Focal Fossa), or Debian 10.11 or later (Buster). It is recommended to use the distribution kit [Armbian](https://www.armbian.com/ "Armbian - Linux for ARM development boards").
+- **Software.** OpenSSH SSH server.
 
 ## Getting started
 

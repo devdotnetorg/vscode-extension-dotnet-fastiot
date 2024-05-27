@@ -16,7 +16,18 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
     //const catalogNetSDKChannel: Array<string>=["3.1","5.0","6.0","7.0"];
     //const catalogNetRuntimeChannel: Array<string>=["3.1","5.0","6.0","7.0"];
     const catalogNetRuntimeName: Array<string>=["dotnet","aspnetcore"];
-    const catalogLibgpiodVersion: Array<string>=["1.6.3"];
+    type typeLibgpiodVersion ={
+        version:string,
+        description:string
+    }
+    const catalogLibgpiodVersion: Array<typeLibgpiodVersion>=[
+        { version:"2.1.1", description:"Libgpiod"},
+        { version:"2.1", description:"Libgpiod"},
+        { version:"2.0.2", description:"Libgpiod"},
+        { version:"2.0", description:"Libgpiod"},   
+        { version:"1.6.4", description:"Maximum version for .NET application"},
+        { version:"1.6.3", description:"Libgpiod"}
+    ];
     //objJSON: preparation of input parameters    
     let jsonObj = {
         dotnetrid:"",
@@ -76,49 +87,67 @@ export async function installPackage(treeData: TreeDataDevicesProvider,item:IotD
             jsonObj.installpath="/usr/share/vsdbg";
             break; 
         }
-        case TypePackage.libgpiod: { 
-             //Shows a selection list allowing multiple selections.
-             //Select task
-             let itemLibgpiodTasks:Array<ItemQuickPick>=[];
-             let item = new ItemQuickPick('Check the version of Libgpiod in the repository','Latest version 1.6.4','checkinrepository');
-             itemLibgpiodTasks.push(item);
-             item = new ItemQuickPick('Install Libgpiod from repository','(recommended)','installfromrepository');
-             itemLibgpiodTasks.push(item);
-             item = new ItemQuickPick('Install Libgpiod from source','take a long time','installfromsource');
-             itemLibgpiodTasks.push(item);
-             let SELECTED_ITEM = await vscode.window.showQuickPick(itemLibgpiodTasks,{title: 'Choose a task:'});
-             if(!SELECTED_ITEM) return;
-             //             
-             if(SELECTED_ITEM.value=='installfromsource')
-             {
+        case TypePackage.libgpiod: {
+            //Shows a selection list allowing multiple selections.
+            //Select task
+            let itemLibgpiodTasks:Array<ItemQuickPick>=[];
+            //installation type
+            //binary - installation from binaries;
+            let item = new ItemQuickPick('Installation from binaries','(recommended)','binary');
+            itemLibgpiodTasks.push(item);
+            //findver - find out the version in the repository;
+            item = new ItemQuickPick('Check the version in the repository','Latest version 2.1.1','findver');
+            itemLibgpiodTasks.push(item);
+            //repo - installation from the repository.
+            item = new ItemQuickPick('Installation from repository','Old version','repo');
+            itemLibgpiodTasks.push(item);
+            //source - installation from source;
+            item = new ItemQuickPick('Install from source','take a long time','source');
+            itemLibgpiodTasks.push(item);
+            //Selecting an installation option
+            let SELECTED_ITEM = await vscode.window.showQuickPick(itemLibgpiodTasks,{title: 'Choose the type of Libgpiod library installation:'});
+            if(!SELECTED_ITEM) return;
+            let optionType:string = SELECTED_ITEM.value;
+            //Select version
+            if(optionType=="binary"||optionType=="source") {
                 //catalogLibgpiodVersion
                 let itemLibgpiodVersion:Array<ItemQuickPick>=[];
-                //Select version
-                catalogLibgpiodVersion.forEach((nameItem) => {
-                    const item = new ItemQuickPick(nameItem,"Libgpiod",nameItem);
+                //Select Libgpiod version
+                catalogLibgpiodVersion.forEach((itemLibgpiod) => {
+                    const item = new ItemQuickPick(itemLibgpiod.version,itemLibgpiod.description,itemLibgpiod.version);
                     itemLibgpiodVersion.push(item);
                 });
                 SELECTED_ITEM = await vscode.window.showQuickPick(itemLibgpiodVersion,{title: 'Choose a Libgpiod version:',});
                 if(!SELECTED_ITEM) return;
-                //formation jsonObj
-                jsonObj.version=SELECTED_ITEM.value;  
-                jsonObj.installpath="/usr/share/libgpiod";
-             }else
-             {
-                jsonObj.version=SELECTED_ITEM.value;
-             }
-            break; 
+            }
+            let optionVersion:string = SELECTED_ITEM.value;
+            //parameter design
+            switch(optionType) { 
+                case "binary": {
+                    jsonObj.version= `--type ${optionType} --version ${optionVersion} --canselect no`;
+                    break;
+                }
+                case "source": {
+                    jsonObj.version= `--type ${optionType} --version ${optionVersion}`;
+                    break;
+                }
+                default: {
+                    jsonObj.version= `--type ${optionType}`;
+                    break;
+                }
+            }
+            break;
         }
         case TypePackage.docker: {
             const username=<string>item.Device.Account.UserName;
             //formation jsonObj
-            jsonObj.username=username;            
-            break; 
-        }      
-        default: { 
-            break; 
-        } 
-    }    
+            jsonObj.username=username;        
+            break;
+        }
+        default: {
+            break;
+        }
+    }
     //Info
     vscode.window.showInformationMessage('Package installation/upgrade may take 2 to 7 minutes.');
     //main process

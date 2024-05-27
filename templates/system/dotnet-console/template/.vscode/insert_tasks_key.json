@@ -28,7 +28,7 @@
 					"-p",
 					"%{device.ssh.port}",
 					"%{device.user.debug}@%{device.host}",
-					"mkdir -p ~/fastiot/debugapps/%{project.name}"
+					"mkdir -p %{debug.app.folder}/%{project.name}"
 			],
 			"problemMatcher": "$msCompile"
 		},
@@ -43,7 +43,7 @@
 				"-e",
 				"%{extension.apps.builtin.aswindows}\\cwrsync\\ssh.exe -i %{device.ssh.key.path.full.aswindows} -o 'StrictHostKeyChecking no' -p %{device.ssh.port}",
 				"%{project.path.full.ascygdrive}/bin/Debug/%{project.dotnet.targetframework}/%{device.dotnet.rid}/",
-				"%{device.user.debug}@%{device.host}:~/fastiot/debugapps/%{project.name}"
+				"%{device.user.debug}@%{device.host}:%{debug.app.folder}/%{project.name}"
 			],
 			 "problemMatcher": "$msCompile"
 		}

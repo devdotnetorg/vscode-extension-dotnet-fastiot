@@ -33,6 +33,7 @@ export class IoTUI implements IContexUI {
       msg=value;
     } else {
       //IotResult
+      if (logLevel!=LogLevel.Information) value.logLevel=logLevel;
       if(value.logLevel) {
         logLevel=value.logLevel;
       }else {

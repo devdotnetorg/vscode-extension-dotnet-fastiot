@@ -120,7 +120,7 @@ The `template.fastiot.yaml` file will be placed in the project folder. This file
 
 ## Rebuild Launch
 
-Launch (`/.vscode/launch.json`) and Tasks (`/.vscode/tasks.json`) configurations contain absolute paths to binary files that are loaded on the device, for example `/cygdrive/d/Anton/Projects/Tests /DotnetConsoleAppRuntimeInfo/bin/Debug/net5.0/linux-arm/`. In this regard, if you change the path to the `Applicationdatafolder` folder in the settings or rename / move the project folder, then the paths become non-existent. In this case, you need to rebuild (Rebuild) Launch. Select the required Launch and then call the context menu, click on the `Rebuild` menu item.
+Launch (`/.vscode/launch.json`) and Tasks (`/.vscode/tasks.json`) configurations contain absolute paths to binary files that are loaded on the device, for example `/cygdrive/d/Anton/Projects/Tests /DotnetConsoleAppRuntimeInfo/bin/Debug/net5.0/linux-arm/`. In this regard, if you change the path to the `Applicationdatafolder` folder in the settings or rename/move the project folder, then the paths become non-existent. In this case, you need to rebuild (Rebuild) Launch. Select the required Launch and then call the context menu, click on the `Rebuild` menu item.
 
 *Invoking the Rebuild command*
 
@@ -131,4 +131,4 @@ Launch (`/.vscode/launch.json`) and Tasks (`/.vscode/tasks.json`) configurations
 Some Launch options can be changed from the LAUCHS window. The following options are changed:
 
 - **Console (terminal)** - controls what console (terminal) window the target app is launched into. Default value: `internalConsole`. More details [Console (terminal) window](https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window);
-- **Just My Code** - debug just my code. Default value: `true`. Learn more [How to disable the “Just My Code” setting on the VS Code debugger](https://medium.com/@thiagoalves/how-to-disable-the-just-my-code-setting-on-the -vs-code-debugger-f5fd774e0af8);
+- **Just My Code** - debug just my code. Default value: `true`. Learn more [How to disable the “Just My Code” setting on the VS Code debugger](https://medium.com/@thiagoalves/how-to-disable-the-just-my-code-setting-on-the-vs-code-debugger-f5fd774e0af8);

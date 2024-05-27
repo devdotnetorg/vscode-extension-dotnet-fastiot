@@ -1,0 +1,13 @@
+# for https://github.com/redhat-developer/vscode-yaml
+title: ".NET FastIoT. Project Template"
+type: object
+properties:
+  id:
+    type: string
+    description: "Entity unique identifier"
+  id2:
+    type: string
+    description: "Id2 Entity unique identifier"
+required:
+  - id
+  - id2

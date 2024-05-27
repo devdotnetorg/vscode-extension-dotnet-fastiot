@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.4.1 (27-05-2024)
+
+- Added templates for RISC-V devices.
+- Updated package Libgpiod.
+- Bugs fixed.
+
 ## v0.4.0 (30-05-2023)
 
 - Added command to discover devices on the local network.

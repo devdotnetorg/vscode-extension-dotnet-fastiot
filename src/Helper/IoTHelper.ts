@@ -130,31 +130,27 @@ export class IoTHelper {
   static UnpackFromZip(fileZipPath:string, unpackDir:string):IotResult {
     let result:IotResult;
     try {
-      let filename = path.basename(fileZipPath);
-      filename=filename.substring(0,filename.length-4);
-      unpackDir=unpackDir+"\\"+filename;
+      //no file
+      if (!fs.existsSync(fileZipPath)) {
+        result = new IotResult(StatusResult.Error,`Unpack file not found ${fileZipPath}`);
+        return result;
+      }
       //clear
-      if (fs.existsSync(unpackDir)) fs.emptyDirSync(unpackDir);
-      //mkdir
-      IoTHelper.MakeDirSync(unpackDir);
+      if (fs.existsSync(unpackDir)) {
+        fs.emptyDirSync(unpackDir);
+        fs.removeSync(unpackDir);
+      }
+      //create root dir
+      const rootDir = path.dirname(unpackDir);
+      IoTHelper.MakeDirSync(rootDir);
       //unpack
       var AdmZip = require("adm-zip");
       var zip = new AdmZip(fileZipPath);
       // extracts everything
       zip.extractAllTo(/*target path*/ unpackDir, /*overwrite*/ true);
-      /*
-      const zip = new StreamZip.async({ file: fileZipPath });
-      const entriesCount = await zip.entriesCount;
-      console.log(`Entries read: ${entriesCount}`);
-
-      const count = await zip.extract(null, unpackDir);
-      console.log(`Extracted ${count} entries`);
-      await zip.close();
-      */
-      result = new IotResult(StatusResult.Ok);
-      result.returnObject=unpackDir;
+      result = new IotResult(StatusResult.Ok, `The archive was successfully unpacked, path ${unpackDir}`);
     } catch (err: any){
-      result = new IotResult(StatusResult.Error,`Error while unpacking file ${fileZipPath}`,err);
+      result = new IotResult(StatusResult.Error,`Error while unpacking file ${fileZipPath} to dir ${unpackDir}`,err);
     }
     //result
     return result;
@@ -233,9 +229,12 @@ export class IoTHelper {
     return result;
   }
 
+  //to Unix
   static SetLineEnding(content:string):string
   {
     //https://github.com/Neoklosch/crlf-helper/
+    //Unix(LF)
+    //Windows (CR LF)
     //CRLF: /\r\n/g
     const re = new RegExp("\r\n", 'g');
     //LF: '\n',
@@ -244,10 +243,53 @@ export class IoTHelper {
     return content;
   }
 
+  static SetLineEndingWindows(content:string):string
+  {
+    //https://github.com/Neoklosch/crlf-helper/
+    //Unix(LF)
+    //Windows (CR LF)
+    //CRLF: /\r\n/g
+    const re = new RegExp("\n", 'g');
+    //LF: '\n',
+    const value='\r\n';
+    content=content.replace(re,value);
+    return content;
+  }
+
+  static SetLineEndingFiles(filesPath:string[], targerEnd:string="windows"/*unix, windows*/):IotResult
+  {
+    let result:IotResult;
+    let lastFile:string|undefined;
+    try {
+      filesPath.forEach(path =>{
+        lastFile=path;
+        let data:string= fs.readFileSync(path,'utf8');
+        data=this.SetLineEndingWindows(data);
+        //save in file
+        fs.writeFileSync(path, data,undefined);
+      });
+      result= new IotResult(StatusResult.Ok, `SetLineEndingFiles OK.`);
+    } catch (err: any){
+      result = new IotResult(StatusResult.Error,`ERROR SetLineEndingFiles for file ${lastFile}.`,err);
+    }
+    //result
+    return result;
+  }
+
   static ShowExplorer(path:string)
   {
     const fullpath=`explorer ${path}`;
     cp.exec(fullpath, undefined);
+  }
+
+  static ValidationErrorsToString(validationErrors:string[]): string {
+    let msg=`Validation messages:`;
+    let index=1;
+    validationErrors.forEach((item) => {
+      msg=`${msg}\n${index}. ${item}`;
+      index++;
+    });
+    return msg;
   }
 
 }

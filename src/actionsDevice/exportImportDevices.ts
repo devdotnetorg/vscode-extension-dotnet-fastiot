@@ -40,26 +40,24 @@ export async function importDevices(treeData: TreeDataDevicesProvider,contextUI:
        }
     };    
     const file = await vscode.window.showOpenDialog(options);
-    let result = new IotResult(StatusResult.None);
-    if(file)
-    {        
-        contextUI.Output(`Action: Import devices from file ${file[0].fsPath}`);        
-        try
-        {
-            const jsonObj = JSON.parse(fs.readFileSync(file[0].fsPath, 'utf-8'));
-            result = await treeData.FromJSON(jsonObj);
-        } catch (err:any) {
-            result = new IotResult(StatusResult.Error,err);
-        }     
-        //Output       
-        contextUI.Output(result.toStringWithHead());
-        //Message       
-        if(result.Status==StatusResult.Ok) {
-            vscode.window.showInformationMessage(`Devices imported successfully. ${result.Message}`);
-            treeData.RefreshsFull();
-            treeData.SaveDevices();
-        } else {
-            vscode.window.showErrorMessage(`Error. Device import failed! \n${result.Message}`);            
-        }
+    if(!file) return;
+    let result:IotResult;
+    contextUI.Output(`Action: Import devices from file ${file[0].fsPath}`);        
+    try {
+        const jsonObj = JSON.parse(fs.readFileSync(file[0].fsPath, 'utf-8'));
+        result = await treeData.FromJSON(jsonObj);
+    }catch (err:any) {
+        result = new IotResult(StatusResult.Error,err);
+    }     
+    //Output       
+    contextUI.Output(result.toStringWithHead());
+    //Message       
+    if(result.Status==StatusResult.Ok) {
+        vscode.window.showInformationMessage(`Devices imported successfully. ${result.Message}`);
+        treeData.RefreshsFull();
+        treeData.SaveDevices();
+    } else {
+        vscode.window.showErrorMessage(`Error. Device import failed! \n${result.Message}`);            
     }
+    
 }

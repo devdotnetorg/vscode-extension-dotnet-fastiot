@@ -130,7 +130,8 @@ export class IotDevicePackage extends BaseTreeItem {
     //installpackagedotnetsdk.sh
     let nameScript=`installpackage${namePackage}`;
     //Params
-    let paramsScript=this.GetParamsScript(this.NamePackage,objJSON);    
+    let paramsScript=this.GetParamsScript(this.NamePackage,objJSON);
+    //return Promise.resolve(new IotResult(StatusResult.Ok)); 
     //Exec
     let result = await this.Client.RunScript(this.Device.Account.SshConfig,undefined,this.Device.Config.Folder.Extension,
       nameScript,paramsScript, true,false);    

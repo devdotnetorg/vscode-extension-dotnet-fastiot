@@ -139,7 +139,7 @@ export class IotDevice extends BaseTreeItem {
     this.Information.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
     this.PackagesLinux.collapsibleState=vscode.TreeItemCollapsibleState.Expanded;
     //
-    return Promise.resolve(result);   
+    return Promise.resolve(result);
   }
 
   private AddidDeviceInChildsInformation():void

@@ -13,6 +13,27 @@ import { IotDevice } from '../IotDevice';
 import { IotConfiguration } from '../Configuration/IotConfiguration';
 import { FilesValidator } from '../Validator/FilesValidator';
 
+/*
+load order:
+Create:
+1) IotTemplate - constructor
+2) EntityBase - constructor
+3) IotTemplateAttribute - constructor
+4) EntityBaseAttribute - constructor
+Init:
+1) IotTemplate - Init
+2) EntityBase - Init
+3) EntityBaseAttribute - InitBaseAttribute
+4) EntityBaseAttribute - ParseBaseAttribute
+5) EntityBaseAttribute - ValidateBaseAttribute
+6) EntityBaseAttribute - PostCheckAfterParse
+7) EntityBase - ValidateBase
+8) IotTemplateAttribute - Init
+9) IotTemplateAttribute - Parse
+10) IotTemplateAttribute - Validate
+11) IotTemplate - Validate
+*/
+
 export class IotTemplate extends EntityBase<IotTemplateAttribute> {
   public get StoragePath(): string {
     return this.RootDir+"\\storage";}
@@ -23,30 +44,28 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
 
   private _mergeDictionary:Map<string,string>= new Map<string,string>();
 
-  constructor(pathFolderSchemas: string
+  constructor(pathFolderSchema: string
     ){
-      super("template","templates",IotTemplateAttribute,pathFolderSchemas);
+      super("template","templates",IotTemplateAttribute,
+      pathFolderSchema,"template.fastiot.schema.validator-fork.yaml","template.fastiot.files.schema.json");
   }
 
   public Init(type:EntityType,yamlFilePath:string,recoverySourcePath?:string)
   {
     super.Init(type,yamlFilePath,recoverySourcePath);
+    //
     if(!this.IsValid) return;
-    //next
+    //Attributes
+    const isValidAttributes = this.Attributes.Init(yamlFilePath);
+    if(!isValidAttributes)
+        //error
+        this._validationErrors = this.Attributes.ValidationErrors.slice();
+    if(!this.IsValid) return;
     this.Validate();
-    //if(this.IsValid) this.Parse(filePath);
   }
 
   protected Validate(){
     this._validationErrors=[];
-    //checking folder structure
-    //FilesValidator
-    let filesValidator=new FilesValidator(this._pathFolderSchemas);
-    let result = filesValidator.ValidateFiles(this.RootDir,"template.files.schema.json");
-    const validationErrors=<Array<string>>result.returnObject;
-    this._validationErrors = validationErrors.slice();
-    //check id=""
-    if (this.Attributes.Id=="") this._validationErrors.push("id cannot be empty");
     // TODO: проверка наличия файлов для dotnetapp.csproj которые внутри
   }
 
@@ -112,6 +131,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       }
       //Not necessary. Time setting
       IoTHelper.SetTimeFiles(IoTHelper.GetAllFile(dstPath));
+      //SetLineEndingWindows
+      IoTHelper.SetLineEndingFiles([`${dstPath}\\.vscode\\launch.json`,`${dstPath}\\.vscode\\tasks.json`])
       //
       result= new IotResult(StatusResult.Ok, `Project successfully created!`);
     } catch (err: any){
@@ -169,6 +190,8 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       }
       //Not necessary. Time setting
       IoTHelper.SetTimeFiles(IoTHelper.GetAllFile(`${dstPath}\\.vscode`));
+      //SetLineEndingWindows
+      IoTHelper.SetLineEndingFiles([`${dstPath}\\.vscode\\launch.json`,`${dstPath}\\.vscode\\tasks.json`])
       //
       result= new IotResult(StatusResult.Ok, `Launch and tasks added successfully`);
       //launch.id
@@ -239,17 +262,17 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
       let dataEntity:string= fs.readFileSync(fileEntityPath,'utf8');
       dataEntity=IoTHelper.DeleteComments(dataEntity);
       const fileInsertEntityPath=`${this.TemplatePath}\\.vscode\\insert_${entity}_key.json`;
-      let insertDataEntitys:string= fs.readFileSync(fileInsertEntityPath,'utf8');
-      insertDataEntitys=IoTHelper.DeleteComments(insertDataEntitys);
+      let insertDataEntities:string= fs.readFileSync(fileInsertEntityPath,'utf8');
+      insertDataEntities=IoTHelper.DeleteComments(insertDataEntities);
       //toJSON
       fs.writeFileSync(debugFilePath, dataEntity,undefined);
       let jsonDataEntity = JSON.parse(dataEntity);
-      fs.writeFileSync(debugFilePath, insertDataEntitys,undefined);
-      const jsonInsertDataEntitys = JSON.parse(insertDataEntitys);
-      //insert entitys
+      fs.writeFileSync(debugFilePath, insertDataEntities,undefined);
+      const jsonInsertDataEntities = JSON.parse(insertDataEntities);
+      //insert entities
       let index=0;    
       do {
-        let jsonInsertDataEntity=jsonInsertDataEntitys.values[index];
+        let jsonInsertDataEntity=jsonInsertDataEntities.values[index];
         if(jsonInsertDataEntity)
         {
           if(entity=="launch") {
@@ -391,6 +414,7 @@ export class IotTemplate extends EntityBase<IotTemplateAttribute> {
     this._mergeDictionary.set("%{template.storage.path.aswindows}",<string>storagePath);
     const userName=os.userInfo().username;
     this._mergeDictionary.set("%{os.userinfo.username}",<string>userName);
+    this._mergeDictionary.set("%{debug.app.folder}",<string>config.DebugAppFolderDevice);
   }
 
   private CreateDictionaryStep5DefinePathToProject(dstPath:string) {

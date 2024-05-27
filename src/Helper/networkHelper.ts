@@ -11,6 +11,8 @@ import * as dns from 'dns';
 import tcpPortUsed from 'tcp-port-used';
 import ping from 'pingman';
 import {extendedPingOptions, pingOptions, pingResponse} from '@lolpants/pingman';
+import * as platformFolders from 'platform-folders';
+import { promisify } from 'util';
 
 import {IoTHelper} from './IoTHelper';
 import {IotResult,StatusResult } from '../IotResult';
@@ -92,18 +94,59 @@ export class networkHelper {
     return Promise.resolve(result);
   }
 
-  static  finished = util.promisify(stream.finished);
-
-  static async DownloadFileHttp(fileUrl: string, outputLocationPath: string): Promise<any> {
-    const writer = fs.createWriteStream(outputLocationPath);
-    return axios({
-      method: 'get',
-      url: fileUrl,
-      responseType: 'stream',
-    }).then(response => {
-      response.data.pipe(writer);
-      return this.finished(writer); //this is a Promise
-    });
+  /**
+   * File download.
+   *
+   * @param {string} fileUrl - File download link URL. Ex: https://devdotnet.org/wp-content/media/code-title.png
+   * @param {string=} outputLocationPath - The disk path to the save file.
+   * Ex: If the path is `D:\temp`, then the path to save the file is `D:\temp\code-title.png`.
+   * If the path is `D:\temp\image.png`, then the path to save the file is `D:\temp\image.png`.
+   * If the path is `undefined`, then the `IotResult.returnObject` response will contain the file itself.
+   * @returns {IotResult} `IotResult.tag` contain is HTTP response code. `IotResult.returnObject` contain is path to the file.
+   * Ex: 200 (Ok), 404 (Not Found).
+   */
+  static async DownloadFileHttp(fileUrl: string, outputLocationPath?: string): Promise<IotResult> {
+    let result:IotResult;
+    try {
+      if(outputLocationPath && fs.existsSync(outputLocationPath) && fs.lstatSync(outputLocationPath).isDirectory()) {
+        //Directory
+        const fileName=vscode.Uri.parse(fileUrl).path.split(`/`).pop() ?? "file.tmp";
+        outputLocationPath=path.join(outputLocationPath, fileName);
+      }
+      const finishedDownload = promisify(stream.finished);
+      result = new IotResult(StatusResult.Ok,`File downloaded Url ${fileUrl}`);
+      if(outputLocationPath) {
+        const response = await axios({
+          method: 'GET',
+          url: fileUrl,
+          responseType: 'stream',
+          timeout: 10000 // 10 seconds
+        });
+        const writer = fs.createWriteStream(outputLocationPath);
+        response.data.pipe(writer);
+        await finishedDownload(writer);
+        writer.close();
+        result.returnObject=outputLocationPath;
+        result.tag=response.status.toString();
+      }else {
+        const response = await axios({
+          method: 'GET',
+          url: fileUrl,
+          timeout: 5000 // 5 seconds
+        });
+        result.returnObject=response.data;
+        result.tag=response.status.toString();
+      }
+    } catch (err: any) {
+      let errMsg:string;
+      errMsg=`Unable to download file ${fileUrl}.`;
+      if(err.response)
+        errMsg=`Unable to download file ${fileUrl}. Server response http code ${err.response.status}. statusText ${err.response.statusText}`;  
+      result = new IotResult(StatusResult.Error,errMsg,err);
+      if(err.response) result.tag=err.response.status.toString();
+    }
+    //result
+    return Promise.resolve(result);
   }
 
   static GetLocalIPaddress(): Map<string,string> {

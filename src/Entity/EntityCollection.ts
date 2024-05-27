@@ -42,6 +42,10 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
   public Add(value:T):boolean
   {
     try {
+      //unique label
+      if(!this.isUniqueLabel(value.Attributes.Label)) {
+        value.Attributes.Label=`[${value.Attributes.Id}] ${value.Attributes.Label}`;
+      }
       this._items.set(value.Attributes.Id,value);
       return true;
     } catch (err: any){
@@ -99,19 +103,19 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     if(result==0) {
       return ContainsType.yesSameVersion;
     } else if (result==1) return ContainsType.yesVersionSmaller;
-    return ContainsType.yesMoreVersion;
+    return ContainsType.yesNewerVersion;
   }
 
   public SelectByEndDeviceArchitecture(endDeviceArchitecture?:string):Array<T>
   {
-    let listEntitys:Array<T>=[];
-    if(!endDeviceArchitecture) return listEntitys;
+    let listEntities:Array<T>=[];
+    if(!endDeviceArchitecture) return listEntities;
     this._items.forEach(entiny => {
       //Entiny
       let found=entiny.Attributes.EndDeviceArchitecture.find(value=>value==endDeviceArchitecture);
-      if(found) listEntitys.push(entiny);
+      if(found) listEntities.push(entiny);
     });
-    return listEntitys;
+    return listEntities;
   }
 
   public FindById(idEntity:string):T|undefined
@@ -119,11 +123,11 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return this._items.get(idEntity);
   }
 
-  protected async LoadFromFolder(pathFolder:string, type:EntityType):Promise<IotResult>
+  protected async LoadEntitiesFromFolder(pathFolder:string, type:EntityType):Promise<IotResult>
   {
     let result:IotResult;
     try {
-      const entitysCountBegin=this.Count;
+      const entitiesCountBegin=this.Count;
       //Recovery
       let recovery = new EntityRecovery(); 
       if(type==EntityType.system) {
@@ -137,59 +141,13 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
         return Promise.resolve(result);
       }
       //checking all folders
-      listFolders.forEach(dir => {
-        const filePath=`${dir}\\${this._entityLabel.toLowerCase()}.fastiot.yaml`;
-        let entity = new this.TCreator(this.Config.schemasFolderPath);
-        entity.Init(type,filePath,this.Config.recoverySourcePath);
-        if(!entity.IsValid&&type==EntityType.system) {
-          //Recovery
-          this.CreateEvent(`${this._entityLabel} recovery: ${path.dirname(filePath)}`,LogLevel.Debug);
-          result= entity.Recovery();
-          if(result.Status==StatusResult.Ok) {
-            entity.Init(type,filePath,this.Config.recoverySourcePath);}
-            else {
-              this.CreateEvent(result,LogLevel.Debug);
-            }
-        }
-        //main
-        if(entity.IsValid) {
-          this.CreateEvent(`${this._entityLabel} is valid: [${entity.Attributes.Id}]`,LogLevel.Debug);
-          if(this.IsCompatibleByVersionExtAndPlatform(entity)) {
-            const isContains=this.Contains(entity);
-            switch(isContains) { 
-              case ContainsType.no: {
-                this.Add(entity);
-                this.CreateEvent(`${this._entityLabel} added: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
-                break; 
-              } 
-              case ContainsType.yesVersionSmaller: {
-                this.Update(entity);
-                this.CreateEvent(`${this._entityLabel} updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
-                break; 
-              }
-              default: {
-                this.CreateEvent(`Adding a ${this._entityLabel} was skipped because already in the collection: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
-                break; 
-              } 
-            }
-          }else{
-            result = new IotResult(StatusResult.Error,`The ${this._entityLabel} ${entity.RootDir} is for a newer version of the extension. ` +
-              `Update the extension.`);
-            this.CreateEvent(result);
-          }
-        }else{
-          result = new IotResult(StatusResult.Error,`The ${this._entityLabel} ${entity.RootDir} has not been validated.`);
-          this.CreateEvent(result);
-          this.CreateEvent(entity.ValidationErrorsToString,LogLevel.Debug);
-          //delete system entity
-          if(type==EntityType.system) {
-            result= entity.Remove();
-            this.CreateEvent(result,LogLevel.Debug);
-          }
-        }
-      });
+      let dir:string;
+      for (let i = 0; i < listFolders.length; i++) {
+        dir=listFolders[i];
+        await this.LoadOneEntityFromFolder(dir,type);
+      }
       //result
-      if((this.Count-entitysCountBegin)>0) {
+      if((this.Count-entitiesCountBegin)>0) {
         result= new IotResult(StatusResult.Ok,`Loading ${type} ${this._entitiesLabel} from ${pathFolder} folder successfully completed`);
         result.logLevel=LogLevel.Debug;
       }else{
@@ -202,13 +160,114 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return Promise.resolve(result);
   }
 
+  protected async ImportEntityFromZip(fileZipPath:string,type:EntityType):Promise<IotResult>
+  {
+    let result:IotResult;
+    //unpack to current dir
+    let unpackDir=path.join(path.dirname(fileZipPath), path.parse(fileZipPath).name);
+    try {
+      result=IoTHelper.UnpackFromZip(fileZipPath,unpackDir);
+      if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
+      //test
+      result=await this.LoadOneEntityFromFolder(unpackDir,type,true);
+      if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
+      //move
+      let entity:T;
+      entity=<T>result.returnObject;
+      result=entity.Move(this.GetDirEntitiesCallback(type));
+      if(result.Status!=StatusResult.Ok) return Promise.resolve(result);
+      //add
+      unpackDir=<string>result.returnObject;
+      result=await this.LoadOneEntityFromFolder(unpackDir,type);
+    } catch (err: any){
+      result = new IotResult(StatusResult.Error,`${this._entityLabel} import error. File: ${fileZipPath}, type ${type}.`,err);
+      //clear
+      if (fs.existsSync(unpackDir)) {
+        fs.emptyDirSync(unpackDir);
+        fs.removeSync(unpackDir);
+      }
+    }
+    //result
+    return Promise.resolve(result);
+  }
+
+  protected async LoadOneEntityFromFolder(dir:string,type:EntityType,isTest:boolean=false):Promise<IotResult>
+  {
+    let result:IotResult;
+    try {
+      const filePath=`${dir}\\${this._entityLabel.toLowerCase()}.fastiot.yaml`;
+      let entity = new this.TCreator(this.Config.schemasFolderPath);
+      entity.Init(type,filePath,this.Config.recoverySourcePath);
+      if(!isTest&&!entity.IsValid&&type==EntityType.system) {
+        //Recovery
+        this.CreateEvent(`${this._entityLabel} recovery: ${path.dirname(filePath)}`,LogLevel.Debug);
+        result= entity.Recovery();
+        if(result.Status==StatusResult.Ok) {
+          entity.Init(type,filePath,this.Config.recoverySourcePath);}
+          else {
+            this.CreateEvent(result,LogLevel.Debug);
+          }
+      }
+      //main
+      if(entity.IsValid) {
+        if(!isTest) this.CreateEvent(`${this._entityLabel} is valid: [${entity.Attributes.Id}]`,LogLevel.Debug);
+        if(this.IsCompatibleByVersionExtAndPlatform(entity)) {
+          const isContains=this.Contains(entity);
+          switch(isContains) { 
+            case ContainsType.no: {
+              if(!isTest) {
+                this.Add(entity);
+                this.CreateEvent(`${this._entityLabel} added: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+              }
+              result = new IotResult(StatusResult.Ok,`${this._entityLabel} added: [${entity.Attributes.Id}] ${entity.RootDir}`);
+              result.returnObject=entity;
+              break; 
+            } 
+            case ContainsType.yesVersionSmaller: {
+              if(!isTest) {
+                this.Update(entity);
+                this.CreateEvent(`${this._entityLabel} updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+              }
+              result = new IotResult(StatusResult.Ok,`${this._entityLabel} updated: [${entity.Attributes.Id}] ${entity.RootDir}`);
+              result.returnObject=entity;
+              break; 
+            }
+            default: {
+              this.CreateEvent(`Adding a ${this._entityLabel} was skipped because already in the collection: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
+              result = new IotResult(StatusResult.Error,`Adding a ${this._entityLabel} was skipped because already in the collection: [${entity.Attributes.Id}] ${entity.RootDir}`);
+              break; 
+            } 
+          }
+        }else{
+          result = new IotResult(StatusResult.Error,`The ${this._entityLabel} ${entity.RootDir} is for a newer version of the extension. ` +
+            `Update the extension.`);
+          this.CreateEvent(result);
+        }
+      }else{
+        result = new IotResult(StatusResult.Error,`The ${this._entityLabel} ${entity.RootDir} has not been validated.`);
+        this.CreateEvent(result);
+        this.CreateEvent(IoTHelper.ValidationErrorsToString(entity.ValidationErrors),
+          LogLevel.Debug);
+        //delete system entity
+        if(!isTest&&type==EntityType.system) {
+          result= entity.Remove();
+          this.CreateEvent(result,LogLevel.Debug);
+        }
+      }
+    } catch (err: any){
+      result= new IotResult(StatusResult.Error,`Error load ${type} ${this._entitiesLabel} dir ${dir}`,err);
+    } 
+    return Promise.resolve(result);
+  }
+
   protected async UpdateEntitiesFromUrl(url:string,type:EntityType):Promise<IotResult>
   {
+    //download list
     const destPath= this.GetDirEntitiesCallback(type);
-    let downloader = new EntityDownloader();
+    let downloader = new EntityDownloader(this.Config.schemasFolderPath);
     let result:IotResult;
     this.CreateEvent(`🔗 Downloading a list of ${this._entitiesLabel} to update: ${url}`,LogLevel.Debug);
-    result= await downloader.GetDownloadListEntity(url);
+    result= await downloader.GetDownloadListEntities(url);
     if(result.Status==StatusResult.Error) {
       result.AddMessage(`Error updating ${type} ${this._entitiesLabel}`);
       return Promise.resolve(result);
@@ -219,72 +278,47 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       result= new IotResult(StatusResult.Ok,`Url: ${url}. No ${this._entitiesLabel} to download`);
       return Promise.resolve(result);
     }
-    //next
+    //filter
     let index:number=0;
     do{
       let item = listDownload[index];
       if(item) {
-          //parse
-          if(this.IsCompatibleByVersionExtAndPlatform2(item.ForVersionExt,item.platform)) {
-            const isContains=this.Contains2(item.Id,EntityType.system,item.Version);
-            switch(isContains) { 
-              case ContainsType.no: {
-                result= await downloader.DownloadEntity(item,this.Config.tempFolderPath);
-                if(result.Status==StatusResult.Ok) {
-                  const unpackPath= <string> result.returnObject;
-                  const filePath = path.join(unpackPath, `${this._entityLabel.toLowerCase()}.fastiot.yaml`);
-                  let entity= new this.TCreator(this.Config.schemasFolderPath);
-                  entity.Init(EntityType.system,filePath);
-                  if(entity.IsValid) {
-                    result=entity.Move(path.join(destPath, entity.Attributes.Id));
-                    if(result.Status==StatusResult.Error) {
-                      this.CreateEvent(result,LogLevel.Debug);
-                      break;
-                    } 
-                    this.Add(entity);
-                    this.CreateEvent(`${this._entityLabel} added/updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
-                  } else {
-                    result = new IotResult(StatusResult.Error,`The  ${this._entityLabel} ${entity.YAMLFilePath} has not been validated`)
-                    this.CreateEvent(result,LogLevel.Debug);
-                    this.CreateEvent(entity.ValidationErrorsToString,LogLevel.Debug);
-                  }
-                }
-                break; 
-              }
-              case ContainsType.yesVersionSmaller: {
-                result= await downloader.DownloadEntity(item,this.Config.tempFolderPath);
-                if(result.Status==StatusResult.Ok) {
-                  const unpackPath= <string> result.returnObject;
-                  const filePath = path.join(unpackPath, ` ${this._entityLabel.toLowerCase()}.fastiot.yaml`);
-                  let entity= new this.TCreator(this.Config.schemasFolderPath);
-                  entity.Init(EntityType.system,filePath);
-                  if(entity.IsValid) {
-                    result=entity.Move(path.join(destPath, entity.Attributes.Id));
-                    if(result.Status==StatusResult.Error) {
-                      this.CreateEvent(result,LogLevel.Debug);
-                      break;
-                    } 
-                    this.Update(entity);
-                    this.CreateEvent(`${this._entityLabel} added/updated: [${entity.Attributes.Id}] ${entity.RootDir}`,LogLevel.Debug);
-                  } else {
-                    result = new IotResult(StatusResult.Error,`The  ${this._entityLabel} ${entity.YAMLFilePath} has not been validated`)
-                    this.CreateEvent(result,LogLevel.Debug);
-                    this.CreateEvent(entity.ValidationErrorsToString,LogLevel.Debug);
-                  }
-                }
-              }
-              default: { 
-                //statements; 
-                break; 
-              } 
-            }
-        }else{
-          result = new IotResult(StatusResult.Error,`Error. The ${this._entityLabel} ${item.Url} is for a newer version of the extension. ` +
-          `Update the extension.`);
+        //check
+        if(this.IsCompatibleByVersionExtAndPlatform2(item.ForVersionExt,item.platform)) {
+          const isContains=this.Contains2(item.Id,EntityType.system,item.Version);
+          if(isContains==ContainsType.yesSameVersion || isContains==ContainsType.yesNewerVersion) {
+            //remove
+            listDownload.splice(index, 1);
+            index--;
+          }
+        } else {
+          //remove
+          listDownload.splice(index, 1);
+          index--;
+        }
+      }else break;
+      index++;
+    }while(true)
+    //add entities
+    index=0;
+    do{
+      let item = listDownload[index];
+      if (!item) break; // exit do
+      //download entity
+      result= await downloader.DownloadEntity(item,this.Config.tempFolderPath);
+      this.CreateEvent(result,LogLevel.Debug);
+      //add entity
+      if(result.Status==StatusResult.Ok) {
+        const fileZipPath = <string> result.returnObject;
+        result= await this.ImportEntityFromZip(fileZipPath,type);
+        if(result.Status==StatusResult.Ok) {
+          //delete zip
+          fs.removeSync(fileZipPath);
+        }else {
           this.CreateEvent(result,LogLevel.Debug);
         }
-        //
-      }else break;      
+      }
+      //next index
       index++;
     }while(true)
     //result
@@ -317,11 +351,11 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     return Promise.resolve(result);
   }
 
-  protected async LoadEntities(type:EntityType):Promise<void>
+  protected async LoadEntitiesByType(type:EntityType):Promise<void>
   {
     this.CreateEvent(`☑️ Loading ${type} ${this._entitiesLabel}`,LogLevel.Debug);
     const path=this.GetDirEntitiesCallback(type);
-    const result = await this.LoadFromFolder(path,type);
+    const result = await this.LoadEntitiesFromFolder(path,type);
     this.CreateEvent(result,LogLevel.Debug);
   }
 
@@ -332,18 +366,18 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       //Preparing
       result= new IotResult(StatusResult.None);
       this.Clear();
-      //To get the number of hours since Unix epoch, i.e. Unix timestamp:
-      const dateNow=Math.floor(Date.now() / 1000/ 3600);
-      const TimeHasPassedHours=dateNow-this.Config.builtInConfig.LastUpdateTemplatesHours;
-      const isNeedUpdate = ()=>this.Config.isUpdate&&(TimeHasPassedHours>=this.Config.updateIntervalHours);
       //main code
       this.CreateEvent(`-------- Loading ${this._entitiesLabel} -------`,
         LogLevel.Information);
       //Loading system entities
       this.CreateEvent(`Loading system ${this._entitiesLabel}`,undefined,15); //15
-      await this.LoadEntities(EntityType.system);
+      await this.LoadEntitiesByType(EntityType.system);
       //Updating system entities
       this.CreateEvent(`Updating system ${this._entitiesLabel}`,undefined,15); //30
+      //To get the number of hours since Unix epoch, i.e. Unix timestamp:
+      const dateNow=Math.floor(Date.now() / 1000/ 3600);
+      const TimeHasPassedHours=dateNow-this.Config.builtInConfig.LastUpdateTemplatesHours;
+      const isNeedUpdate = ()=>this.Config.isUpdate&&(TimeHasPassedHours>=this.Config.updateIntervalHours);
       if(force||isNeedUpdate()){
         //system
         this.CreateEvent(`☑️ Updating system ${this._entitiesLabel}`,LogLevel.Debug);
@@ -359,7 +393,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       }
       //Loading community entities
       this.CreateEvent(`Loading community ${this._entitiesLabel}`,undefined,15); //45
-      await this.LoadEntities(EntityType.community);
+      await this.LoadEntitiesByType(EntityType.community);
       //Updating community entities
       this.CreateEvent(`Updating community ${this._entitiesLabel}`,undefined,15); //60
       if(force||isNeedUpdate()){
@@ -375,7 +409,7 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
       }
       //Loading custom entities
       this.CreateEvent(`Loading custom ${this._entitiesLabel}  templates loaded `,undefined,15); //75
-      await this.LoadEntities(EntityType.user);
+      await this.LoadEntitiesByType(EntityType.user);
       //result
       this.CreateEvent(new IotResult(StatusResult.Ok, `${this._entitiesLabel} loaded`));
       const endMsg=`📚 ${this.Count} ${this._entityLabel}(s) available.`;
@@ -395,9 +429,19 @@ export abstract class EntityCollection <A extends EntityBaseAttribute, T extends
     if (fs.existsSync(dir)) fs.emptyDirSync(dir);
   }
 
+  private isUniqueLabel(searchLabel:string):boolean
+  {
+    searchLabel=searchLabel.toLocaleLowerCase();
+    for (let [key, value] of this._items.entries()) {
+      if (value.Attributes.Label.toLocaleLowerCase() === searchLabel)
+        return false;
+    }
+    return true;
+  }
+
 }
 
-//TODO убрать, заменить на Interface IConfig
+//TODO убрать, заменить на Interface IConfig. Все еще под ???
 
 export interface IConfigEntityCollection {
   extVersion: string;

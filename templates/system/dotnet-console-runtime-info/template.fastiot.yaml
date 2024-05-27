@@ -1,12 +1,8 @@
 #YAML
+#Base Entity
 id: dotnet-console-runtime-info # unique
-#dependsOn: none # dependencies/inheritance in templates. Coming in one of the next version
-#isVisible: yes # yes,no. Related to the dependsOn parameter. Coming in one of the next version
-platform: # win32, linux. Only Windows is currently supported
-  - win32
-version: "0.2"
-releaseDate: "2023-03-15" # YYYY-MM-DD
-forVersionExt: 0.3.0
+version: "0.3"
+releaseDate: "2023-07-09" # YYYY-MM-DD
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT
@@ -15,7 +11,9 @@ detail: Creates a console application with output runtime information
 description: >
              The application displays information about the OS, .NET version, environment variables.
              The application is compiled on the PC.
-language: C#
+forVersionExt: 0.4.1
+platform: # win32, linux. Only Windows is currently supported
+  - win32
 endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l
   - aarch64
@@ -23,16 +21,18 @@ endDeviceArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
 dependOnPackages: # Coming in one of the next version
   - dotnetruntime-%{dotnetTarget}
   - vsdbg
-typeProj: dotnet # template type is related to processing logic
-projName: DotnetConsoleAppRuntimeInfo # default value shown to the user
-mainFileProj: dotnetapp.csproj # relative path to the project file as in Linux i.e. folder1/dotnetapp.csproj or dotnetapp.csproj
-mainFileProjLabel: Visual Studio C# Project
 tags:
   - console
   - dotnet
   - runtime
   - environment
   - info
+#Template
+language: C#
+typeProj: dotnet # template type is related to processing logic
+projName: DotnetConsoleAppRuntimeInfo # default value shown to the user
+mainFileProj: dotnetapp.csproj # relative path to the project file as in Linux i.e. folder1/dotnetapp.csproj or dotnetapp.csproj
+mainFileProjLabel: Visual Studio C# Project
 filesToProcess:
   - dotnetapp.csproj # relative path to the file as in Linux
   - Program.cs

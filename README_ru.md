@@ -1,4 +1,4 @@
-[![Version](https://vsmarketplacebadges.dev/version-short/devdotnetorg.vscode-extension-dotnet-fastiot.svg)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](LICENSE) [![Github Issues](https://img.shields.io/github/issues/devdotnetorg/vscode-extension-dotnet-fastiot.svg)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![GitHub Repo stars](https://img.shields.io/github/stars/devdotnetorg/vscode-extension-dotnet-fastiot)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Visual Studio Marketplace Last Updated](https://img.shields.io/visual-studio-marketplace/last-updated/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![License](https://img.shields.io/badge/License-LGPL3.0-blue.svg)](LICENSE) [![Github Issues](https://img.shields.io/github/issues/devdotnetorg/vscode-extension-dotnet-fastiot.svg)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/devdotnetorg/vscode-extension-dotnet-fastiot/dev)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![GitHub Repo stars](https://img.shields.io/github/stars/devdotnetorg/vscode-extension-dotnet-fastiot)](https://github.com/devdotnetorg/vscode-extension-dotnet-fastiot/) [![Installs](https://img.shields.io/visual-studio-marketplace/i/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Visual Studio Marketplace Last Updated](https://img.shields.io/visual-studio-marketplace/last-updated/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot) [![Rating](https://img.shields.io/visual-studio-marketplace/stars/devdotnetorg.vscode-extension-dotnet-fastiot)](https://marketplace.visualstudio.com/items?itemName=devdotnetorg.vscode-extension-dotnet-fastiot)
 
 # .NET FastIoT VS Code Extension
 
@@ -6,7 +6,7 @@
 
 [README](README.md "README") in English | [README](README_ru.md "README") на русском языке | DevDotNet.ORG (Russian) - [последние новости](https://devdotnet.org/tag/fastiot/ "devdotnet.org/tag/fastiot") | Habr.com (Russian) - [Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux](https://habr.com/ru/company/timeweb/blog/597601/ "Простая разработка IoT приложений на C# для Raspberry Pi и других одноплатников, на Linux").
 
-Расширение настраивает встраиваемое устройство на архитектуре ARMv7 или ARMv8, работающее под Linux, для запуска .NET приложений, и конфигурирует проекты `*.csproj` для удаленной отладки по ssh-туннелю. Работает только на Windows (64 бит).
+Расширение настраивает встраиваемое устройство на архитектуре ARMv7, ARMv8 или RISC-V, работающее под Linux, для запуска .NET приложений, и конфигурирует проекты `*.csproj` для удаленной отладки по ssh-туннелю. Работает только на Windows (64 бит).
 
 Поддерживаются устройства: Raspberry Pi, Banana Pi, Orange Pi, Radxa, Tinkerboard, Odroid, Khadas VIM, NanoPi, Pine.
 
@@ -42,8 +42,9 @@
 
 ## Системные требования для устройства
 
-- **Процессор.** ARMv7 или ARMv8;
-- **Версия ОС.** Linux дистрибутив построенный на основе Ubuntu версии не ниже 20.04 LTS (Focal Fossa), или на основе Debian версии не ниже 10.11 (Buster). Рекомендуется использовать дистрибутив [Armbian](https://www.armbian.com/ "Armbian – Linux for ARM development boards").
+- **Процессор.** ARMv7, ARMv8 или RISC-V;
+- **Версия ОС.** Linux дистрибутив построенный на основе Ubuntu версии не ниже 20.04 LTS (Focal Fossa), или на основе Debian версии не ниже 10.11 (Buster). Рекомендуется использовать дистрибутив [Armbian](https://www.armbian.com/ "Armbian – Linux for ARM development boards");
+- **ПО.** SSH-сервер OpenSSH.
 
 ## Быстрый старт
 

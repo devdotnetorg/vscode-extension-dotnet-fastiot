@@ -67,6 +67,7 @@ import { changeOption } from './actionsLaunch/changeOption';
 import { createProject } from './actionsTemplates/createProject';
 import { loadTemplates } from './actionsTemplates/loadTemplates';
 import { openTemplateFolder } from './actionsTemplates/openTemplateFolder';
+import { importTemplate } from './actionsTemplates/importTemplate';
 import { EntityType } from './Entity/EntityType';
 
 // this method is called when your extension is activated
@@ -305,6 +306,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	let commandOpenTemplateFolder = vscode.commands.registerCommand('viewTemplates.OpenTemplateFolder', () => {	
 			openTemplateFolder(app.Config.Folder.GetDirTemplates(EntityType.none));
 	});
+	//Import template
+	let commandImportTemplate = vscode.commands.registerCommand('viewTemplates.ImportTemplate', () => {	
+			importTemplate(app);
+	});
 	//Restore/upgrade system templates
 	let commandRestoreSystemTemplates = vscode.commands.registerCommand('viewTemplates.RestoreSystemTemplates', async () => {
 		app.Templates.DeletingSystemEntities();
@@ -330,7 +335,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
     }, undefined, context.subscriptions);
 	//FileSystemWatcher
-	//- "**/.vscode/*.json"
+	//- "**/.vscode/launch.json"
 	const reloadLaunchs = debounce( () => {
 		if(app.Config.Folder.WorkspaceDirectory) {
 			const lockFilePath=path.join(app.Config.Folder.WorkspaceDirectory,".vscode",".lockreadlaunch");
@@ -338,7 +343,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	});
 	const watcher: vscode.FileSystemWatcher =
-		vscode.workspace.createFileSystemWatcher("**/.vscode/launch.json", false, false, false);
+		vscode.workspace.createFileSystemWatcher("**/{.vscode,.vscode/launch.json}", false, false, false);
 	watcher.onDidChange((uri: vscode.Uri) => {
 		reloadLaunchs();
 	});
@@ -394,7 +399,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(commandCreateProject);
 	context.subscriptions.push(commandReloadTemplates);
 	context.subscriptions.push(commandOpenTemplateFolder);
-	context.subscriptions.push(commandOpenTemplateFolder);
+	context.subscriptions.push(commandImportTemplate);
 	//events
 	context.subscriptions.push(commandRestoreSystemTemplates);
 	//other

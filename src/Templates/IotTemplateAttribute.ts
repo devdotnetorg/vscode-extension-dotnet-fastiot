@@ -2,12 +2,13 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import YAML from 'yaml';
-
 import { EntityBaseAttribute } from '../Entity/EntityBaseAttribute';
 import { IoTHelper } from '../Helper/IoTHelper';
-import { YamlSchemaValidator } from '../Validator/YamlSchemaValidator';
 
 export class IotTemplateAttribute extends EntityBaseAttribute {
+  private _language:string="";  
+  public get Language(): string {
+    return this._language;}
   private _typeProj:string="";  
   public get TypeProj(): string {
     return this._typeProj;}
@@ -30,35 +31,32 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
     //dotnetapp.csproj => .csproj
     return IoTHelper.GetFileExtensions(this.MainFileProj);}
   
-  constructor(schemasFolderPath?: string){
-      super(schemasFolderPath);
+  constructor(pathFolderSchema:string,fileNameSchemaRootYaml:string){
+      super(pathFolderSchema,fileNameSchemaRootYaml);
   }
 
-  public Init(filePath:string)
+  public Init(yamlFilePath:string):boolean
   {
-    //Base Init 
-    super.Parse(filePath);
-    //
-    if(!this.IsValid) return;
-    //next
-    this.Validate(filePath);
-    if(this.IsValid) this.Parse(filePath);
+    //Init
+    return this.Parse(yamlFilePath);
   }
 
-  protected Validate(yamlFilePath:string){
+  private Validate(yamlFilePath:string){
     this._validationErrors=[];
-    //YamlSchemaValidator
-    let yamlSchemaValidator=new YamlSchemaValidator(this._schemasFolderPath);
-    let result = yamlSchemaValidator.ValidateSchema(yamlFilePath,"template.schema.yaml");
-    const validationErrors=<Array<string>>result.returnObject;
-    this._validationErrors = validationErrors.slice();
+    //custom Validator
+
   }
 
-  protected Parse(filePath:string){
+  private Parse(yamlFilePath:string):boolean{
     try {
-      const file = fs.readFileSync(filePath, 'utf8');
+      //validate
+      this.Validate(yamlFilePath);
+      if(!this.IsValid) return false;
+      //
+      const file = fs.readFileSync(yamlFilePath, 'utf8');
       const obj=YAML.parse(file);
       //one value
+      this._language=obj.language;
       this._typeProj=obj.typeProj;
       this._projName=obj.projName;
       this._mainFileProj=obj.mainFileProj;
@@ -93,8 +91,9 @@ export class IotTemplateAttribute extends EntityBaseAttribute {
       } 
       while(true)
       //next
-  } catch (err: any){
-      this._validationErrors.push(`File: ${filePath} Error parsing attributes: ${err}`);
+    } catch (err: any){
+      this._validationErrors.push(`File: ${yamlFilePath} Error parsing attributes: ${err}`);
     }
+    return this.IsValid;
   }
 }
