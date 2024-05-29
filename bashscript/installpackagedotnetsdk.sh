@@ -46,8 +46,8 @@ sudo apt-get update
 sudo apt-get install -y wget
 
 #for aarch64, armv7l, x86_64
-if [ $ARCH_OS == "aarch64" ] && [ $ARCH_OS == "armv7l" ] \
- && [ $ARCH_OS == "x86_64" ]; then
+if [ $ARCH_OS == "aarch64" ] || [ $ARCH_OS == "armv7l" ] \
+ || [ $ARCH_OS == "x86_64" ]; then
 	#install
 	wget https://dot.net/v1/dotnet-install.sh
 	sudo chmod +x dotnet-install.sh

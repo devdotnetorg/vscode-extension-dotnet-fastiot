@@ -26,6 +26,16 @@ if [ -z $INSTALLPATH ]; then
 	INSTALLPATH=/usr/share/dotnet
 fi
 
+# **************** definition of variables ****************
+declare ARCH_OS=$(uname -m) #aarch64, armv7l, x86_64 or riscv64
+
+# requirements check
+if [ $ARCH_OS != "aarch64" ] && [ $ARCH_OS != "armv7l" ] \
+ && [ $ARCH_OS != "x86_64" ]; then
+	echo "ERROR. Current OS architecture ${ARCH_OS} is not supported. For riscv64 architecture you can install .NET SDK 8.0"
+	exit 1;
+fi
+
 export DEBIAN_FRONTEND="noninteractive"
 
 sudo apt-get update

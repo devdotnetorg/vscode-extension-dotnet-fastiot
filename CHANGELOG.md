@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.2 (29-05-2024)
+
+- Fixed bugs in packages.
+
 ## v0.4.1 (27-05-2024)
 
 - Added templates for RISC-V devices.
