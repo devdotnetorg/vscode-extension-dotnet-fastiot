@@ -1,8 +1,9 @@
 #!/bin/bash
 # Run: 
 # chmod +x remove.sh
-# ./remove.sh --version 8.0.6 --edition Microsoft.AspNetCore.App --dir /usr/share/dotnet/shared/Microsoft.AspNetCore.App --tag none --full no
+# ./remove.sh --version 8.0.6 --edition Microsoft.AspNetCore.App --dir /usr/share/dotnet/shared/Microsoft.AspNetCore.App --full no
 # --full yes/no
+# package: dotnet-runtime
 
 set -e #Exit immediately if a comman returns a non-zero status
 

@@ -5,6 +5,7 @@
 # runtime: dotnet, aspnetcore
 # channel: 8.0, 7.0, 6.0, 5.0
 # https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core
+# package: dotnet-runtime
 
 set -e #Exit immediately if a comman returns a non-zero status
 
@@ -58,7 +59,6 @@ export DEBIAN_FRONTEND="noninteractive"
 
 #Combining @ssokolow's last comment with the answer from here, this command will run apt-get update if it hasn't run in the last 1 days:
 #https://askubuntu.com/questions/410247/how-to-know-last-time-apt-get-update-was-executed
-
 [ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mtime -1)" ] && sudo apt-get update
 
 sudo apt-get install -y wget

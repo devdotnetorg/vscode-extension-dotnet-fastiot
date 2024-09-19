@@ -1,0 +1,21 @@
+#!/bin/bash
+# Run: 
+# chmod +x remove.sh
+# ./remove.sh
+# package: docker
+
+set -e #Exit immediately if a comman returns a non-zero status
+
+echo "Run: package/docker/remove.sh"
+
+# remove
+sudo dpkg -l | grep -i docker
+sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli
+sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce
+#
+sudo rm -rf /var/lib/docker /etc/docker
+sudo rm /etc/apparmor.d/docker
+sudo groupdel docker
+sudo rm -rf /var/run/docker.sock
+
+echo "Successfully"

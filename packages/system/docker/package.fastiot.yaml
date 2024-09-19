@@ -1,0 +1,26 @@
+#YAML
+#Base Entity
+id: docker # unique
+version: "0.1"
+releaseDate: "2024-09-19" # YYYY-MM-DD
+author: DevDotNet.ORG
+emailAuthor: fastiot@devdotnet.org
+license: MIT
+label: Docker
+detail: Docker is an open source platform that enables developers to build, deploy, run, update and manage containerized applications.
+description: >
+             Docker is a set of platform as a service (PaaS) products that use OS-level virtualization to deliver software in packages called containers. The software that hosts the containers is called Docker Engine. Docker is a tool that is used to automate the deployment of applications in lightweight containers so that applications can work efficiently in different environments in isolation.
+forVersionExt: 0.5.0
+platform: # win32, linux
+  - win32
+endSbcArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
+  - armv7l
+  - aarch64
+  - x86_64
+dependOnPackages: # Coming in one of the next version
+  - none
+tags:
+  - docker
+  - container
+  - virtualization
+#Package

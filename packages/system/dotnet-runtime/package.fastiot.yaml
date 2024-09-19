@@ -2,17 +2,17 @@
 #Base Entity
 id: dotnet-runtime # unique
 version: "0.1"
-releaseDate: "2024-09-18" # YYYY-MM-DD
+releaseDate: "2024-09-19" # YYYY-MM-DD
 author: DevDotNet.ORG
 emailAuthor: fastiot@devdotnet.org
 license: MIT
 label: .NET Runtime
-detail: .NET is the free, open-source, cross-platform framework for building modern apps and powerful cloud services
+detail: .NET is the free, open-source, cross-platform framework for building modern apps and powerful cloud services.
 description: >
              You can develop desktop, web (ASP.NET), mobile applications in C# and F#, for Windows and Linux.
 forVersionExt: 0.5.0
 platform: # win32, linux
-  - linux
+  - win32
 endSbcArchitecture: # armv6l, armv7l, aarch64, riscv64, x86_64
   - armv7l
   - aarch64

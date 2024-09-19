@@ -2,6 +2,7 @@
 # Run:
 # chmod +x check.sh
 # ./check.sh
+# package: dotnet-runtime
 
 set -e #Exit immediately if a comman returns a non-zero status
 
@@ -16,6 +17,7 @@ if [ "$outstr" == "notinstalled" ]; then
 	echo $JSON_STRING
 	exit 0
 fi
+
 #is OK
 #declare 
 declare listdata=($(dotnet --list-runtimes))
@@ -24,7 +26,6 @@ declare listdata=($(dotnet --list-runtimes))
 #echo "Number of elements in the array: ${#listdata[@]}"
 
 JSON_STRING='{"packages":['
-tag='none'
 
 for (( i=0; i<=(${#listdata[@]}-3); i=i+3)); do
      #echo "${listdata[i+1]} ${listdata[i]} ${listdata[i+2]}"
@@ -39,7 +40,7 @@ for (( i=0; i<=(${#listdata[@]}-3); i=i+3)); do
                   --arg version "${listdata[i+1]}" \
                   --arg edition "${listdata[i]}" \
                   --arg dir "${dir}" \
-                  --arg tag "${tag}" \
+                  --arg tag "none" \
                   '{version: $version, edition: $edition, dir: $dir, tag: $tag}' )
      JSON_STRING=$(echo "${JSON_STRING}${JSON_RECORD},")
 	 #echo "${JSON_RECORD}"

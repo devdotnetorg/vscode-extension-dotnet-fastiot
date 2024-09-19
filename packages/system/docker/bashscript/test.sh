@@ -2,13 +2,15 @@
 # Run: 
 # chmod +x test.sh
 # ./test.sh
-# package: dotnet-runtime
+# package: docker
 
 set -e #Exit immediately if a comman returns a non-zero status
 
-echo "Run: package/dotnet-runtime/test.sh"
+echo "Run: package/docker/test.sh"
 
-#
-dotnet --info
+sudo systemctl status docker
+docker --version
+docker version
+sudo docker info
 
 echo "Successfully"
