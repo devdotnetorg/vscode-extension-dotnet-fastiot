@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run: 
+# Run:
 # chmod +x check.sh
 # ./check.sh
 
@@ -24,21 +24,23 @@ declare listdata=($(dotnet --list-runtimes))
 #echo "Number of elements in the array: ${#listdata[@]}"
 
 JSON_STRING='{"packages":['
+tag='none'
 
 for (( i=0; i<=(${#listdata[@]}-3); i=i+3)); do
      #echo "${listdata[i+1]} ${listdata[i]} ${listdata[i+2]}"
-	 installdir="${listdata[i+2]}"
+	 dir="${listdata[i+2]}"
 	 #Remove first character of a string
-	 installdir="${installdir:1}"
+	 dir="${dir:1}"
 	 #Delete the last character of a string
-	 installdir="${installdir::-1}"
+	 dir="${dir::-1}"
 
      #json
      JSON_RECORD=$( jq -n \
                   --arg version "${listdata[i+1]}" \
                   --arg edition "${listdata[i]}" \
-                  --arg installdir "${installdir}" \
-                  '{version: $version, edition: $edition, installdir: $installdir}' )
+                  --arg dir "${dir}" \
+                  --arg tag "${tag}" \
+                  '{version: $version, edition: $edition, dir: $dir, tag: $tag}' )
      JSON_STRING=$(echo "${JSON_STRING}${JSON_RECORD},")
 	 #echo "${JSON_RECORD}"
 
@@ -47,7 +49,25 @@ done
 #Delete the last character of a string
 JSON_STRING="${JSON_STRING::-1}"
 
+#end
 JSON_STRING=$(echo "${JSON_STRING}]}")
+
+#output
+#{
+#	"packages": [
+#		{
+#			"version": "8.0.6",
+#			"edition": "Microsoft.AspNetCore.App",
+#			"dir": "/usr/share/dotnet/shared/Microsoft.AspNetCore.App",
+#			"tag": "none"
+#		},
+#			"version": "5.0.17",
+#			"edition": "Microsoft.NETCore.App",
+#			"dir": "/usr/share/dotnet/shared/Microsoft.NETCore.App",
+#			"tag": "none"
+#		}
+#	]
+#}
 
 echo $JSON_STRING
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run: 
 # chmod +x install.sh
-# ./install.sh --runtime dotnet --channel 8.0 --install-dir /usr/share/dotnet
+# ./install.sh --runtime dotnet --channel 8.0 --installdir /usr/share/dotnet
 # runtime: dotnet, aspnetcore
 # channel: 8.0, 7.0, 6.0, 5.0
 # https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core
@@ -24,7 +24,7 @@ while [[ $# -gt 0 ]]; do
       shift # past argument
       shift # past value
       ;;
-    -i|--install-dir)
+    -i|--installdir)
       INSTALLDIR="$2"
       shift # past argument
       shift # past value
