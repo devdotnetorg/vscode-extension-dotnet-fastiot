@@ -15,9 +15,11 @@ export async function checkRequirements(): Promise<void> {
     const app = AppDomain.getInstance().CurrentApp;
     try {
         //components
-        //net6.0 or net7.0
-        let dotnetInstalled = dotnetHelper.ExistsDotNetRuntime("6.0");
-        //dotnet-script need net6.0 or net7.0
+        //net8.0
+        let netVersion="8.0";
+        let dotnetInstalled = dotnetHelper.ExistsDotNetRuntime(netVersion);
+        //dotnet-script need net8.0
+        //https://github.com/dotnet-script/dotnet-script
         let dotnetScriptInstalled = false;
         if (dotnetInstalled)
             dotnetScriptInstalled = dotnetHelper.ExistsToolDotnetScript();
@@ -26,7 +28,7 @@ export async function checkRequirements(): Promise<void> {
             return Promise.resolve(undefined);
         //out
         let msg = `Checking system requirements:\n`+
-            `${(dotnetInstalled?"🟢":"🔴 not installed")} 'dotnet 6.0'\n`+
+            `${(dotnetInstalled?"🟢":"🔴 not installed")} 'dotnet ${netVersion}'\n`+
             `${(dotnetScriptInstalled?"🟢":"🔴 not installed")} 'dotnet script'`;
         app.UI.Output(msg);
         //Main process
@@ -56,11 +58,11 @@ export async function checkRequirements(): Promise<void> {
                     }
                 });
                 //install
-                //dotnet6.0
+                //dotnet8.0
                 //https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-install-script
-                app.UI.Output("Installing/updating dotnet6.0:");
+                app.UI.Output("Installing/updating dotnet${netVersion}:");
                 app.UI.Output("Wait for the operation to complete!");
-                let command = `powershell.exe -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1'))) -Runtime dotnet -Channel 6.0"`;
+                let command = `powershell.exe -NoProfile -ExecutionPolicy unrestricted -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1'))) -Runtime dotnet -Channel ${netVersion}"`;
                 let result = await localCLI.Run(command,token);
                 //dotnet-script
                 //https://github.com/dotnet-script/dotnet-script
@@ -94,14 +96,14 @@ export async function checkRequirements(): Promise<void> {
             app.UI.Output(msg);
         }
         //report
-        dotnetInstalled = dotnetHelper.ExistsDotNetRuntime("6.0");
-        //dotnet-script need net6.0 or net7.0
+        dotnetInstalled = dotnetHelper.ExistsDotNetRuntime(netVersion);
+        //dotnet-script need net8.0
         dotnetScriptInstalled = false;
         if (dotnetInstalled)
             dotnetScriptInstalled = dotnetHelper.ExistsToolDotnetScript();
         //out
         msg = `Checking system requirements:\n`+
-            `${(dotnetInstalled?"🟢":"🔴 not installed")} 'dotnet 6.0'\n`+
+            `${(dotnetInstalled?"🟢":"🔴 not installed")} 'dotnet ${netVersion}'\n`+
             `${(dotnetScriptInstalled?"🟢":"🔴 not installed")} 'dotnet script'`;
         app.UI.Output(msg);
     } catch (err: any){
