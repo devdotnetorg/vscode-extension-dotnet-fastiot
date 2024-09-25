@@ -10,6 +10,7 @@ label: .NET Runtime
 detail: .NET is the free, open-source, cross-platform framework for building modern apps and powerful cloud services.
 description: >
              You can develop desktop, web (ASP.NET), mobile applications in C# and F#, for Windows and Linux.
+website: https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-install-script
 forVersionExt: 0.5.0
 platform: # win32, linux
   - win32
@@ -27,3 +28,6 @@ tags:
   - asp.net
   - runtime
 #Package
+relatedPackages:
+  - dotnet-sdk
+  

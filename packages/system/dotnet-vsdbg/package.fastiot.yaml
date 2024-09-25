@@ -10,6 +10,7 @@ label: Microsoft .NET Core Debugger (vsdbg)
 detail: Remote debug .NET apps on single-board computers.
 description: >
              Bla-bla-bla.
+website: https://learn.microsoft.com/ru-ru/dotnet/iot/debugging?tabs=self-contained&pivots=vscode
 forVersionExt: 0.5.0
 platform: # win32, linux
   - win32
@@ -24,3 +25,6 @@ tags:
   - remote
   - dotnet
 #Package
+relatedPackages:
+  - none
+  

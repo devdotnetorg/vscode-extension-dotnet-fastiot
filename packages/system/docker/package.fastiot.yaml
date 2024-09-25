@@ -10,6 +10,7 @@ label: Docker
 detail: Docker is an open source platform that enables developers to build, deploy, run, update and manage containerized applications.
 description: >
              Docker is a set of platform as a service (PaaS) products that use OS-level virtualization to deliver software in packages called containers. The software that hosts the containers is called Docker Engine. Docker is a tool that is used to automate the deployment of applications in lightweight containers so that applications can work efficiently in different environments in isolation.
+website: https://docker.com
 forVersionExt: 0.5.0
 platform: # win32, linux
   - win32
@@ -24,3 +25,6 @@ tags:
   - container
   - virtualization
 #Package
+relatedPackages:
+  - none
+  
